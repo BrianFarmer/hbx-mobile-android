@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:tag="@+id/view_type"
+    >
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text=""
+        android:id="@+id/textViewCompanyName"
+        style="@style/TextFieldStyle"
+        android:gravity="center_vertical"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:maxLines="2"
+        android:layout_toLeftOf="@+id/textViewEmployessNeeded"
+        android:ellipsize="end" />
+
+    <TextView
+        android:layout_width="70dp"
+        android:layout_height="wrap_content"
+        android:text="New Text"
+        android:id="@+id/textViewDaysLeft"
+        style="@style/TextFieldStyle"
+        android:gravity="center"
+        android:layout_alignTop="@+id/textViewCompanyName"
+        android:layout_alignBottom="@+id/textViewCompanyName"
+        android:layout_toLeftOf="@+id/imageButton"
+        android:layout_toStartOf="@+id/imageButton" />
+
+    <ImageView
+        android:layout_width="6dp"
+        android:layout_height="match_parent"
+        android:id="@+id/imageViewAlertBar"
+        android:src="@drawable/alert_bar"
+        android:scaleType="fitXY"
+        android:layout_alignTop="@+id/textViewCompanyName"
+        android:layout_alignBottom="@+id/textViewCompanyName"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true" />
+
+    <TextView
+        android:layout_width="80dp"
+        android:layout_height="wrap_content"
+        android:text=""
+        android:id="@+id/textViewEmployessNeeded"
+        style="@style/TextFieldStyle"
+        android:gravity="center"
+        android:layout_marginRight="20dp"
+        android:layout_alignTop="@+id/textViewCompanyName"
+        android:layout_alignBottom="@+id/textViewCompanyName"
+        android:layout_toStartOf="@id/textViewDaysLeft"
+        android:layout_toLeftOf="@id/textViewDaysLeft" />
+
+    <ImageButton
+        android:layout_width="25dp"
+        android:layout_height="wrap_content"
+        android:id="@+id/imageButton"
+        android:src="@drawable/right_arrow"
+        android:background="@null"
+        android:layout_alignTop="@+id/textViewCompanyName"
+        android:layout_alignBottom="@+id/textViewCompanyName"
+        android:layout_alignParentRight="true"
+        android:scaleType="fitCenter" />
+</RelativeLayout>

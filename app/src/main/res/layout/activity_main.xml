@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.v4.widget.DrawerLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/drawer_layout"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+	<RelativeLayout
+		android:layout_width="match_parent"
+		android:layout_height="match_parent"
+        android:orientation="vertical"
+        tools:context="gov.dc.broker.MainActivity"
+		android:id="@+id/relative_layout">
+
+
+        <android.support.v7.widget.Toolbar
+            xmlns:android="http://schemas.android.com/apk/res/android"
+            xmlns:app="http://schemas.android.com/apk/res-auto"
+            android:id="@+id/toolbar"
+            android:layout_height="wrap_content"
+            android:layout_width="match_parent"
+            android:fitsSystemWindows="true"
+            android:minHeight="?attr/actionBarSize"
+            android:layout_alignParentTop="true"
+            android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
+			android:title="test title"
+            android:background="?attr/colorPrimaryDark">
+        </android.support.v7.widget.Toolbar>
+
+        <WebView
+            android:id="@+id/webViewWelcome"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="18dp"
+            android:layout_below="@+id/toolbar"
+            android:layout_centerHorizontal="true" >
+        </WebView>
+		<ListView
+			android:layout_width="fill_parent"
+			android:layout_height="30dp"
+			android:id="@+id/listViewEmployers"
+			android:layout_below="@+id/webViewWelcome"
+			android:layout_alignParentLeft="true"
+			android:layout_alignParentStart="true"
+			android:layout_alignParentBottom="true"
+			android:layout_marginTop="29dp" />
+	</RelativeLayout>
+	<android.support.design.widget.NavigationView
+		android:id="@+id/navigation"
+		android:layout_width="wrap_content"
+		android:layout_height="match_parent"
+		android:layout_gravity="start"
+        app:headerLayout="@layout/navigation_header"
+		app:menu="@menu/hamburger" />
+</android.support.v4.widget.DrawerLayout>

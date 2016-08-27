@@ -1,0 +1,91 @@
+<resources>
+    <string name="app_name">Broker</string>
+    <string name="title_activity_login">Broker Login</string>
+
+    <!-- Strings related to login -->
+    <string name="prompt_email">Email</string>
+    <string name="prompt_password">Password (optional)</string>
+    <string name="action_sign_in">Sign in or register</string>
+    <string name="action_sign_in_short">Sign in</string>
+    <string name="error_invalid_email">This email address is invalid</string>
+    <string name="error_invalid_password">This password is too short</string>
+    <string name="error_incorrect_password">This password is incorrect</string>
+    <string name="error_field_required">This field is required</string>
+    <string name="permission_rationale">"Contacts permissions are needed for providing email
+        completions."
+    </string>
+    <string name="all_other_clients">All Other Clients</string>
+    <string name="open_enrollment_in_progress">Open Enrollment In Progress</string>
+    <string name="renewals_in_progress">Renewals In Progress</string>
+    <string name="drawer_open">Open navigation drawer</string>
+    <string name="drawer_close">Close navigation drawer</string>
+    <string name="welcome_html" formatted="false">
+<![CDATA[
+    <html>
+        <STYLE type="text/css">
+            BODY {
+                color: #555555;
+                margin: 0 0 0 0;
+            }
+            div.welcome{
+                padding-top: .2cm;
+                padding-bottom: .4cm;
+                font-weight: 700;
+                font-size: .55cm;
+                text-align: center;
+            }
+            div.summary{
+                font-weight: 500;
+                font-size: .45cm;
+                text-align: center;
+            }
+            span.employercount {
+                color: #00a3e2;
+            }
+            span.attention {
+                color: #f21f28;
+            }
+        </STYLE>
+        <body>
+            <div class="welcome">Welcome Back, %s</div>
+            <div class="summary">You have <span class="employercount">%s</span> clients with</div>
+            <div class="summary"><span class="attention">%s</span> requiring your immediate attention.</div>
+        </body>
+    </html>
+]]>
+    </string>
+    <string name="welcome_message" formatted="false">Welcome Back, %s</string>
+    <string name="welcome_summary" formatted="false">You have %s clients with %s requiring your immediate attention.</string>
+    <string name="client">Client</string>
+    <string name="employees_needed">Employees Needed</string>
+    <string name="plan_year">Plan Year</string>
+    <string name="days_left">DAYS LEFT</string>
+
+    <string name="title_activity_client_details">ClientDetailsActivity</string>
+    <string name="dummy_button">Dummy Button</string>
+    <string name="dummy_content">DUMMY\nCONTENT</string>
+    <string name="carriers_menu_item">Carriers</string>
+    <string name="logout_menu_item">Logout</string>
+    <string name="participation_label">Participation</string>
+    <string name="must_participate_label">Must Participate to Meet Minimum</string>
+    <string name="enrolled_label">Enrolled</string>
+    <string name="waived_label">Waived</string>
+    <string name="not_completed_label">Not Completed</string>
+    <string name="total_employees_label">Total Employees</string>
+    <string name="open_enrollment_label">Open Enrollment</string>
+    <string name="open_enrollment_begins_label">Open Enrollment Begins</string>
+    <string name="open_enrollment_ends_labell">Open Enrollment Ends</string>
+    <string name="days_left_label">Days Left</string>
+    <string name="call_dc_healthlink">Call DC HealthLink</string>
+    <string name="estimated_cost_label">Monthly Estimated Cost-</string>
+    <string name="employer_contribution_label">Employer Contribution</string>
+    <string name="employee_contribution_label">Employee Contribution</string>
+    <string name="total">Total</string>
+    <string name="minimum_not_met">Open enrollment in progress &#8226; Minimum not met</string>
+    <string name="minimum_met">Open enrollment in progress</string>
+    <string name="in_coverage">In Coverage</string>
+    <string name="coverage_info_label">Coverage Info</string>
+    <string name="coverage_year" formatted="false">Coverage Year %1$s - %2$s</string>
+    <string name="renewal_available_label">Renewal Available</string>
+    <string name="next_coverage_year_begins_label">Next Coverage Year Begins</string>
+</resources>

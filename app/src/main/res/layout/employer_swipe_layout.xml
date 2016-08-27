@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:orientation="horizontal">
+
+    <ImageButton
+        android:id="@+id/imageButtonPhone"
+        style="@style/IconImageButtonStyle"
+        android:src="@drawable/phoneicon"
+    />
+
+    <ImageButton
+        android:id="@+id/imageButtonEmail"
+        style="@style/IconImageButtonStyle"
+        android:src="@drawable/emailicon"
+    />
+
+    <ImageButton
+        android:id="@+id/imageButtonLocation"
+        style="@style/IconImageButtonStyle"
+        android:src="@drawable/locationicon"
+    />
+
+    <ImageButton
+        android:id="@+id/imageButtonChat"
+        style="@style/IconImageButtonStyle"
+        android:src="@drawable/messageicon"
+    />
+</LinearLayout>

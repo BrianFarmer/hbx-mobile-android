@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <group android:checkableBehavior="none">
+        <item
+            android:id="@+id/nav_carriers"
+            android:icon="@drawable/carriers"
+            android:title="@string/carriers_menu_item" />
+        <item
+            android:id="@+id/nav_call_healthlink"
+            android:icon="@drawable/call_color"
+            android:title="@string/call_dc_healthlink" />
+        <item
+            android:id="@+id/nav_logout"
+            android:icon="@drawable/logout"
+            android:title="@string/logout_menu_item" />
+    </group>
+</menu>

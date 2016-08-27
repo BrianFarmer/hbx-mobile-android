@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="#e1e1e1"
+    android:tag="@+id/view_type"
+    >
+
+    <TextView
+        android:id="@+id/textViewCompanyNameLabel"
+        style="@style/TextColumnHeaderStyle"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/client"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:layout_toLeftOf="@+id/textViewEnrolledLabel"
+        android:layout_toStartOf="@+id/textViewEnrolledLabel"
+        android:paddingLeft="10dp"
+        android:paddingStart="10dp"
+    />
+    <TextView
+        android:id="@+id/textViewEnrolledLabel"
+        android:layout_width="120dp"
+        android:layout_height="wrap_content"
+        android:text="@string/enrolled_label"
+        android:layout_alignTop="@+id/textViewCompanyNameLabel"
+        android:layout_toStartOf="@+id/textViewDaysLeftLabel"
+        android:layout_toLeftOf="@+id/textViewDaysLeftLabel"
+        android:textAllCaps="true"
+        android:paddingTop="4dp"
+        android:paddingBottom="4dp"
+        android:paddingRight="0dp"
+        android:textSize="11dp"
+        android:textColor="#555555"
+    />
+    <TextView
+        android:id="@+id/textViewDaysLeftLabel"
+        android:layout_width="70dp"
+        android:layout_height="wrap_content"
+        android:text="@string/days_left"
+        android:layout_marginRight="23dp"
+        android:layout_alignTop="@+id/textViewCompanyNameLabel"
+        android:layout_alignParentRight="true"
+        android:textAllCaps="true"
+        android:paddingTop="4dp"
+        android:paddingBottom="4dp"
+        android:paddingRight="0dp"
+        android:textSize="11dp"
+        android:textColor="#555555"
+    />
+</RelativeLayout>
