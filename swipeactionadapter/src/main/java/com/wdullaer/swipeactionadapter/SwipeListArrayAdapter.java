@@ -8,4 +8,5 @@ import android.widget.ListAdapter;
  */
 public abstract class SwipeListArrayAdapter extends BaseAdapter {
     public abstract boolean isItemSwipeable(int position);
+    public abstract int getTagId();
 }

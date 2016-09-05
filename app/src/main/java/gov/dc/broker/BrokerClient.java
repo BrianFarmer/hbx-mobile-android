@@ -6,13 +6,14 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonParseException;
 import com.google.gson.annotations.SerializedName;
 
+import java.io.Serializable;
 import java.lang.reflect.Type;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
-public class BrokerClient {
+public class BrokerClient implements Serializable {
 
     @SerializedName("employer_name")
     public String employerName;

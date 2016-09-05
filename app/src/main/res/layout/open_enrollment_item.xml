@@ -15,6 +15,7 @@
         android:layout_alignParentTop="true"
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true"
+        android:minLines="2"
         android:maxLines="2"
         android:layout_toLeftOf="@+id/textViewEmployessNeeded"
         android:ellipsize="end" />

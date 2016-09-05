@@ -77,8 +77,6 @@ public class MainActivity extends AppCompatActivity {
         // Initializing Toolbar and setting it as the actionbar
         toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-        ActionBar supportActionBar = getSupportActionBar();
-        supportActionBar.setDisplayUseLogoEnabled(true);
         toolbar.setLogo(R.drawable.app_header);
 
 
@@ -182,12 +180,12 @@ public class MainActivity extends AppCompatActivity {
         swipeActionAdapter = new SwipeActionAdapter(employerAdapter);
         swipeActionAdapter.setListView(listViewEmployers);
         listViewEmployers.setAdapter(swipeActionAdapter);
-        swipeActionAdapter.addBackground(SwipeDirection.DIRECTION_NORMAL_LEFT, R.layout.employer_swipe_layout);
+        swipeActionAdapter.addBackground(SwipeDirection.DIRECTION_FAR_LEFT, R.layout.employer_swipe_layout);
         swipeActionAdapter.setSwipeActionListener(new SwipeActionAdapter.SwipeActionListener() {
             @Override
             public boolean hasActions(int position, SwipeDirection direction) {
                 if (employerAdapter.isItemSwipeable(position)
-                    && direction == SwipeDirection.DIRECTION_NORMAL_LEFT){
+                    && direction == SwipeDirection.DIRECTION_FAR_LEFT){
                     return true;
                 }
                 return false;

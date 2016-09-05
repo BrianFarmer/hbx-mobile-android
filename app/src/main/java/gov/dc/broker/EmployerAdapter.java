@@ -180,6 +180,11 @@ public class EmployerAdapter extends SwipeListArrayAdapter {
     public boolean isItemSwipeable(int position) {
         return wrapped_items.get(position).isSwipeable();
     }
+
+    @Override
+    public int getTagId() {
+        return R.id.view_type;
+    }
 }
 
 abstract class ItemWrapperBase {
@@ -420,8 +425,7 @@ class OpenEnrollmentAlertedWrapper extends BrokerClientWrapper {
         return 5;
     }
 
-    protected void fillOpenEnrollmentItem(View view, MainActivity mainActivity) {
-        final MainActivity mainActivityFinal = mainActivity;
+    protected void fillOpenEnrollmentItem(View view, final MainActivity mainActivity) {
         TextView companyName = (TextView)view.findViewById(R.id.textViewCompanyName);
         companyName.setText(brokerClient.employerName);
         TextView employeesNeeded = (TextView)view.findViewById(R.id.textViewEmployessNeeded);
@@ -431,10 +435,10 @@ class OpenEnrollmentAlertedWrapper extends BrokerClientWrapper {
         view.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(mainActivityFinal, ClientDetailsActivity.class);
+                Intent intent = new Intent(mainActivity, ClientDetailsActivity.class);
                 Log.d(TAG, "onClick: launching");
                 intent.putExtra(ClientDetailsActivity.BROKER_CLIENT_ID, getObjectIndex());
-                mainActivityFinal.startActivity(intent);
+                mainActivity.startActivity(intent);
             }
         });
     }
@@ -634,6 +638,7 @@ class OtherWrapper extends BrokerClientWrapper {
     public View getView(View convertView, ViewGroup parent, MainActivity mainActivity, LayoutInflater inflater) {
         View view;
         Boolean createNewView = true;
+
         if (convertView != null){
             Object tagObject = convertView.getTag(R.id.view_type);
             if (tagObject != null){

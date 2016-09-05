@@ -1,11 +1,18 @@
 package gov.dc.broker;
 
+import android.app.Activity;
 import android.content.Intent;
 import android.content.res.Resources;
+import android.media.Image;
+import android.support.v4.app.DialogFragment;
+import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.widget.Toolbar;
 import android.text.format.DateFormat;
 import android.util.Log;
+import android.view.View;
+import android.widget.ImageButton;
 import android.widget.TextView;
 
 import org.greenrobot.eventbus.EventBus;
@@ -26,12 +33,14 @@ public class ClientDetailsActivity extends AppCompatActivity {
     public static final String BROKER_CLIENT_ID = "BrokerClientId";
 
     private EventBus eventBus;
+    private Toolbar toolbar;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
         final ClientDetailsActivity _this = this;
+
 
         Intent intent = getIntent();
         int clientId = intent.getIntExtra(BROKER_CLIENT_ID, -1);
@@ -45,7 +54,7 @@ public class ClientDetailsActivity extends AppCompatActivity {
 
     }
 
-    private CharSequence DateAsString(Date date){
+        private CharSequence DateAsString(Date date){
         return DateFormat.format("MMM dd, yyyy", date);
     }
 
@@ -69,25 +78,88 @@ public class ClientDetailsActivity extends AppCompatActivity {
 
     private void showOtherClients(BrokerClient brokerClient, BrokerClientDetails brokerClientDetails) {
         setContentView(R.layout.client_details_other);
+
+        // Initializing Toolbar and setting it as the actionbar
+        configToolbar();
+        configButtons(brokerClient);
         fillCoverateInfo(brokerClient);
-        fillOpenScreeen(brokerClient, brokerClientDetails);
+        fillOpenScreen(brokerClient, brokerClientDetails);
     }
 
     private void showNotAlerted(BrokerClient brokerClient, BrokerClientDetails brokerClientDetails) {
         setContentView(R.layout.client_details_minimum_met);
+
+        // Initializing Toolbar and setting it as the actionbar
+        configToolbar();
+
+        configButtons(brokerClient);
+        fillCoverageHeading(brokerClient);
         fillMinimumParticipation(brokerClient);
         fillOpenEnrollmentFields(brokerClient);
-        fillOpenScreeen(brokerClient, brokerClientDetails);
+        fillOpenScreen(brokerClient, brokerClientDetails);
+    }
+
+    private void configButtons(final BrokerClient brokerClient){
+        ImageButton emailButton = (ImageButton)findViewById(R.id.imageButtonEmail);
+
+        emailButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                ContactDialog contactDialog = ContactDialog.build(brokerClient, ContactListAdapter.ListType.Email);
+                contactDialog.setStyle(DialogFragment.STYLE_NO_TITLE, R.style.DialogStyle);
+                contactDialog.show(getSupportFragmentManager(), "ContactDialog");
+            }
+        });
+        ImageButton chatButton = (ImageButton)findViewById(R.id.imageButtonChat);
+        chatButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                ContactDialog contactDialog = ContactDialog.build(brokerClient, ContactListAdapter.ListType.Chat);
+                contactDialog.setStyle(DialogFragment.STYLE_NO_TITLE, R.style.DialogStyle);
+                contactDialog.show(getSupportFragmentManager(), "ContactDialog");
+            }
+        });
+        ImageButton phoneButton = (ImageButton)findViewById(R.id.imageButtonPhone);
+        phoneButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+            ContactDialog contactDialog = ContactDialog.build(brokerClient, ContactListAdapter.ListType.Phone);
+            contactDialog.setStyle(DialogFragment.STYLE_NO_TITLE, R.style.DialogStyle);
+            contactDialog.show(getSupportFragmentManager(), "ContactDialog");
+            }
+        });
+        ImageButton locationButton = (ImageButton)findViewById(R.id.imageButtonLocation);
+        locationButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+            ContactDialog contactDialog = ContactDialog.build(brokerClient, ContactListAdapter.ListType.Directions);
+            contactDialog.setStyle(DialogFragment.STYLE_NO_TITLE, R.style.DialogStyle);
+            contactDialog.show(getSupportFragmentManager(), "ContactDialog");
+            }
+        });
     }
 
     private void showAlerted(BrokerClient brokerClient, BrokerClientDetails brokerClientDetails) {
         setContentView(R.layout.client_details_minimum_not_met);
+        configToolbar();
+
+
+        configButtons(brokerClient);
+        fillCoverageHeading(brokerClient);
         fillMinimumParticipation(brokerClient);
         fillOpenEnrollmentFields(brokerClient);
-        fillOpenScreeen(brokerClient, brokerClientDetails);
+        fillOpenScreen(brokerClient, brokerClientDetails);
     }
 
-    private void fillOpenScreeen(BrokerClient brokerClient, BrokerClientDetails brokerClientDetails) {
+    private void configToolbar() {
+        // Initializing Toolbar and setting it as the actionbar
+        toolbar = (Toolbar) findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
+        toolbar.setLogo(R.drawable.app_header);
+        toolbar.setTitle("");
+    }
+
+    private void fillOpenScreen(BrokerClient brokerClient, BrokerClientDetails brokerClientDetails) {
         TextView companyName = (TextView) findViewById(R.id.textViewCompanyName);
         companyName.setText(brokerClient.employerName);
 
@@ -121,6 +193,16 @@ public class ClientDetailsActivity extends AppCompatActivity {
     }
 
     private void fillCoverateInfo(BrokerClient brokerClient){
+        fillCoverageHeading(brokerClient);
+        TextView textViewRenewalAvailable = (TextView)findViewById(R.id.textViewRenewalAvailable);
+        textViewRenewalAvailable.setText(DateAsString(brokerClient.renewalApplicationAvailable));
+        TextView textViewNextCoverageYearBegins = (TextView)findViewById(R.id.textViewNextCoverageYearBegins);
+        textViewNextCoverageYearBegins.setText(DateAsString(brokerClient.planYearBegins));
+        TextView textViewOpenEnrollmentEnds= (TextView)findViewById(R.id.textViewOpenEnrollmentEnds);
+        textViewOpenEnrollmentEnds.setText(DateAsString(brokerClient.openEnrollmentEnds));
+    }
+
+    private void fillCoverageHeading(BrokerClient brokerClient) {
         TextView textViewCoverageInfoSubheadingLabel = (TextView)findViewById(R.id.textViewCoverageInfoSubheadingLabel);
         Resources resources = getResources();
         Date startDate = brokerClient.planYearBegins;
@@ -132,12 +214,6 @@ public class ClientDetailsActivity extends AppCompatActivity {
         String formatString = resources.getString(R.string.coverage_year);
         String coverageDates = String.format(formatString, DateAsString(startDate), DateAsString(endDate));
         textViewCoverageInfoSubheadingLabel.setText(coverageDates);
-        TextView textViewRenewalAvailable = (TextView)findViewById(R.id.textViewRenewalAvailable);
-        textViewRenewalAvailable.setText(DateAsString(brokerClient.renewalApplicationAvailable));
-        TextView textViewNextCoverageYearBegins = (TextView)findViewById(R.id.textViewNextCoverageYearBegins);
-        textViewNextCoverageYearBegins.setText(DateAsString(brokerClient.planYearBegins));
-        TextView textViewOpenEnrollmentEnds= (TextView)findViewById(R.id.textViewOpenEnrollmentEnds);
-        textViewOpenEnrollmentEnds.setText(DateAsString(brokerClient.openEnrollmentEnds));
     }
 
     private void fillMinimumParticipation(BrokerClient brokerClient) {

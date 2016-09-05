@@ -23,6 +23,7 @@ import android.animation.ValueAnimator;
 import android.graphics.Rect;
 import android.os.SystemClock;
 import android.support.annotation.NonNull;
+import android.util.Log;
 import android.view.MotionEvent;
 import android.view.VelocityTracker;
 import android.view.View;
@@ -71,6 +72,7 @@ import java.util.List;
  * ViewPropertyAnimator}.</p>
  */
 public class SwipeActionTouchListener implements View.OnTouchListener {
+    private static final String TAG = "SwipeActionTouchLstnr";
     // Cached ViewConfiguration and system-wide constant values
     private int mSlop;
     private int mMinFlingVelocity;
@@ -360,8 +362,13 @@ public class SwipeActionTouchListener implements View.OnTouchListener {
                                             downPosition,
                                             direction
                                     );
-                                    if(performDismiss) performDismiss(downView,downPosition,direction);
-                                    else slideBack(downView, downPosition, direction);
+                                    if(performDismiss) {
+                                        Log.d(TAG, "**************** calling performDismiss");
+                                        performDismiss(downView,downPosition,direction);
+                                    } else {
+                                        Log.d(TAG, "---------------calling slideBack");
+                                        slideBack(downView, downPosition, direction);
+                                    }
                                 }
                             });
                 } else {

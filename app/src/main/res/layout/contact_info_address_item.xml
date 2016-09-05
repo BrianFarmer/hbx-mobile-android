@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:tag="@+id/view_type"
+    style="@style/ContactInfoItem"
+    >
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:layout_alignParentLeft="true"
+        android:layout_alignRight="@+id/textViewItemValue"
+        android:text=""
+        android:id="@+id/textViewItemType"
+        style="@style/ContactInfoLabelText" />
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentRight="true"
+        android:text=""
+        android:id="@+id/textViewAddressLine1"
+        style="@style/ContactInfoValueText" />
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentRight="true"
+        android:layout_below="@+id/textViewAddressLine1"
+        android:text=""
+        android:id="@+id/textViewAddressLine2"
+        style="@style/ContactInfoValueText" />
+</RelativeLayout>

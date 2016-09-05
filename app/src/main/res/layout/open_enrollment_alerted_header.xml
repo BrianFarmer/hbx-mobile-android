@@ -40,5 +40,8 @@
         android:gravity="center"
         android:layout_alignTop="@+id/textViewCompanyNameLabel"
         android:layout_alignBottom="@+id/textViewCompanyNameLabel"
+        android:paddingTop="4dp"
+        android:paddingBottom="4dp"
+        android:paddingRight="0dp"
         android:layout_alignParentRight="true" />
 </RelativeLayout>

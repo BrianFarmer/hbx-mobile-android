@@ -7,4 +7,15 @@
     <color name="pageBackground">#e1e1e1</color>
 
     <color name="black_overlay">#66000000</color>
+
+    <color name="mainblue">#007bc4</color>
+    <color name="drawer1green">#00a993</color>
+    <color name="drawer2blue">#00a3e2</color>
+    <color name="drawer3purple">#625ba8</color>
+    <color name="alertred">#f21f28</color>
+    <color name="pagebggray">#e1e1e1</color>
+    <color name="textgray">#555555</color>
+    <color name="textmediumgray">#959595</color>
+    <color name="white">#ffffff</color>
+
 </resources>

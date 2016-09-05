@@ -7,7 +7,8 @@
     <uses-permission android:name="android.permission.READ_PROFILE" />
     <uses-permission android:name="android.permission.READ_CONTACTS" />
     <uses-permission android:name="android.permission.INTERNET" />
-
+    <uses-permission android:name="android.permission.CALL_PHONE" />
+    <uses-permission android:name="android.permission.SEND_SMS" />
     <application
         android:name=".BrokerApplication"
         android:allowBackup="true"
@@ -33,8 +34,7 @@
         <activity
             android:name=".ClientDetailsActivity"
             android:configChanges="orientation|keyboardHidden|screenSize"
-            android:label="@string/title_activity_client_details"
-            android:theme="@style/FullscreenTheme" />
+            android:label="@string/title_activity_client_details" />
         <activity android:name=".CarriersActivity"></activity>
     </application>
 

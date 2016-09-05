@@ -69,7 +69,14 @@ public class SwipeActionAdapter extends DecoratorAdapter implements
             output.setSwipeTouchListener(mTouchListener);
         }
 
-        output.setContentView(super.getView(position,output.getContentView(),output));
+        View previousView = output.getContentView();
+        View newView = super.getView(position, previousView, output);
+        int tagId = super.getAdapter().getTagId();
+        if (previousView != null
+            && previousView.getTag(tagId) != newView.getTag(tagId)){
+            previousView.setVisibility(View.INVISIBLE);
+        }
+        output.setContentView(newView);
 
         return output;
     }

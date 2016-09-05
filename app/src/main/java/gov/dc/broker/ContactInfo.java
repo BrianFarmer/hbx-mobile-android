@@ -2,12 +2,13 @@ package gov.dc.broker;
 
 import com.google.gson.annotations.SerializedName;
 
+import java.io.Serializable;
 import java.util.List;
 
 /**
  * Created by plast on 7/29/2016.
  */
-public class ContactInfo {
+public class ContactInfo implements Serializable {
     @SerializedName("first")
     public String firstName;
 
@@ -24,7 +25,7 @@ public class ContactInfo {
     public List<String> emails;
 
     @SerializedName("address_1")
-    public String addres1;
+    public String address1;
 
     @SerializedName("address_2")
     public String address2;

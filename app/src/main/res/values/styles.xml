@@ -17,6 +17,10 @@
         <!-- item name="android:windowFullscreen">true</item-->
     </style>
 
+    <style name="ActionBarColored" parent="ThemeOverlay.AppCompat.Dark.ActionBar">
+        <item name="android:background">#007bc4</item>
+    </style>
+
     <style name="RobotoTextViewStyle" parent="android:Widget.TextView">
         <item name="android:fontFamily">sans-serif-light</item>
     </style>
@@ -75,6 +79,13 @@
         <item name="android:background">#ffffff</item>
     </style>
 
+    <style name="LargeIconImageButtonStyle">
+        <item name="android:padding">10dp</item>
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">match_parent</item>
+        <item name="android:scaleType">centerInside</item>
+        <item name="android:background">#ffffff</item>
+    </style>
 
     <style name="BrokerClientHeader">
         <item name="android:layout_width">match_parent</item>
@@ -170,5 +181,66 @@
     </style>
     <style name="RedSubtitle" parent="Subtitle">
         <item name="android:textColor">#f21f28</item>
+    </style>
+
+    <style name="ContactInfoItem">
+        <item name="android:background">#ffffff</item>
+        <item name="android:minHeight">30dp</item>
+    </style>
+    <style name="ContactInfoLabelText">
+        <item name="android:gravity">center_vertical</item>
+        <item name="android:paddingTop">4dp</item>
+        <item name="android:paddingBottom">4dp</item>
+        <item name="android:paddingLeft">10dp</item>
+        <item name="android:background">@color/white</item>
+        <item name="android:textSize">15sp</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:textColor">@color/textmediumgray</item>
+    </style>
+    <style name="ContactInfoValueText">
+        <item name="android:gravity">center_vertical</item>
+        <item name="android:paddingTop">4dp</item>
+        <item name="android:paddingBottom">4dp</item>
+        <item name="android:paddingRight">10dp</item>
+        <item name="android:background">@color/white</item>
+        <item name="android:textSize">15sp</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:textColor">@color/mainblue</item>
+    </style>
+
+    <style name="ContactInfoHeader">
+        <item name="android:background">#e1e1e1</item>
+        <item name="android:minHeight">30dp</item>
+    </style>
+    <style name="ContactInfoHeaderText">
+        <item name="android:gravity">center_vertical</item>
+        <item name="android:paddingTop">4dp</item>
+        <item name="android:paddingBottom">4dp</item>
+        <item name="android:paddingLeft">10dp</item>
+        <item name="android:textSize">15sp</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:textColor">@color/textgray</item>
+    </style>
+
+    <style
+        name="DialogStyle"
+        parent="Theme.AppCompat.Dialog">
+        <item name="colorPrimary">@color/mainblue</item>
+        <item name="colorPrimaryDark">@color/drawer1green</item>
+        <item name="android:topDark">@color/mainblue</item>
+        <item name="colorAccent">#FFC107</item>
+        <item name="android:textColorPrimary">@color/white</item>
+        <item name="android:background">@color/white</item>
+        <item name="windowNoTitle">true</item>
+    </style>
+
+    <style name="contactInfoTitleBar">
+        <item name="android:paddingTop">25dp</item>
+        <item name="android:paddingBottom">25dp</item>
+        <item name="android:textSize">18sp</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:textColor">@color/white</item>
+        <item name="android:background">@color/mainblue</item>
+        <item name="android:gravity">center_horizontal</item>
     </style>
 </resources>

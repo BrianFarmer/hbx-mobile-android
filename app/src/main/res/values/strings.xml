@@ -47,8 +47,8 @@
             }
         </STYLE>
         <body>
-            <div class="welcome">Welcome Back, %s</div>
-            <div class="summary">You have <span class="employercount">%s</span> clients with</div>
+            <div class="welcome">Welcome back, %s</div>
+            <div class="summary">You have <span class="employercount">%s</span> clients</div>
             <div class="summary"><span class="attention">%s</span> requiring your immediate attention.</div>
         </body>
     </html>
@@ -88,4 +88,8 @@
     <string name="coverage_year" formatted="false">Coverage Year %1$s - %2$s</string>
     <string name="renewal_available_label">Renewal Available</string>
     <string name="next_coverage_year_begins_label">Next Coverage Year Begins</string>
+    <string name="PhoneLabel">Phone</string>
+    <string name="MobileLabel">Mobile</string>
+    <string name="dismiss">Dismiss</string>
+    <string name="cancel">cancel</string>
 </resources>
