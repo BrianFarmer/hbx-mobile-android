@@ -92,4 +92,8 @@
     <string name="MobileLabel">Mobile</string>
     <string name="dismiss">Dismiss</string>
     <string name="cancel">cancel</string>
+    <string name="no_emails">There are no email addresses available for this client</string>
+    <string name="no_phone_numbers">No phone numbers available for this client.</string>
+    <string name="no_addresses">No addresses available for this client.</string>
+    <string name="no_mobile_phone_numbers">No mobile phone numbers available for this client.</string>
 </resources>

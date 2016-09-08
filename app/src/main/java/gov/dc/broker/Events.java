@@ -1,5 +1,7 @@
 package gov.dc.broker;
 
+import android.widget.ImageView;
+
 /**
  * Created by plast on 7/26/2016.
  */
@@ -69,6 +71,18 @@ public class Events {
         }
     }
 
+    static public class GetCarrierImage extends CancelableRequest {
+        private String url;
+        private ImageView imageView;
+
+        public GetCarrierImage(String url, ImageView imageView){
+            this.url = url;
+            this.imageView = imageView;
+        }
+
+
+    }
+
     static public class GetCarriers extends CancelableRequest{
         // https://dchealthlink.com/shared/json/carriers.json
     }
@@ -135,6 +149,19 @@ public class Events {
 
         public BrokerClientDetails getBrokerClientDetails() {
             return brokerClientDetails;
+        }
+    }
+
+    static public class Carriers extends ResponseToRequest {
+        private final gov.dc.broker.Carriers carriers;
+
+        Carriers(int id, gov.dc.broker.Carriers carriers) {
+            super(id);
+            this.carriers = carriers;
+        }
+
+        public gov.dc.broker.Carriers getCarriers() {
+            return carriers;
         }
     }
 }

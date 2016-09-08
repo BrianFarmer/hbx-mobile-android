@@ -35,6 +35,7 @@ public class BrokerWorker extends IntentService {
         void GetEmployerList(Events.GetEmployerList getEmployerList);
         void GetEmployer(Events.GetEmployer getEmployer);
         void GetAccount(Events.GetAccount getAccount);
+        void GetCarriers(Events.GetCarriers getCarriers);
     }
 
     static private class GitSite implements Site{
@@ -94,6 +95,23 @@ public class BrokerWorker extends IntentService {
         public void GetAccount(Events.GetAccount getAccount) {
 
         }
+
+        @Override
+        public void GetCarriers(Events.GetCarriers getCarriers) {
+            try{
+                int requestId = getCarriers.getId();
+                Request request = new Request.Builder().url("https://dchealthlink.com/shared/json/carriers.json").build();
+                Response response = client.newCall(request).execute();
+                String body = response.body().string();
+                GsonBuilder gsonBuilder = new GsonBuilder();
+                gsonBuilder.registerTypeAdapter(Date.class, new DateTimeDeserializer());
+                Gson gson = gsonBuilder.create();
+                Carriers carriers = gson.fromJson(body, Carriers.class);
+                BrokerWorker.eventBus.post(new Events.Carriers (requestId, carriers));
+            } catch (IOException ex){
+
+            }
+        }
     }
 
     static GitSite gitSite = new GitSite();
@@ -138,6 +156,11 @@ public class BrokerWorker extends IntentService {
     @Subscribe(threadMode = ThreadMode.BACKGROUND)
     public void doThis(Events.GetEmployerList getEmployerList) {
         currentSite.GetEmployerList(getEmployerList);
+    }
+
+    @Subscribe(threadMode =  ThreadMode.BACKGROUND)
+    public void doThis(Events.GetCarriers getCarriers){
+        currentSite.GetCarriers(getCarriers);
     }
 }
 

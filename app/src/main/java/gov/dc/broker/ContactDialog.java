@@ -14,6 +14,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
+import android.widget.Button;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -31,6 +32,7 @@ public class ContactDialog extends AppCompatDialogFragment {
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        final ContactDialog thisContactDialog = this;
         view = inflater.inflate(R.layout.contact_action_selection,container, false);
 
         Bundle arguments = getArguments();
@@ -40,19 +42,18 @@ public class ContactDialog extends AppCompatDialogFragment {
         final ContactDialog contactDialog = this;
 
         ListView listView = (ListView) view.findViewById(R.id.listView);
-        /*listView.setOnItemClickListener(new AdapterView.OnItemClickListener()
-        {
-            @Override
-            public void onItemClick(AdapterView<?> adapterView, View arg1,int position, long arg3)
-            {
-
-                Toast.makeText(getActivity(), "" + position, Toast.LENGTH_SHORT).show();
-            }
-        });*/
         ContactListAdapter listAdapter = new ContactListAdapter(context, brokerClient, listType, this);
         listView.setAdapter(listAdapter);
         TextView titleBarTextView = (TextView) view.findViewById(R.id.textViewTitleBar);
         titleBarTextView.setText(brokerClient.employerName);
+
+        Button cancelButton = (Button) view.findViewById(R.id.buttonCancel);
+        cancelButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                thisContactDialog.dismiss();
+            }
+        });
 
         return view;
     }

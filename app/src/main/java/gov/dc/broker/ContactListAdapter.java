@@ -53,30 +53,52 @@ public class ContactListAdapter extends BaseAdapter {
 
         for (ContactInfo contactInfo:
              brokerClient.contactInfo) {
-            listItems.add(new NameHeader(contactInfo));
             switch (listType){
                 case Email:
-                    for (String email:contactInfo.emails) {
-                        listItems.add(new EmailWrapper(contactInfo, email, contactDialog));
+                    if (!contactInfo.allEmailsEmpty()){
+                        listItems.add(new NameHeader(contactInfo));
+                        for (String email:contactInfo.emails) {
+                            listItems.add(new EmailWrapper(contactInfo, email, contactDialog));
+                        }
                     }
                     break;
                 case Phone:
+                    PhoneWrapper phoneWrapper = null;
+                    PhoneWrapper mobileWrapper = null;
                     if (contactInfo.phone != null && !contactInfo.phone.isEmpty()) {
-                        listItems.add(new PhoneWrapper(contactInfo, context.getString(R.string.PhoneLabel), contactInfo.phone, contactDialog));
+                        phoneWrapper = new PhoneWrapper(contactInfo, context.getString(R.string.PhoneLabel), contactInfo.phone, contactDialog);
                     }
                     if (contactInfo.mobile != null && !contactInfo.mobile.isEmpty()) {
-                        listItems.add(new PhoneWrapper(contactInfo, context.getString(R.string.MobileLabel), contactInfo.mobile, contactDialog));
+                        mobileWrapper = new PhoneWrapper(contactInfo, context.getString(R.string.MobileLabel), contactInfo.mobile, contactDialog);
+                    }
+                    if (phoneWrapper != null || mobileWrapper != null) {
+                        listItems.add(new NameHeader(contactInfo));
+                        if (phoneWrapper != null) {
+                            listItems.add(phoneWrapper);
+                        }
+                        if (mobileWrapper != null) {
+                            listItems.add(mobileWrapper);
+                        }
                     }
                     break;
                 case Directions:
-                    listItems.add(new AddressWrapper(contactInfo, contactDialog));
+                    if (!contactInfo.isAddressEmpty()) {
+                        listItems.add(new NameHeader(contactInfo));
+                        listItems.add(new AddressWrapper(contactInfo, contactDialog));
+                    }
                     break;
                 case Chat:
-                    if (contactInfo.mobile != null && !contactInfo.mobile.isEmpty()) {
+                    if (!contactInfo.isPrimaryOffice()
+                        && contactInfo.mobile != null
+                        && !contactInfo.mobile.isEmpty()) {
+                        listItems.add(new NameHeader(contactInfo));
                         listItems.add(new ChatWrapper(contactInfo, contactInfo.mobile, contactDialog));
                     }
                     break;
             }
+        }
+        if (listItems.isEmpty()){
+            listItems.add(new EmptyListWrapper(listType));
         }
     }
 
@@ -148,12 +170,54 @@ abstract class ContactItemWrapperBase {
     }
     public abstract int getLayout();
     public abstract void fill(View view);
-    public abstract int getType();
     public abstract String getViewType();
 
     public abstract boolean clicked();
 }
 
+class EmptyListWrapper extends ContactItemWrapperBase{
+
+    private final ContactListAdapter.ListType listType;
+
+    public EmptyListWrapper(ContactListAdapter.ListType listType){
+        this.listType = listType;
+    }
+    @Override
+    public int getLayout() {
+        return R.layout.client_info_empty_item;
+    }
+
+    @Override
+    public void fill(View view) {
+        int stringResourceId = 0;
+        switch (listType){
+            case Email:
+                stringResourceId = R.string.no_emails;
+                break;
+            case Phone:
+                stringResourceId = R.string.no_phone_numbers;
+                break;
+            case Directions:
+                stringResourceId = R.string.no_addresses;
+                break;
+            case Chat:
+                stringResourceId = R.string.no_mobile_phone_numbers;
+                break;
+        }
+        TextView emptyItemLabel = (TextView) view.findViewById(R.id.textViewEmptyItem);
+        emptyItemLabel.setText(stringResourceId);
+    }
+
+    @Override
+    public String getViewType() {
+        return null;
+    }
+
+    @Override
+    public boolean clicked() {
+        return false;
+    }
+}
 class AddressWrapper extends ContactItemWrapperBase{
 
     private final ContactInfo contactInfo;
@@ -162,10 +226,6 @@ class AddressWrapper extends ContactItemWrapperBase{
     public AddressWrapper(ContactInfo contactInfo, ContactDialog dialog){
         this.contactInfo = contactInfo;
         this.dialog = dialog;
-    }
-    @Override
-    public int getType() {
-        return 2;
     }
 
     @Override
@@ -201,11 +261,6 @@ class NameHeader extends ContactItemWrapperBase {
     }
 
     @Override
-    public int getType() {
-        return 0;
-    }
-
-    @Override
     public String getViewType() {
         return "Name";
     }
@@ -237,11 +292,6 @@ class PhoneWrapper extends ContactItemWrapperBase {
         this.label = label;
         this.phoneNumber = phoneNumber;
         this.dialog = dialog;
-    }
-
-    @Override
-    public int getType() {
-        return 1;
     }
 
     @Override
@@ -280,11 +330,6 @@ class EmailWrapper extends ContactItemWrapperBase {
     }
 
     @Override
-    public int getType() {
-        return 1;
-    }
-
-    @Override
     public String getViewType() {
         return "Email";
     }
@@ -320,11 +365,6 @@ class ChatWrapper extends ContactItemWrapperBase {
     }
 
     @Override
-    public int getType() {
-        return 1;
-    }
-
-    @Override
     public String getViewType() {
         return "ContactInfo";
     }
@@ -342,6 +382,7 @@ class ChatWrapper extends ContactItemWrapperBase {
 
     public void fill(View view) {
         TextView itemType = (TextView) view.findViewById(R.id.textViewItemType);
+        itemType.setText(R.string.MobileLabel);
         TextView itemValue = (TextView) view.findViewById(R.id.textViewItemValue);
         itemValue.setText(chatPhoneNumber);
     }

@@ -38,4 +38,29 @@ public class ContactInfo implements Serializable {
 
     @SerializedName("zip")
     public String zip;
+
+    public boolean isPrimaryOffice() {
+        return firstName.equalsIgnoreCase("primary") && lastName.equalsIgnoreCase("office");
+    }
+
+    public boolean allEmailsEmpty(){
+        for (String email :
+                emails) {
+            if (!isEmailEmpty(email)){
+                return false;
+            }
+        }
+        return true;
+    }
+
+    private boolean isEmailEmpty(String email) {
+        if (email == null){
+            return true;
+        }
+        return email.isEmpty();
+    }
+
+    public boolean isAddressEmpty() {
+        return address1.isEmpty();
+    }
 }

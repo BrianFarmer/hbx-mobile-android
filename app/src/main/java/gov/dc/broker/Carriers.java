@@ -1,5 +1,7 @@
 package gov.dc.broker;
 
-public class Carriers {
+import java.util.HashMap;
+
+public class Carriers extends HashMap<String, Carrier>{
 
 }

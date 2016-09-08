@@ -40,10 +40,9 @@ public class ClientDetailsActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
 
         final ClientDetailsActivity _this = this;
-
-
         Intent intent = getIntent();
         int clientId = intent.getIntExtra(BROKER_CLIENT_ID, -1);
+
         if (clientId == -1){
             Log.d(TAG, "onCreate: no client id found");
             return;
@@ -54,7 +53,7 @@ public class ClientDetailsActivity extends AppCompatActivity {
 
     }
 
-        private CharSequence DateAsString(Date date){
+    private CharSequence DateAsString(Date date){
         return DateFormat.format("MMM dd, yyyy", date);
     }
 
@@ -157,6 +156,14 @@ public class ClientDetailsActivity extends AppCompatActivity {
         setSupportActionBar(toolbar);
         toolbar.setLogo(R.drawable.app_header);
         toolbar.setTitle("");
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        getSupportActionBar().setDisplayShowHomeEnabled(true);
+        toolbar.setNavigationOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                finish();
+            }
+        });
     }
 
     private void fillOpenScreen(BrokerClient brokerClient, BrokerClientDetails brokerClientDetails) {
