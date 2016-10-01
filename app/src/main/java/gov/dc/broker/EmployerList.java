@@ -4,7 +4,6 @@ import com.google.gson.annotations.SerializedName;
 
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.Date;
 import java.util.List;
 
 /**
@@ -13,6 +12,12 @@ import java.util.List;
 public class EmployerList {
     @SerializedName("broker_agency")
     public String brokerAgency;
+
+    @SerializedName("broker_name")
+    public String brokerName;
+
+    @SerializedName("broker_agency_id")
+    public String brokerAgencyId;
 
     @SerializedName("broker_clients")
     public List<BrokerClient> brokerClients;

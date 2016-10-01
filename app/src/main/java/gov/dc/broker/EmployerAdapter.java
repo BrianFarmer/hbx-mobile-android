@@ -2,22 +2,24 @@ package gov.dc.broker;
 
 import android.content.Context;
 import android.content.Intent;
+import android.support.v4.app.DialogFragment;
 import android.text.format.DateFormat;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.wdullaer.swipeactionadapter.SwipeListArrayAdapter;
+import com.daimajia.swipe.adapters.BaseSwipeAdapter;
 
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 
-public class EmployerAdapter extends SwipeListArrayAdapter {
+public class EmployerAdapter extends BaseSwipeAdapter {
     private static final String TAG = "EmployerAdapter";
 
     private MainActivity mainActivity;
@@ -29,7 +31,7 @@ public class EmployerAdapter extends SwipeListArrayAdapter {
     private ArrayList<OpenEnrollmentAlertedWrapper> alertedItems = new ArrayList<OpenEnrollmentAlertedWrapper>();
     private ArrayList<OpenEnrollmentNotAlertedWrapper> notAlertedItems = new ArrayList<OpenEnrollmentNotAlertedWrapper>();
     private ArrayList<RenewalWrapper> renewalItems = new ArrayList<RenewalWrapper>();
-    private ArrayList<OtherWrapper> otherItems = new ArrayList<OtherWrapper>();
+    private ArrayList<OtherWrapper> otherItems = new ArrayList<>();
     private OpenEnrollmentHeader openEnrollmentHeader;
     private OpenEnrollmentAlertHeader openEnrollmentAlertHeader;
     private OpenEnrollmentNotAlertedHeader openEnrollmentNotAlertedHeader;
@@ -80,7 +82,7 @@ public class EmployerAdapter extends SwipeListArrayAdapter {
 
     private void updateWrappedItems(){
         wrapped_items.clear();
-        wrapped_items.add(openEnrollmentHeader);
+            wrapped_items.add(openEnrollmentHeader);
         if (openEnrollmentState
             && (alertedItems.size() > 0
                 || notAlertedItems.size() > 0)) {
@@ -101,7 +103,7 @@ public class EmployerAdapter extends SwipeListArrayAdapter {
 
     @Override
     public int getViewTypeCount(){
-        return  1;
+        return  9;
     }
 
     @Override
@@ -125,9 +127,18 @@ public class EmployerAdapter extends SwipeListArrayAdapter {
     }
 
     @Override
-    public View getView(int position, View convertView, ViewGroup parent) {
-        ItemWrapperBase itemWrapperBase = wrapped_items.get(position);
-        return itemWrapperBase.getView(convertView, parent, mainActivity, inflater);
+    public int getSwipeLayoutResourceId(int position) {
+        return ((ItemWrapperBase)getItem(position)).getSwipeLayoutResourceId();
+    }
+
+    @Override
+    public View generateView(int position, ViewGroup parent) {
+        return ((ItemWrapperBase)getItem(position)).generateView(inflater, parent);
+    }
+
+    @Override
+    public void fillValues(int position, View convertView) {
+        ((ItemWrapperBase)getItem(position)).fillValues(convertView, mainActivity);
     }
 
     public ArrayList<OpenEnrollmentAlertedWrapper> getAlertedItems() {
@@ -176,12 +187,10 @@ public class EmployerAdapter extends SwipeListArrayAdapter {
         notifyDataSetChanged();
     }
 
-    @Override
     public boolean isItemSwipeable(int position) {
         return wrapped_items.get(position).isSwipeable();
     }
 
-    @Override
     public int getTagId() {
         return R.id.view_type;
     }
@@ -205,7 +214,19 @@ abstract class ItemWrapperBase {
         return id;
     }
 
-    public abstract View getView(View convertView, ViewGroup parent, MainActivity mainActivity, LayoutInflater inflater);
+    //public abstract View getView(View convertView, ViewGroup parent, MainActivity mainActivity, LayoutInflater inflater);
+
+
+
+    //return the `SwipeLayout` resource id in your listview | gridview item layout.
+    public abstract int getSwipeLayoutResourceId();
+
+    //render a new item layout.
+    public abstract View generateView(LayoutInflater inflater, ViewGroup parent);
+
+    /*fill values to your item layout returned from `generateView`.
+      The position param here is passed from the BaseAdapter's 'getView()*/
+    public abstract void fillValues(View convertView, final MainActivity mainActivity);
 }
 
 class OpenEnrollmentHeader extends ItemWrapperBase {
@@ -222,10 +243,9 @@ class OpenEnrollmentHeader extends ItemWrapperBase {
     }
 
     @Override
-    public View getView(View convertView, ViewGroup parent, MainActivity mainActivity, LayoutInflater inflater) {
-        View view = inflater.inflate(R.layout.open_enrollment_header, parent, false);
-        Button openButton = (Button)view.findViewById(R.id.buttonCount);
-        ImageView circleImageView = (ImageView)view.findViewById(R.id.imageViewCircle);
+    public void fillValues(View convertView, MainActivity mainActivity) {
+        Button openButton = (Button)convertView.findViewById(R.id.buttonCount);
+        ImageView circleImageView = (ImageView)convertView.findViewById(R.id.imageViewCircle);
         if (employerAdapter.isOpenEnrollmentOpen()){
             openButton.setText("");
             circleImageView.setImageResource(R.drawable.uparrow);
@@ -239,7 +259,16 @@ class OpenEnrollmentHeader extends ItemWrapperBase {
                 employerAdapter.toggleOpenEnrollments();
             }
         });
-        return view;
+    }
+
+    @Override
+    public int getSwipeLayoutResourceId() {
+        return 0;
+    }
+
+    @Override
+    public View generateView(LayoutInflater inflater, ViewGroup parent) {
+        return inflater.inflate(R.layout.open_enrollment_header, parent, false);
     }
 }
 class OpenEnrollmentAlertHeader extends ItemWrapperBase {
@@ -258,25 +287,18 @@ class OpenEnrollmentAlertHeader extends ItemWrapperBase {
     }
 
     @Override
-    public View getView(View convertView, ViewGroup parent, MainActivity mainActivity, LayoutInflater inflater) {
-        View view;
-        Boolean createNewView = true;
-        if (convertView != null){
-            Object tagObject = convertView.getTag(R.id.view_type);
-            if (tagObject != null){
-                String tagString = (String) tagObject;
-                if (tagString.equals(VIEW_TYPE)){
-                    createNewView = false;
-                }
-            }
-        }
-        if (createNewView) {
-            view = inflater.inflate(R.layout.open_enrollment_alerted_header, parent, false);
-            view.setTag(R.id.view_type, VIEW_TYPE);
-        } else {
-            view = convertView;
-        }
-        return view;
+    public int getSwipeLayoutResourceId() {
+        return 0;
+    }
+
+    @Override
+    public View generateView(LayoutInflater inflater, ViewGroup parent) {
+        return inflater.inflate(R.layout.open_enrollment_alerted_header, parent, false);
+    }
+
+    @Override
+    public void fillValues(View convertView, MainActivity mainActivity) {
+
     }
 }
 
@@ -295,27 +317,18 @@ class OpenEnrollmentNotAlertedHeader extends ItemWrapperBase {
     }
 
     @Override
-    public View getView(View convertView, ViewGroup parent, MainActivity mainActivity, LayoutInflater inflater) {
-        View view;
-        Boolean createNewView = true;
-        if (convertView != null){
-            Object tagObject = convertView.getTag(R.id.view_type);
-            if (tagObject != null){
-                String tagString = (String) tagObject;
-                if (tagString.equals(VIEW_TYPE)){
-                    createNewView = false;
-                }
-            }
-        }
-        if (createNewView) {
-            view = inflater.inflate(R.layout.open_enrollment_not_alerted_header, parent, false);
-            view.setTag(R.id.view_type, VIEW_TYPE);
-        } else {
-            view = convertView;
-        }
+    public void fillValues(View convertView, MainActivity mainActivity) {
+        employerAdapter.notAlerted = convertView;
+    }
 
-        employerAdapter.notAlerted = view;
-        return view;
+    @Override
+    public int getSwipeLayoutResourceId() {
+        return 0;
+    }
+
+    @Override
+    public View generateView(LayoutInflater inflater, ViewGroup parent) {
+        return inflater.inflate(R.layout.open_enrollment_not_alerted_header, parent, false);
     }
 }
 
@@ -332,11 +345,9 @@ class RenewalHeader extends ItemWrapperBase {
         return 3;
     }
 
-    @Override
-    public View getView(View convertView, ViewGroup parent, MainActivity mainActivity, LayoutInflater inflater) {
-        View view = inflater.inflate(R.layout.renewals_in_progress_header, parent, false);
-        Button openButton = (Button)view.findViewById(R.id.buttonCount);
-        ImageView circleImageView = (ImageView)view.findViewById(R.id.imageViewCircle);
+    public void fillValues(View convertView, MainActivity mainActivity) {
+        Button openButton = (Button)convertView.findViewById(R.id.buttonCount);
+        ImageView circleImageView = (ImageView)convertView.findViewById(R.id.imageViewCircle);
         if (employerAdapter.isRenewalOpen()){
             openButton.setText("");
             circleImageView.setImageResource(R.drawable.uparrow);
@@ -351,10 +362,19 @@ class RenewalHeader extends ItemWrapperBase {
             }
         });
         if (!employerAdapter.isRenewalOpen()){
-            View columnHeaders = view.findViewById(R.id.relativeLayoutColumnHeaders);
+            View columnHeaders = convertView.findViewById(R.id.relativeLayoutColumnHeaders);
             columnHeaders.setVisibility(View.GONE);
         }
-        return view;
+    }
+
+    @Override
+    public int getSwipeLayoutResourceId() {
+        return 0;
+    }
+
+    @Override
+    public View generateView(LayoutInflater inflater, ViewGroup parent) {
+        return inflater.inflate(R.layout.renewals_in_progress_header, parent, false);
     }
 }
 
@@ -372,10 +392,9 @@ class OtherItemsHeader extends ItemWrapperBase {
     }
 
     @Override
-    public View getView(View convertView, ViewGroup parent, final MainActivity mainActivity, LayoutInflater inflater) {
-        View view = inflater.inflate(R.layout.all_other_clients_header, parent, false);
-        Button openButton = (Button)view.findViewById(R.id.buttonCount);
-        ImageView circleImageView = (ImageView)view.findViewById(R.id.imageViewCircle);
+    public void fillValues(View convertView, final MainActivity mainActivity) {
+        Button openButton = (Button)convertView.findViewById(R.id.buttonCount);
+        ImageView circleImageView = (ImageView)convertView.findViewById(R.id.imageViewCircle);
         if (employerAdapter.isOthersOpen()){
             openButton.setText("");
             circleImageView.setImageResource(R.drawable.uparrow);
@@ -390,10 +409,19 @@ class OtherItemsHeader extends ItemWrapperBase {
             }
         });
         if (!employerAdapter.isOthersOpen()) {
-            View columnHeaders = view.findViewById(R.id.relativeLayoutColumnHeaders);
+            View columnHeaders = convertView.findViewById(R.id.relativeLayoutColumnHeaders);
             columnHeaders.setVisibility(View.GONE);
         }
-        return view;
+    }
+
+    @Override
+    public int getSwipeLayoutResourceId() {
+        return 0;
+    }
+
+    @Override
+    public View generateView(LayoutInflater inflater, ViewGroup parent) {
+        return inflater.inflate(R.layout.all_other_clients_header, parent, false);
     }
 }
 
@@ -410,6 +438,46 @@ abstract class BrokerClientWrapper extends ItemWrapperBase {
     public int getObjectIndex() {
         return objectIndex;
     }
+
+    public void fillSwipeButtons(View view, final MainActivity mainActivity, final BrokerClient brokerClient){
+        ImageButton emailButton = (ImageButton)view.findViewById(R.id.imageButtonEmail);
+
+        emailButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                ContactDialog contactDialog = ContactDialog.build(brokerClient, ContactListAdapter.ListType.Email);
+                contactDialog.setStyle(DialogFragment.STYLE_NO_TITLE, R.style.DialogStyle);
+                contactDialog.show(mainActivity.getSupportFragmentManager(), "ContactDialog");
+            }
+        });
+        ImageButton chatButton = (ImageButton)view.findViewById(R.id.imageButtonChat);
+        chatButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                ContactDialog contactDialog = ContactDialog.build(brokerClient, ContactListAdapter.ListType.Chat);
+                contactDialog.setStyle(DialogFragment.STYLE_NO_TITLE, R.style.DialogStyle);
+                contactDialog.show(mainActivity.getSupportFragmentManager(), "ContactDialog");
+            }
+        });
+        ImageButton phoneButton = (ImageButton)view.findViewById(R.id.imageButtonPhone);
+        phoneButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                ContactDialog contactDialog = ContactDialog.build(brokerClient, ContactListAdapter.ListType.Phone);
+                contactDialog.setStyle(DialogFragment.STYLE_NO_TITLE, R.style.DialogStyle);
+                contactDialog.show(mainActivity.getSupportFragmentManager(), "ContactDialog");
+            }
+        });
+        ImageButton locationButton = (ImageButton)view.findViewById(R.id.imageButtonLocation);
+        locationButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                ContactDialog contactDialog = ContactDialog.build(brokerClient, ContactListAdapter.ListType.Directions);
+                contactDialog.setStyle(DialogFragment.STYLE_NO_TITLE, R.style.DialogStyle);
+                contactDialog.show(mainActivity.getSupportFragmentManager(), "ContactDialog");
+            }
+        });
+    }
 }
 
 class OpenEnrollmentAlertedWrapper extends BrokerClientWrapper {
@@ -425,14 +493,15 @@ class OpenEnrollmentAlertedWrapper extends BrokerClientWrapper {
         return 5;
     }
 
-    protected void fillOpenEnrollmentItem(View view, final MainActivity mainActivity) {
-        TextView companyName = (TextView)view.findViewById(R.id.textViewCompanyName);
+    @Override
+    public void fillValues(View convertView, final MainActivity mainActivity) {
+        TextView companyName = (TextView)convertView.findViewById(R.id.textViewCompanyName);
         companyName.setText(brokerClient.employerName);
-        TextView employeesNeeded = (TextView)view.findViewById(R.id.textViewEmployessNeeded);
+        TextView employeesNeeded = (TextView)convertView.findViewById(R.id.textViewEmployessNeeded);
         employeesNeeded.setText(String.valueOf(brokerClient.getEmployessNeeded()));
-        TextView daysLeft = (TextView)view.findViewById(R.id.textViewDaysLeft);
+        TextView daysLeft = (TextView)convertView.findViewById(R.id.textViewDaysLeft);
         daysLeft.setText(String.valueOf(brokerClient.getDaysLeft()));
-        view.setOnClickListener(new View.OnClickListener() {
+        convertView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(mainActivity, ClientDetailsActivity.class);
@@ -441,6 +510,7 @@ class OpenEnrollmentAlertedWrapper extends BrokerClientWrapper {
                 mainActivity.startActivity(intent);
             }
         });
+        fillSwipeButtons(convertView, mainActivity, brokerClient);
     }
 
     @Override
@@ -449,26 +519,14 @@ class OpenEnrollmentAlertedWrapper extends BrokerClientWrapper {
     }
 
     @Override
-    public View getView(View convertView, ViewGroup parent, MainActivity mainActivity, LayoutInflater inflater) {
-        View view;
-        Boolean createNewView = true;
-        if (convertView != null){
-            Object tagObject = convertView.getTag(R.id.view_type);
-            if (tagObject != null){
-                String tagString = (String) tagObject;
-                if (tagString.equals(VIEW_TYPE)){
-                    createNewView = false;
-                }
-            }
-        }
-        if (createNewView) {
-            view = inflater.inflate(R.layout.open_enrollment_item, parent, false);
-            view.setTag(R.id.view_type, VIEW_TYPE);
-        } else {
-            view = convertView;
-        }
-        fillOpenEnrollmentItem(view, mainActivity);
-        return view;
+    public int getSwipeLayoutResourceId() {
+        return 0;
+    }
+
+    @Override
+    public View generateView(LayoutInflater inflater, ViewGroup parent) {
+        return inflater.inflate(R.layout.open_enrollment_item, parent, false);
+
     }
 }
 
@@ -509,9 +567,9 @@ class OpenEnrollmentNotAlertedWrapper extends BrokerClientWrapper {
                 mainActivityFinal.startActivity(intent);
             }
         });
+        fillSwipeButtons(view, mainActivity, brokerClient);
     }
 
-    @Override
     public View getView(View convertView, ViewGroup parent, MainActivity mainActivity, LayoutInflater inflater) {
         View view;
         Boolean createNewView = true;
@@ -534,6 +592,21 @@ class OpenEnrollmentNotAlertedWrapper extends BrokerClientWrapper {
         return view;
 
     }
+
+    @Override
+    public int getSwipeLayoutResourceId() {
+        return R.id.swipe;
+    }
+
+    @Override
+    public View generateView(LayoutInflater inflater, ViewGroup parent) {
+        return inflater.inflate(R.layout.open_enrollment_item, parent, false);
+    }
+
+    @Override
+    public void fillValues(View convertView, MainActivity activity) {
+        fillOpenEnrollmentItem(convertView, activity);
+    }
 }
 
 class RenewalWrapper extends BrokerClientWrapper {
@@ -554,7 +627,7 @@ class RenewalWrapper extends BrokerClientWrapper {
         return 7;
     }
 
-    private void fillRenewalInProgressItem(View view, MainActivity mainActivity) {
+    public void fillValues(View view, MainActivity mainActivity) {
         final MainActivity mainActivityFinal = mainActivity;
         TextView companyName = (TextView)view.findViewById(R.id.textViewCompanyName);
         companyName.setText((brokerClient).employerName);
@@ -572,9 +645,9 @@ class RenewalWrapper extends BrokerClientWrapper {
                 mainActivityFinal.startActivity(intent);
             }
         });
+        fillSwipeButtons(view, mainActivity, brokerClient);
     }
 
-    @Override
     public View getView(View convertView, ViewGroup parent, MainActivity mainActivity, LayoutInflater inflater) {
         View view;
         Boolean createNewView = true;
@@ -593,8 +666,17 @@ class RenewalWrapper extends BrokerClientWrapper {
         } else {
             view = convertView;
         }
-        fillRenewalInProgressItem(view, mainActivity);
         return view;
+    }
+
+    @Override
+    public int getSwipeLayoutResourceId() {
+        return R.id.swipe;
+    }
+
+    @Override
+    public View generateView(LayoutInflater inflater, ViewGroup parent) {
+        return inflater.inflate(R.layout.renewals_in_progress_item, parent, false);
     }
 }
 
@@ -616,13 +698,16 @@ class OtherWrapper extends BrokerClientWrapper {
         return 8;
     }
 
-    private void fillOtherItem(View view, MainActivity mainActivity) {
+    @Override
+    public void fillValues(View view, MainActivity mainActivity) {
         final MainActivity mainActivityFinal = mainActivity;
         TextView companyName = (TextView)view.findViewById(R.id.textViewCompanyName);
         companyName.setText((brokerClient).employerName);
-        TextView planYear = (TextView)view.findViewById(R.id.textViewPlanYear);
-        CharSequence dateString = DateFormat.format("MMM yy", brokerClient.planYearBegins);
-        planYear.setText(dateString);
+        if (brokerClient.planYearBegins != null) {
+            TextView planYear = (TextView) view.findViewById(R.id.textViewPlanYear);
+            CharSequence dateString = DateFormat.format("MMM yy", brokerClient.planYearBegins);
+            planYear.setText(dateString);
+        }
         view.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -632,31 +717,19 @@ class OtherWrapper extends BrokerClientWrapper {
                 mainActivityFinal.startActivity(intent);
             }
         });
+        fillSwipeButtons(view, mainActivity, brokerClient);
     }
 
     @Override
-    public View getView(View convertView, ViewGroup parent, MainActivity mainActivity, LayoutInflater inflater) {
-        View view;
-        Boolean createNewView = true;
-
-        if (convertView != null){
-            Object tagObject = convertView.getTag(R.id.view_type);
-            if (tagObject != null){
-                String tagString = (String) tagObject;
-                if (tagString.equals(VIEW_TYPE)){
-                    createNewView = false;
-                }
-            }
-        }
-        if (createNewView) {
-            view = inflater.inflate(R.layout.all_other_clients_item, parent, false);
-            view.setTag(R.id.view_type, VIEW_TYPE);
-        } else {
-            view = convertView;
-        }
-        fillOtherItem(view, mainActivity);
-        return view;
+    public int getSwipeLayoutResourceId() {
+        return R.id.swipe;
     }
+
+    @Override
+    public View generateView(LayoutInflater inflater, ViewGroup parent) {
+        return inflater.inflate(R.layout.all_other_clients_item, parent, false);
+    }
+
 }
 
 

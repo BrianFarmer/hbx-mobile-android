@@ -1,60 +1,106 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<com.daimajia.swipe.SwipeLayout
+    xmlns:swipe="http://schemas.android.com/apk/res-auto"
+    xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:tag="@+id/view_type"
-    android:minHeight="30dp">
+    android:id="@+id/swipe"
+    android:background="@color/mainbackgroundcolor"
+    swipe:leftEdgeSwipeOffset="0dp"
+    swipe:rightEdgeSwipeOffset="0dp"
+>
 
-    <TextView
+    <RelativeLayout
         android:layout_width="wrap_content"
-        android:layout_height="65dp"
-        android:text=""
-        android:id="@+id/textViewCompanyName"
-        android:paddingRight="0dp"
-        style="@style/TextFieldStyle"
-        android:gravity="center_vertical"
-        android:layout_alignParentTop="true"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true"
-        android:minLines="2"
-        android:maxLines="2"
-        android:layout_toLeftOf="@+id/textViewPlanYear"
-        android:ellipsize="end" />
+        android:layout_height="?android:listPreferredItemHeight"
+        >
+        <ImageButton
+            android:id="@+id/imageButtonPhone"
+            style="@style/LargeIconImageButtonStyle"
+            android:src="@drawable/phoneicon"
+        />
 
-    <TextView
-        android:layout_width="70dp"
+        <ImageButton
+            android:id="@+id/imageButtonEmail"
+            style="@style/LargeIconImageButtonStyle"
+            android:src="@drawable/emailicon"
+            android:layout_toRightOf="@id/imageButtonPhone"
+        />
+
+        <ImageButton
+            android:id="@+id/imageButtonLocation"
+            style="@style/LargeIconImageButtonStyle"
+            android:src="@drawable/locationicon"
+            android:layout_toRightOf="@id/imageButtonEmail"
+        />
+
+        <ImageButton
+            android:id="@+id/imageButtonChat"
+            style="@style/LargeIconImageButtonStyle"
+            android:src="@drawable/messageicon"
+            android:layout_toRightOf="@id/imageButtonLocation"
+        />
+    </RelativeLayout>
+
+    <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text=""
-        android:id="@+id/textViewDaysLeft"
-        style="@style/TextFieldStyle"
-        android:gravity="center"
-        android:layout_alignTop="@+id/textViewCompanyName"
-        android:layout_alignBottom="@+id/textViewCompanyName"
-        android:layout_toLeftOf="@+id/imageButton"
-        android:layout_toStartOf="@+id/imageButton" />
+        android:tag="@+id/view_type"
+        android:minHeight="30dp"
+    >
 
-    <TextView
-        android:layout_width="80dp"
-        android:layout_height="wrap_content"
-        android:text=""
-        android:id="@+id/textViewPlanYear"
-        style="@style/TextFieldStyle"
-        android:textAllCaps="true"
-        android:gravity="center"
-        android:layout_marginRight="20dp"
-        android:layout_alignTop="@+id/textViewCompanyName"
-        android:layout_alignBottom="@+id/textViewCompanyName"
-        android:layout_toStartOf="@id/textViewDaysLeft"
-        android:layout_toLeftOf="@id/textViewDaysLeft" />
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="65dp"
+            android:text=""
+            android:id="@+id/textViewCompanyName"
+            android:paddingRight="0dp"
+            style="@style/TextFieldStyle"
+            android:gravity="center_vertical"
+            android:layout_alignParentTop="true"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentStart="true"
+            android:minLines="2"
+            android:maxLines="2"
+            android:layout_toLeftOf="@+id/textViewPlanYear"
+            android:ellipsize="end" />
 
-    <ImageButton
-        android:layout_width="25dp"
-        android:layout_height="match_parent"
-        android:id="@+id/imageButton"
-        android:src="@drawable/right_arrow"
-        android:background="@null"
-        android:layout_alignTop="@+id/textViewCompanyName"
-        android:layout_alignBottom="@+id/textViewCompanyName"
-        android:layout_alignParentRight="true"
-        android:scaleType="fitCenter" />
-</RelativeLayout>
+        <TextView
+            android:layout_width="70dp"
+            android:layout_height="wrap_content"
+            android:text=""
+            android:id="@+id/textViewDaysLeft"
+            style="@style/TextFieldStyle"
+            android:gravity="center"
+            android:layout_alignTop="@+id/textViewCompanyName"
+            android:layout_alignBottom="@+id/textViewCompanyName"
+            android:layout_toLeftOf="@+id/imageButton"
+            android:layout_toStartOf="@+id/imageButton" />
+
+        <TextView
+            android:layout_width="80dp"
+            android:layout_height="wrap_content"
+            android:text=""
+            android:id="@+id/textViewPlanYear"
+            style="@style/TextFieldStyle"
+            android:textAllCaps="true"
+            android:gravity="center"
+            android:layout_marginRight="20dp"
+            android:layout_alignTop="@+id/textViewCompanyName"
+            android:layout_alignBottom="@+id/textViewCompanyName"
+            android:layout_toStartOf="@id/textViewDaysLeft"
+            android:layout_toLeftOf="@id/textViewDaysLeft" />
+
+        <ImageButton
+            android:layout_width="25dp"
+            android:layout_height="match_parent"
+            android:id="@+id/imageButton"
+            android:src="@drawable/right_arrow"
+            android:background="@null"
+            android:layout_alignTop="@+id/textViewCompanyName"
+            android:layout_alignBottom="@+id/textViewCompanyName"
+            android:layout_alignParentRight="true"
+            android:scaleType="fitCenter" />
+    </RelativeLayout>
+
+</com.daimajia.swipe.SwipeLayout>

@@ -1,9 +1,7 @@
 package gov.dc.broker;
 
 import android.app.Application;
-import android.content.Intent;
 import android.util.Log;
-import android.widget.EditText;
 
 /**
  * Created by plast on 7/21/2016.
@@ -27,6 +25,7 @@ public class BrokerApplication extends Application {
         super.onCreate();
         Log.d(TAG, "In BrokerApplicaiton.onCreate");
         //Intent intent = new Intent(this, LoginActivity.class);
+        HbxSite.initClients();
         brokerWorker.onHandleIntent(null);
     }
 }

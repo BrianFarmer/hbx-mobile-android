@@ -4,14 +4,11 @@ import android.content.Intent;
 import android.content.res.Resources;
 import android.net.Uri;
 import android.os.Bundle;
-import android.support.annotation.StringRes;
 import android.support.design.widget.NavigationView;
 import android.support.v4.widget.DrawerLayout;
-import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.text.Html;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
@@ -22,15 +19,15 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.wdullaer.swipeactionadapter.SwipeActionAdapter;
-import com.wdullaer.swipeactionadapter.SwipeDirection;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 
-import java.util.ArrayList;
-
 import static gov.dc.broker.Events.GetEmployerList;
+
+//import com.wdullaer.swipeactionadapter.SwipeActionAdapter;
+//import com.wdullaer.swipeactionadapter.SwipeDirection;
 
 
 public class MainActivity extends AppCompatActivity {
@@ -65,6 +62,7 @@ public class MainActivity extends AppCompatActivity {
             Log.d(TAG, "exception in setContentView: " + e.getClass().getName());
             throw e;
         }
+
         Intent intent = new Intent(this, BrokerWorker.class);
         intent.setData(Uri.parse("http://dc.gov"));
         this.startService(intent);
@@ -106,13 +104,17 @@ public class MainActivity extends AppCompatActivity {
 
                 switch (item.getItemId()){
                     case R.id.nav_call_healthlink:
+                        Intent phoneIntent = new Intent(Intent.ACTION_DIAL);
+                        phoneIntent.setData(Uri.parse("tel:" + Constants.HbxPhoneNumber));
+                        startActivity(phoneIntent);
                         return true;
                     case R.id.nav_logout:
+                        eventBus.post(new Events.LogoutRequest());
                         return true;
                     case R.id.nav_carriers:
-                        Intent intent = new Intent(mainActivity, CarriersActivity.class);
+                        Intent carrierIntent = new Intent(mainActivity, CarriersActivity.class);
                         Log.d(TAG, "onClick: launching carriers activitiy");
-                        mainActivity.startActivity(intent);
+                        mainActivity.startActivity(carrierIntent);
                         return true;
                 }
                 return false;
@@ -154,17 +156,28 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
+
         eventBus = EventBus.getDefault();
         eventBus.register(this);
-        if (BrokerManager.getDefault().isLoggedIn()){
+
+        eventBus.post(new Events.GetLogin());
+    }
+
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void doThis(Events.GetLoginResult getLoginResult){
+        if (getLoginResult.isLoggedIn()){
             Log.d(TAG, "requesting employer list");
             eventBus.post(new GetEmployerList());
         } else {
-            Intent intent = new Intent(this, LoginActivity.class);
-            startActivity(intent);
+            showLogin();
+            return;
         }
         webViewWelcome = (WebView)findViewById(R.id.webViewWelcome);
-        //textViewStatus = (TextView)findViewById(R.id.textViewStatus);
+    }
+
+    private void showLogin() {
+        Intent intent = new Intent(this, LoginActivity.class);
+        startActivity(intent);
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)
@@ -174,37 +187,32 @@ public class MainActivity extends AppCompatActivity {
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)
-    public void doThis(Events.EmployerList employerList) {
-        EmployerList employerList1 = employerList.getEmployerList();
-        final EmployerAdapter employerAdapter = new EmployerAdapter(this, this.getBaseContext(), employerList1);
-        swipeActionAdapter = new SwipeActionAdapter(employerAdapter);
-        swipeActionAdapter.setListView(listViewEmployers);
-        listViewEmployers.setAdapter(swipeActionAdapter);
-        swipeActionAdapter.addBackground(SwipeDirection.DIRECTION_FAR_LEFT, R.layout.employer_swipe_layout);
-        swipeActionAdapter.setSwipeActionListener(new SwipeActionAdapter.SwipeActionListener() {
-            @Override
-            public boolean hasActions(int position, SwipeDirection direction) {
-                if (employerAdapter.isItemSwipeable(position)
-                    && direction == SwipeDirection.DIRECTION_FAR_LEFT){
-                    return true;
-                }
-                return false;
-            }
+    public void doThis(Events.LoggedOutResult loggedOutResult){
+        BrokerManager.getDefault().setLoggedIn(false);
+        if (!BrokerManager.getDefault().isLoggedIn()) {
+            showLogin();
+        }
+    }
 
-            @Override
-            public boolean shouldDismiss(int position, SwipeDirection direction) {
-                return false;
-            }
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void doThis(Events.Error error) {
+        showLogin();
+    }
 
-            @Override
-            public void onSwipe(int[] position, SwipeDirection[] direction) {
-
-            }
-        });
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void doThis(Events.EmployerList employerListEvent) {
+        EmployerList employerList = employerListEvent.getEmployerList();
+        final EmployerAdapter employerAdapter = new EmployerAdapter(this, this.getBaseContext(), employerList);
+        listViewEmployers.setAdapter(employerAdapter);
+        //swipeActionAdapter = new SwipeActionAdapter(employerAdapter);
+        //swipeActionAdapter.setListView(listViewEmployers);
+        //swipeActionAdapter.addBackground(SwipeDirection.DIRECTION_FAR_LEFT, R.layout.employer_swipe_layout);
 
         Resources resources = getResources();
         String welcomeMessageFormat = resources.getString(R.string.welcome_html);
-        String welcomeMessage = String.format(welcomeMessageFormat, account.getBroker().getName(), 15, 15);
+        String welcomeMessage = String.format(welcomeMessageFormat, employerList.brokerName,
+                Integer.toString(employerList.getAllClients().size()),
+                Integer.toString(employerList.getOpenEnrollmentsAlerted().size()));
         webViewWelcome.loadDataWithBaseURL("", welcomeMessage, "text/html", "UTF-8", "");
         //webViewWelcome.setText(Html.fromHtml(welcomeMessage));
     }

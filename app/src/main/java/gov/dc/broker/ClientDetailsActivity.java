@@ -1,13 +1,10 @@
 package gov.dc.broker;
 
-import android.app.Activity;
 import android.content.Intent;
 import android.content.res.Resources;
-import android.media.Image;
-import android.support.v4.app.DialogFragment;
-import android.support.v7.app.ActionBar;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v4.app.DialogFragment;
+import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.text.format.DateFormat;
 import android.util.Log;
@@ -75,13 +72,24 @@ public class ClientDetailsActivity extends AppCompatActivity {
         return DateAsString(calendar.getTime());
     }
 
+    private void showRenewalClients(BrokerClient brokerClient, BrokerClientDetails brokerClientDetails) {
+        setContentView(R.layout.client_details_other);
+
+        // Initializing Toolbar and setting it as the actionbar
+        configToolbar();
+        configButtons(brokerClient);
+        TextView status = (TextView)findViewById(R.id.textViewCompanyInOpenEnrollment);
+        status.setText(R.string.renewal_in_progress);
+        fillCoverageInfo(brokerClient);
+        fillOpenScreen(brokerClient, brokerClientDetails);
+    }
     private void showOtherClients(BrokerClient brokerClient, BrokerClientDetails brokerClientDetails) {
         setContentView(R.layout.client_details_other);
 
         // Initializing Toolbar and setting it as the actionbar
         configToolbar();
         configButtons(brokerClient);
-        fillCoverateInfo(brokerClient);
+        fillCoverageInfo(brokerClient);
         fillOpenScreen(brokerClient, brokerClientDetails);
     }
 
@@ -199,28 +207,38 @@ public class ClientDetailsActivity extends AppCompatActivity {
         }
     }
 
-    private void fillCoverateInfo(BrokerClient brokerClient){
+    private void fillCoverageInfo(BrokerClient brokerClient){
         fillCoverageHeading(brokerClient);
         TextView textViewRenewalAvailable = (TextView)findViewById(R.id.textViewRenewalAvailable);
-        textViewRenewalAvailable.setText(DateAsString(brokerClient.renewalApplicationAvailable));
+        if (brokerClient.renewalApplicationAvailable != null) {
+            textViewRenewalAvailable.setText(DateAsString(brokerClient.renewalApplicationAvailable));
+        }
         TextView textViewNextCoverageYearBegins = (TextView)findViewById(R.id.textViewNextCoverageYearBegins);
-        textViewNextCoverageYearBegins.setText(DateAsString(brokerClient.planYearBegins));
+        if (brokerClient.planYearBegins != null) {
+            textViewNextCoverageYearBegins.setText(DateAsString(brokerClient.planYearBegins));
+        }
         TextView textViewOpenEnrollmentEnds= (TextView)findViewById(R.id.textViewOpenEnrollmentEnds);
-        textViewOpenEnrollmentEnds.setText(DateAsString(brokerClient.openEnrollmentEnds));
+        if (brokerClient.openEnrollmentEnds != null) {
+            textViewOpenEnrollmentEnds.setText(DateAsString(brokerClient.openEnrollmentEnds));
+        }
     }
 
     private void fillCoverageHeading(BrokerClient brokerClient) {
         TextView textViewCoverageInfoSubheadingLabel = (TextView)findViewById(R.id.textViewCoverageInfoSubheadingLabel);
         Resources resources = getResources();
-        Date startDate = brokerClient.planYearBegins;
-        Calendar cal = Calendar.getInstance();
-        cal.setTime(startDate);
-        cal.add(Calendar.YEAR, 1);
-        cal.add(Calendar.HOUR, -24);
-        Date endDate = cal.getTime();
-        String formatString = resources.getString(R.string.coverage_year);
-        String coverageDates = String.format(formatString, DateAsString(startDate), DateAsString(endDate));
-        textViewCoverageInfoSubheadingLabel.setText(coverageDates);
+        if (brokerClient.planYearBegins != null) {
+            Date startDate = brokerClient.planYearBegins;
+            Calendar cal = Calendar.getInstance();
+            cal.setTime(startDate);
+            cal.add(Calendar.YEAR, 1);
+            cal.add(Calendar.HOUR, -24);
+            Date endDate = cal.getTime();
+            String formatString = resources.getString(R.string.coverage_year);
+            String coverageDates = String.format(formatString, DateAsString(startDate), DateAsString(endDate));
+            textViewCoverageInfoSubheadingLabel.setText(coverageDates);
+        } else {
+            textViewCoverageInfoSubheadingLabel.setText(R.string.NoPlanYearBeginDateMessagge);
+        }
     }
 
     private void fillMinimumParticipation(BrokerClient brokerClient) {
@@ -248,7 +266,11 @@ public class ClientDetailsActivity extends AppCompatActivity {
                 showNotAlerted(brokerClient, brokerClientEvent.getBrokerClientDetails());
             }
         } else {
-            showOtherClients(brokerClient, brokerClientEvent.getBrokerClientDetails());
+            if (brokerClient.renewalInProgress){
+                showRenewalClients(brokerClient, brokerClientEvent.getBrokerClientDetails());
+            } else {
+                showOtherClients(brokerClient, brokerClientEvent.getBrokerClientDetails());
+            }
         }
     }
 }

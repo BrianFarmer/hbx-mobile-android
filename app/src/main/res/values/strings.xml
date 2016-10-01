@@ -16,7 +16,7 @@
     </string>
     <string name="all_other_clients">All Other Clients</string>
     <string name="open_enrollment_in_progress">Open Enrollment In Progress</string>
-    <string name="renewals_in_progress">Renewals In Progress</string>
+    <string name="renewals_in_progress">Pending Renewals</string>
     <string name="drawer_open">Open navigation drawer</string>
     <string name="drawer_close">Close navigation drawer</string>
     <string name="welcome_html" formatted="false">
@@ -96,4 +96,25 @@
     <string name="no_phone_numbers">No phone numbers available for this client.</string>
     <string name="no_addresses">No addresses available for this client.</string>
     <string name="no_mobile_phone_numbers">No mobile phone numbers available for this client.</string>
+    <string name="in_progress">In Progress</string>
+    <string name="renewal_in_progress">Pending Renewal</string>
+    <string name="renewal_deadlines">Renewal Deadlines</string>
+    <string name="email_address">Email Address</string>
+    <string name="password">Password</string>
+    <string name="log_in">Log In</string>
+    <string name="remember_me">Remember me</string>
+    <string name="existing_customers">DC Health Link Mobile is for existing Health Link customers.</string>
+    <string name="not_existing">If you are not an existing customer please sign up on your home computer.</string>
+    <string name="sharedpreferencename">hbxbroker</string>
+    <string name="shared_preference_account_name">accountname</string>
+    <string name="shared_preference_password">password</string>
+    <string name="shared_preference_session_id">session_id</string>
+    <string name="shared_preference_remember_me">rememberme</string>
+    <string name="logging_in">Logging in.</string>
+    <string name="security_question">Security Question</string>
+    <string name="ok">OK</string>
+    <string name="hbxroot">-----BEGIN CERTIFICATE-----\nMIIFgTCCBGmgAwIBAgIJAPbkwARsy/snMA0GCSqGSIb3DQEBBQUAMIHaMQswCQYD\nVQQGEwJVUzEdMBsGA1UECBMURGlzdHJpY3Qgb2YgQ29sdW1iaWExEzARBgNVBAcT\nCldhc2hpbmd0b24xLTArBgNVBAoTJERDIEhlYWx0aCBCZW5lZml0IEV4Y2hhbmdl\nIEF1dGhvcml0eTEcMBoGA1UECxMTVGVjaG5vbG9neSBTZXJ2aWNlczEkMCIGA1UE\nAxMbRENIQlggQ2VydGlmaWNhdGUgQXV0aG9yaXR5MSQwIgYJKoZIhvcNAQkBFhVt\nYXR0LndpbGxpYW1zM0BkYy5nb3YwHhcNMTYwMTA4MTcyMzA2WhcNMjYwMTA1MTcy\nMzA2WjCB2jELMAkGA1UEBhMCVVMxHTAbBgNVBAgTFERpc3RyaWN0IG9mIENvbHVt\nYmlhMRMwEQYDVQQHEwpXYXNoaW5ndG9uMS0wKwYDVQQKEyREQyBIZWFsdGggQmVu\nZWZpdCBFeGNoYW5nZSBBdXRob3JpdHkxHDAaBgNVBAsTE1RlY2hub2xvZ3kgU2Vy\ndmljZXMxJDAiBgNVBAMTG0RDSEJYIENlcnRpZmljYXRlIEF1dGhvcml0eTEkMCIG\nCSqGSIb3DQEJARYVbWF0dC53aWxsaWFtczNAZGMuZ292MIIBIjANBgkqhkiG9w0B\nAQEFAAOCAQ8AMIIBCgKCAQEAxrtdZ3wNcHQ+iMpOG1veU0/FRYmP+Bcz4Ji1klXk\njcTLMpsrVE0hwXrb45lIXG6yb8LQuP1L6QeIJswcCnSFojm1uTFNnc8iW7mOE5Ev\nJIzDAbNvyCWByLXyZO4aKhjA9gYwyLdZ1vB4QEj9cvTGfnjPXmAnI/Rme5zDPZWn\n5wjb3TNJ7zB69EEOM+p/FL6/+4gZXZEb3UGnESSEqAaSQeGpB/TuH10pGjYLaHsa\nWNkBDJDMon5M4urXZ5hMdn1by02M4Pbdfx9yy7ULY+t0ntH5FD24edeq3+u78qMA\nbElTDlVUbvJrS/t5kGTZ5MNkjS0DBchPUrvHgEYWXdWM1wIDAQABo4IBRjCCAUIw\nHQYDVR0OBBYEFAGPrQ6vT8Wtx8BJ4hM1uCvUV43wMIIBEQYDVR0jBIIBCDCCAQSA\nFAGPrQ6vT8Wtx8BJ4hM1uCvUV43woYHgpIHdMIHaMQswCQYDVQQGEwJVUzEdMBsG\nA1UECBMURGlzdHJpY3Qgb2YgQ29sdW1iaWExEzARBgNVBAcTCldhc2hpbmd0b24x\nLTArBgNVBAoTJERDIEhlYWx0aCBCZW5lZml0IEV4Y2hhbmdlIEF1dGhvcml0eTEc\nMBoGA1UECxMTVGVjaG5vbG9neSBTZXJ2aWNlczEkMCIGA1UEAxMbRENIQlggQ2Vy\ndGlmaWNhdGUgQXV0aG9yaXR5MSQwIgYJKoZIhvcNAQkBFhVtYXR0LndpbGxpYW1z\nM0BkYy5nb3aCCQD25MAEbMv7JzAMBgNVHRMEBTADAQH/MA0GCSqGSIb3DQEBBQUA\nA4IBAQB/QV8016ZMKIivrYHjiPuJ1L4tbwNNqD6qHu787XXTAuOoYObnug6CNsqA\nvKz46NhwbOd0IaOwN2dMz8Vw/KQAb422d337o+VKMOtjflbul//coCCWCA56W6JE\nGPKoeDP+mQyM7SboiA4Hu5a9c9zD6oB3ea1Y0sftK/x0MjTelC8aMegNnKeg98pD\nYvl1rVShk56iWD1OucGqRQ7p1nHapIIO6hKFT2YCSpEgUJxmEhui9WMHGJfTPQ3M\nYWBFzuQGHf1ECvki6YOpHBitGtdp0vUTPk0uV0DVBgHhrVzUI5l++kJdyyI8a7Rc\nONijCyevM04LlV8sBJsbBRrK8HsX\n-----END CERTIFICATE-----</string>
+    <string name="format_url_path_with_leading_slash" formatted="false">%s://%s:%d%s</string>
+    <string name="format_url_path_without_leading_slash" formatted="false">%s://%s:%d/%s</string>
+    <string name="NoPlanYearBeginDateMessagge">Not yet defined</string>
 </resources>

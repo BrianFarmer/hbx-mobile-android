@@ -3,7 +3,7 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:background="#ffffff"
+    android:background="@color/mainbackgroundcolor"
     >
 
     <android.support.v7.widget.Toolbar
@@ -29,7 +29,7 @@
     <TextView
         android:id="@+id/textViewCompanyInOpenEnrollment"
         style="@style/Subtitle"
-        android:text="@string/minimum_met"
+        android:text="@string/in_progress"
         android:layout_below="@id/textViewCompanyName"
     />
     <LinearLayout
@@ -68,14 +68,11 @@
         android:layout_below="@id/action_buttons_row"
         android:layout_alignParentBottom="true"
         tools:context="gov.dc.broker.ClientDetailsActivity"
-        android:background="#ffffff"
     >
         <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:background="#ffffff"
             >
-
 
             <TextView
                 android:id="@+id/textViewMonthlyEstimatedCost"

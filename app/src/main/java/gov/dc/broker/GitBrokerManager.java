@@ -22,6 +22,16 @@ public class GitBrokerManager implements BrokerManagerInterface {
     public void setUserName(String userName) {}
 
     @Override
+    public String getPassword() {
+        return null;
+    }
+
+    @Override
+    public void setPassword(String userName) {
+
+    }
+
+    @Override
     public Boolean getRememberUserName() {
         return true;
     }

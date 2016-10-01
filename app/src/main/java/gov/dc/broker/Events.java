@@ -28,46 +28,48 @@ public class Events {
         }
     }
 
-    static public class LoginRequest extends CancelableRequest{
-        private String accountName;
-        private String password;
+    static public class LogoutRequest extends CancelableRequest {
+    }
 
-        public LoginRequest(String accountName, String password){
+
+    static public class GetLogin extends CancelableRequest{
+    }
+
+    static public class LoginRequest extends CancelableRequest{
+        private CharSequence accountName;
+        private CharSequence password;
+        private boolean rememberMe;
+
+        public LoginRequest(CharSequence accountName, CharSequence password, Boolean rememberMe){
             this.accountName = accountName;
             this.password = password;
+            this.rememberMe = rememberMe;
         }
 
-        public String getAccountName() {
+        public CharSequence getAccountName() {
             return accountName;
         }
 
-        public String getPassword() {
+        public CharSequence getPassword() {
             return password;
         }
-    }
 
-    static public class GetAccount extends CancelableRequest {
-
+        public boolean getRememberMe() {
+            return rememberMe;
+        }
     }
 
     static public class GetEmployerList extends CancelableRequest {
-
     }
 
     static public class GetEmployer extends CancelableRequest {
-        private int id;
+        private int employerId;
 
-        public GetEmployer(int id){
-            this.id = id;
+        public GetEmployer(int employerId){
+            this.employerId = employerId;
         }
-
-        @Override
-        public int getId() {
-            return id;
-        }
-
-        public void setId(int id) {
-            this.id = id;
+        public int getEmployerId() {
+            return employerId;
         }
     }
 
@@ -162,6 +164,110 @@ public class Events {
 
         public gov.dc.broker.Carriers getCarriers() {
             return carriers;
+        }
+    }
+
+    static public class LoginRequestResult {
+        static final int Failure = 0;
+        static final int Success = 1;
+        static final int Error = 2;
+
+        private final int loginResult;
+        public LoginRequestResult(int loginResult) {
+            this.loginResult = loginResult;
+        }
+
+        public int getLoginResult(){
+            return loginResult;
+        }
+    }
+
+    static public class SecurityAnswerResult {
+        static final int Failure = 0;
+        static final int Success = 1;
+        static final int Error = 2;
+
+        private final int loginResult;
+        public SecurityAnswerResult(int loginResult) {
+            this.loginResult = loginResult;
+        }
+
+        public int getLoginResult(){
+            return loginResult;
+        }
+    }
+
+    static public class GetLoginResult {
+        private CharSequence accountName;
+        private CharSequence password;
+        private CharSequence securityAnswer;
+        private boolean rememberMe;
+
+        public GetLoginResult(CharSequence accountName, CharSequence password, CharSequence securityAnswer, Boolean rememberMe){
+            this.accountName = accountName;
+            this.password = password;
+            this.securityAnswer = securityAnswer;
+            this.rememberMe = rememberMe;
+        }
+
+        public CharSequence getAccountName() {
+            return accountName;
+        }
+
+        public CharSequence getPassword() {
+            return password;
+        }
+
+        public boolean getRememberMe() {
+            return rememberMe;
+        }
+
+        public boolean isLoggedIn() {
+            return (this.accountName != null
+            && this.accountName.length() > 0
+            && this.password != null
+            && this.password.length() > 0);
+        }
+
+        public CharSequence getSecurityAnswer() {
+            return securityAnswer;
+        }
+    }
+
+    static public class LoggedOutResult {
+        public LoggedOutResult() {
+        }
+    }
+
+    static public class Error {
+        private final String errorMsg;
+
+        public Error(String s) {
+            errorMsg = s;
+        }
+
+        public String getErrorMsg() {
+            return errorMsg;
+        }
+    }
+
+    static public class GetSecurityAnswer {
+        public String question;
+
+        public GetSecurityAnswer(String securityQuestion) {
+            this.question = securityQuestion;
+        }
+    }
+
+    static public class SecurityAnswer {
+        private final String securityAnswer;
+
+        public SecurityAnswer(String securityAnswer) {
+            this.securityAnswer = securityAnswer;
+        }
+
+        public String getSecurityAnswer() {
+            return securityAnswer;
         }
     }
 }
