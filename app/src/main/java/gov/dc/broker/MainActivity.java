@@ -16,7 +16,6 @@ import android.webkit.WebView;
 import android.widget.ListView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.wdullaer.swipeactionadapter.SwipeActionAdapter;
 
@@ -46,8 +45,9 @@ public class MainActivity extends AppCompatActivity {
     private TextView textViewStatus;
     private SwipeActionAdapter swipeActionAdapter;
 
-    private Broker broker = new Broker("Test-001 User-001");
+    private Broker broker;
     private Account account = new Account(broker);
+    private int scrollPosition = -1;
 
 
     public MainActivity(){
@@ -150,6 +150,7 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onPause() {
         super.onPause();
+        scrollPosition = listViewEmployers.getFirstVisiblePosition();
         EventBus.getDefault().unregister(this);
     }
 
@@ -182,7 +183,7 @@ public class MainActivity extends AppCompatActivity {
 
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void doThis(BrokerResult brokerResult) {
-        Toast.makeText(this, (CharSequence) brokerResult.getBroker().getName(), Toast.LENGTH_SHORT).show();
+        //Toast.makeText(this, (CharSequence) brokerResult.getBroker().getName(), Toast.LENGTH_SHORT).show();
 
     }
 
@@ -204,6 +205,7 @@ public class MainActivity extends AppCompatActivity {
         EmployerList employerList = employerListEvent.getEmployerList();
         final EmployerAdapter employerAdapter = new EmployerAdapter(this, this.getBaseContext(), employerList);
         listViewEmployers.setAdapter(employerAdapter);
+        listViewEmployers.setSelectionFromTop(scrollPosition, 0);
         //swipeActionAdapter = new SwipeActionAdapter(employerAdapter);
         //swipeActionAdapter.setListView(listViewEmployers);
         //swipeActionAdapter.addBackground(SwipeDirection.DIRECTION_FAR_LEFT, R.layout.employer_swipe_layout);

@@ -10,6 +10,7 @@ public class BrokerApplication extends Application {
 
     private static final String TAG = "BrokerApplication";
     private BrokerWorker brokerWorker = new BrokerWorker();
+    private boolean fingerprintSupported;
     private static BrokerApplication brokerApplication;
 
     public BrokerApplication() {

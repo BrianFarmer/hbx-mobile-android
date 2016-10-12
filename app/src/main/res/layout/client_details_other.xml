@@ -29,7 +29,7 @@
     <TextView
         android:id="@+id/textViewCompanyInOpenEnrollment"
         style="@style/Subtitle"
-        android:text="@string/in_progress"
+        android:text="@string/all_other_clients"
         android:layout_below="@id/textViewCompanyName"
     />
     <LinearLayout

@@ -1,8 +1,10 @@
 package gov.dc.broker;
 
+import android.annotation.TargetApi;
 import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.graphics.Typeface;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.app.DialogFragment;
 import android.support.v7.app.AlertDialog;
@@ -26,6 +28,7 @@ import org.greenrobot.eventbus.ThreadMode;
  */
 public class LoginActivity extends AppCompatActivity {
 
+    private static final int FINGERPRINT_PERMISSION_REQUEST_CODE = 15;
     // UI references.
     private EditText emailAddress;
     private EditText password;
@@ -36,6 +39,7 @@ public class LoginActivity extends AppCompatActivity {
 
     private ProgressDialog progressDialog;
 
+    @TargetApi(Build.VERSION_CODES.M)
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -55,7 +59,8 @@ public class LoginActivity extends AppCompatActivity {
         password.setOnEditorActionListener(new TextView.OnEditorActionListener() {
             @Override
             public boolean onEditorAction(TextView textView, int id, KeyEvent keyEvent) {
-                if (keyEvent.getAction() != KeyEvent.ACTION_DOWN) {
+                if (keyEvent == null
+                    || keyEvent.getAction() != KeyEvent.ACTION_DOWN) {
                     return false;
                 }
                 attemptLogin();
@@ -73,7 +78,6 @@ public class LoginActivity extends AppCompatActivity {
 
         eventBus.post(new Events.GetLogin());
     }
-
 
     private void attemptLogin() {
         showProgress();
@@ -163,6 +167,9 @@ public class LoginActivity extends AppCompatActivity {
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void doThis(Events.GetSecurityAnswer getSecurityAnswer){
         hideProgress();
+        if (getSecurityAnswer.question == null){
+            return;
+        }
         SecurityQuestionDialog dialog = SecurityQuestionDialog.build(getSecurityAnswer.question);
         dialog.setStyle(DialogFragment.STYLE_NO_TITLE, R.style.DialogStyle);
         dialog.show(this.getSupportFragmentManager(), "SecurityQuestionDialog");

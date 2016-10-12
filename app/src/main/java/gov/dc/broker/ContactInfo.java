@@ -44,6 +44,10 @@ public class ContactInfo implements Serializable {
     }
 
     public boolean allEmailsEmpty(){
+        if (emails == null){
+            return true;
+        }
+
         for (String email :
                 emails) {
             if (!isEmailEmpty(email)){
@@ -61,6 +65,9 @@ public class ContactInfo implements Serializable {
     }
 
     public boolean isAddressEmpty() {
+        if (address1 == null){
+            return false;
+        }
         return address1.isEmpty();
     }
 }

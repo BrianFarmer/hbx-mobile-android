@@ -68,7 +68,7 @@ public class ContactDialog extends AppCompatDialogFragment {
 
     public void launchEmail(ContactInfo contactInfo, String email) {
         Intent intent = new Intent(Intent.ACTION_SENDTO);
-        intent.setData(Uri.parse("mailto:myemail@gmail.com"));
+        intent.setData(Uri.parse("mailto:" + email));
         startActivity(intent);
         dismiss();;
     }

@@ -9,12 +9,13 @@
         android:id="@+id/imageViewDcHealthLinkLogo"
         android:layout_width="match_parent"
         android:scaleType="fitXY"
-        android:layout_height="45dp"
+        android:layout_height="wrap_content"
         android:layout_marginLeft="40dp"
         android:layout_marginRight="40dp"
         android:layout_marginBottom="30dp"
         android:layout_marginTop="30dp"
         android:src="@drawable/app_header_two_inches"
+        android:adjustViewBounds="true"
         />
 
     <EditText
@@ -89,6 +90,8 @@
         android:layout_marginTop="10dp"
         android:layout_marginBottom="10dp"
         android:textColor="@color/white"
+        android:thumb="@drawable/switchselector"
+        android:track="@drawable/trackselector"
         />
 
     <Button

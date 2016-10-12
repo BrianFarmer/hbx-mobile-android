@@ -1,17 +1,11 @@
 package gov.dc.broker;
 
-import com.google.gson.JsonDeserializationContext;
-import com.google.gson.JsonDeserializer;
-import com.google.gson.JsonElement;
-import com.google.gson.JsonParseException;
 import com.google.gson.annotations.SerializedName;
 
 import java.io.Serializable;
-import java.lang.reflect.Type;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
-import java.util.concurrent.TimeUnit;
 
 public class BrokerClient implements Serializable {
 
@@ -78,6 +72,10 @@ public class BrokerClient implements Serializable {
         return minimumParticipationRequired - (employeesEnrolled + employessWaived);
     }
 
+    public int getEmployessNotCompleted(){
+        return employeesTotal - (employeesEnrolled + employessWaived);
+    }
+
     private long getDaysDiff(Date early, Date late){
         long diffMilliSeconds = late.getTime() - early.getTime();
         return diffMilliSeconds / 1000/60/60/24;
@@ -89,5 +87,66 @@ public class BrokerClient implements Serializable {
 
     public boolean isAlerted(){
         return (employeesEnrolled + employessWaived < minimumParticipationRequired);
+    }
+
+    public boolean anyEmailAddresses() {
+        if (contactInfo == null){
+            return false;
+        }
+
+        for (ContactInfo cur: contactInfo) {
+            if (cur != null
+                    && cur.emails != null
+                    && cur.emails.size() > 0){
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public boolean anyPhoneNumbers (){
+        if (contactInfo == null){
+            return false;
+        }
+
+        for (ContactInfo cur: contactInfo) {
+            if (cur != null
+                && ((cur.mobile != null
+                     && !cur.mobile.isEmpty())
+                    || (cur.phone != null
+                        && !cur.phone.isEmpty()))){
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public boolean anyMobileNumbers() {
+        if (contactInfo == null){
+            return false;
+        }
+
+        for (ContactInfo cur: contactInfo) {
+            if (cur != null
+                && cur.mobile != null
+                && !cur.mobile.isEmpty()){
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public boolean anyAddresses(){
+        if (contactInfo == null){
+            return false;
+        }
+
+        for (ContactInfo cur: contactInfo){
+            if (cur != null
+                && !cur.isAddressEmpty()){
+                return true;
+            }
+        }
+        return false;
     }
 }

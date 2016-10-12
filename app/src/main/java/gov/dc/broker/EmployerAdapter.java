@@ -38,9 +38,9 @@ public class EmployerAdapter extends BaseSwipeAdapter {
     private RenewalHeader renewalHeader;
     private OtherItemsHeader otherItemsHeader;
 
-    private boolean openEnrollmentState = true;
-    private boolean renewalState = false;
-    private boolean othersState = false;
+    private static boolean openEnrollmentState = true;
+    private static boolean renewalState = false;
+    private static boolean othersState = false;
     public View notAlerted;
 
     public EmployerAdapter(MainActivity mainActivity, Context context, EmployerList employerList){
@@ -72,8 +72,9 @@ public class EmployerAdapter extends BaseSwipeAdapter {
             i ++;
         }
 
-        if (alertedItems.size() == 0
-                && notAlertedItems.size() == 0){
+        if (openEnrollmentState == false
+            && alertedItems.size() == 0
+            && notAlertedItems.size() == 0){
             openEnrollmentState = false;
         }
 

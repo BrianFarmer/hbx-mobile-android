@@ -230,6 +230,6 @@ public abstract class HbxSite extends Site {
 
     @Override
     public String GetCarriers(Events.GetCarriers getCarriers) throws IOException{
-        return "";
+        return getUrl("https://dchealthlink.com/shared/json/carriers.json");
     }
 }

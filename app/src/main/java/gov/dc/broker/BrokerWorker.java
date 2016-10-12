@@ -31,7 +31,10 @@ import java.net.CookiePolicy;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLEncoder;
+import java.security.InvalidKeyException;
 import java.security.KeyStoreException;
+import java.security.NoSuchAlgorithmException;
+import java.security.spec.InvalidKeySpecException;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
@@ -40,6 +43,8 @@ import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import javax.crypto.SecretKey;
+import javax.crypto.spec.DESKeySpec;
 import javax.net.ssl.HttpsURLConnection;
 
 import okhttp3.FormBody;
@@ -66,7 +71,7 @@ public class BrokerWorker extends IntentService {
     static MobileServerSite devTest = new MobileServerSite(new HbxSite.ServerSiteConfig("http", "ec2-54-234-22-53.compute-1.amazonaws.com", 3003));
 
     private final boolean forcedAccount = false; // This is here to protech mistyping accounts & passwords.
-    private final String forcedAccountName = "LoadTest02";
+    private final String forcedAccountName = "bill.murray@example.com";
     private final String forcedPassword = "Test123!";
     private final String forcedSecurityAnswer = "Test";
     private EmployerList employerList = null;
@@ -79,7 +84,7 @@ public class BrokerWorker extends IntentService {
             devTest
     };
 
-    Site currentSite = sites[1];
+    Site currentSite = sites[0];
     Parser parser = new Parser();
 
 
@@ -108,13 +113,45 @@ public class BrokerWorker extends IntentService {
         }
     }
 
-    private interface AccountInfoStorage {
-        void storeAccountInfo(AccountInfo accountInfo) throws KeyStoreException;
-        AccountInfo getAccountInfo();
-        void logout();
+    private abstract static class AccountInfoStorage {
+        private DESKeySpec keySpec;
+        private SecretKey key;
+
+        public abstract void storeAccountInfo(AccountInfo accountInfo) throws KeyStoreException;
+
+        public abstract AccountInfo getAccountInfo();
+
+        public abstract void logout();
+
+        protected AccountInfoStorage() {
+            //DESKeySpec keySpec = new DESKeySpec(BrokerApplication.getBrokerApplication().getResources().getString(R.string.dchbx_des_encryption_key).getBytes("UTF8"));
+            //SecretKeyFactory keyFactory = SecretKeyFactory.getInstance("DES");
+            //key = keyFactory.generateSecret(keySpec);
+        }
+
+        /*protected String decrypt(String string) throws Exception {
+            // ENCODE plainTextPassword String
+            byte[] cleartext = string.getBytes("UTF8");
+            Cipher cipher = Cipher.getInstance("AES"); // cipher is not thread safe
+            cipher.init(Cipher.ENCRYPT_MODE,key);
+            return Base64.encodeToString(cipher.doFinal(cleartext), Base64.DEFAULT);
+        }
+
+
+        protected String encrypt(String string) throws GeneralSecurityException {
+            byte[] encrypedPwdBytes = Base64.decode(string, Base64.DEFAULT);
+            Cipher cipher = Cipher.getInstance("AES");// cipher is not thread safe
+            cipher.init(Cipher.DECRYPT_MODE, key);
+            byte[] plainTextPwdBytes = (cipher.doFinal(encrypedPwdBytes));
+            return new String(plainTextPwdBytes);
+        }*/
+
     }
 
-    private static class FileAccountInfoStorage implements AccountInfoStorage{
+    private static class FileAccountInfoStorage extends AccountInfoStorage {
+
+        protected FileAccountInfoStorage() throws UnsupportedEncodingException, InvalidKeyException, NoSuchAlgorithmException, InvalidKeySpecException {
+        }
 
         @Override
         public void storeAccountInfo(AccountInfo accountInfo) throws KeyStoreException {
@@ -132,8 +169,11 @@ public class BrokerWorker extends IntentService {
         }
     }
 
-    private static class MemoryAccountInfoStorage implements AccountInfoStorage{
+    private static class MemoryAccountInfoStorage extends AccountInfoStorage {
         private AccountInfo accountInfo;
+
+        protected MemoryAccountInfoStorage() throws UnsupportedEncodingException, InvalidKeyException, NoSuchAlgorithmException, InvalidKeySpecException {
+        }
 
         @Override
         public void storeAccountInfo(AccountInfo accountInfo) throws KeyStoreException {
@@ -151,7 +191,10 @@ public class BrokerWorker extends IntentService {
         }
     }
 
-    private static class SharedPreferencesAccountInfoStorage implements AccountInfoStorage{
+    private static class SharedPreferencesAccountInfoStorage extends AccountInfoStorage {
+
+        protected SharedPreferencesAccountInfoStorage() {
+        }
 
         @Override
         public void storeAccountInfo(AccountInfo accountInfo) {
@@ -207,7 +250,7 @@ public class BrokerWorker extends IntentService {
         private boolean haveAccountInfo = false;
         private String accountId;
 
-        public BackdoorSite(ServerSiteConfig serverSiteConfig){
+        BackdoorSite(ServerSiteConfig serverSiteConfig){
             super(serverSiteConfig);
 
             cookieManager = new CookieManager();
@@ -289,7 +332,7 @@ public class BrokerWorker extends IntentService {
                     HttpsURLConnection httpsURLConnection = (HttpsURLConnection) connection;
                     httpsURLConnection.setSSLSocketFactory(getSSLContext().getSocketFactory());
                 }
-                dumpHeaders(connection);
+                //dumpHeaders(connection);
                 connection.setRequestMethod("GET");
                 //connection.setRequestProperty("Cookie", "_session_id=" + sessionId);
 

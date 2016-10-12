@@ -31,6 +31,7 @@ public class ClientDetailsActivity extends AppCompatActivity {
 
     private EventBus eventBus;
     private Toolbar toolbar;
+    private int clientId;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -38,7 +39,7 @@ public class ClientDetailsActivity extends AppCompatActivity {
 
         final ClientDetailsActivity _this = this;
         Intent intent = getIntent();
-        int clientId = intent.getIntExtra(BROKER_CLIENT_ID, -1);
+        clientId = intent.getIntExtra(BROKER_CLIENT_ID, -1);
 
         if (clientId == -1){
             Log.d(TAG, "onCreate: no client id found");
@@ -107,43 +108,62 @@ public class ClientDetailsActivity extends AppCompatActivity {
     }
 
     private void configButtons(final BrokerClient brokerClient){
-        ImageButton emailButton = (ImageButton)findViewById(R.id.imageButtonEmail);
+        ContactInfo curContactInfo = brokerClient.contactInfo.get(0);
 
-        emailButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                ContactDialog contactDialog = ContactDialog.build(brokerClient, ContactListAdapter.ListType.Email);
-                contactDialog.setStyle(DialogFragment.STYLE_NO_TITLE, R.style.DialogStyle);
-                contactDialog.show(getSupportFragmentManager(), "ContactDialog");
-            }
-        });
-        ImageButton chatButton = (ImageButton)findViewById(R.id.imageButtonChat);
-        chatButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                ContactDialog contactDialog = ContactDialog.build(brokerClient, ContactListAdapter.ListType.Chat);
-                contactDialog.setStyle(DialogFragment.STYLE_NO_TITLE, R.style.DialogStyle);
-                contactDialog.show(getSupportFragmentManager(), "ContactDialog");
-            }
-        });
-        ImageButton phoneButton = (ImageButton)findViewById(R.id.imageButtonPhone);
-        phoneButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-            ContactDialog contactDialog = ContactDialog.build(brokerClient, ContactListAdapter.ListType.Phone);
-            contactDialog.setStyle(DialogFragment.STYLE_NO_TITLE, R.style.DialogStyle);
-            contactDialog.show(getSupportFragmentManager(), "ContactDialog");
-            }
-        });
-        ImageButton locationButton = (ImageButton)findViewById(R.id.imageButtonLocation);
-        locationButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-            ContactDialog contactDialog = ContactDialog.build(brokerClient, ContactListAdapter.ListType.Directions);
-            contactDialog.setStyle(DialogFragment.STYLE_NO_TITLE, R.style.DialogStyle);
-            contactDialog.show(getSupportFragmentManager(), "ContactDialog");
-            }
-        });
+        ImageButton emailButton = (ImageButton)findViewById(R.id.imageButtonEmail);
+        if (brokerClient.anyEmailAddresses()) {
+            emailButton.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    ContactDialog contactDialog = ContactDialog.build(brokerClient, ContactListAdapter.ListType.Email);
+                    contactDialog.setStyle(DialogFragment.STYLE_NO_TITLE, R.style.DialogStyle);
+                    contactDialog.show(getSupportFragmentManager(), "ContactDialog");
+                }
+            });
+        } else {
+            emailButton.setEnabled(false);
+        }
+        ImageButton chatButton = (ImageButton) findViewById(R.id.imageButtonChat);
+        if (brokerClient.anyMobileNumbers()) {
+            chatButton.setEnabled(true);
+            chatButton.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    ContactDialog contactDialog = ContactDialog.build(brokerClient, ContactListAdapter.ListType.Chat);
+                    contactDialog.setStyle(DialogFragment.STYLE_NO_TITLE, R.style.DialogStyle);
+                    contactDialog.show(getSupportFragmentManager(), "ContactDialog");
+                }
+            });
+        } else {
+            chatButton.setEnabled(false);
+        }
+
+        ImageButton phoneButton = (ImageButton) findViewById(R.id.imageButtonPhone);
+        if (brokerClient.anyPhoneNumbers()) {
+            phoneButton.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    ContactDialog contactDialog = ContactDialog.build(brokerClient, ContactListAdapter.ListType.Phone);
+                    contactDialog.setStyle(DialogFragment.STYLE_NO_TITLE, R.style.DialogStyle);
+                    contactDialog.show(getSupportFragmentManager(), "ContactDialog");
+                }
+            });
+        } else {
+            phoneButton.setEnabled(false);
+        }
+        ImageButton locationButton = (ImageButton) findViewById(R.id.imageButtonLocation);
+        if (brokerClient.anyAddresses()) {
+            locationButton.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    ContactDialog contactDialog = ContactDialog.build(brokerClient, ContactListAdapter.ListType.Directions);
+                    contactDialog.setStyle(DialogFragment.STYLE_NO_TITLE, R.style.DialogStyle);
+                    contactDialog.show(getSupportFragmentManager(), "ContactDialog");
+                }
+            });
+        } else {
+            locationButton.setEnabled(false);
+        }
     }
 
     private void showAlerted(BrokerClient brokerClient, BrokerClientDetails brokerClientDetails) {
@@ -183,7 +203,7 @@ public class ClientDetailsActivity extends AppCompatActivity {
         TextView waived = (TextView) findViewById(R.id.textViewWaived);
         waived.setText(Integer.toString(brokerClient.employessWaived));
         TextView notCompleted = (TextView) findViewById(R.id.textViewNotCompleted);
-        notCompleted.setText(Integer.toString(brokerClient.getEmployessNeeded()));
+        notCompleted.setText(Integer.toString(brokerClient.getEmployessNotCompleted()));
         TextView totalEmployees = (TextView) findViewById(R.id.textViewTotalEmployees);
         totalEmployees.setText(Integer.toString(brokerClient.employeesTotal));
         TextView monthlyEstimatedCost = (TextView) findViewById(R.id.textViewMonthlyEstimatedCost);
