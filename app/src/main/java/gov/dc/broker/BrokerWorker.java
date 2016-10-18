@@ -64,6 +64,8 @@ public class BrokerWorker extends IntentService {
 
     static AccountInfoStorage accountInfoStorage = new SharedPreferencesAccountInfoStorage();
 
+    static HbxSite.ServerSiteConfig enrollFeatureServerSite = new HbxSite.ServerSiteConfig("http", "ec2-54-234-22-53.compute-1.amazonaws.com", 443);
+
     static GitSite gitSite = new GitSite();
     static BackdoorSite backdoorSite = new BackdoorSite(new HbxSite.ServerSiteConfig("http", "ec2-54-234-22-53.compute-1.amazonaws.com", 3001));
     static BackdoorSite enrollFeatureBackdoorSite = new BackdoorSite(new HbxSite.ServerSiteConfig("https", "enroll-feature.dchbx.org", 443));
@@ -84,7 +86,7 @@ public class BrokerWorker extends IntentService {
             devTest
     };
 
-    Site currentSite = sites[0];
+    Site currentSite = sites[4];
     Parser parser = new Parser();
 
 
@@ -251,7 +253,7 @@ public class BrokerWorker extends IntentService {
         private String accountId;
 
         BackdoorSite(ServerSiteConfig serverSiteConfig){
-            super(serverSiteConfig);
+            super(serverSiteConfig, serverSiteConfig);
 
             cookieManager = new CookieManager();
             cookieManager.setCookiePolicy(CookiePolicy.ACCEPT_ALL);
@@ -726,28 +728,20 @@ public class BrokerWorker extends IntentService {
 
     @Subscribe(threadMode = ThreadMode.BACKGROUND)
     public void doThis(Events.SecurityAnswer securityAnswer) {
-        if (forcedAccount){
-            try {
+
+        try {
+            if (forcedAccount){
                 inProgressAccountInfo.securityAnswer = forcedSecurityAnswer;
-                Log.d(TAG,"LoginRequest: Getting sessionid");
-                checkSecurityAnswer(inProgressAccountInfo);
-                Log.d(TAG,"LoginRequest: got sessionid");
-                BrokerWorker.eventBus.post(new Events.SecurityAnswerResult(1));
-            } catch (Exception e) {
-                e.printStackTrace();
-                BrokerWorker.eventBus.post(new Events.Error("Error logging in"));
-            }
-        } else {
-            try {
+            } else {
                 inProgressAccountInfo.securityAnswer = securityAnswer.getSecurityAnswer();
-                Log.d(TAG,"LoginRequest: Getting sessionid");
-                checkSecurityAnswer(inProgressAccountInfo);
-                Log.d(TAG,"LoginRequest: got sessionid");
-                BrokerWorker.eventBus.post(new Events.LoginRequestResult(1));
-            } catch (Exception e) {
-                e.printStackTrace();
-                BrokerWorker.eventBus.post(new Events.Error("Error logging in"));
             }
+            Log.d(TAG,"LoginRequest: Getting sessionid");
+            checkSecurityAnswer(inProgressAccountInfo);
+            Log.d(TAG,"LoginRequest: got sessionid");
+            BrokerWorker.eventBus.post(new Events.LoginRequestResult(1));
+        } catch (Exception e) {
+            e.printStackTrace();
+            BrokerWorker.eventBus.post(new Events.Error("Error logging in"));
         }
     }
 
@@ -755,6 +749,7 @@ public class BrokerWorker extends IntentService {
     public void doThis(Events.GetLogin getLogin) {
         try {
             AccountInfo accountInfo = accountInfoStorage.getAccountInfo();
+            currentSite.initEnrollServerInfo(accountInfo.enrollServer);
             BrokerWorker.eventBus.post(new Events.GetLoginResult(accountInfo.accountName, accountInfo.password, accountInfo.securityAnswer, accountInfo.rememberMe));
         } catch (Exception e) {
             e.printStackTrace();

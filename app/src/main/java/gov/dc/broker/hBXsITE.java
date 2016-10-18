@@ -8,6 +8,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.net.URL;
 import java.security.KeyStore;
 import java.security.cert.Certificate;
@@ -25,6 +27,14 @@ import okhttp3.Response;
 
 public abstract class HbxSite extends Site {
 
+    public ServerSiteConfig getEnrollServerSiteConfig() {
+        return enrollServerSiteConfig;
+    }
+
+    public void setEnrollServerSiteConfig(ServerSiteConfig enrollServerSiteConfig) {
+        this.enrollServerSiteConfig = enrollServerSiteConfig;
+    }
+
     static public class ServerSiteConfig {
         public final String scheme;
         public final String host;
@@ -34,7 +44,16 @@ public abstract class HbxSite extends Site {
 
             this.scheme = scheme;
             this.host = host;
-            this.port = 80;
+            if (scheme.compareToIgnoreCase("http") == 0) {
+                this.port = 80;
+            } else {
+                if (scheme.compareToIgnoreCase("https") == 0) {
+                    this.port = 443;
+                }
+                else {
+                    this.port = -1;
+                }
+            }
         }
 
         public ServerSiteConfig(String scheme, String host, int port){
@@ -52,6 +71,7 @@ public abstract class HbxSite extends Site {
     private static String TAG = "HbxSite";
     private static String employersList = "/api/v1/mobile_api/employers_list";
     protected final ServerSiteConfig siteConfig;
+    private ServerSiteConfig enrollServerSiteConfig;
     static protected OkHttpClient client = null;
     static OkHttpClient clientDontFollow = null;
 
@@ -75,8 +95,31 @@ public abstract class HbxSite extends Site {
 
     HbxSite(ServerSiteConfig siteConfig){
         this.siteConfig = siteConfig;
+        enrollServerSiteConfig = null;
     }
 
+    HbxSite(ServerSiteConfig siteConfig, ServerSiteConfig enrollServerSiteConfig){
+        this.siteConfig = siteConfig;
+        this.enrollServerSiteConfig = enrollServerSiteConfig;
+    }
+
+    @Override
+    public void initEnrollServerInfo(String enrollServerBaseUrl) throws URISyntaxException {
+        if (enrollServerBaseUrl == null){
+            enrollServerSiteConfig = null;
+            return;
+        }
+        URI uri = new URI(enrollServerBaseUrl);
+        int port = uri.getPort();
+        if (port == -1){
+            if (uri.getScheme().compareToIgnoreCase("http") == 0){
+                port = 80;
+            } else {
+                port = 443;
+            }
+        }
+        enrollServerSiteConfig = new HbxSite.ServerSiteConfig(uri.getScheme(), uri.getHost(), port);
+    }
 
     public static SSLContext getSSLContext() {
         try {
@@ -208,24 +251,28 @@ public abstract class HbxSite extends Site {
     }
 
     protected String getRelativeUrl(String relativeUrl, AccountInfo accountInfo) throws Exception {
+        return getRelativeUrl(siteConfig, relativeUrl, accountInfo);
+    }
+
+    protected String getRelativeUrl(ServerSiteConfig serverSiteConfig, String relativeUrl, AccountInfo accountInfo) throws Exception {
         String fullyQualifiedUrl;
         if (relativeUrl.charAt(0) == '/') {
-            fullyQualifiedUrl = String.format(BrokerApplication.getBrokerApplication().getString(R.string.format_url_path_with_leading_slash), siteConfig.scheme, siteConfig.host, siteConfig.port, relativeUrl);
+            fullyQualifiedUrl = String.format(BrokerApplication.getBrokerApplication().getString(R.string.format_url_path_with_leading_slash), serverSiteConfig.scheme, serverSiteConfig.host, serverSiteConfig.port, relativeUrl);
         } else {
-            fullyQualifiedUrl = String.format(BrokerApplication.getBrokerApplication().getString(R.string.format_url_path_without_leading_slash), siteConfig.scheme, siteConfig.host, siteConfig.port, relativeUrl);
+            fullyQualifiedUrl = String.format(BrokerApplication.getBrokerApplication().getString(R.string.format_url_path_without_leading_slash), serverSiteConfig.scheme, serverSiteConfig.host, serverSiteConfig.port, relativeUrl);
         }
         return getFullyQualifiedUrl(fullyQualifiedUrl, accountInfo);
     }
 
     @Override
     public String GetEmployerList(Events.GetEmployerList getEmployerList, AccountInfo accountInfo) throws Exception {
-        String result = getRelativeUrl(employersList, accountInfo);
+        String result = getRelativeUrl(enrollServerSiteConfig, employersList, accountInfo);
         return result;
     }
 
     @Override
     public String GetEmployer(Events.GetEmployer getEmployer, String url, AccountInfo accountInfo) throws Exception {
-        return getRelativeUrl(url, accountInfo);
+        return getRelativeUrl(enrollServerSiteConfig, url, accountInfo);
     }
 
     @Override

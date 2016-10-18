@@ -4,6 +4,7 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
+import java.net.URISyntaxException;
 import java.net.URL;
 
 /**
@@ -14,6 +15,9 @@ public abstract class Site {
 
     abstract void Login(AccountInfo accountInfo) throws IOException, Exception;
     abstract void Logout(Events.LogoutRequest logout) throws IOException;
+
+    public void initEnrollServerInfo(String enrollServerBaseUrl) throws URISyntaxException {}
+
     abstract String GetEmployerList(Events.GetEmployerList getEmployerList, AccountInfo accountInfo) throws Exception;
     abstract String GetEmployer(Events.GetEmployer getEmployer, String url, AccountInfo accountInfo) throws Exception;
     abstract String GetCarriers(Events.GetCarriers getCarriers) throws IOException;
@@ -37,5 +41,4 @@ public abstract class Site {
         }
         return response.toString();
     }
-
 }

@@ -103,9 +103,16 @@ public class MobileServerSite extends HbxSite {
         FormBody formBody = new FormBody.Builder()
                 .add("security_answer", accountInfo.securityAnswer)
                 .build();
-        String json = super.GetCarriers(null);
+
+        String url;
+        if (accountInfo.location.substring(0,4).compareToIgnoreCase("http") == 0){
+            url = accountInfo.location;
+        } else {
+            url = siteConfig.scheme + "://" + siteConfig.host + accountInfo.location;
+        }
+
         Request request = new Request.Builder()
-                .url(accountInfo.location)
+                .url(url)
                 .post(formBody)
                 .build();
 
@@ -123,6 +130,8 @@ public class MobileServerSite extends HbxSite {
 
         accountInfo.enrollServer = securityAnswerResponse.enroll_server;
         accountInfo.sessionId = securityAnswerResponse.session_id;
+
+        initEnrollServerInfo(securityAnswerResponse.enroll_server);
     }
 
     @Override
