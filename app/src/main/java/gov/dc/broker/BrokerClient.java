@@ -2,9 +2,10 @@ package gov.dc.broker;
 
 import com.google.gson.annotations.SerializedName;
 
+import org.joda.time.DateTime;
+import org.joda.time.Duration;
+
 import java.io.Serializable;
-import java.util.Calendar;
-import java.util.Date;
 import java.util.List;
 
 public class BrokerClient implements Serializable {
@@ -16,22 +17,22 @@ public class BrokerClient implements Serializable {
     public String employerDetailsUrl;
 
     @SerializedName("open_enrollment_begins")
-    public Date openEnrollmentBegins;
+    public DateTime openEnrollmentBegins;
 
     @SerializedName("open_enrollment_ends")
-    public Date openEnrollmentEnds;
+    public DateTime openEnrollmentEnds;
 
     @SerializedName("plan_year_begins")
-    public Date planYearBegins;
+    public DateTime planYearBegins;
 
     @SerializedName("renewal_in_progress")
     public boolean renewalInProgress;
 
     @SerializedName("renewal_application_available")
-    public Date renewalApplicationAvailable;
+    public DateTime renewalApplicationAvailable;
 
     @SerializedName("renewal_application_due")
-    public Date renewalApplicationDue;
+    public DateTime renewalApplicationDue;
 
     @SerializedName("binder_payment_due")
     public String binderPaymentDue;
@@ -54,15 +55,15 @@ public class BrokerClient implements Serializable {
     @SerializedName("active_general_agency")
     public String generalAgency;
 
-    public boolean isInOpenEnrollment(Date date){
+    public boolean isInOpenEnrollment(DateTime date){
         if (openEnrollmentBegins == null
             || openEnrollmentEnds == null){
             return false;
         }
-        if (openEnrollmentBegins.after(date)){
+        if (openEnrollmentBegins.isAfter(date)){
             return false;
         }
-        if (openEnrollmentEnds.before(date)){
+        if (openEnrollmentEnds.isBefore(date)){
             return false;
         }
         return true;
@@ -76,13 +77,12 @@ public class BrokerClient implements Serializable {
         return employeesTotal - (employeesEnrolled + employessWaived);
     }
 
-    private long getDaysDiff(Date early, Date late){
-        long diffMilliSeconds = late.getTime() - early.getTime();
-        return diffMilliSeconds / 1000/60/60/24;
+    private long getDaysDiff(DateTime early, DateTime late){
+        return (new Duration(early, late)).getStandardDays();
     }
 
     public long getDaysLeft() {
-        return getDaysDiff(Calendar.getInstance().getTime(), openEnrollmentEnds);
+        return getDaysDiff(new DateTime(), openEnrollmentEnds);
     }
 
     public boolean isAlerted(){

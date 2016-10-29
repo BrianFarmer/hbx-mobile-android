@@ -17,7 +17,7 @@
         android:layout_alignParentTop="true"
         android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
         android:title="test title"
-        android:background="@color/mainblue">
+        android:background="@color/titlebar">
     </android.support.v7.widget.Toolbar>
 
     <TextView

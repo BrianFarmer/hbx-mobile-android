@@ -1,10 +1,7 @@
 package gov.dc.broker;
 
 import android.content.Context;
-import android.content.Intent;
 import android.support.v4.app.DialogFragment;
-import android.text.format.DateFormat;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -15,9 +12,10 @@ import android.widget.TextView;
 
 import com.daimajia.swipe.adapters.BaseSwipeAdapter;
 
+import org.joda.time.DateTime;
+import org.joda.time.format.DateTimeFormat;
+
 import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Date;
 
 public class EmployerAdapter extends BaseSwipeAdapter {
     private static final String TAG = "EmployerAdapter";
@@ -55,7 +53,7 @@ public class EmployerAdapter extends BaseSwipeAdapter {
         renewalHeader = new RenewalHeader(this);
         otherItemsHeader = new OtherItemsHeader(this);
 
-        Date now = Calendar.getInstance().getTime();
+        DateTime now = new DateTime();
         int i = 0;
         for (BrokerClient brokerclient : employerList.brokerClients) {
             if (brokerclient.isInOpenEnrollment(now)
@@ -505,10 +503,7 @@ class OpenEnrollmentAlertedWrapper extends BrokerClientWrapper {
         convertView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(mainActivity, ClientDetailsActivity.class);
-                Log.d(TAG, "onClick: launching");
-                intent.putExtra(ClientDetailsActivity.BROKER_CLIENT_ID, getObjectIndex());
-                mainActivity.startActivity(intent);
+                Intents.launchEmployerDetails(mainActivity, getObjectIndex());
             }
         });
         fillSwipeButtons(convertView, mainActivity, brokerClient);
@@ -562,10 +557,7 @@ class OpenEnrollmentNotAlertedWrapper extends BrokerClientWrapper {
         view.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(mainActivityFinal, ClientDetailsActivity.class);
-                Log.d(TAG, "onClick: launching");
-                intent.putExtra(ClientDetailsActivity.BROKER_CLIENT_ID, getObjectIndex());
-                mainActivityFinal.startActivity(intent);
+                Intents.launchEmployerDetails(mainActivityFinal, getObjectIndex());
             }
         });
         fillSwipeButtons(view, mainActivity, brokerClient);
@@ -633,17 +625,14 @@ class RenewalWrapper extends BrokerClientWrapper {
         TextView companyName = (TextView)view.findViewById(R.id.textViewCompanyName);
         companyName.setText((brokerClient).employerName);
         TextView planYear = (TextView)view.findViewById(R.id.textViewPlanYear);
-        CharSequence dateString = DateFormat.format("MMM yy", brokerClient.planYearBegins);
+        CharSequence dateString = DateTimeFormat.forPattern("MMM yy").print(brokerClient.planYearBegins);
         planYear.setText(dateString);
         TextView daysLeft = (TextView)view.findViewById(R.id.textViewDaysLeft);
         daysLeft.setText(String.valueOf(brokerClient.getDaysLeft()));
         view.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(mainActivityFinal, ClientDetailsActivity.class);
-                Log.d(TAG, "onClick: launching");
-                intent.putExtra(ClientDetailsActivity.BROKER_CLIENT_ID, getObjectIndex());
-                mainActivityFinal.startActivity(intent);
+                Intents.launchEmployerDetails(mainActivityFinal, getObjectIndex());
             }
         });
         fillSwipeButtons(view, mainActivity, brokerClient);
@@ -706,16 +695,13 @@ class OtherWrapper extends BrokerClientWrapper {
         companyName.setText((brokerClient).employerName);
         if (brokerClient.planYearBegins != null) {
             TextView planYear = (TextView) view.findViewById(R.id.textViewPlanYear);
-            CharSequence dateString = DateFormat.format("MMM yy", brokerClient.planYearBegins);
+            CharSequence dateString = DateTimeFormat.forPattern("MMM yy").print(brokerClient.planYearBegins);
             planYear.setText(dateString);
         }
         view.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(mainActivityFinal, ClientDetailsActivity.class);
-                Log.d(TAG, "onClick: launching");
-                intent.putExtra(ClientDetailsActivity.BROKER_CLIENT_ID, getObjectIndex());
-                mainActivityFinal.startActivity(intent);
+                Intents.launchEmployerDetails(mainActivityFinal, getObjectIndex());
             }
         });
         fillSwipeButtons(view, mainActivity, brokerClient);

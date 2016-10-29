@@ -6,10 +6,11 @@ import android.content.DialogInterface;
 import android.graphics.Typeface;
 import android.os.Build;
 import android.os.Bundle;
+import android.support.test.espresso.idling.CountingIdlingResource;
 import android.support.v4.app.DialogFragment;
 import android.support.v7.app.AlertDialog;
-import android.support.v7.app.AppCompatActivity;
 import android.text.method.PasswordTransformationMethod;
+import android.util.Log;
 import android.util.TypedValue;
 import android.view.KeyEvent;
 import android.view.View;
@@ -19,33 +20,38 @@ import android.widget.EditText;
 import android.widget.Switch;
 import android.widget.TextView;
 
-import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 
 /**
  * A login screen that offers login via email/password.
  */
-public class LoginActivity extends AppCompatActivity {
+public class LoginActivity extends BrokerActivity {
 
+    private static String TAG = "LoginActivity";
     private static final int FINGERPRINT_PERMISSION_REQUEST_CODE = 15;
+
     // UI references.
     private EditText emailAddress;
     private EditText password;
     private Switch rememberMe;
     private View mProgressView;
     private View mLoginFormView;
-    public EventBus eventBus;
 
     private ProgressDialog progressDialog;
+
+    private CountingIdlingResource idlingResource = new CountingIdlingResource("Login");
+
+
+    public CountingIdlingResource getIdlingResource() {
+        return idlingResource;
+    }
+
 
     @TargetApi(Build.VERSION_CODES.M)
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
-        eventBus = EventBus.getDefault();
-        eventBus.register(this);
 
         setContentView(R.layout.activity_login);
         // Set up the login form.
@@ -76,12 +82,13 @@ public class LoginActivity extends AppCompatActivity {
             }
         });
 
-        eventBus.post(new Events.GetLogin());
+        idlingResource.increment();
+        messages.getLogin();
     }
 
     private void attemptLogin() {
         showProgress();
-        eventBus.post(new Events.LoginRequest(emailAddress.getText(), password.getText(), rememberMe.isChecked()));
+        messages.loginRequest(new Events.LoginRequest(emailAddress.getText(), password.getText(), rememberMe.isChecked()));
     }
 
     private void showProgress() {
@@ -183,7 +190,11 @@ public class LoginActivity extends AppCompatActivity {
     }
 
     public void securityDialogOkClicked(String securityAnswer) {
-        showProgress();
-        eventBus.post(new Events.SecurityAnswer(securityAnswer));
+        try{
+            showProgress();
+            messages.securityAnswer(securityAnswer);
+        } catch (Exception e) {
+            Log.e(TAG, "Exception posting SecurityAnswer", e);
+        }
     }
 }

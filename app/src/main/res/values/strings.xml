@@ -119,4 +119,10 @@
     <string name="NoPlanYearBeginDateMessagge">Not yet defined</string>
     <string name="dchbx_des_encryption_key">DCHBXBrokerApp</string>
     <string name="enable_fingerprint_login">Enable Fingerprint Login</string>
+    <string name="info_tab_name">Info</string>
+    <string name="roster_tab_name">Roster</string>
+    <string name="costs_tab_name">Costs</string>
+    <string name="plans_tab_name">Plans</string>
+    <string name="participation">Participation</string>
+    <string name="monthly_costs">Monthly Costs</string>
 </resources>

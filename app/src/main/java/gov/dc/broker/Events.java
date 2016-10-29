@@ -224,9 +224,7 @@ public class Events {
 
         public boolean isLoggedIn() {
             return (this.accountName != null
-            && this.accountName.length() > 0
-            && this.password != null
-            && this.password.length() > 0);
+            && this.accountName.length() > 0);
         }
 
         public CharSequence getSecurityAnswer() {

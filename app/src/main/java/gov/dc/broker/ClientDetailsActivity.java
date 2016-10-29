@@ -6,7 +6,6 @@ import android.os.Bundle;
 import android.support.v4.app.DialogFragment;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.text.format.DateFormat;
 import android.util.Log;
 import android.view.View;
 import android.widget.ImageButton;
@@ -15,11 +14,17 @@ import android.widget.TextView;
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
+import org.joda.time.DateTime;
+import org.joda.time.Days;
+import org.joda.time.Duration;
+import org.joda.time.Years;
 
 import java.text.NumberFormat;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.concurrent.TimeUnit;
+
+import static gov.dc.broker.Utilities.DateAsString;
 
 /**
  * An example full-screen activity that shows and hides the system UI (i.e.
@@ -27,7 +32,6 @@ import java.util.concurrent.TimeUnit;
  */
 public class ClientDetailsActivity extends AppCompatActivity {
     private static final String TAG = "ClientDetailsActivity";
-    public static final String BROKER_CLIENT_ID = "BrokerClientId";
 
     private EventBus eventBus;
     private Toolbar toolbar;
@@ -39,7 +43,7 @@ public class ClientDetailsActivity extends AppCompatActivity {
 
         final ClientDetailsActivity _this = this;
         Intent intent = getIntent();
-        clientId = intent.getIntExtra(BROKER_CLIENT_ID, -1);
+        clientId = intent.getIntExtra(Intents.BROKER_CLIENT_ID, -1);
 
         if (clientId == -1){
             Log.d(TAG, "onCreate: no client id found");
@@ -51,13 +55,6 @@ public class ClientDetailsActivity extends AppCompatActivity {
 
     }
 
-    private CharSequence DateAsString(Date date){
-        return DateFormat.format("MMM dd, yyyy", date);
-    }
-
-    private CharSequence DateAsMonthYear(Date date){
-        return DateFormat.format("MMM dd, yyyy", date);
-    }
 
     private long dateDifference(Date start, Date end) {
         Calendar cal = Calendar.getInstance();
@@ -70,7 +67,7 @@ public class ClientDetailsActivity extends AppCompatActivity {
         Calendar calendar = Calendar.getInstance();
         calendar.setTime(now);
         calendar.add(Calendar.MONTH, 1);
-        return DateAsString(calendar.getTime());
+        return DateAsString(new DateTime());
     }
 
     private void showRenewalClients(BrokerClient brokerClient, BrokerClientDetails brokerClientDetails) {
@@ -231,15 +228,15 @@ public class ClientDetailsActivity extends AppCompatActivity {
         fillCoverageHeading(brokerClient);
         TextView textViewRenewalAvailable = (TextView)findViewById(R.id.textViewRenewalAvailable);
         if (brokerClient.renewalApplicationAvailable != null) {
-            textViewRenewalAvailable.setText(DateAsString(brokerClient.renewalApplicationAvailable));
+            textViewRenewalAvailable.setText(Utilities.DateAsString(brokerClient.renewalApplicationAvailable));
         }
         TextView textViewNextCoverageYearBegins = (TextView)findViewById(R.id.textViewNextCoverageYearBegins);
         if (brokerClient.planYearBegins != null) {
-            textViewNextCoverageYearBegins.setText(DateAsString(brokerClient.planYearBegins));
+            textViewNextCoverageYearBegins.setText(Utilities.DateAsString(brokerClient.planYearBegins));
         }
         TextView textViewOpenEnrollmentEnds= (TextView)findViewById(R.id.textViewOpenEnrollmentEnds);
         if (brokerClient.openEnrollmentEnds != null) {
-            textViewOpenEnrollmentEnds.setText(DateAsString(brokerClient.openEnrollmentEnds));
+            textViewOpenEnrollmentEnds.setText(Utilities.DateAsString(brokerClient.openEnrollmentEnds));
         }
     }
 
@@ -247,12 +244,9 @@ public class ClientDetailsActivity extends AppCompatActivity {
         TextView textViewCoverageInfoSubheadingLabel = (TextView)findViewById(R.id.textViewCoverageInfoSubheadingLabel);
         Resources resources = getResources();
         if (brokerClient.planYearBegins != null) {
-            Date startDate = brokerClient.planYearBegins;
-            Calendar cal = Calendar.getInstance();
-            cal.setTime(startDate);
-            cal.add(Calendar.YEAR, 1);
-            cal.add(Calendar.HOUR, -24);
-            Date endDate = cal.getTime();
+            DateTime startDate = brokerClient.planYearBegins;
+            DateTime oneYearOut = startDate.plus(new Duration(Years.ONE));
+            DateTime endDate = oneYearOut.minus(new Duration(Days.ONE));
             String formatString = resources.getString(R.string.coverage_year);
             String coverageDates = String.format(formatString, DateAsString(startDate), DateAsString(endDate));
             textViewCoverageInfoSubheadingLabel.setText(coverageDates);
@@ -272,14 +266,14 @@ public class ClientDetailsActivity extends AppCompatActivity {
         TextView enrollmentEnds = (TextView) findViewById(R.id.textViewOpenEnrollmentEnds);
         enrollmentEnds.setText(DateAsString(brokerClient.openEnrollmentEnds));
         TextView daysLeft = (TextView) findViewById(R.id.textViewDaysLeft);
-        daysLeft.setText(Long.toString(dateDifference(brokerClient.openEnrollmentBegins, brokerClient.openEnrollmentEnds)));
+        daysLeft.setText(Long.toString(Utilities.dateDifferenceDays(brokerClient.openEnrollmentBegins, brokerClient.openEnrollmentEnds)));
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void doThis(Events.BrokerClient  brokerClientEvent) {
         BrokerClient brokerClient = brokerClientEvent.getBrokerClient();
 
-        if (brokerClient.isInOpenEnrollment(new Date())) {
+        if (brokerClient.isInOpenEnrollment(new DateTime())) {
             if (brokerClient.isAlerted()){
                 showAlerted(brokerClient, brokerClientEvent.getBrokerClientDetails());
             } else {

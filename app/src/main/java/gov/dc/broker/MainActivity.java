@@ -7,7 +7,6 @@ import android.os.Bundle;
 import android.support.design.widget.NavigationView;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
-import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.MenuItem;
@@ -19,19 +18,14 @@ import android.widget.TextView;
 
 import com.wdullaer.swipeactionadapter.SwipeActionAdapter;
 
-import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 
 import static gov.dc.broker.Events.GetEmployerList;
 
-//import com.wdullaer.swipeactionadapter.SwipeActionAdapter;
-//import com.wdullaer.swipeactionadapter.SwipeDirection;
 
-
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends BrokerActivity {
     private final String TAG = "MainActivity";
-    public EventBus eventBus;
 
     private RelativeLayout contentView;
     private DrawerLayout mDrawerLayout;
@@ -151,24 +145,25 @@ public class MainActivity extends AppCompatActivity {
     protected void onPause() {
         super.onPause();
         scrollPosition = listViewEmployers.getFirstVisiblePosition();
-        EventBus.getDefault().unregister(this);
+    }
+
+    @Override
+    protected void onDestroy(){
+            finish();
     }
 
     @Override
     protected void onResume() {
         super.onResume();
 
-        eventBus = EventBus.getDefault();
-        eventBus.register(this);
-
-        eventBus.post(new Events.GetLogin());
+        messages.getLogin();
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void doThis(Events.GetLoginResult getLoginResult){
         if (getLoginResult.isLoggedIn()){
             Log.d(TAG, "requesting employer list");
-            eventBus.post(new GetEmployerList());
+            messages.getEmployerList();
         } else {
             showLogin();
             return;
@@ -203,6 +198,11 @@ public class MainActivity extends AppCompatActivity {
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void doThis(Events.EmployerList employerListEvent) {
         EmployerList employerList = employerListEvent.getEmployerList();
+        if (employerListEvent == null
+            || employerListEvent.getEmployerList() == null){
+            showLogin();
+            return;
+        }
         final EmployerAdapter employerAdapter = new EmployerAdapter(this, this.getBaseContext(), employerList);
         listViewEmployers.setAdapter(employerAdapter);
         listViewEmployers.setSelectionFromTop(scrollPosition, 0);
