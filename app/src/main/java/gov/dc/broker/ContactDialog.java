@@ -14,6 +14,7 @@ import android.widget.TextView;
 
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
+import java.util.ArrayList;
 
 public class ContactDialog extends AppCompatDialogFragment {
     private BrokerClient brokerClient;
@@ -28,13 +29,21 @@ public class ContactDialog extends AppCompatDialogFragment {
         view = inflater.inflate(R.layout.contact_action_selection,container, false);
 
         Bundle arguments = getArguments();
+        ContactListAdapter listAdapter;
         brokerClient = (BrokerClient) arguments.getSerializable("BrokerClient");
+        if (brokerClient == null){
+            ContactInfo contactInfo = (ContactInfo) arguments.getSerializable("ContactInfo");
+            ArrayList<ContactInfo> contactInfos = new ArrayList<>();
+            contactInfos.add(contactInfo);
+            listAdapter = new ContactListAdapter(context, contactInfos, listType, this);
+        } else {
+            listAdapter = new ContactListAdapter(context, brokerClient.contactInfo, listType, this);
+
+        }
         listType = ContactListAdapter.ListType.fromInt(arguments.getInt("ListType"));
 
         final ContactDialog contactDialog = this;
-
         ListView listView = (ListView) view.findViewById(R.id.listView);
-        ContactListAdapter listAdapter = new ContactListAdapter(context, brokerClient, listType, this);
         listView.setAdapter(listAdapter);
         TextView titleBarTextView = (TextView) view.findViewById(R.id.textViewTitleBar);
         titleBarTextView.setText(brokerClient.employerName);
@@ -61,6 +70,16 @@ public class ContactDialog extends AppCompatDialogFragment {
 
         Bundle bundle = new Bundle();
         bundle.putSerializable("BrokerClient", brokerClient);
+        bundle.putInt("ListType", dialogtype.ordinal());
+        contactDialog.setArguments(bundle);
+        return contactDialog;
+    }
+
+    public static ContactDialog build(ContactInfo contactInfo, ContactListAdapter.ListType dialogtype) {
+        ContactDialog contactDialog = new ContactDialog();
+
+        Bundle bundle = new Bundle();
+        bundle.putSerializable("ContactInfo", contactInfo);
         bundle.putInt("ListType", dialogtype.ordinal());
         contactDialog.setArguments(bundle);
         return contactDialog;

@@ -7,9 +7,7 @@ import org.joda.time.DateTime;
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * Created by plast on 7/27/2016.
- */
+
 public class EmployerList {
     @SerializedName("broker_agency")
     public String brokerAgency;

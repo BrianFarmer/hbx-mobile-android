@@ -20,6 +20,7 @@ public abstract class Site {
 
     abstract String GetEmployerList(Events.GetEmployerList getEmployerList, AccountInfo accountInfo) throws Exception;
     abstract String GetEmployer(Events.GetEmployer getEmployer, String url, AccountInfo accountInfo) throws Exception;
+    abstract String getRoster(Events.GetRoster getRoster, String url, AccountInfo accountInfo) throws Exception;
     abstract String GetCarriers(Events.GetCarriers getCarriers) throws IOException;
     abstract void checkSecurityAnswer(AccountInfo accountInfo) throws Exception;
 
@@ -41,4 +42,6 @@ public abstract class Site {
         }
         return response.toString();
     }
+
+    public abstract String getEmployee(Events.GetEmployee getEmployee, BrokerClient client);
 }

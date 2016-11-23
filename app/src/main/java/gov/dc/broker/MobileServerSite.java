@@ -135,6 +135,11 @@ public class MobileServerSite extends HbxSite {
     }
 
     @Override
+    public String getEmployee(Events.GetEmployee getEmployee, BrokerClient client) {
+        return null;
+    }
+
+    @Override
     public void Logout(Events.LogoutRequest logout) throws IOException {
 
     }

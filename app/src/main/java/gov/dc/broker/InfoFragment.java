@@ -1,14 +1,29 @@
 package gov.dc.broker;
 
 import android.os.Bundle;
+import android.support.v4.content.ContextCompat;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
+
+import com.github.mikephil.charting.charts.PieChart;
+import com.github.mikephil.charting.data.Entry;
+import com.github.mikephil.charting.data.PieData;
+import com.github.mikephil.charting.data.PieDataSet;
+import com.github.mikephil.charting.data.PieEntry;
+import com.github.mikephil.charting.formatter.IValueFormatter;
+import com.github.mikephil.charting.utils.ViewPortHandler;
 
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
+
+import java.util.ArrayList;
+
+import gov.dc.broker.models.brokerclient.BrokerClientDetails;
+import gov.dc.broker.models.roster.Roster;
 
 /**
  * Created by plast on 10/21/2016.
@@ -18,8 +33,14 @@ public class InfoFragment extends BrokerFragment {
     private static String TAG = "BrokerFragment";
 
     private int brokerClientId;
+    private Roster roster = null;
     private BrokerClient brokerClient = null;
+    private BrokerClientDetails brokerClientDetails = null;
     private View view;
+    private static boolean renewalsInitiallyOpen = false;
+    private static boolean participationInitiallyOpen = false;
+    private static boolean monthlyCostsInitiallyOpen = false;
+    private String coverageYear;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -44,22 +65,131 @@ public class InfoFragment extends BrokerFragment {
                 return view;
             }
             getMessages().getEmployer(brokerClientId);
+            getMessages().getRoster(brokerClientId);
+        } else {
+            populateField();
         }
+
         return view;
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void doThis(Events.BrokerClient brokerClientEvent) {
         brokerClient = brokerClientEvent.getBrokerClient();
+        brokerClientDetails = brokerClientEvent.getBrokerClientDetails();
+        EmployerDetailsActivity activity = (EmployerDetailsActivity) getActivity();
+        this.coverageYear = activity.getCoverageYear();
+        configureDrawers();
         populateField();
     }
 
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void doThis(Events.RosterResult rosterResult) {
+        roster = rosterResult.getRoster();
+        EmployerDetailsActivity activity = (EmployerDetailsActivity) getActivity();
+        this.coverageYear = activity.getCoverageYear();
+        configureDrawers();
+        populateField();
+    }
+
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void doThis(Events.CoverageYear coverageYear) {
+        this.coverageYear = coverageYear.getYear();
+        populateField();
+    }
+
+    private void configureDrawers(){
+        ImageView renewalDeadlines = (ImageView) view.findViewById(R.id.imageViewRenewalDeadlines);
+        renewalDeadlines.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                invertGroup(view, R.string.renewal_group, R.id.imageViewRenewalDeadlines, R.drawable.uparrow, R.drawable.circle_plus);
+            }
+        });
+        setVisibility(view, R.string.renewal_group, renewalsInitiallyOpen, R.id.imageViewRenewalDeadlines, R.drawable.uparrow, R.drawable.circle_plus);
+        ImageView participation = (ImageView) view.findViewById(R.id.imageViewParticipation);
+        participation.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                invertGroup(view, R.string.participation_group, R.id.imageViewParticipation, R.drawable.uparrow, R.drawable.circle_plus);
+            }
+        });
+        setVisibility(view, R.string.participation_group, participationInitiallyOpen, R.id.imageViewParticipation, R.drawable.uparrow, R.drawable.circle_plus);
+        final ImageView monthlyCosts = (ImageView) view.findViewById(R.id.imageViewMonthlyCosts);
+        monthlyCosts.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                invertGroup(view, R.string.monthly_costs_group, R.id.imageViewMonthlyCosts, R.drawable.uparrow, R.drawable.circle_plus);
+            }
+        });
+        setVisibility(view, R.string.monthly_costs_group, monthlyCostsInitiallyOpen, R.id.imageViewMonthlyCosts, R.drawable.uparrow, R.drawable.circle_plus);
+    }
+
     private void populateField() {
+        if (brokerClient == null
+            || roster == null){
+            return;
+        }
+
         TextView openEnrollmentBegins = (TextView) view.findViewById(R.id.textViewOpenEnrollmentBegins);
         openEnrollmentBegins.setText(Utilities.DateAsString(brokerClient.openEnrollmentBegins));
         TextView openEnrollmentEnds = (TextView) view.findViewById(R.id.textViewOpenEnrollmentEnds);
         openEnrollmentEnds.setText(Utilities.DateAsString(brokerClient.openEnrollmentEnds));
         TextView daysLeft = (TextView) view.findViewById(R.id.textViewDaysLeft);
         daysLeft.setText(Long.toString(Utilities.dateDifferenceDays(brokerClient.openEnrollmentBegins, brokerClient.openEnrollmentEnds)));
+
+        TextView textViewEnrolled = (TextView) view.findViewById(R.id.textViewEnrolled);
+        textViewEnrolled.setText(Integer.toString(brokerClient.employeesEnrolled));
+        TextView textViewWaived = (TextView)view.findViewById(R.id.textViewWaived);
+        textViewWaived.setText(Integer.toString(brokerClient.employessWaived));
+        TextView textViewNotEnrolled = (TextView)view.findViewById(R.id.textViewNotEnrolled);
+        textViewNotEnrolled.setText(Integer.toString(brokerClient.employeesTotal - (brokerClient.employeesEnrolled + brokerClient.employessWaived)));
+        TextView textViewTotalEmployees = (TextView)view.findViewById(R.id.textViewTotalEmployees);
+        textViewTotalEmployees.setText(Integer.toString(brokerClient.employeesTotal));
+
+        configurePieChartData();
+
+        BrokerUtilities.Totals totals = BrokerUtilities.calcTotals(roster.roster, coverageYear.compareToIgnoreCase("active") == 0);
+        TextView textViewEmployerContribution = (TextView)view.findViewById(R.id.textViewEmployerContribution);
+        textViewEmployerContribution.setText(String.format("%.2f", totals.employerTotal));
+        TextView textViewEmployeeContribution = (TextView)view.findViewById(R.id.textViewEmployeeContribution);
+        textViewEmployeeContribution.setText(String.format("%.2f", totals.employeeTotal));
+        TextView textViewTotal = (TextView)view.findViewById(R.id.textViewTotal);
+        textViewTotal.setText(String.format("%.2f", totals.total));
+    }
+
+    private void configurePieChartData() {
+        PieChart pieChart = (PieChart) view.findViewById(R.id.pieChart);
+        pieChart.setUsePercentValues(false);
+        pieChart.setDrawEntryLabels(true);
+        pieChart.setDrawHoleEnabled(false);
+        pieChart.setDescription(null);
+        pieChart.getLegend().setEnabled(false);
+        pieChart.setCenterText("");
+        pieChart.setDrawSliceText(false);
+
+        ArrayList<PieEntry> yValues = new ArrayList<>();
+
+        yValues.add(new PieEntry(2*brokerClient.employeesEnrolled, Integer.toString(brokerClient.employeesEnrolled)));
+        yValues.add(new PieEntry(2*brokerClient.employessWaived, Integer.toString(brokerClient.employessWaived)));
+        int notEnrolledCount = 2*(brokerClient.employeesTotal - (brokerClient.employeesEnrolled + brokerClient.employessWaived));
+        yValues.add(new PieEntry(notEnrolledCount, Integer.toString(notEnrolledCount)));
+
+        PieDataSet dataSet = new PieDataSet(yValues, "");
+        dataSet.setValueTextSize(16f);
+        dataSet.setValueTextColor(ContextCompat.getColor(this.getActivity(), R.color.white));
+        dataSet.setValueFormatter(new IValueFormatter() {
+            @Override
+            public String getFormattedValue(float value, Entry entry, int dataSetIndex, ViewPortHandler viewPortHandler) {
+                return Integer.toString((int)(value/2));
+            }
+        });
+        ArrayList<Integer> colors = new ArrayList<>();
+        colors.add(ContextCompat.getColor(this.getActivity(), R.color.enrolled_color));
+        colors.add(ContextCompat.getColor(this.getActivity(), R.color.waived_color));
+        colors.add(ContextCompat.getColor(this.getActivity(), R.color.not_enrolled_color));
+        dataSet.setColors(colors);
+        PieData data = new PieData(dataSet);
+        pieChart.setData(data);
     }
 }

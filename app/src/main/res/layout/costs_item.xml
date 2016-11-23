@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+
+    <TextView
+        android:text="employee name"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:layout_toLeftOf="@+id/textViewEmployerCost"
+        android:id="@+id/textViewEmployeeName"
+        style="@style/costs_name_text"
+        />
+
+    <TextView
+        android:text="employerCosts"
+        android:layout_width="120sp"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:layout_toLeftOf="@+id/textViewEmployeeCost"
+        android:id="@+id/textViewEmployerCost"
+        style="@style/costs_text"
+        />
+
+    <TextView
+        android:text="employee costs"
+        android:layout_width="120sp"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentEnd="true"
+        android:id="@+id/textViewEmployeeCost"
+        style="@style/costs_text_right_column"
+        />
+</RelativeLayout>

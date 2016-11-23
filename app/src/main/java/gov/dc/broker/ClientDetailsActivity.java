@@ -15,16 +15,12 @@ import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 import org.joda.time.DateTime;
-import org.joda.time.Days;
-import org.joda.time.Duration;
-import org.joda.time.Years;
 
-import java.text.NumberFormat;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.concurrent.TimeUnit;
 
-import static gov.dc.broker.Utilities.DateAsString;
+import gov.dc.broker.models.brokerclient.BrokerClientDetails;
 
 /**
  * An example full-screen activity that shows and hides the system UI (i.e.
@@ -67,7 +63,7 @@ public class ClientDetailsActivity extends AppCompatActivity {
         Calendar calendar = Calendar.getInstance();
         calendar.setTime(now);
         calendar.add(Calendar.MONTH, 1);
-        return DateAsString(new DateTime());
+        return Utilities.DateAsString(new DateTime());
     }
 
     private void showRenewalClients(BrokerClient brokerClient, BrokerClientDetails brokerClientDetails) {
@@ -206,22 +202,22 @@ public class ClientDetailsActivity extends AppCompatActivity {
         TextView monthlyEstimatedCost = (TextView) findViewById(R.id.textViewMonthlyEstimatedCost);
         Resources resources = getResources();
         monthlyEstimatedCost.setText(resources.getString(R.string.estimated_cost_label) + nextMonthString());
+        /*
         if (brokerClientDetails != null) {
             TextView employerContribution = (TextView) findViewById(R.id.textViewEmployerContribution);
-            String employerContributionStriing = NumberFormat.getCurrencyInstance().format(brokerClientDetails.employerContribution);
+            String employerContributionStriing = NumberFormat.getCurrencyInstance().format(brokerClientDetails.);
             employerContribution.setText(employerContributionStriing);
             TextView employeeContribution = (TextView) findViewById(R.id.textViewEmployeeContribution);
             employeeContribution.setText(NumberFormat.getCurrencyInstance().format(brokerClientDetails.employeeContribution));
             TextView totalCost = (TextView) findViewById(R.id.textViewTotal);
             totalCost.setText(NumberFormat.getCurrencyInstance().format(brokerClientDetails.totalPremium));
-        } else {
-            TextView employerContribution = (TextView) findViewById(R.id.textViewEmployerContribution);
-            employerContribution.setText("NA");
-            TextView employeeContribution = (TextView) findViewById(R.id.textViewEmployeeContribution);
-            employeeContribution.setText("NA");
-            TextView totalCost = (TextView) findViewById(R.id.textViewTotal);
-            totalCost.setText("NA");
-        }
+        } else {*/
+        TextView employerContribution = (TextView) findViewById(R.id.textViewEmployerContribution);
+        employerContribution.setText("NA");
+        TextView employeeContribution = (TextView) findViewById(R.id.textViewEmployeeContribution);
+        employeeContribution.setText("NA");
+        TextView totalCost = (TextView) findViewById(R.id.textViewTotal);
+        totalCost.setText("NA");
     }
 
     private void fillCoverageInfo(BrokerClient brokerClient){
@@ -245,10 +241,9 @@ public class ClientDetailsActivity extends AppCompatActivity {
         Resources resources = getResources();
         if (brokerClient.planYearBegins != null) {
             DateTime startDate = brokerClient.planYearBegins;
-            DateTime oneYearOut = startDate.plus(new Duration(Years.ONE));
-            DateTime endDate = oneYearOut.minus(new Duration(Days.ONE));
+            DateTime endDate = Utilities.calculateOneYearOut(startDate);
             String formatString = resources.getString(R.string.coverage_year);
-            String coverageDates = String.format(formatString, DateAsString(startDate), DateAsString(endDate));
+            String coverageDates = String.format(formatString, Utilities.DateAsString(startDate), Utilities.DateAsString(endDate));
             textViewCoverageInfoSubheadingLabel.setText(coverageDates);
         } else {
             textViewCoverageInfoSubheadingLabel.setText(R.string.NoPlanYearBeginDateMessagge);
@@ -262,9 +257,9 @@ public class ClientDetailsActivity extends AppCompatActivity {
 
     private void fillOpenEnrollmentFields(BrokerClient brokerClient) {
         TextView enrollmentBegins = (TextView) findViewById(R.id.textViewOpenEnrollmentBegins);
-        enrollmentBegins.setText(DateAsString(brokerClient.openEnrollmentBegins));
+        enrollmentBegins.setText(Utilities.DateAsString(brokerClient.openEnrollmentBegins));
         TextView enrollmentEnds = (TextView) findViewById(R.id.textViewOpenEnrollmentEnds);
-        enrollmentEnds.setText(DateAsString(brokerClient.openEnrollmentEnds));
+        enrollmentEnds.setText(Utilities.DateAsString(brokerClient.openEnrollmentEnds));
         TextView daysLeft = (TextView) findViewById(R.id.textViewDaysLeft);
         daysLeft.setText(Long.toString(Utilities.dateDifferenceDays(brokerClient.openEnrollmentBegins, brokerClient.openEnrollmentEnds)));
     }

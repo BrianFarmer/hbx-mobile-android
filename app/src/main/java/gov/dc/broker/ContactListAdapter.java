@@ -9,6 +9,7 @@ import android.widget.TextView;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 
 /**
  * Created by plast on 8/31/2016.
@@ -16,7 +17,7 @@ import java.util.HashMap;
 public class ContactListAdapter extends BaseAdapter {
 
     private final Context context;
-    private final BrokerClient brokerClient;
+    private List<ContactInfo> contactInfos;
     private final ListType listType;
     private final LayoutInflater inflater;
     private final ArrayList<ContactItemWrapperBase> listItems;
@@ -43,16 +44,16 @@ public class ContactListAdapter extends BaseAdapter {
 
     }
 
-    public ContactListAdapter(Context context, BrokerClient brokerClient,
+    public ContactListAdapter(Context context, List<ContactInfo> contactInfos,
                               ListType listType, ContactDialog contactDialog){
         this.context = context;
-        this.brokerClient = brokerClient;
+        this.contactInfos = contactInfos;
         this.listType = listType;
         this.inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         listItems = new ArrayList<ContactItemWrapperBase>();
 
         for (ContactInfo contactInfo:
-             brokerClient.contactInfo) {
+             contactInfos) {
             switch (listType){
                 case Email:
                     if (!contactInfo.allEmailsEmpty()){

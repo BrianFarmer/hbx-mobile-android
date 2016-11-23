@@ -37,29 +37,29 @@ public class BrokerApplication extends Application {
         brokerWorker.onHandleIntent(null);
     }
 
-    private Messages messages = null;
-    public Messages getMessages(){
-        if (messages == null){
-            messages = new EventBusMessages();
-        }
-        return messages;
-    }
-
-    public void initActivity(BrokerActivity activity){
-        eventBus = EventBus.getDefault();
-        eventBus.register(activity);
-    }
-
-    public void initFragment(BrokerFragment fragment) {
-        eventBus = EventBus.getDefault();
-        eventBus.register(fragment);
-    }
-
     public void finish(BrokerActivity activity) {
-        EventBus.getDefault().unregister(activity);
+        if (eventBus != null){
+            EventBus.getDefault().unregister(activity);
+        }
     }
 
-    public void finish(BrokerFragment activity) {
-        EventBus.getDefault().unregister(activity);
+    public void finish(BrokerFragment fragment) {
+        if (eventBus != null) {
+            eventBus.unregister(fragment);
+        }
+    }
+
+    public void pauseActivity(BrokerActivity activity) {
+        if (eventBus != null){
+            eventBus.unregister(activity);
+        }
+    }
+
+    public Messages getMessages(BrokerActivity activity) {
+        return new EventBusMessages(activity);
+    }
+
+    public Messages getMessages(BrokerFragment fragment) {
+        return new EventBusMessages(fragment);
     }
 }

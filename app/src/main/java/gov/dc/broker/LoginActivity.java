@@ -83,12 +83,12 @@ public class LoginActivity extends BrokerActivity {
         });
 
         idlingResource.increment();
-        messages.getLogin();
+        getMessages().getLogin();
     }
 
     private void attemptLogin() {
         showProgress();
-        messages.loginRequest(new Events.LoginRequest(emailAddress.getText(), password.getText(), rememberMe.isChecked()));
+        getMessages().loginRequest(new Events.LoginRequest(emailAddress.getText(), password.getText(), rememberMe.isChecked()));
     }
 
     private void showProgress() {
@@ -192,7 +192,7 @@ public class LoginActivity extends BrokerActivity {
     public void securityDialogOkClicked(String securityAnswer) {
         try{
             showProgress();
-            messages.securityAnswer(securityAnswer);
+            getMessages().securityAnswer(securityAnswer);
         } catch (Exception e) {
             Log.e(TAG, "Exception posting SecurityAnswer", e);
         }

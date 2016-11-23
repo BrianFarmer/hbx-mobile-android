@@ -408,10 +408,14 @@ public class BackdoorSite extends HbxSite {
         BrokerWorker.eventBus.post(new Events.LoggedOutResult());
     }
 
-
     @Override
     public void checkSecurityAnswer(AccountInfo accountInfo) {
         accountInfo.enrollServer = root;
 
+    }
+
+    @Override
+    public String getEmployee(Events.GetEmployee getEmployee, BrokerClient client) {
+        return null;
     }
 }

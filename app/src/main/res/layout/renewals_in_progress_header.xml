@@ -16,11 +16,11 @@
         style="@style/EmployerListSectionHeaderText" />
     <ImageView
         android:id="@+id/imageViewCircle"
-        android:layout_height="60dp"
-        android:layout_width="60dp"
-        android:paddingTop="7dp"
-        android:paddingBottom="7dp"
-        android:layout_marginRight="29dp"
+        android:layout_height="60sp"
+        android:layout_width="60sp"
+        android:paddingTop="7sp"
+        android:paddingBottom="7sp"
+        android:layout_marginRight="12dp"
         android:layout_alignParentRight="true"
         android:layout_alignTop="@+id/textViewSectionName"
         android:layout_alignBottom="@+id/textViewSectionName"
@@ -28,16 +28,14 @@
         android:background="@android:color/transparent"/>
     <Button
         android:id="@+id/buttonCount"
-        android:layout_height="60dp"
-        android:layout_width="60dp"
-        android:paddingTop="7dp"
-        android:paddingBottom="7dp"
-        android:layout_marginRight="29dp"
+        android:layout_height="60sp"
+        android:layout_width="60sp"
+        android:layout_marginRight="12sp"
         android:layout_alignParentRight="true"
         android:layout_alignTop="@+id/textViewSectionName"
         android:layout_alignBottom="@+id/textViewSectionName"
         android:textColor="#ffffff"
-        android:textSize="11dp"
+        android:textSize="15sp"
         android:text="1"
         android:background="@android:color/transparent"/>
     <RelativeLayout

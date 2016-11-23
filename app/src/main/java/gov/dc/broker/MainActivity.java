@@ -21,7 +21,6 @@ import com.wdullaer.swipeactionadapter.SwipeActionAdapter;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 
-import static gov.dc.broker.Events.GetEmployerList;
 
 
 public class MainActivity extends BrokerActivity {
@@ -103,7 +102,7 @@ public class MainActivity extends BrokerActivity {
                         startActivity(phoneIntent);
                         return true;
                     case R.id.nav_logout:
-                        eventBus.post(new Events.LogoutRequest());
+                        getMessages().logoutRequest();
                         return true;
                     case R.id.nav_carriers:
                         Intent carrierIntent = new Intent(mainActivity, CarriersActivity.class);
@@ -141,6 +140,7 @@ public class MainActivity extends BrokerActivity {
             }
         };
     }
+
     @Override
     protected void onPause() {
         super.onPause();
@@ -149,21 +149,21 @@ public class MainActivity extends BrokerActivity {
 
     @Override
     protected void onDestroy(){
-            finish();
+        super.onDestroy();
     }
 
     @Override
     protected void onResume() {
         super.onResume();
 
-        messages.getLogin();
+        getMessages().getLogin();
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void doThis(Events.GetLoginResult getLoginResult){
         if (getLoginResult.isLoggedIn()){
             Log.d(TAG, "requesting employer list");
-            messages.getEmployerList();
+            getMessages().getEmployerList();
         } else {
             showLogin();
             return;

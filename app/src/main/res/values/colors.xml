@@ -4,15 +4,19 @@
     <color name="colorPrimaryDark">#303F9F</color>
     <color name="colorAccent">#FF4081</color>
     <color name="alertRed">#ed1c24</color>
+    <color name="light_blue">#00a3e2</color>
+    <color name="blueish_green">#00a99e</color>
+    <color name="purple">#625ba8</color>
     <color name="pageBackground">#e1e1e1</color>
     <color name="black_overlay">#66000000</color>
     <color name="mainblue">#007bc4</color>
     <color name="drawer1green">#00a993</color>
-    <color name="drawer2blue">#00a3e2</color>
-    <color name="drawer3purple">#625ba8</color>
+    <color name="drawer2blue">@color/light_blue</color>
+    <color name="drawer3purple">@color/purple</color>
     <color name="alertred">#f21f28</color>
     <color name="pagebggray">#e1e1e1</color>
     <color name="textgray">#555555</color>
+    <color name="lightgray">#ebebeb</color>
     <color name="textmediumgray">#959595</color>
     <color name="textgreen">#018b01</color>
     <color name="white">#ffffff</color>
@@ -23,4 +27,15 @@
     <color name="selected_tab_color">@color/mainblue</color>
     <color name="titlebar">@color/mainblue</color>
     <color name="alertColor">@color/alertRed</color>
+    <color name="enrolled_color">#69a30d</color>
+    <color name="waived_color">#eaaa00</color>
+    <color name="terminated_color">#625ba8</color>
+    <color name="not_enrolled_color">#e72b2d</color>
+    <color name="total_employees_color">@color/black</color>
+    <color name="roster_header_background">@color/lightgray</color>
+    <color name="roster_filters_background">#d9d9d9</color>
+    <color name="employee_costs">@color/light_blue</color>
+    <color name="employer_costs">@color/blueish_green</color>
+    <color name="total_costs">@color/purple</color>
+    <color name="contribution_text">#044972</color>
 </resources>

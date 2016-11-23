@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+>
+    <TextView
+        android:id="@+id/textViewCompanyName"
+        android:text=""
+        android:layout_below="@+id/toolbar"
+        style="@style/Title2"
+        />
+    <TextView
+        android:id="@+id/textViewEnrollmentStatus"
+        style="@style/Subtitle2"
+        android:text=""
+        android:layout_below="@id/textViewCompanyName"
+        />
+    <LinearLayout
+        android:id="@+id/action_buttons_row"
+        android:orientation="horizontal"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/textViewEnrollmentStatus"
+        android:layout_centerHorizontal="true" >
+        <ImageButton
+            android:id="@+id/imageButtonPhone"
+            android:src="@drawable/phoneicon"
+            style="@style/IconButton" />
+
+        <ImageButton
+            android:id="@+id/imageButtonChat"
+            android:src="@drawable/messageicon"
+            style="@style/IconButton" />
+
+        <ImageButton
+            android:id="@+id/imageButtonLocation"
+            android:src="@drawable/locationicon"
+            style="@style/IconButton" />
+
+        <ImageButton
+            android:id="@+id/imageButtonEmail"
+            android:src="@drawable/emailicon"
+            style="@style/IconButton" />
+    </LinearLayout>
+    <Spinner
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/action_buttons_row"
+        android:layout_centerHorizontal="true"
+        android:id="@+id/spinnerCoverageYear"
+        style="@style/Subtitle2"
+        />
+    <TextView
+        android:id="@+id/textViewCoverageYearLabel"
+        android:text="@string/coverage_year_label"
+        android:layout_below="@+id/spinnerCoverageYear"
+        style="@style/Subtitle2"
+        />
+</RelativeLayout>

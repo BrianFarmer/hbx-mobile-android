@@ -16,6 +16,9 @@ public class BrokerClient implements Serializable {
     @SerializedName("employer_details_url")
     public String employerDetailsUrl;
 
+    @SerializedName("employee_roster_url")
+    public String employeeRosterUrl;
+
     @SerializedName("open_enrollment_begins")
     public DateTime openEnrollmentBegins;
 
@@ -46,6 +49,9 @@ public class BrokerClient implements Serializable {
     @SerializedName("employees_waived")
     public int employessWaived;
 
+    @SerializedName("employees_terminated")
+    public Integer employeesTerminated;
+
     @SerializedName("minimum_participation_required")
     public int minimumParticipationRequired;
 
@@ -54,6 +60,9 @@ public class BrokerClient implements Serializable {
 
     @SerializedName("active_general_agency")
     public String generalAgency;
+
+    @SerializedName("billing_report_date")
+    public String billingReportDate;
 
     public boolean isInOpenEnrollment(DateTime date){
         if (openEnrollmentBegins == null

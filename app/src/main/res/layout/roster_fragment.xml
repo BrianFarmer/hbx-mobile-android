@@ -1,18 +1,44 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                xmlns:app="http://schemas.android.com/apk/res-auto"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent">
 
     <TextView
-        android:text="roster fragment"
+        android:text="@string/name_header"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentTop="true"
         android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true"
-        android:layout_marginLeft="43dp"
-        android:layout_marginStart="43dp"
-        android:layout_marginTop="106dp"
-        android:id="@+id/textView3"
+        android:layout_alignRight="@+id/textViewStatusColumnHeader"
+        android:id="@+id/textViewNameColumnHeader"
+        style="@style/roster_name_text"
         />
+    <TextView
+        android:text="@string/status_header"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/textViewStatusColumnHeader"
+        android:layout_alignParentTop="true"
+        android:layout_toLeftOf="@+id/imageViewDownArrow"
+        style="@style/roster_status_header_text"
+        />
+    <ImageView
+        android:layout_width="20sp"
+        android:layout_height="20dp"
+        app:srcCompat="@drawable/open_carrot"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentRight="true"
+        android:layout_alignBottom="@+id/textViewStatusColumnHeader"
+        android:id="@+id/imageViewDownArrow"
+        style="@style/roster_status_carrot"
+        />
+    <ListView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_alignParentLeft="true"
+        android:layout_below="@+id/textViewNameColumnHeader"
+        android:id="@+id/listViewRoster"
+        />
+
 </RelativeLayout>

@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                xmlns:tools="http://schemas.android.com/tools"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                style="@style/DialogStyle">
+
+    <TextView
+        android:id="@+id/employeeFilterTitleBar"
+        style="@style/contactInfoTitleBar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:maxLines="2"
+        android:text="@string/employee_status_filter"
+        />
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/linearLayoutRosterFilters"
+        android:orientation="vertical"
+        android:layout_below="@+id/employeeFilterTitleBar"
+        android:background="@color/roster_filters_background"
+        >
+        <TextView
+            android:text="@string/active_status_roster_filter_header"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            style="@style/roster_filter_header"
+            android:id="@+id/textViewActiveStatus"
+            />
+        <TextView
+            android:text="@string/enrolled_label"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            style="@style/roster_filter_enrolled"
+            android:id="@+id/textViewEnrolledFilter"
+            />
+        <TextView
+            android:text="@string/waived_label"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            style="@style/roster_filter_waived"
+            android:id="@+id/textViewWaivedFilter"
+            />
+        <TextView
+            android:text="@string/not_enrolled_label"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            style="@style/roster_filter_not_enrolled"
+            android:id="@+id/textViewNotEnrolledFilter"
+            />
+        <TextView
+            android:text="@string/terminated"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            style="@style/roster_filter_terminated"
+            android:id="@+id/textViewTerminatedFilter"
+            />
+
+        <Space
+            android:layout_width="match_parent"
+            android:layout_height="10sp"
+            style="@style/roster_filter_space"
+            />
+
+        <TextView
+            android:text="@string/no_filter_label"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            style="@style/roster_filter_no_filter"
+            android:id="@+id/textViewClearFilter"
+            />
+    </LinearLayout>
+
+    <Button
+        android:id="@+id/buttonCancel"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/linearLayoutRosterFilters"
+        android:layout_weight="1"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="20dp"
+        android:background="@color/alertRed"
+        android:textColor="@color/white"
+        android:textAllCaps="true"
+        android:textSize="15sp"
+        android:text="@string/cancel" />
+
+</RelativeLayout>

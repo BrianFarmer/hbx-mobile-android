@@ -40,6 +40,11 @@ public class GitSite extends Site {
     }
 
     @Override
+    String getRoster(Events.GetRoster getRoster, String url, AccountInfo accountInfo) throws Exception {
+        return getUrl(url);
+    }
+
+    @Override
     public String GetCarriers(Events.GetCarriers getCarriers) throws IOException{
         return getUrl("https://dchealthlink.com/shared/json/carriers.json");
     }
@@ -47,5 +52,10 @@ public class GitSite extends Site {
     @Override
     public void checkSecurityAnswer(AccountInfo accountInfo) {
 
+    }
+
+    @Override
+    public String getEmployee(Events.GetEmployee getEmployee, BrokerClient client) {
+        return null;
     }
 }

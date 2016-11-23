@@ -4,15 +4,41 @@
                 android:layout_height="match_parent">
 
     <TextView
-        android:text="costs fragment"
+        android:text="@string/name_header"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentTop="true"
         android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true"
-        android:layout_marginLeft="76dp"
-        android:layout_marginStart="76dp"
-        android:layout_marginTop="166dp"
-        android:id="@+id/textView4"
+        android:layout_toLeftOf="@+id/textViewEmployerCostsHeader"
+        android:id="@+id/textViewNameColumnHeader"
+        style="@style/costs_header_text_name"
         />
+    <TextView
+        android:text="@string/employer_header"
+        android:layout_width="120sp"
+        android:layout_height="wrap_content"
+        android:id="@+id/textViewEmployerCostsHeader"
+        android:layout_alignParentTop="true"
+        android:layout_toLeftOf="@+id/textViewEmployeeCostsHeader"
+        style="@style/costs_header_text"
+        />
+    <TextView
+        android:text="@string/employee_header"
+        android:layout_width="120sp"
+        android:layout_height="wrap_content"
+        android:id="@+id/textViewEmployeeCostsHeader"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentRight="true"
+        style="@style/costs_header_text"
+        />
+
+    <ListView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_below="@+id/textViewNameColumnHeader"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:id="@+id/listViewEmployeeCosts"
+        />
+
 </RelativeLayout>

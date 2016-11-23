@@ -2,6 +2,9 @@ package gov.dc.broker;
 
 import android.widget.ImageView;
 
+import gov.dc.broker.models.brokerclient.BrokerClientDetails;
+import gov.dc.broker.models.roster.Roster;
+
 /**
  * Created by plast on 7/26/2016.
  */
@@ -73,6 +76,17 @@ public class Events {
         }
     }
 
+    static public class GetRoster extends CancelableRequest {
+        private int employerId;
+
+        public GetRoster(int employerId){
+            this.employerId = employerId;
+        }
+        public int getEmployerId() {
+            return employerId;
+        }
+    }
+
     static public class GetCarrierImage extends CancelableRequest {
         private String url;
         private ImageView imageView;
@@ -136,10 +150,10 @@ public class Events {
 
     static public class BrokerClient extends ResponseToRequest{
         private final gov.dc.broker.BrokerClient brokerClient;
-        private final gov.dc.broker.BrokerClientDetails brokerClientDetails;
+        private final BrokerClientDetails brokerClientDetails;
 
         public BrokerClient(int id, gov.dc.broker.BrokerClient brokerClient,
-                            gov.dc.broker.BrokerClientDetails brokerClientDetails) {
+                            BrokerClientDetails brokerClientDetails) {
             super(id);
             this.brokerClient = brokerClient;
             this.brokerClientDetails = brokerClientDetails;
@@ -151,6 +165,19 @@ public class Events {
 
         public BrokerClientDetails getBrokerClientDetails() {
             return brokerClientDetails;
+        }
+    }
+
+    static public class RosterResult extends ResponseToRequest{
+        private final Roster roster;
+
+        public RosterResult(int id, gov.dc.broker.models.roster.Roster roster) {
+            super(id);
+            this.roster = roster;
+        }
+
+        public Roster getRoster() {
+            return roster;
         }
     }
 
@@ -257,7 +284,7 @@ public class Events {
         }
     }
 
-    static public class SecurityAnswer {
+    static public class SecurityAnswer extends CancelableRequest {
         private final String securityAnswer;
 
         public SecurityAnswer(String securityAnswer) {
@@ -266,6 +293,53 @@ public class Events {
 
         public String getSecurityAnswer() {
             return securityAnswer;
+        }
+    }
+
+    static public class GetEmployee extends CancelableRequest {
+        private final int employeeId;
+        private final int employerId;
+
+        public GetEmployee(int employeeId, int employerId) {
+            this.employeeId = employeeId;
+            this.employerId = employerId;
+        }
+
+        public int getEmployerId() {
+            return employerId;
+        }
+
+        public int getEmployeeId(){
+            return employeeId;
+        }
+    }
+
+    static public class Employee {
+        private final int employeeId;
+        private final int employerId;
+        private final gov.dc.broker.models.roster.Employee employee;
+
+        public Employee(int employeeId, int employerId, gov.dc.broker.models.roster.Employee employee) {
+
+            this.employeeId = employeeId;
+            this.employerId = employerId;
+            this.employee = employee;
+        }
+
+        public gov.dc.broker.models.roster.Employee getEmployee() {
+            return employee;
+        }
+    }
+
+    static public class CoverageYear {
+        private final String year;
+
+        public CoverageYear(String year) {
+            this.year = year;
+        }
+
+        public String getYear() {
+            return year;
         }
     }
 }

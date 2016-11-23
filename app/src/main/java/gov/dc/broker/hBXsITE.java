@@ -276,6 +276,11 @@ public abstract class HbxSite extends Site {
     }
 
     @Override
+    public String getRoster(Events.GetRoster getRoster, String url, AccountInfo accountInfo) throws Exception {
+        return getRelativeUrl(enrollServerSiteConfig, url, accountInfo);
+    }
+
+    @Override
     public String GetCarriers(Events.GetCarriers getCarriers) throws IOException{
         return getUrl("https://dchealthlink.com/shared/json/carriers.json");
     }

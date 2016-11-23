@@ -10,8 +10,11 @@ import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.Spinner;
 import android.widget.TabHost;
 import android.widget.TabWidget;
 import android.widget.TextView;
@@ -19,6 +22,8 @@ import android.widget.TextView;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 import org.joda.time.DateTime;
+
+import java.util.ArrayList;
 
 /**
  * Created by plast on 10/21/2016.
@@ -38,6 +43,7 @@ public class EmployerDetailsActivity extends BrokerActivity {
     private int clientId;
     BrokerClient brokerClient;
     private FragmentTabHost tabHost;
+    private String coverageYear = "active";
 
 
     @Subscribe(threadMode = ThreadMode.MAIN)
@@ -46,6 +52,37 @@ public class EmployerDetailsActivity extends BrokerActivity {
 
         TextView textViewCompanyName = (TextView) findViewById(R.id.textViewCompanyName);
         textViewCompanyName.setText(brokerClient.employerName);
+
+        Spinner spinnerCoverageYear = (Spinner) findViewById(R.id.spinnerCoverageYear);
+
+        DateTime planYearBegins = brokerClient.planYearBegins;
+        DateTime oneYearOut = new DateTime(planYearBegins.getYear() + 1, planYearBegins.getMonthOfYear(), planYearBegins.getDayOfMonth(), planYearBegins.getHourOfDay(), planYearBegins.getMinuteOfHour());
+
+        String thisYear = String.format("%s - %s", Utilities.DateAsMonthYear(brokerClient.planYearBegins), Utilities.DateAsMonthYear(Utilities.calculateOneYearOut(brokerClient.planYearBegins)));
+        String nextYear = String.format("%s - %s", Utilities.DateAsMonthYear(oneYearOut), Utilities.DateAsMonthYear(Utilities.calculateOneYearOut(oneYearOut)));
+
+        ArrayList<String> list = new ArrayList<>();
+        list.add(thisYear);
+        list.add(nextYear);
+        ArrayAdapter<String> dataAdapter = new ArrayAdapter<String>(this,
+                android.R.layout.simple_spinner_item, list);
+        spinnerCoverageYear.setAdapter(dataAdapter);
+        spinnerCoverageYear.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> adapterView, View view, int pos, long l) {
+                if (pos == 0){
+                    coverageYear = "active";
+                } else {
+                    coverageYear = "renewal";
+                }
+                getMessages().coverageYearChanged(coverageYear);
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> adapterView) {
+
+            }
+        });
 
         TextView textViewEnrollmentStatus = (TextView) findViewById(R.id.textViewEnrollmentStatus);
         if (brokerClient.isInOpenEnrollment(new DateTime())) {
@@ -225,5 +262,9 @@ public class EmployerDetailsActivity extends BrokerActivity {
             tabTitle.setTextColor(ContextCompat.getColor(this, R.color.selected_tab_color));
         }
         return tabIndicator;
+    }
+
+    public String getCoverageYear() {
+        return coverageYear;
     }
 }

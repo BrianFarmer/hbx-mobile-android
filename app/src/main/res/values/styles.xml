@@ -145,16 +145,10 @@
     </style>
 
     <style name="IconButton">
-        <item name="android:layout_width">50dp</item>
-        <item name="android:layout_height">50dp</item>
-        <item name="android:layout_marginLeft">15dp</item>
-        <item name="android:layout_marginTop">15dp</item>
-        <item name="android:layout_marginRight">15dp</item>
-        <item name="android:layout_marginBottom">15dp</item>
-        <item name="android:paddingLeft">0dp</item>
-        <item name="android:paddingTop">0dp</item>
-        <item name="android:paddingRight">0dp</item>
-        <item name="android:paddingBottom">0dp</item>
+        <item name="android:layout_width">50sp</item>
+        <item name="android:layout_height">50sp</item>
+        <item name="android:layout_margin">12sp</item>
+        <item name="android:padding">0sp</item>
         <item name="android:scaleType">fitXY</item>
         <item name="android:background">@android:color/transparent</item>
     </style>
@@ -180,6 +174,71 @@
         <item name="android:textSize">18dp</item>
         <item name="android:textStyle">bold</item>
     </style>
+    <style name="Title2">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:maxLines">2</item>
+        <item name="android:layout_margin">0sp</item>
+        <item name="android:padding">0sp</item>
+        <item name="android:gravity">center</item>
+        <item name="android:textColor">@color/textgray</item>
+        <item name="android:textSize">25sp</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:ellipsize">end</item>
+    </style>
+    <style name="Subtitle2">
+        <item name="android:gravity">center</item>
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_margin">0sp</item>
+        <item name="android:padding">0sp</item>
+        <item name="android:textColor">@color/textgray</item>
+        <item name="android:textSize">18sp</item>
+        <item name="android:textStyle">bold</item>
+    </style>
+    <style name="coverage_year_subtitle" parent="Subtitle2">
+        <item name="android:paddingBottom">20sp</item>
+    </style>
+    <style name="employee_field" parent="Subtitle2">
+        <item name="android:textSize">14sp</item>
+        <item name="android:padding">3sp</item>
+        <item name="android:gravity">left</item>
+    </style>
+
+    <style name="employee_costs" parent="Subtitle2">
+        <item name="android:textSize">18sp</item>
+        <item name="android:gravity">center</item>
+    </style>
+
+    <style name="employee_costs_label" parent="employee_costs">
+        <item name="android:textSize">14sp</item>
+        <item name="android:gravity">center</item>
+    </style>
+
+    <style name="employer_costs_employee" parent="employee_costs">
+        <item name="android:textColor">@color/employer_costs</item>
+    </style>
+
+    <style name="employer_costs_label_employee" parent="employee_costs">
+        <item name="android:textColor">@color/employer_costs</item>
+    </style>
+
+    <style name="total_costs_employee" parent="employee_costs">
+        <item name="android:textColor">@color/total_costs</item>
+    </style>
+
+    <style name="total_costs_label_employee" parent="employee_costs">
+        <item name="android:textColor">@color/total_costs</item>
+    </style>
+
+    <style name="employee_costs_employee" parent="employee_costs">
+        <item name="android:textColor">@color/employee_costs</item>
+    </style>
+
+    <style name="employee_costs_label_employee" parent="employee_costs">
+        <item name="android:textColor">@color/employee_costs</item>
+    </style>
+
     <style name="RedSubtitle" parent="Subtitle">
         <item name="android:textColor">#f21f28</item>
     </style>
@@ -272,16 +331,278 @@
 
     <style name="expandableText">
         <item name="android:gravity">center_vertical</item>
-        <item name="android:paddingTop">10sp</item>
-        <item name="android:paddingBottom">10sp</item>
-        <item name="android:paddingLeft">6sp</item>
+        <item name="android:paddingTop">14sp</item>
+        <item name="android:paddingBottom">14sp</item>
+        <item name="android:paddingLeft">14sp</item>
         <item name="android:background">@color/mainblue</item>
         <item name="android:textStyle">bold</item>
         <item name="android:textColor">@color/white</item>
         <item name="android:textAllCaps">true</item>
-        <item name="android:textSize">20sp</item>
+        <item name="android:textSize">16sp</item>
     </style>
     <style name="expandableImage">
         <item name="android:background">@color/mainblue</item>
+    </style>
+    <style
+        name="participants_fields">
+        <item name="android:background">@color/white</item>
+        <item name="android:textSize">16sp</item>
+        <item name="android:layout_marginTop">12sp</item>
+        <item name="android:layout_marginBottom">0sp</item>
+        <item name="android:layout_marginLeft">14sp</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:textAllCaps">true</item>
+    </style>
+    <style
+        name="enrolled_participants_field"
+        parent="participants_fields"
+        >
+        <item name="android:layout_marginTop">16sp</item>
+        <item name="android:textColor">@color/enrolled_color</item>
+    </style>
+    <style
+        name="enrolled_participants_label"
+        parent="participants_fields"
+        >
+        <item name="android:layout_marginTop">0sp</item>
+        <item name="android:textColor">@color/enrolled_color</item>
+    </style>
+    <style
+        name="waived_participants_field"
+        parent="participants_fields"
+        >
+        <item name="android:textColor">@color/waived_color</item>
+    </style>
+    <style
+        name="waived_participants_label"
+        parent="participants_fields"
+        >
+        <item name="android:layout_marginTop">0sp</item>
+        <item name="android:textColor">@color/waived_color</item>
+    </style>
+    <style
+        name="not_enrolled_participants_field"
+        parent="participants_fields">
+        <item name="android:textColor">@color/not_enrolled_color</item>
+    </style>
+    <style
+        name="not_enrolled_participants_label"
+        parent="participants_fields">
+        <item name="android:layout_marginTop">0sp</item>
+        <item name="android:textColor">@color/not_enrolled_color</item>
+    </style>
+    <style
+        name="total_participants_field"
+        parent="participants_fields"
+        >
+        <item name="android:textColor">@color/total_employees_color</item>
+    </style>
+    <style
+        name="total_participants_label"
+        parent="participants_fields"
+        >
+        <item name="android:layout_marginTop">0sp</item>
+        <item name="android:layout_marginBottom">16sp</item>
+        <item name="android:textColor">@color/total_employees_color</item>
+    </style>
+    <style name="client_details_label">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_alignParentLeft">true</item>
+        <item name="android:layout_marginLeft">14sp</item>
+        <item name="android:textSize">16dp</item>
+        <item name="android:paddingLeft">0dp</item>
+        <item name="android:paddingRight">0dp</item>
+        <item name="android:paddingTop">5dp</item>
+        <item name="android:paddingBottom">5dp</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:textColor">@color/textgray</item>
+    </style>
+    <style name="client_details_field">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_alignParentLeft">true</item>
+        <item name="android:layout_marginRight">14sp</item>
+        <item name="android:textSize">16dp</item>
+        <item name="android:paddingLeft">0dp</item>
+        <item name="android:paddingRight">0dp</item>
+        <item name="android:paddingTop">5dp</item>
+        <item name="android:paddingBottom">5dp</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:textColor">@color/textgray</item>
+    </style>
+    <style name="roster_header_text">
+        <item name="android:textColor">@color/textgray</item>
+        <item name="android:textSize">18sp</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:background">@color/roster_header_background</item>
+        <item name="android:paddingTop">7sp</item>
+        <item name="android:paddingBottom">7sp</item>
+    </style>
+    <style name="roster_name_text" parent="roster_header_text">
+        <item name="android:paddingLeft">10sp</item>
+    </style>
+    <style name="roster_status_header_text" parent="roster_header_text">
+        <item name="android:paddingRight">8sp</item>
+        <item name="android:textColor">@color/mainblue</item>
+    </style>
+    <style name="roster_status_carrot">
+        <item name="android:background">@color/roster_header_background</item>
+        <item name="android:paddingRight">10sp</item>
+        <item name="android:paddingTop">10sp</item>
+        <item name="android:paddingBottom">10sp</item>
+        <item name="android:scaleType">fitXY</item>
+    </style>
+
+    <style name="roster_item_text">
+        <item name="android:textSize">18sp</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:paddingTop">6sp</item>
+    </style>
+
+    <style name="roster_item_name_text" parent="roster_item_text">
+        <item name="android:paddingLeft">10sp</item>
+    </style>
+    <style name="roster_item_status_text" parent="roster_item_text">
+        <item name="android:paddingRight">10sp</item>
+        <item name="android:paddingBottom">0sp</item>
+    </style>
+    <style name="roster_item_renewal_text" parent="roster_item_text">
+        <item name="android:paddingRight">10sp</item>
+        <item name="android:textSize">14sp</item>
+        <item name="android:paddingTop">0sp</item>
+        <item name="android:layout_marginTop">0sp</item>
+    </style>
+    <style name="roster_filter_header">
+        <item name="android:textSize">16sp</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:textColor">@color/textgray</item>
+        <item name="android:paddingTop">4sp</item>
+        <item name="android:paddingLeft">6sp</item>
+        <item name="android:paddingRight">6sp</item>
+        <item name="android:paddingBottom">4sp</item>
+        <item name="android:background">@color/roster_header_background</item>
+    </style>
+    <style name="roster_filter_item" parent="roster_filter_header">
+        <item name="android:gravity">right</item>
+        <item name="android:textSize">16sp</item>
+        <item name="android:layout_gravity">end</item>
+        <item name="android:paddingTop">2sp</item>
+        <item name="android:paddingBottom">2sp</item>
+        <item name="android:background">@color/roster_filters_background</item>
+    </style>
+    <style name="roster_filter_enrolled" parent="roster_filter_item">
+        <item name="android:textColor">@color/enrolled_color</item>
+    </style>
+    <style name="roster_filter_waived" parent="roster_filter_item">
+        <item name="android:textColor">@color/waived_color</item>
+    </style>
+    <style name="roster_filter_not_enrolled" parent="roster_filter_item">
+        <item name="android:textColor">@color/not_enrolled_color</item>
+    </style>
+    <style name="roster_filter_terminated" parent="roster_filter_item">
+        <item name="android:textColor">@color/terminated_color</item>
+    </style>
+    <style name="roster_filter_no_filter" parent="roster_filter_item">
+        <item name="android:paddingBottom">4sp</item>
+    </style>
+    <style name="roster_filter_space" parent="roster_filter_item">
+        <item name="android:background">@color/transparent</item>
+    </style>
+    <style name="expandable_text_employee" parent="expandableText">
+        <item name="android:background">@color/lightgray</item>
+        <item name="android:textColor">@color/mainblue</item>
+    </style>
+    <style name="expandable_image_employee" parent="expandableImage">
+        <item name="android:background">@color/lightgray</item>
+    </style>
+
+    <style name="costs_header_text" parent="roster_header_text">
+        <item name="android:textColor">@color/textgray</item>
+        <item name="android:gravity">center_horizontal</item>
+    </style>
+    <style name="costs_header_text_right_column" parent="costs_header_text">
+        <item name="android:paddingRight">8sp</item>
+    </style>
+    <style name="costs_header_text_name" parent="costs_header_text">
+        <item name="android:gravity">left</item>
+        <item name="android:paddingLeft">10sp</item>
+    </style>
+    <style name="costs_name_text" parent="roster_header_text">
+        <item name="android:paddingLeft">15sp</item>
+        <item name="android:textColor">@color/textgray</item>
+        <item name="android:background">@color/transparent</item>
+        <item name="android:ellipsize">end</item>
+    </style>
+    <style name="costs_text" parent="roster_header_text">
+        <item name="android:textColor">@color/textgray</item>
+        <item name="android:gravity">right</item>
+        <item name="android:background">@color/transparent</item>
+    </style>
+    <style name="costs_text_right_column" parent="costs_text">
+        <item name="android:paddingRight">8sp</item>
+    </style>
+
+    <style name="plan_base">
+        <item name="android:textColor">@color/textgray</item>
+        <item name="android:textSize">16sp</item>
+        <item name="android:gravity">center_vertical</item>
+    </style>
+
+    <style name="plan_text_field" parent="plan_base">
+        <item name="android:paddingLeft">22sp</item>
+    </style>
+
+    <style name="plan_drawer_text" parent="plan_text_field">
+        <item name="android:textStyle">bold</item>
+        <item name="android:textColor">@color/mainblue</item>
+        <item name="android:background">@color/lightgray</item>
+        <item name="android:gravity">center_vertical</item>
+        <item name="android:paddingTop">14sp</item>
+        <item name="android:paddingBottom">14sp</item>
+        <item name="android:paddingLeft">14sp</item>
+        <item name="android:textAllCaps">true</item>
+
+    </style>
+
+    <style name="plan_drawer_circle" parent="plan_text_field">
+        <item name="android:background">@color/lightgray</item>
+    </style>
+
+    <style name="plan_bullet" parent="plan_base">
+        <item name="android:paddingLeft">30sp</item>
+        <item name="android:textStyle">normal</item>
+    </style>
+
+    <style name="plan_elected_dental" parent="plan_base">
+        <item name="android:paddingLeft">5sp</item>
+        <item name="android:textStyle">normal</item>
+    </style>
+
+
+    <style name="plan_type" parent="plan_text_field">
+        <item name="android:textStyle">bold</item>
+    </style>
+
+    <style name="plan_label" parent="plan_text_field">
+        <item name="android:textStyle">bold</item>
+    </style>
+
+    <style name="plan_field" parent="plan_text_field">
+        <item name="android:textStyle">normal</item>
+    </style>
+
+    <style name="plan_contribution_label" parent="plan_base">
+        <item name="android:textColor">@color/contribution_text</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:gravity">center</item>
+        <item name="android:maxLines">2</item>
+        <item name="android:layout_marginTop">20sp</item>
+    </style>
+    <style name="plan_contribution_field" parent="plan_base">
+        <item name="android:gravity">center</item>
+        <item name="android:textColor">@color/contribution_text</item>
+        <item name="android:maxLines">1</item>
+        <item name="android:layout_marginTop">14sp</item>
     </style>
 </resources>

@@ -1,9 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:orientation="vertical"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:background="@color/white">
 
     <ScrollView
             xmlns:android="http://schemas.android.com/apk/res/android"
@@ -11,10 +13,10 @@
             android:layout_height="match_parent"
             android:layout_alignParentTop="true"
             android:layout_alignParentBottom="true">
-        <RelativeLayout
+        <android.support.percent.PercentRelativeLayout
             android:orientation="vertical"
             android:layout_width="match_parent"
-            android:layout_height="match_parent">
+            android:layout_height="wrap_content">
 
             <TextView
                 android:layout_width="wrap_content"
@@ -26,10 +28,11 @@
                 android:layout_alignParentStart="true"
                 android:layout_toLeftOf="@+id/imageViewRenewalDeadlines"
                 android:layout_toStartOf="@+id/imageViewRenewalDeadlines"
+                android:layout_marginBottom="2sp"
                 style="@style/expandableText"
                 />
             <ImageView
-                android:id="@id/imageViewRenewalDeadlines"
+                android:id="@+id/imageViewRenewalDeadlines"
                 android:layout_height="60dp"
                 android:layout_width="60dp"
                 android:paddingTop="7dp"
@@ -41,7 +44,6 @@
                 android:src="@drawable/circle_plus"
                 style="@style/expandableImage"
             />
-
             <TextView
                 android:text="@string/open_enrollment_begins_label"
                 android:layout_width="wrap_content"
@@ -50,6 +52,8 @@
                 android:layout_alignParentLeft="true"
                 android:layout_alignParentStart="true"
                 android:id="@+id/textViewOpenEnrollmentBeginsLabel"
+                android:tag="@string/renewal_group"
+                style="@style/client_details_label"
                 />
             <TextView
                 android:text=""
@@ -59,6 +63,8 @@
                 android:layout_alignParentRight="true"
                 android:layout_alignParentEnd="true"
                 android:id="@+id/textViewOpenEnrollmentBegins"
+                android:tag="@string/renewal_group"
+                style="@style/client_details_field"
                 />
 
             <TextView
@@ -69,6 +75,8 @@
                 android:layout_alignParentLeft="true"
                 android:layout_alignParentStart="true"
                 android:id="@+id/textViewOpenEnrollmentEndsLabel"
+                android:tag="@string/renewal_group"
+                style="@style/client_details_label"
                 />
             <TextView
                 android:text=""
@@ -78,6 +86,8 @@
                 android:layout_alignParentRight="true"
                 android:layout_alignParentEnd="true"
                 android:id="@+id/textViewOpenEnrollmentEnds"
+                android:tag="@string/renewal_group"
+                style="@style/client_details_field"
                 />
 
             <TextView
@@ -88,6 +98,8 @@
                 android:layout_alignParentLeft="true"
                 android:layout_alignParentStart="true"
                 android:id="@+id/textViewDaysLeftLabel"
+                android:tag="@string/renewal_group"
+                style="@style/client_details_label"
                 />
             <TextView
                 android:text=""
@@ -97,9 +109,9 @@
                 android:layout_alignParentRight="true"
                 android:layout_alignParentEnd="true"
                 android:id="@+id/textViewDaysLeft"
+                android:tag="@string/renewal_group"
+                style="@style/client_details_field"
                 />
-
-
 
             <TextView
                 android:layout_width="wrap_content"
@@ -111,6 +123,7 @@
                 android:layout_alignParentStart="true"
                 android:layout_toStartOf="@+id/imageViewParticipation"
                 android:layout_toLeftOf="@+id/imageViewParticipation"
+                android:layout_marginBottom="2sp"
                 style="@style/expandableText"
                 />
             <ImageView
@@ -127,14 +140,118 @@
                 style="@style/expandableImage"
                 />
 
+            <TextView
+                android:text=""
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentLeft="true"
+                android:layout_alignParentStart="true"
+                android:layout_below="@id/textViewParticipation"
+                android:id="@+id/textViewEnrolled"
+                android:tag="@string/participation_group"
+                style="@style/enrolled_participants_field"
+                />
 
+            <TextView
+                android:text="@string/enrolled_label"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentLeft="true"
+                android:layout_alignParentStart="true"
+                android:layout_below="@id/textViewEnrolled"
+                android:id="@+id/textViewEnrolledLabel"
+                android:tag="@string/participation_group"
+                style="@style/enrolled_participants_label"
+                />
 
+            <TextView
+                android:text=""
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentLeft="true"
+                android:layout_alignParentStart="true"
+                android:layout_below="@id/textViewEnrolledLabel"
+                android:id="@+id/textViewWaived"
+                android:tag="@string/participation_group"
+                style="@style/waived_participants_field"
+                />
+
+            <TextView
+                android:text="@string/waived_label"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentLeft="true"
+                android:layout_alignParentStart="true"
+                android:layout_below="@id/textViewWaived"
+                android:id="@+id/textViewWaivedLabel"
+                android:tag="@string/participation_group"
+                style="@style/waived_participants_label"
+                />
+
+            <TextView
+                android:text=""
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentLeft="true"
+                android:layout_alignParentStart="true"
+                android:layout_below="@id/textViewWaivedLabel"
+                android:id="@+id/textViewNotEnrolled"
+                android:tag="@string/participation_group"
+                style="@style/not_enrolled_participants_field"
+                />
+
+            <TextView
+                android:text="@string/not_enrolled_label"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentLeft="true"
+                android:layout_alignParentStart="true"
+                android:layout_below="@id/textViewNotEnrolled"
+                android:id="@+id/textViewNotEnrolledLabel"
+                android:tag="@string/participation_group"
+                style="@style/not_enrolled_participants_label"
+                />
+
+            <TextView
+                android:text=""
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentLeft="true"
+                android:layout_alignParentStart="true"
+                android:layout_below="@id/textViewNotEnrolledLabel"
+                android:id="@+id/textViewTotalEmployees"
+                android:tag="@string/participation_group"
+                style="@style/total_participants_field"
+                />
+
+            <TextView
+                android:text="@string/total_employees_label"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentLeft="true"
+                android:layout_below="@id/textViewTotalEmployees"
+                android:id="@+id/textViewTotalEmployeesLabel"
+                android:tag="@string/participation_group"
+                android:paddingBottom="18sp"
+                style="@style/total_participants_label"
+                />
+            <com.github.mikephil.charting.charts.PieChart
+                android:id="@+id/pieChart"
+                android:layout_height="0dp"
+                android:layout_marginRight="1sp"
+                app:layout_widthPercent="45%"
+                android:layout_below="@id/textViewParticipation"
+                android:layout_above="@+id/textViewMonthlyCosts"
+                android:layout_alignParentRight="true"
+                android:textSize="12sp"
+                android:tag="@string/participation_group"
+            />
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@string/monthly_costs"
                 android:id="@+id/textViewMonthlyCosts"
-                android:layout_below="@id/textViewParticipation"
+                android:layout_below="@id/textViewTotalEmployeesLabel"
                 android:layout_alignParentLeft="true"
                 android:layout_alignParentStart="true"
                 android:layout_toStartOf="@+id/imageViewMonthlyCosts"
@@ -154,7 +271,72 @@
                 android:src="@drawable/circle_plus"
                 style="@style/expandableImage"
                 />
-
-        </RelativeLayout>
+            <TextView
+                android:text="@string/employee_contribution_label"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/textViewMonthlyCosts"
+                android:layout_alignParentLeft="true"
+                android:layout_alignParentStart="true"
+                android:id="@+id/textViewEmployeeContributionLabel"
+                android:tag="@string/monthly_costs_group"
+                style="@style/client_details_label"
+                />
+            <TextView
+                android:text=""
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignBottom="@+id/textViewEmployeeContributionLabel"
+                android:layout_alignParentRight="true"
+                android:layout_alignParentEnd="true"
+                android:id="@+id/textViewEmployeeContribution"
+                android:tag="@string/monthly_costs_group"
+                style="@style/client_details_field"
+                />
+            <TextView
+                android:text="@string/employer_contribution_label"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/textViewEmployeeContributionLabel"
+                android:layout_alignParentLeft="true"
+                android:layout_alignParentStart="true"
+                android:id="@+id/textViewEmployerContributionLabel"
+                android:tag="@string/monthly_costs_group"
+                style="@style/client_details_label"
+                />
+            <TextView
+                android:text=""
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignBottom="@+id/textViewEmployerContributionLabel"
+                android:layout_alignParentRight="true"
+                android:layout_alignParentEnd="true"
+                android:id="@+id/textViewEmployerContribution"
+                android:tag="@string/monthly_costs_group"
+                style="@style/client_details_field"
+                />
+            <TextView
+                android:text="@string/total"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/textViewEmployerContributionLabel"
+                android:layout_alignParentLeft="true"
+                android:layout_alignParentStart="true"
+                android:id="@+id/textViewTotalLabel"
+                android:tag="@string/monthly_costs_group"
+                style="@style/client_details_label"
+                />
+            <TextView
+                android:text=""
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignBottom="@+id/textViewTotalLabel"
+                android:layout_alignParentRight="true"
+                android:layout_alignParentEnd="true"
+                android:id="@+id/textViewTotal"
+                android:tag="@string/monthly_costs_group"
+                style="@style/client_details_field"
+                />
+        </android.support.percent.PercentRelativeLayout>
     </ScrollView>
 </RelativeLayout>
