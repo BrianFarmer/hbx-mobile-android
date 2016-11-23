@@ -5,11 +5,12 @@
 
     <TextView
         android:text="employee name"
-        android:layout_width="wrap_content"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_alignParentTop="true"
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true"
+        android:layout_toStartOf="@+id/textViewEmployerCost"
         android:layout_toLeftOf="@+id/textViewEmployerCost"
         android:id="@+id/textViewEmployeeName"
         style="@style/costs_name_text"

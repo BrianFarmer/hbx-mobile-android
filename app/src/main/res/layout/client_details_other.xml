@@ -85,6 +85,7 @@
                 android:id="@+id/textViewEmployerContributionLabel"
                 style="@style/BrokerClientLabel"
                 android:layout_below="@id/textViewMonthlyEstimatedCost"
+                android:layout_toLeftOf="@+id/textViewEmployerContribution"
                 android:text="@string/employer_contribution_label"
                 />
             <TextView
@@ -97,6 +98,7 @@
                 android:id="@+id/textViewEmployeeContributionLabel"
                 style="@style/BrokerClientLabel"
                 android:layout_below="@id/textViewEmployerContributionLabel"
+                android:layout_toLeftOf="@+id/textViewEmployeeContribution"
                 android:text="@string/employee_contribution_label"
                 />
 
@@ -110,6 +112,7 @@
                 android:id="@+id/textViewTotalLabel"
                 style="@style/CapitalizedLabel"
                 android:layout_below="@id/textViewEmployeeContributionLabel"
+                android:layout_toLeftOf="@+id/textViewTotal"
                 android:text="@string/total"
                 />
             <TextView
@@ -134,7 +137,7 @@
                 android:id="@+id/textViewEnrolledLabel"
                 style="@style/BrokerClientLabel"
                 android:layout_below="@id/textViewParticipationLabel"
-                android:keepScreenOn="true"
+                android:layout_toLeftOf="@+id/textViewEnrolled"
                 android:text="@string/enrolled_label"
                 />
             <TextView
@@ -147,6 +150,7 @@
                 android:id="@+id/textViewWaivedLabel"
                 style="@style/BrokerClientLabel"
                 android:layout_below="@id/textViewEnrolledLabel"
+                android:layout_toLeftOf="@+id/textViewWaived"
                 android:text="@string/waived_label"
                 />
             <TextView
@@ -159,6 +163,7 @@
                 android:id="@+id/textViewNotCompletedLabel"
                 style="@style/BrokerClientLabel"
                 android:layout_below="@id/textViewWaivedLabel"
+                android:layout_toLeftOf="@+id/textViewNotCompleted"
                 android:text="@string/not_completed_label"
                 />
             <TextView
@@ -171,6 +176,7 @@
                 android:id="@+id/textViewTotalEmployeesLabel"
                 style="@style/CapitalizedLabel"
                 android:layout_below="@id/textViewNotCompletedLabel"
+                android:layout_toLeftOf="@+id/textViewTotalEmployees"
                 android:text="@string/total_employees_label"
                 />
             <TextView
@@ -202,6 +208,7 @@
                 android:id="@+id/textViewRenewalAvailableLabel"
                 style="@style/BrokerClientLabel"
                 android:layout_below="@id/textViewCoverageInfoSubheadingLabel"
+                android:layout_toLeftOf="@+id/textViewRenewalAvailable"
                 android:keepScreenOn="true"
                 android:text="@string/renewal_available_label"
                 />
@@ -215,6 +222,7 @@
                 android:id="@+id/textViewNextCoverageYearBeginsLabel"
                 style="@style/BrokerClientLabel"
                 android:layout_below="@id/textViewRenewalAvailableLabel"
+                android:layout_toLeftOf="@+id/textViewNextCoverageYearBegins"
                 android:keepScreenOn="true"
                 android:text="@string/next_coverage_year_begins_label"
                 />
@@ -228,6 +236,7 @@
                 android:id="@+id/textViewOpenEnrollmentEndsLabel"
                 style="@style/BrokerClientLabel"
                 android:layout_below="@id/textViewNextCoverageYearBeginsLabel"
+                android:layout_toLeftOf="@+id/textViewOpenEnrollmentEnds"
                 android:keepScreenOn="true"
                 android:text="@string/open_enrollment_ends_labell"
                 />

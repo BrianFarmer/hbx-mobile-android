@@ -90,8 +90,9 @@
     <style name="BrokerClientHeader">
         <item name="android:layout_width">match_parent</item>
         <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_alignParentStart">true</item>
         <item name="android:layout_alignParentLeft">true</item>
-        <item name="android:textSize">17dp</item>
+        <item name="android:textSize">17sp</item>
         <item name="android:textStyle">bold</item>
         <item name="android:textColor">#33b5e5</item>
     </style>
@@ -99,17 +100,18 @@
         <item name="android:layout_width">match_parent</item>
         <item name="android:layout_height">wrap_content</item>
         <item name="android:layout_alignParentLeft">true</item>
-        <item name="android:textSize">15dp</item>
+        <item name="android:textSize">15sp</item>
     </style>
     <style name="BrokerClientLabel">
-        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_width">0dp</item>
         <item name="android:layout_height">wrap_content</item>
         <item name="android:layout_alignParentLeft">true</item>
-        <item name="android:textSize">15dp</item>
-        <item name="android:paddingLeft">30dp</item>
-        <item name="android:paddingRight">0dp</item>
-        <item name="android:paddingTop">5dp</item>
-        <item name="android:paddingBottom">5dp</item>
+        <item name="android:layout_alignParentStart">true</item>
+        <item name="android:textSize">15sp</item>
+        <item name="android:paddingLeft">30sp</item>
+        <item name="android:paddingRight">5sp</item>
+        <item name="android:paddingTop">5sp</item>
+        <item name="android:paddingBottom">5sp</item>
         <item name="android:textStyle">bold</item>
         <item name="android:textColor">#555555</item>
     </style>
@@ -123,11 +125,11 @@
         <item name="android:layout_width">wrap_content</item>
         <item name="android:layout_height">wrap_content</item>
         <item name="android:layout_alignParentRight">true</item>
-        <item name="android:textSize">15dp</item>
-        <item name="android:paddingLeft">0dp</item>
-        <item name="android:paddingRight">30dp</item>
-        <item name="android:paddingTop">5dp</item>
-        <item name="android:paddingBottom">5dp</item>
+        <item name="android:textSize">15sp</item>
+        <item name="android:paddingLeft">0sp</item>
+        <item name="android:paddingRight">30sp</item>
+        <item name="android:paddingTop">5sp</item>
+        <item name="android:paddingBottom">5sp</item>
         <item name="android:textStyle">bold</item>
         <item name="android:textColor">#555555</item>
     </style>
@@ -461,7 +463,10 @@
     </style>
 
     <style name="roster_item_name_text" parent="roster_item_text">
+        <item name="android:paddingStart">10sp</item>
         <item name="android:paddingLeft">10sp</item>
+        <item name="android:paddingEnd">5sp</item>
+        <item name="android:paddingRight">5sp</item>
     </style>
     <style name="roster_item_status_text" parent="roster_item_text">
         <item name="android:paddingRight">10sp</item>
@@ -533,6 +538,7 @@
         <item name="android:textColor">@color/textgray</item>
         <item name="android:background">@color/transparent</item>
         <item name="android:ellipsize">end</item>
+        <item name="android:maxLines">2</item>
     </style>
     <style name="costs_text" parent="roster_header_text">
         <item name="android:textColor">@color/textgray</item>

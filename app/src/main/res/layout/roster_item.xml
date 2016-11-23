@@ -10,6 +10,8 @@
         android:layout_alignParentTop="true"
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true"
+        android:layout_toLeftOf="@+id/textViewStatusThisYear"
+        android:layout_toStartOf="@+id/textViewStatusThisYear"
         android:id="@+id/textViewEmployeeName"
         style="@style/roster_item_name_text"
         />

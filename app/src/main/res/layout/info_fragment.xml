@@ -33,11 +33,11 @@
                 />
             <ImageView
                 android:id="@+id/imageViewRenewalDeadlines"
-                android:layout_height="60dp"
-                android:layout_width="60dp"
-                android:paddingTop="7dp"
-                android:paddingBottom="7dp"
-                android:paddingRight="25dp"
+                android:layout_height="60sp"
+                android:layout_width="60sp"
+                android:paddingTop="7sp"
+                android:paddingBottom="7sp"
+                android:paddingRight="25sp"
                 android:layout_alignParentRight="true"
                 android:layout_alignTop="@id/textViewRenewalDeadlines"
                 android:layout_alignBottom="@id/textViewRenewalDeadlines"
@@ -46,11 +46,12 @@
             />
             <TextView
                 android:text="@string/open_enrollment_begins_label"
-                android:layout_width="wrap_content"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_below="@id/textViewRenewalDeadlines"
                 android:layout_alignParentLeft="true"
                 android:layout_alignParentStart="true"
+                android:layout_toLeftOf="@+id/textViewOpenEnrollmentBegins"
                 android:id="@+id/textViewOpenEnrollmentBeginsLabel"
                 android:tag="@string/renewal_group"
                 style="@style/client_details_label"
@@ -69,9 +70,11 @@
 
             <TextView
                 android:text="@string/open_enrollment_ends_labell"
-                android:layout_width="wrap_content"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_below="@id/textViewOpenEnrollmentBeginsLabel"
+                android:layout_toStartOf="@+id/textViewOpenEnrollmentEnds"
+                android:layout_toLeftOf="@+id/textViewOpenEnrollmentEnds"
                 android:layout_alignParentLeft="true"
                 android:layout_alignParentStart="true"
                 android:id="@+id/textViewOpenEnrollmentEndsLabel"
@@ -82,7 +85,7 @@
                 android:text=""
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_alignBottom="@id/textViewOpenEnrollmentEndsLabel"
+                android:layout_alignBottom="@+id/textViewOpenEnrollmentEndsLabel"
                 android:layout_alignParentRight="true"
                 android:layout_alignParentEnd="true"
                 android:id="@+id/textViewOpenEnrollmentEnds"
@@ -92,9 +95,11 @@
 
             <TextView
                 android:text="@string/days_left_label"
-                android:layout_width="wrap_content"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_below="@id/textViewOpenEnrollmentEndsLabel"
+                android:layout_toStartOf="@+id/textViewDaysLeft"
+                android:layout_toLeftOf="@+id/textViewDaysLeft"
                 android:layout_alignParentLeft="true"
                 android:layout_alignParentStart="true"
                 android:id="@+id/textViewDaysLeftLabel"
@@ -114,7 +119,7 @@
                 />
 
             <TextView
-                android:layout_width="wrap_content"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:text="@string/participation"
                 android:id="@+id/textViewParticipation"
@@ -128,11 +133,11 @@
                 />
             <ImageView
                 android:id="@+id/imageViewParticipation"
-                android:layout_height="60dp"
-                android:layout_width="60dp"
-                android:paddingTop="7dp"
-                android:paddingBottom="7dp"
-                android:paddingRight="25dp"
+                android:layout_height="60sp"
+                android:layout_width="60sp"
+                android:paddingTop="7sp"
+                android:paddingBottom="7sp"
+                android:paddingRight="25sp"
                 android:layout_alignParentRight="true"
                 android:layout_alignTop="@id/textViewParticipation"
                 android:layout_alignBottom="@id/textViewParticipation"
@@ -260,11 +265,11 @@
                 />
             <ImageView
                 android:id="@+id/imageViewMonthlyCosts"
-                android:layout_height="60dp"
-                android:layout_width="60dp"
-                android:paddingTop="7dp"
-                android:paddingBottom="7dp"
-                android:paddingRight="25dp"
+                android:layout_height="60sp"
+                android:layout_width="60sp"
+                android:paddingTop="7sp"
+                android:paddingBottom="7sp"
+                android:paddingRight="25sp"
                 android:layout_alignParentRight="true"
                 android:layout_alignTop="@id/textViewMonthlyCosts"
                 android:layout_alignBottom="@id/textViewMonthlyCosts"
@@ -273,9 +278,11 @@
                 />
             <TextView
                 android:text="@string/employee_contribution_label"
-                android:layout_width="wrap_content"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_below="@id/textViewMonthlyCosts"
+                android:layout_below="@+id/textViewMonthlyCosts"
+                android:layout_toLeftOf="@+id/textViewEmployeeContribution"
+                android:layout_toStartOf="@+id/textViewEmployeeContribution"
                 android:layout_alignParentLeft="true"
                 android:layout_alignParentStart="true"
                 android:id="@+id/textViewEmployeeContributionLabel"
@@ -295,11 +302,13 @@
                 />
             <TextView
                 android:text="@string/employer_contribution_label"
-                android:layout_width="wrap_content"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_below="@id/textViewEmployeeContributionLabel"
                 android:layout_alignParentLeft="true"
                 android:layout_alignParentStart="true"
+                android:layout_toLeftOf="@+id/textViewEmployerContribution"
+                android:layout_toStartOf="@+id/textViewEmployerContribution"
                 android:id="@+id/textViewEmployerContributionLabel"
                 android:tag="@string/monthly_costs_group"
                 style="@style/client_details_label"
@@ -320,6 +329,8 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_below="@id/textViewEmployerContributionLabel"
+                android:layout_toLeftOf="@+id/textViewTotal"
+                android:layout_toStartOf="@+id/textViewTotal"
                 android:layout_alignParentLeft="true"
                 android:layout_alignParentStart="true"
                 android:id="@+id/textViewTotalLabel"
