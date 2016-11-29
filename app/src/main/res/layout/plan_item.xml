@@ -426,6 +426,28 @@
 
                 </LinearLayout>
             </LinearLayout>
+            <TextView
+                android:text="@string/reference_plan_label"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/linearLayoutDentalContributionLevels"
+                android:layout_alignParentLeft="true"
+                android:layout_alignParentStart="true"
+                android:layout_marginTop="30dp"
+                style="@style/plan_label"
+                android:id="@+id/textViewDentalReferencePlanLabel"
+                />
+            <TextView
+                android:text="ref plan text goes here"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/textViewDentalReferencePlanLabel"
+                android:layout_alignParentLeft="true"
+                android:layout_alignParentStart="true"
+                android:layout_marginTop="14dp"
+                style="@style/plan_field"
+                android:id="@+id/textViewDentalReferencePlan"
+                />
         </RelativeLayout>
     </RelativeLayout>
 </RelativeLayout>

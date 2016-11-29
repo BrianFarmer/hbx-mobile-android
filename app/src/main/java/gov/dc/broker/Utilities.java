@@ -1,7 +1,9 @@
 package gov.dc.broker;
 
 import org.joda.time.DateTime;
+import org.joda.time.Days;
 import org.joda.time.Duration;
+import org.joda.time.LocalDate;
 import org.joda.time.format.DateTimeFormat;
 
 import gov.dc.broker.models.roster.Dependent;
@@ -25,8 +27,8 @@ public class Utilities {
         return DateTimeFormat.forPattern("MMM dd, yyyy").print(date);
     }
 
-    public static long dateDifferenceDays(DateTime start, DateTime end) {
-        return (new Duration(start, end)).getStandardDays();
+    public static long dateDifferenceDays(LocalDate start, LocalDate end) {
+        return Days.daysBetween(start, end).getDays();
     }
 
     public static int colorFromEmployeeStatus(String statusString) {

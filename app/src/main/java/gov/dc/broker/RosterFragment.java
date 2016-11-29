@@ -7,12 +7,16 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.ListView;
+import android.widget.TextView;
 
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 
 import java.util.ArrayList;
+import java.util.Map;
+import java.util.TreeMap;
 
 import gov.dc.broker.models.roster.Employee;
 import gov.dc.broker.models.roster.Roster;
@@ -29,6 +33,8 @@ public class RosterFragment extends BrokerFragment implements EmployeeFilterDial
     private int brokerClientId;
     private Roster roster;
     private String coverageYear;
+    private String filterName = "";
+    private String filterLetter;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -48,7 +54,35 @@ public class RosterFragment extends BrokerFragment implements EmployeeFilterDial
         EmployerDetailsActivity activity = (EmployerDetailsActivity) getActivity();
         this.coverageYear = activity.getCoverageYear();
         populateRosterList();
+        populateSideIndex();
    }
+
+    private void populateSideIndex() {
+        TreeMap<Character, Integer> foundChars = new TreeMap<>();
+        for (int i = 0; i < roster.roster.size(); i ++){
+            Employee employee = roster.roster.get(i);
+            if (employee.lastName != null
+                && employee.lastName.length() > 0
+                && foundChars.get(employee.lastName.charAt(0)) == null){
+                foundChars.put(employee.lastName.charAt(0), i);
+            }
+        }
+
+        LinearLayout linearLayoutSideIndex = (LinearLayout)view.findViewById(R.id.linearLayoutSideIndex);
+        LayoutInflater layoutInflater = LayoutInflater.from(getActivity());
+        for (final Map.Entry<Character, Integer> entry: foundChars.entrySet()) {
+            TextView sideIndexItem = (TextView) layoutInflater.inflate(R.layout.side_index_item, null);
+            sideIndexItem.setText(entry.getKey().toString());
+            sideIndexItem.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    RosterFragment.this.filterLetter = entry.getKey().toString();
+                    RosterFragment.this.filter();
+                }
+            });
+            linearLayoutSideIndex.addView(sideIndexItem);
+        }
+    }
 
     private void populateRosterList() {
         ListView listViewRoster = (ListView) view.findViewById(R.id.listViewRoster);
@@ -65,6 +99,7 @@ public class RosterFragment extends BrokerFragment implements EmployeeFilterDial
                 dialog.show(RosterFragment.this.getFragmentManager(), "SecurityQuestionDialog");
             }
         });
+
     }
 
     @Override
@@ -95,24 +130,57 @@ public class RosterFragment extends BrokerFragment implements EmployeeFilterDial
 
     @Override
     public void filter(String filterName) {
+        this.filterName = filterName;
+        filter();
+    }
+
+    public void filter() {
         boolean active = coverageYear.compareToIgnoreCase("active") == 0;
+        char lowerCaseLetter = 'a';
+        boolean compareLetter = false;
+        if (filterLetter != null
+            && filterLetter.length() > 0) {
+            lowerCaseLetter = filterLetter.toLowerCase().charAt(0);
+            compareLetter = true;
+        }
+
         ArrayList<Employee> filteredEmployees = new ArrayList<>();
-        if (filteredEmployees == null){
+        if (filterName == null
+            || filterName.length() == 0){
             for(Employee employee : roster.roster){
-                filteredEmployees.add(employee);
+                if (compareLetter) {
+                    if (employee.lastName.toLowerCase().charAt(0) == lowerCaseLetter) {
+                        filteredEmployees.add(employee);
+                    }
+                } else {
+                    filteredEmployees.add(employee);
+                }
             }
         } else {
-
             if (active) {
                 for(Employee employee : roster.roster){
-                    if (employee.enrollments.active.health.status.compareToIgnoreCase(filterName) == 0){
-                        filteredEmployees.add(employee);
+                    if (compareLetter) {
+                        if (employee.lastName.charAt(0) == lowerCaseLetter
+                            && employee.enrollments.active.health.status.compareToIgnoreCase(filterName) == 0) {
+                            filteredEmployees.add(employee);
+                        }
+                    } else {
+                        if (employee.enrollments.active.health.status.compareToIgnoreCase(filterName) == 0) {
+                            filteredEmployees.add(employee);
+                        }
                     }
                 }
             } else {
                 for(Employee employee : roster.roster){
-                    if (employee.enrollments.renewal.health.status.compareToIgnoreCase(filterName) == 0){
-                        filteredEmployees.add(employee);
+                    if (compareLetter) {
+                        if (employee.lastName.charAt(0) == lowerCaseLetter
+                            && employee.enrollments.renewal.health.status.compareToIgnoreCase(filterName) == 0) {
+                            filteredEmployees.add(employee);
+                        }
+                    } else {
+                        if (employee.enrollments.renewal.health.status.compareToIgnoreCase(filterName) == 0) {
+                            filteredEmployees.add(employee);
+                        }
                     }
                 }
             }

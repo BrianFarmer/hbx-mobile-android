@@ -2,7 +2,7 @@ package gov.dc.broker;
 
 import com.google.gson.annotations.SerializedName;
 
-import org.joda.time.DateTime;
+import org.joda.time.LocalDate;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -34,9 +34,10 @@ public class EmployerList {
     }
 
     public ArrayList<BrokerClient> getOpenEnrollmentsAlerted() {
+        LocalDate today = new LocalDate();
         ArrayList<BrokerClient> employers_in_open_enrollment = new ArrayList<BrokerClient>();
         for (BrokerClient brokerClient : brokerClients) {
-            if (brokerClient.isInOpenEnrollment(new DateTime())
+            if (brokerClient.isInOpenEnrollment(today)
                 && brokerClient.isAlerted()){
                 employers_in_open_enrollment.add(brokerClient);
             }
@@ -47,7 +48,7 @@ public class EmployerList {
     public ArrayList<BrokerClient> getOpenEnrollmentsNotAlerted() {
         ArrayList<BrokerClient> employers_in_open_enrollment = new ArrayList<BrokerClient>();
         for (BrokerClient brokerClient : brokerClients) {
-            if (brokerClient.isInOpenEnrollment(new DateTime())
+            if (brokerClient.isInOpenEnrollment(new LocalDate())
                 && !brokerClient.isAlerted()){
                 employers_in_open_enrollment.add(brokerClient);
             }

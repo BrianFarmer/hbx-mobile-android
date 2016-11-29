@@ -15,6 +15,7 @@ import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 import org.joda.time.DateTime;
+import org.joda.time.LocalDate;
 
 import java.util.Calendar;
 import java.util.Date;
@@ -261,14 +262,14 @@ public class ClientDetailsActivity extends AppCompatActivity {
         TextView enrollmentEnds = (TextView) findViewById(R.id.textViewOpenEnrollmentEnds);
         enrollmentEnds.setText(Utilities.DateAsString(brokerClient.openEnrollmentEnds));
         TextView daysLeft = (TextView) findViewById(R.id.textViewDaysLeft);
-        daysLeft.setText(Long.toString(Utilities.dateDifferenceDays(brokerClient.openEnrollmentBegins, brokerClient.openEnrollmentEnds)));
+        daysLeft.setText(Long.toString(Utilities.dateDifferenceDays(brokerClient.openEnrollmentBegins.toLocalDate(), brokerClient.openEnrollmentEnds.toLocalDate())));
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void doThis(Events.BrokerClient  brokerClientEvent) {
         BrokerClient brokerClient = brokerClientEvent.getBrokerClient();
 
-        if (brokerClient.isInOpenEnrollment(new DateTime())) {
+        if (brokerClient.isInOpenEnrollment(new LocalDate())) {
             if (brokerClient.isAlerted()){
                 showAlerted(brokerClient, brokerClientEvent.getBrokerClientDetails());
             } else {

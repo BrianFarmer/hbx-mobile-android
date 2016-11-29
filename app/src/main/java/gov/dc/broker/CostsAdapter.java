@@ -3,7 +3,6 @@ package gov.dc.broker;
 import android.content.Context;
 import android.support.v4.content.ContextCompat;
 import android.util.Log;
-import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -81,14 +80,12 @@ public class CostsAdapter extends BaseAdapter {
             TextView textViewEmployerCost = (TextView) view.findViewById(R.id.textViewEmployerCost);
             TextView textViewEmployeeCost = (TextView) view.findViewById(R.id.textViewEmployeeCost);
             if (health.status.compareToIgnoreCase("enrolled") == 0) {
-                textViewEmployerCost.setText(String.format("%.2f", health.employerContribution));
-                textViewEmployeeCost.setText(String.format("%.2f", health.employeeCost));
+                textViewEmployerCost.setText(String.format("$%.2f", health.employerContribution));
+                textViewEmployeeCost.setText(String.format("$%.2f", health.employeeCost));
             } else {
                 textViewEmployerCost.setText(health.status);
-                textViewEmployerCost.setGravity(Gravity.CENTER_HORIZONTAL);
                 textViewEmployerCost.setTextColor(ContextCompat.getColor(context, Utilities.colorFromEmployeeStatus(health.status)));
                 textViewEmployeeCost.setText(health.status);
-                textViewEmployeeCost.setGravity(Gravity.CENTER_HORIZONTAL);
                 textViewEmployeeCost.setTextColor(ContextCompat.getColor(context, Utilities.colorFromEmployeeStatus(health.status)));
             }
             view.setOnClickListener(new View.OnClickListener() {

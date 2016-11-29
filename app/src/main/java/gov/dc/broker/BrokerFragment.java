@@ -72,7 +72,7 @@ public class BrokerFragment extends Fragment {
             view.setVisibility(state);
         }
     }
-    protected void invertGroup(View rootView, int tagResourceId, int openButtonId, int openButtonImageId, int closedButtonImageId) {
+    protected boolean invertGroup(View rootView, int tagResourceId, int openButtonId, int openButtonImageId, int closedButtonImageId) {
         ArrayList<View> views = new ArrayList<>();
         getViewsByTag(views, (ViewGroup)rootView, BrokerApplication.getBrokerApplication().getString(tagResourceId));
         boolean open= false;
@@ -91,5 +91,6 @@ public class BrokerFragment extends Fragment {
         } else {
             imageView.setImageResource(closedButtonImageId);
         }
+        return open;
     }
 }

@@ -2,7 +2,7 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:background="#00a99e"
+    android:background="@color/mainblue"
     android:tag="@+id/view_type"
     android:minHeight="30dp">
 
@@ -31,14 +31,19 @@
         android:background="@android:color/transparent"/>
     <Button
         android:id="@+id/buttonCount"
-        android:layout_height="60sp"
-        android:layout_width="60sp"
+        android:layout_height="0dp"
+        android:layout_width="0dp"
+        android:paddingTop="11sp"
+        android:paddingBottom="7sp"
         android:layout_marginRight="12sp"
         android:layout_alignParentRight="true"
         android:layout_alignTop="@+id/textViewSectionName"
         android:layout_alignBottom="@+id/textViewSectionName"
+        android:layout_alignLeft="@+id/imageViewCircle"
+        android:layout_alignRight="@+id/imageViewCircle"
         android:textColor="#ffffff"
         android:textSize="15sp"
+        android:gravity="center"
         android:text="1"
         android:background="@android:color/transparent"/>
 </RelativeLayout>

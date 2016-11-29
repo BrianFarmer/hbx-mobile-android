@@ -2,13 +2,13 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:background="#625ba8"
+    android:background="@color/mainblue"
     android:tag="@+id/view_type"
     android:minHeight="30dp"
     >
 
     <TextView
-        android:layout_width="wrap_content"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:textAppearance="?android:attr/textAppearanceMedium"
         android:text="@string/all_other_clients"
@@ -16,7 +16,8 @@
         android:layout_alignParentTop="true"
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true"
-        android:textColor="#ffffff"
+        android:layout_toLeftOf="@+id/buttonCount"
+        android:textColor="@color/white"
         style="@style/EmployerListSectionHeaderText" />
     <ImageView
         android:id="@+id/imageViewCircle"
@@ -32,12 +33,16 @@
         android:background="@android:color/transparent"/>
     <Button
         android:id="@+id/buttonCount"
-        android:layout_height="60sp"
-        android:layout_width="60sp"
+        android:layout_height="0dp"
+        android:layout_width="0dp"
+        android:paddingTop="11sp"
+        android:paddingBottom="7sp"
         android:layout_marginRight="12sp"
         android:layout_alignParentRight="true"
         android:layout_alignTop="@+id/textViewSectionName"
         android:layout_alignBottom="@+id/textViewSectionName"
+        android:layout_alignLeft="@+id/imageViewCircle"
+        android:layout_alignRight="@+id/imageViewCircle"
         android:textColor="#ffffff"
         android:textSize="15sp"
         android:gravity="center"
@@ -49,7 +54,7 @@
         android:layout_height="wrap_content"
         android:layout_alignParentLeft="true"
         android:layout_below="@id/textViewSectionName"
-        android:background="#e1e1e1">
+        android:background="@color/lightgray">
         <TextView
             android:id="@+id/textViewCompanyNameLabel"
             style="@style/TextColumnHeaderStyle"

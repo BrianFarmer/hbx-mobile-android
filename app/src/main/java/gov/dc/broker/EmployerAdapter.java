@@ -12,7 +12,7 @@ import android.widget.TextView;
 
 import com.daimajia.swipe.adapters.BaseSwipeAdapter;
 
-import org.joda.time.DateTime;
+import org.joda.time.LocalDate;
 import org.joda.time.format.DateTimeFormat;
 
 import java.util.ArrayList;
@@ -53,20 +53,19 @@ public class EmployerAdapter extends BaseSwipeAdapter {
         renewalHeader = new RenewalHeader(this);
         otherItemsHeader = new OtherItemsHeader(this);
 
-        DateTime now = new DateTime();
+        LocalDate today = new LocalDate();
         int i = 0;
         for (BrokerClient brokerclient : employerList.brokerClients) {
-            if (brokerclient.isInOpenEnrollment(now)
+            if (brokerclient.isInOpenEnrollment(today)
                 && brokerclient.isAlerted()){
                 alertedItems.add(new OpenEnrollmentAlertedWrapper(brokerclient, i));
-            } else if (brokerclient.isInOpenEnrollment(now)
+            } else if (brokerclient.isInOpenEnrollment(today)
                 && !brokerclient.isAlerted()){
                 notAlertedItems.add(new OpenEnrollmentNotAlertedWrapper(brokerclient, i));
             } else if (brokerclient.renewalInProgress){
                 renewalItems.add(new RenewalWrapper(brokerclient, i));
-            } else {
-                otherItems.add(new OtherWrapper(brokerclient, i));
             }
+            otherItems.add(new OtherWrapper(brokerclient, i));
             i ++;
         }
 
@@ -499,7 +498,7 @@ class OpenEnrollmentAlertedWrapper extends BrokerClientWrapper {
         TextView employeesNeeded = (TextView)convertView.findViewById(R.id.textViewEmployessNeeded);
         employeesNeeded.setText(String.valueOf(brokerClient.getEmployessNeeded()));
         TextView daysLeft = (TextView)convertView.findViewById(R.id.textViewDaysLeft);
-        daysLeft.setText(String.valueOf(brokerClient.getDaysLeft()));
+        daysLeft.setText(String.valueOf(BrokerUtilities.daysLeft(brokerClient)));
         convertView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -551,7 +550,7 @@ class OpenEnrollmentNotAlertedWrapper extends BrokerClientWrapper {
         TextView employeesNeeded = (TextView)view.findViewById(R.id.textViewEmployessNeeded);
         employeesNeeded.setText(String.valueOf(brokerClient.employeesEnrolled));
         TextView daysLeft = (TextView)view.findViewById(R.id.textViewDaysLeft);
-        daysLeft.setText(String.valueOf(brokerClient.getDaysLeft()));
+        daysLeft.setText(String.valueOf(BrokerUtilities.daysLeft(brokerClient)));
         View alertBar = view.findViewById(R.id.imageViewAlertBar);
         alertBar.setVisibility(View.GONE);
         view.setOnClickListener(new View.OnClickListener() {
@@ -628,7 +627,7 @@ class RenewalWrapper extends BrokerClientWrapper {
         CharSequence dateString = DateTimeFormat.forPattern("MMM yy").print(brokerClient.planYearBegins);
         planYear.setText(dateString);
         TextView daysLeft = (TextView)view.findViewById(R.id.textViewDaysLeft);
-        daysLeft.setText(String.valueOf(brokerClient.getDaysLeft()));
+        daysLeft.setText(String.valueOf(BrokerUtilities.daysLeft(brokerClient)));
         view.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

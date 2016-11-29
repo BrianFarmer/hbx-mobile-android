@@ -4,6 +4,7 @@ import com.google.gson.annotations.SerializedName;
 
 import org.joda.time.DateTime;
 import org.joda.time.Duration;
+import org.joda.time.LocalDate;
 
 import java.io.Serializable;
 import java.util.List;
@@ -64,15 +65,15 @@ public class BrokerClient implements Serializable {
     @SerializedName("billing_report_date")
     public String billingReportDate;
 
-    public boolean isInOpenEnrollment(DateTime date){
+    public boolean isInOpenEnrollment(LocalDate date){
         if (openEnrollmentBegins == null
             || openEnrollmentEnds == null){
             return false;
         }
-        if (openEnrollmentBegins.isAfter(date)){
+        if (openEnrollmentBegins.toLocalDate().isAfter(date)){
             return false;
         }
-        if (openEnrollmentEnds.isBefore(date)){
+        if (openEnrollmentEnds.toLocalDate().isBefore(date)){
             return false;
         }
         return true;
@@ -88,10 +89,6 @@ public class BrokerClient implements Serializable {
 
     private long getDaysDiff(DateTime early, DateTime late){
         return (new Duration(early, late)).getStandardDays();
-    }
-
-    public long getDaysLeft() {
-        return getDaysDiff(new DateTime(), openEnrollmentEnds);
     }
 
     public boolean isAlerted(){

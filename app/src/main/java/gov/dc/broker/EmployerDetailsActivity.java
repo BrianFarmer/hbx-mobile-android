@@ -22,6 +22,7 @@ import android.widget.TextView;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 import org.joda.time.DateTime;
+import org.joda.time.LocalDate;
 
 import java.util.ArrayList;
 
@@ -85,19 +86,21 @@ public class EmployerDetailsActivity extends BrokerActivity {
         });
 
         TextView textViewEnrollmentStatus = (TextView) findViewById(R.id.textViewEnrollmentStatus);
-        if (brokerClient.isInOpenEnrollment(new DateTime())) {
+        if (brokerClient.isInOpenEnrollment(new LocalDate())) {
             if (brokerClient.isAlerted()){
                 textViewEnrollmentStatus.setText(R.string.minimum_not_met);
                 textViewEnrollmentStatus.setTextColor(ContextCompat.getColor(this, R.color.alertColor));
             } else {
-                textViewEnrollmentStatus.setText(R.string.minimum_not_met);
                 textViewEnrollmentStatus.setText(R.string.minimum_met);
+                textViewEnrollmentStatus.setTextColor(ContextCompat.getColor(this, R.color.open_enrollment_minimum_met));
             }
         } else {
             if (brokerClient.renewalInProgress){
                 textViewEnrollmentStatus.setText(R.string.renewal_in_progress);
+                textViewEnrollmentStatus.setTextColor(ContextCompat.getColor(this, R.color.in_renewal));
             } else {
                 textViewEnrollmentStatus.setText(R.string.all_other_clients);
+                textViewEnrollmentStatus.setTextColor(ContextCompat.getColor(this, R.color.textgray));
             }
         }
         configButtons();

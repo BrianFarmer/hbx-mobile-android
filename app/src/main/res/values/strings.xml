@@ -74,7 +74,7 @@
     <string name="total_employees_label">Total Employees</string>
     <string name="open_enrollment_label">Open Enrollment</string>
     <string name="open_enrollment_begins_label">Open Enrollment Begins</string>
-    <string name="open_enrollment_ends_labell">Open Enrollment Ends</string>
+    <string name="open_enrollment_ends_labell">Open Enrollment Closes</string>
     <string name="days_left_label">Days Left</string>
     <string name="call_dc_healthlink">Call DC HealthLink</string>
     <string name="estimated_cost_label">Monthly Estimated Costs-</string>
@@ -97,7 +97,7 @@
     <string name="no_addresses">No addresses available for this client.</string>
     <string name="no_mobile_phone_numbers">No mobile phone numbers are available for this client.</string>
     <string name="in_progress">In Progress</string>
-    <string name="renewal_in_progress">Pending Renewal</string>
+    <string name="renewal_in_progress">Renewal Pending</string>
     <string name="renewal_deadlines">Renewal Deadlines</string>
     <string name="email_address">Email Address</string>
     <string name="password">Password</string>

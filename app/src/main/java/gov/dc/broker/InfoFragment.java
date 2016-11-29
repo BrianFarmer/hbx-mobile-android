@@ -37,10 +37,20 @@ public class InfoFragment extends BrokerFragment {
     private BrokerClient brokerClient = null;
     private BrokerClientDetails brokerClientDetails = null;
     private View view;
-    private static boolean renewalsInitiallyOpen = false;
+    private static boolean renewalsInitiallyOpen = true;
     private static boolean participationInitiallyOpen = false;
     private static boolean monthlyCostsInitiallyOpen = false;
+    private boolean currentRenewalsOpen;
+    private boolean currentParticipationOpen;
+    private boolean currentMonthlyCostsOpen;
     private String coverageYear;
+
+
+    public InfoFragment(){
+        currentRenewalsOpen = renewalsInitiallyOpen;
+        currentParticipationOpen = participationInitiallyOpen;
+        currentMonthlyCostsOpen = monthlyCostsInitiallyOpen;
+    }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -73,6 +83,12 @@ public class InfoFragment extends BrokerFragment {
         return view;
     }
 
+    @Override
+    public void onResume(){
+        super.onResume();
+        configureDrawers();
+    }
+
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void doThis(Events.BrokerClient brokerClientEvent) {
         brokerClient = brokerClientEvent.getBrokerClient();
@@ -100,29 +116,29 @@ public class InfoFragment extends BrokerFragment {
 
     private void configureDrawers(){
         ImageView renewalDeadlines = (ImageView) view.findViewById(R.id.imageViewRenewalDeadlines);
+        setVisibility(view, R.string.renewal_group, currentRenewalsOpen, R.id.imageViewRenewalDeadlines, R.drawable.uparrow, R.drawable.circle_plus);
         renewalDeadlines.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                invertGroup(view, R.string.renewal_group, R.id.imageViewRenewalDeadlines, R.drawable.uparrow, R.drawable.circle_plus);
+                currentRenewalsOpen = invertGroup(view, R.string.renewal_group, R.id.imageViewRenewalDeadlines, R.drawable.uparrow, R.drawable.circle_plus);
             }
         });
-        setVisibility(view, R.string.renewal_group, renewalsInitiallyOpen, R.id.imageViewRenewalDeadlines, R.drawable.uparrow, R.drawable.circle_plus);
         ImageView participation = (ImageView) view.findViewById(R.id.imageViewParticipation);
+        setVisibility(view, R.string.participation_group, currentParticipationOpen, R.id.imageViewParticipation, R.drawable.uparrow, R.drawable.circle_plus);
         participation.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                invertGroup(view, R.string.participation_group, R.id.imageViewParticipation, R.drawable.uparrow, R.drawable.circle_plus);
+                currentParticipationOpen = invertGroup(view, R.string.participation_group, R.id.imageViewParticipation, R.drawable.uparrow, R.drawable.circle_plus);
             }
         });
-        setVisibility(view, R.string.participation_group, participationInitiallyOpen, R.id.imageViewParticipation, R.drawable.uparrow, R.drawable.circle_plus);
         final ImageView monthlyCosts = (ImageView) view.findViewById(R.id.imageViewMonthlyCosts);
+        setVisibility(view, R.string.monthly_costs_group, currentMonthlyCostsOpen, R.id.imageViewMonthlyCosts, R.drawable.uparrow, R.drawable.circle_plus);
         monthlyCosts.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                invertGroup(view, R.string.monthly_costs_group, R.id.imageViewMonthlyCosts, R.drawable.uparrow, R.drawable.circle_plus);
+                currentMonthlyCostsOpen = invertGroup(view, R.string.monthly_costs_group, R.id.imageViewMonthlyCosts, R.drawable.uparrow, R.drawable.circle_plus);
             }
         });
-        setVisibility(view, R.string.monthly_costs_group, monthlyCostsInitiallyOpen, R.id.imageViewMonthlyCosts, R.drawable.uparrow, R.drawable.circle_plus);
     }
 
     private void populateField() {
@@ -136,26 +152,28 @@ public class InfoFragment extends BrokerFragment {
         TextView openEnrollmentEnds = (TextView) view.findViewById(R.id.textViewOpenEnrollmentEnds);
         openEnrollmentEnds.setText(Utilities.DateAsString(brokerClient.openEnrollmentEnds));
         TextView daysLeft = (TextView) view.findViewById(R.id.textViewDaysLeft);
-        daysLeft.setText(Long.toString(Utilities.dateDifferenceDays(brokerClient.openEnrollmentBegins, brokerClient.openEnrollmentEnds)));
+        daysLeft.setText(Long.toString(BrokerUtilities.daysLeft(brokerClient)));
+        //daysLeft.setText(Long.toString(Utilities.dateDifferenceDays(brokerClient.openEnrollmentBegins, brokerClient.openEnrollmentEnds)));
 
+        BrokerUtilities.EmployeeCounts employeeCounts = BrokerUtilities.getEmployeeCounts(roster, coverageYear);
         TextView textViewEnrolled = (TextView) view.findViewById(R.id.textViewEnrolled);
-        textViewEnrolled.setText(Integer.toString(brokerClient.employeesEnrolled));
+        textViewEnrolled.setText(Integer.toString(employeeCounts.Enrolled));
         TextView textViewWaived = (TextView)view.findViewById(R.id.textViewWaived);
-        textViewWaived.setText(Integer.toString(brokerClient.employessWaived));
+        textViewWaived.setText(Integer.toString(employeeCounts.Waived));
         TextView textViewNotEnrolled = (TextView)view.findViewById(R.id.textViewNotEnrolled);
-        textViewNotEnrolled.setText(Integer.toString(brokerClient.employeesTotal - (brokerClient.employeesEnrolled + brokerClient.employessWaived)));
+        textViewNotEnrolled.setText(Integer.toString(employeeCounts.NotEnrolled));
         TextView textViewTotalEmployees = (TextView)view.findViewById(R.id.textViewTotalEmployees);
-        textViewTotalEmployees.setText(Integer.toString(brokerClient.employeesTotal));
+        textViewTotalEmployees.setText(Integer.toString(employeeCounts.Enrolled + employeeCounts.NotEnrolled + employeeCounts.Waived));
 
         configurePieChartData();
 
         BrokerUtilities.Totals totals = BrokerUtilities.calcTotals(roster.roster, coverageYear.compareToIgnoreCase("active") == 0);
         TextView textViewEmployerContribution = (TextView)view.findViewById(R.id.textViewEmployerContribution);
-        textViewEmployerContribution.setText(String.format("%.2f", totals.employerTotal));
+        textViewEmployerContribution.setText(String.format("$%.2f", totals.employerTotal));
         TextView textViewEmployeeContribution = (TextView)view.findViewById(R.id.textViewEmployeeContribution);
-        textViewEmployeeContribution.setText(String.format("%.2f", totals.employeeTotal));
+        textViewEmployeeContribution.setText(String.format("$%.2f", totals.employeeTotal));
         TextView textViewTotal = (TextView)view.findViewById(R.id.textViewTotal);
-        textViewTotal.setText(String.format("%.2f", totals.total));
+        textViewTotal.setText(String.format("$%.2f", totals.total));
     }
 
     private void configurePieChartData() {

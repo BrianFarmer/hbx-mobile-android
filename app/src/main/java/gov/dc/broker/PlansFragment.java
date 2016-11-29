@@ -107,7 +107,12 @@ public class PlansFragment extends BrokerFragment {
                 }
             });
             TextView textViewPlanOffered = (TextView) planRoot.findViewById(R.id.textViewPlanOffered);
-            textViewPlanOffered.setText(planOffering.health.plansBySummaryText);
+            if (planOffering.health.planOptionKind.compareToIgnoreCase("single_carrier") == 0){
+                textViewPlanOffered.setText(planOffering.health.referencePlanName);
+
+            } else {
+                textViewPlanOffered.setText(planOffering.health.plansBySummaryText);
+            }
             TextView textViewEligibility = (TextView) planRoot.findViewById(R.id.textViewEligibility);
             textViewEligibility.setText(planOffering.eligibilityRule);
             TextView textViewEmployeeContribution = (TextView) planRoot.findViewById(R.id.textViewEmployeeContribution);
@@ -119,7 +124,12 @@ public class PlansFragment extends BrokerFragment {
             TextView textViewChildContributionLevel = (TextView) planRoot.findViewById(R.id.textViewChildContributionLevel);
             textViewChildContributionLevel.setText(Integer.toString(planOffering.health.employerContributionByRelationship.childUnder26));
             TextView textViewReferencePlan = (TextView) planRoot.findViewById(R.id.textViewReferencePlan);
-            textViewReferencePlan.setText(planOffering.health.referencePlanName);
+            if (planOffering.health.planOptionKind.compareToIgnoreCase("single_carrier") == 0) {
+                planRoot.findViewById(R.id.textViewReferencePlanLabel).setVisibility(View.GONE);
+                textViewReferencePlan.setVisibility(View.GONE);
+            } else {
+                textViewReferencePlan.setText(planOffering.health.referencePlanName);
+            }
 
             TextView textViewNoPlanAvailableLabel = (TextView) planRoot.findViewById(R.id.textViewNoPlanAvailableLabel);
             RelativeLayout relativeLayoutDentalPlan = (RelativeLayout) planRoot.findViewById(R.id.relativeLayoutDentalPlan);
@@ -165,6 +175,8 @@ public class PlansFragment extends BrokerFragment {
                 textViewDentalDomesticPartnerLevel.setText(Integer.toString(planOffering.dental.employerContributionByRelationship.domesticPartner));
                 TextView textViewDentalChildContributionLevel = (TextView) planRoot.findViewById(R.id.textViewDentalChildContributionLevel);
                 textViewDentalChildContributionLevel.setText(Integer.toString(planOffering.dental.employerContributionByRelationship.childUnder26));
+                TextView textViewDentalReferencePlan = (TextView) planRoot.findViewById(R.id.textViewDentalReferencePlan);
+                textViewDentalReferencePlan.setText(planOffering.dental.referencePlanName);
             }
 
             linearLayoutPlans.addView(planRoot);

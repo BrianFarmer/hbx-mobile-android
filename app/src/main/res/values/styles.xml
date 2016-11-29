@@ -198,6 +198,9 @@
         <item name="android:textSize">18sp</item>
         <item name="android:textStyle">bold</item>
     </style>
+    <style name="enrollment_status_subtitle" parent="Subtitle2">
+        <item name="android:capitalize">characters</item>
+    </style>
     <style name="coverage_year_subtitle" parent="Subtitle2">
         <item name="android:paddingBottom">20sp</item>
     </style>
@@ -542,7 +545,7 @@
     </style>
     <style name="costs_text" parent="roster_header_text">
         <item name="android:textColor">@color/textgray</item>
-        <item name="android:gravity">right</item>
+        <item name="android:gravity">center_horizontal</item>
         <item name="android:background">@color/transparent</item>
     </style>
     <style name="costs_text_right_column" parent="costs_text">
@@ -600,7 +603,7 @@
 
     <style name="plan_contribution_label" parent="plan_base">
         <item name="android:textColor">@color/contribution_text</item>
-        <item name="android:textStyle">bold</item>
+        <item name="android:textStyle">normal</item>
         <item name="android:gravity">center</item>
         <item name="android:maxLines">2</item>
         <item name="android:layout_marginTop">20sp</item>

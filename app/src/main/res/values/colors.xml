@@ -4,6 +4,8 @@
     <color name="colorPrimaryDark">#303F9F</color>
     <color name="colorAccent">#FF4081</color>
     <color name="alertRed">#ed1c24</color>
+    <color name="in_renewal">#efbf40</color>
+    <color name="open_enrollment_minimum_met">#69A30D</color>
     <color name="light_blue">#00a3e2</color>
     <color name="blueish_green">#00a99e</color>
     <color name="purple">#625ba8</color>
@@ -29,7 +31,7 @@
     <color name="alertColor">@color/alertRed</color>
     <color name="enrolled_color">#69a30d</color>
     <color name="waived_color">#eaaa00</color>
-    <color name="terminated_color">#625ba8</color>
+    <color name="terminated_color">@color/textgray</color>
     <color name="not_enrolled_color">#e72b2d</color>
     <color name="total_employees_color">@color/black</color>
     <color name="roster_header_background">@color/lightgray</color>
