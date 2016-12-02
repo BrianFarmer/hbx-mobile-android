@@ -413,9 +413,4 @@ public class BackdoorSite extends HbxSite {
         accountInfo.enrollServer = root;
 
     }
-
-    @Override
-    public String getEmployee(Events.GetEmployee getEmployee, BrokerClient client) {
-        return null;
-    }
 }

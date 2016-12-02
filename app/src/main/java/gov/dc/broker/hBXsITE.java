@@ -265,7 +265,7 @@ public abstract class HbxSite extends Site {
     }
 
     @Override
-    public String GetEmployerList(Events.GetEmployerList getEmployerList, AccountInfo accountInfo) throws Exception {
+    public String GetBrokerAgency(Events.GetEmployerList getEmployerList, AccountInfo accountInfo) throws Exception {
         String result = getRelativeUrl(enrollServerSiteConfig, employersList, accountInfo);
         return result;
     }

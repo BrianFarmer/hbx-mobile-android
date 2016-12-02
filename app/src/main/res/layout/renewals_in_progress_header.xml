@@ -38,7 +38,7 @@
         android:layout_alignBottom="@+id/textViewSectionName"
         android:layout_alignLeft="@+id/imageViewCircle"
         android:layout_alignRight="@+id/imageViewCircle"
-        android:textColor="#ffffff"
+        android:textColor="@color/white"
         android:textSize="15sp"
         android:gravity="center"
         android:text="1"

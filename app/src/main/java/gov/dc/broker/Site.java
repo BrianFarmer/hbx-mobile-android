@@ -18,7 +18,7 @@ public abstract class Site {
 
     public void initEnrollServerInfo(String enrollServerBaseUrl) throws URISyntaxException {}
 
-    abstract String GetEmployerList(Events.GetEmployerList getEmployerList, AccountInfo accountInfo) throws Exception;
+    abstract String GetBrokerAgency(Events.GetEmployerList getEmployerList, AccountInfo accountInfo) throws Exception;
     abstract String GetEmployer(Events.GetEmployer getEmployer, String url, AccountInfo accountInfo) throws Exception;
     abstract String getRoster(Events.GetRoster getRoster, String url, AccountInfo accountInfo) throws Exception;
     abstract String GetCarriers(Events.GetCarriers getCarriers) throws IOException;
@@ -43,5 +43,4 @@ public abstract class Site {
         return response.toString();
     }
 
-    public abstract String getEmployee(Events.GetEmployee getEmployee, BrokerClient client);
 }

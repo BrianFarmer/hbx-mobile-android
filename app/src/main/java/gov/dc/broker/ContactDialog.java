@@ -16,6 +16,9 @@ import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.util.ArrayList;
 
+import gov.dc.broker.models.brokeragency.BrokerClient;
+import gov.dc.broker.models.brokeragency.ContactInfo;
+
 public class ContactDialog extends AppCompatDialogFragment {
     private BrokerClient brokerClient;
     private ContactListAdapter.ListType listType;

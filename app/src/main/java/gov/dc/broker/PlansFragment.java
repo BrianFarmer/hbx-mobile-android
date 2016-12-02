@@ -13,22 +13,22 @@ import android.widget.TextView;
 
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
+import org.joda.time.LocalDate;
 
-import java.util.List;
-
-import gov.dc.broker.models.brokerclient.Active;
-import gov.dc.broker.models.brokerclient.BrokerClientDetails;
-import gov.dc.broker.models.brokerclient.ElectedDentalPlan;
-
-import static com.bumptech.glide.gifdecoder.GifHeaderParser.TAG;
+import gov.dc.broker.models.employer.ElectedDentalPlan;
+import gov.dc.broker.models.employer.Employer;
+import gov.dc.broker.models.employer.PlanOffering;
+import gov.dc.broker.models.employer.PlanYear;
 
 /**
  * Created by plast on 10/21/2016.
  */
 
 public class PlansFragment extends BrokerFragment {
-    private BrokerClientDetails brokerClientDetails = null;
-    private String coverageYear;
+    private static String TAG = "PlansFragment";
+
+    private Employer employer;
+    private LocalDate coverageYear;
     private View view;
     private int brokerClientId;
 
@@ -45,7 +45,7 @@ public class PlansFragment extends BrokerFragment {
 
         view = LayoutInflater.from(getActivity()).inflate(R.layout.plans_fragment, null);
 
-        if (brokerClientDetails == null) {
+        if (employer == null) {
             brokerClientId = getBrokerActivity().getIntent().getIntExtra(Intents.BROKER_CLIENT_ID, -1);
             if (brokerClientId == -1) {
                 // If we get here the employer id in the intent wasn't initialized and
@@ -55,40 +55,46 @@ public class PlansFragment extends BrokerFragment {
             }
             getMessages().getEmployer(brokerClientId);
         } else {
-            populate();
+            try {
+                populate();
+            } catch (Exception e) {
+                Log.e(TAG, "exception populating PlansFragment", e);
+            }
         }
 
         return view;
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)
-    public void doThis(Events.CoverageYear coverageYear) {
+    public void doThis(Events.CoverageYear coverageYear) throws Exception {
         this.coverageYear = coverageYear.getYear();
-        populate();
+        try{
+            populate();
+        } catch (Exception e){
+            Log.e(TAG, "exception populating plans fragment in dothis(brokerclient)", e);
+        }
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)
-    public void doThis(Events.BrokerClient brokerClient) {
-        brokerClientDetails = brokerClient.getBrokerClientDetails();
+    public void doThis(Events.BrokerClient brokerClient) throws Exception {
+        employer = brokerClient.getEmployer();
         EmployerDetailsActivity activity = (EmployerDetailsActivity) getActivity();
         this.coverageYear = activity.getCoverageYear();
-        populate();
-
+        try {
+            populate();
+        } catch (Exception e){
+            Log.e(TAG, "exception populating plans fragment in dothis(brokerclient)", e);
+        }
     }
 
-    private void populate() {
-        List<Active> planOfferings;
-        if (coverageYear.compareToIgnoreCase("active") == 0){
-            planOfferings = brokerClientDetails.planOfferings.active;
-        } else {
-            planOfferings = brokerClientDetails.planOfferings.renewal;
-        }
+    private void populate() throws Exception {
+        PlanYear planYearForCoverageYear = BrokerUtilities.getPlanYearForCoverageYear(employer, coverageYear);
 
 
         FragmentActivity activity = this.getActivity();
         LinearLayout linearLayoutPlans = (LinearLayout) view.findViewById(R.id.linearLayoutPlans);
         linearLayoutPlans.removeAllViews();
-        for (Active planOffering : planOfferings) {
+        for (PlanOffering planOffering : planYearForCoverageYear.planOfferings) {
             final View planRoot = LayoutInflater.from(activity).inflate(R.layout.plan_item, (ViewGroup)view, false);
 
             TextView textViewDrawerLabel = (TextView) planRoot.findViewById(R.id.textViewDrawerLabel);

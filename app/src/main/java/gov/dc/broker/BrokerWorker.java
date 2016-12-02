@@ -15,6 +15,7 @@ import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 import org.joda.time.DateTime;
+import org.joda.time.LocalDate;
 
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
@@ -27,8 +28,11 @@ import java.security.spec.InvalidKeySpecException;
 import javax.crypto.SecretKey;
 import javax.crypto.spec.DESKeySpec;
 
-import gov.dc.broker.models.roster.Employee;
+import gov.dc.broker.models.brokeragency.BrokerAgency;
+import gov.dc.broker.models.brokeragency.BrokerClient;
+import gov.dc.broker.models.employer.Employer;
 import gov.dc.broker.models.roster.Roster;
+import gov.dc.broker.models.roster.RosterEntry;
 
 
 public class BrokerWorker extends IntentService {
@@ -52,8 +56,10 @@ public class BrokerWorker extends IntentService {
     private final String forcedPassword = "Test123!";
     private final String forcedSecurityAnswer = "Test";
 
-    private EmployerList employerList = null;
-    private Roster currentRoster = null;
+
+    private BrokerAgency brokerAgency = null;
+    private Roster roster = null;
+    private Employer employer;
 
     static Site[] sites = {
             new GitSite(),
@@ -308,10 +314,10 @@ public class BrokerWorker extends IntentService {
         try {
             Log.d(TAG, "Received GetEmployer");
             checkSessionId();
-            BrokerClient brokerClient = employerList.brokerClients.get(getEmployer.getEmployerId());
+            BrokerClient brokerClient = brokerAgency.brokerClients.get(getEmployer.getEmployerId());
             String response = currentSite.GetEmployer(getEmployer, brokerClient.employerDetailsUrl, accountInfoStorage.getAccountInfo());
             BrokerWorker.eventBus.post(new Events.BrokerClient (getEmployer.getId(),
-                                                                employerList.brokerClients.get(getEmployer.getEmployerId()), parser.parseEmployerDetails(response)));
+                                                                brokerAgency.brokerClients.get(getEmployer.getEmployerId()), parser.parseEmployerDetails(response)));
         } catch (Exception e) {
             Log.e(TAG, "Exception processing GetEmployer");
             BrokerWorker.eventBus.post(new Events.Error("Error getting employer details"));
@@ -324,10 +330,10 @@ public class BrokerWorker extends IntentService {
             Log.d(TAG, "Received GetRoster");
             checkSessionId();
 
-            BrokerClient brokerClient = employerList.brokerClients.get(getRoster.getEmployerId());
+            BrokerClient brokerClient = brokerAgency.brokerClients.get(getRoster.getEmployerId());
             String response = currentSite.getRoster(getRoster, brokerClient.employeeRosterUrl, accountInfoStorage.getAccountInfo());
-            currentRoster = parser.parseRoster(response);
-            BrokerWorker.eventBus.post(new Events.RosterResult (getRoster.getId(), currentRoster));
+            roster = parser.parseRoster(response);
+            BrokerWorker.eventBus.post(new Events.RosterResult (getRoster.getId(), roster));
         } catch (Exception e) {
             Log.e(TAG, "Exception processing GetEmployer");
             BrokerWorker.eventBus.post(new Events.Error("Error getting employer details"));
@@ -353,14 +359,14 @@ public class BrokerWorker extends IntentService {
     @Subscribe(threadMode = ThreadMode.BACKGROUND)
     public void doThis(Events.GetEmployerList getEmployerList) {
         try {
-            Log.d(TAG, "Received GetEmployerList message.");
+            Log.d(TAG, "Received GetBrokerAgency message.");
             checkSessionId();
-            String employerResponseString = currentSite.GetEmployerList(getEmployerList, accountInfoStorage.getAccountInfo());
-            employerList = parser.parseEmployerList(employerResponseString);
-            BrokerWorker.eventBus.post(new Events.EmployerList (getEmployerList.getId(), employerList));
+            String employerResponseString = currentSite.GetBrokerAgency(getEmployerList, accountInfoStorage.getAccountInfo());
+            brokerAgency = parser.parseEmployerList(employerResponseString);
+            BrokerWorker.eventBus.post(new Events.EmployerList (getEmployerList.getId(), brokerAgency));
         }
         catch(Throwable e) {
-            Log.e(TAG, "Exception processing GetEmployerList");
+            Log.e(TAG, "Exception processing GetBrokerAgency");
             BrokerWorker.eventBus.post(new Events.Error("Error getting employer list"));
         }
     }
@@ -386,11 +392,11 @@ public class BrokerWorker extends IntentService {
             Log.d(TAG, "Received GetEmployee message");
             checkSessionId();
 
-            BrokerClient brokerClient = employerList.brokerClients.get(getEmployee.getEmployerId());
-            for (Employee employee : currentRoster.roster) {
-                if (employee.id == getEmployee.getEmployeeId()){
+            BrokerClient brokerClient = brokerAgency.brokerClients.get(getEmployee.getEmployerId());
+            for (RosterEntry rosterEntry : roster.roster) {
+                if (rosterEntry.id == getEmployee.getEmployeeId()){
                     BrokerWorker.eventBus.post(new Events.Employee(getEmployee.getId(), getEmployee.getEmployerId(),
-                                                                   employee));
+                                                                   rosterEntry));
                 }
             }
             BrokerWorker.eventBus.post(new Events.Error("Not employee found with that id"));
@@ -406,5 +412,12 @@ class DateTimeDeserializer implements JsonDeserializer<DateTime> {
     public DateTime deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context)
             throws JsonParseException {
         return new DateTime(json.getAsJsonPrimitive().getAsString());
+    }
+}
+
+class LocalDateDeserializer implements JsonDeserializer<LocalDate> {
+    public LocalDate deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context)
+            throws JsonParseException {
+        return new LocalDate(json.getAsJsonPrimitive().getAsString());
     }
 }

@@ -1,4 +1,3 @@
-
 package gov.dc.broker.models.roster;
 
 import com.google.gson.annotations.Expose;
@@ -14,13 +13,13 @@ public class Health {
     public String status;
     @SerializedName("employer_contribution")
     @Expose
-    public double employerContribution;
+    public Double employerContribution;
     @SerializedName("employee_cost")
     @Expose
-    public double employeeCost;
+    public Double employeeCost;
     @SerializedName("total_premium")
     @Expose
-    public double totalPremium;
+    public Double totalPremium;
     @SerializedName("plan_name")
     @Expose
     public String planName;

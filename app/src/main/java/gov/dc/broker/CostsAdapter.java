@@ -9,9 +9,12 @@ import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.TextView;
 
+import org.joda.time.LocalDate;
+
 import java.util.ArrayList;
 
-import gov.dc.broker.models.roster.Employee;
+import gov.dc.broker.models.roster.Enrollment;
+import gov.dc.broker.models.roster.RosterEntry;
 import gov.dc.broker.models.roster.Health;
 
 /**
@@ -23,11 +26,11 @@ public class CostsAdapter extends BaseAdapter {
 
     private final BrokerFragment fragment;
     private final Context context;
-    private final ArrayList<Employee> employees;
+    private final ArrayList<RosterEntry> employees;
     private final int brokerClientId;
-    private final String coverageYear;
+    private final LocalDate coverageYear;
 
-    public CostsAdapter(BrokerFragment fragment, Context context, ArrayList<Employee> employees, int brokerClientId, String coverageYear){
+    public CostsAdapter(BrokerFragment fragment, Context context, ArrayList<RosterEntry> employees, int brokerClientId, LocalDate coverageYear){
         this.fragment = fragment;
         this.context = context;
         this.employees = employees;
@@ -68,15 +71,11 @@ public class CostsAdapter extends BaseAdapter {
         }
 
         try {
-            final Employee employee = employees.get(i);
-            Health health;
-            if (coverageYear.compareToIgnoreCase("active") == 0){
-                health = employee.enrollments.active.health;
-            } else {
-                health = employee.enrollments.renewal.health;
-            }
+            final RosterEntry rosterEntry = employees.get(i);
+            Enrollment enrollmentForCoverageYear = BrokerUtilities.getEnrollmentForCoverageYear(rosterEntry, coverageYear);
+            Health health = enrollmentForCoverageYear.health;
             TextView employeeName = (TextView) view.findViewById(R.id.textViewEmployeeName);
-            employeeName.setText(employee.getFullName());
+            employeeName.setText(BrokerUtilities.getFullName(rosterEntry));
             TextView textViewEmployerCost = (TextView) view.findViewById(R.id.textViewEmployerCost);
             TextView textViewEmployeeCost = (TextView) view.findViewById(R.id.textViewEmployeeCost);
             if (health.status.compareToIgnoreCase("enrolled") == 0) {
@@ -91,7 +90,7 @@ public class CostsAdapter extends BaseAdapter {
             view.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    Intents.launchEmployeeDetails((BrokerActivity)fragment.getActivity(), employee.id, brokerClientId);
+                    Intents.launchEmployeeDetails((BrokerActivity)fragment.getActivity(), rosterEntry.id, brokerClientId);
                 }
             });
             return view;

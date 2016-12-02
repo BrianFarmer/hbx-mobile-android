@@ -9,6 +9,7 @@ import android.widget.ListView;
 
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
+import org.joda.time.LocalDate;
 
 import java.util.ArrayList;
 
@@ -25,7 +26,7 @@ public class CostsFragment extends BrokerFragment {
     private Roster rosterResult;
     private int brokerClientId;
     private Roster roster;
-    private String coverageYear;
+    private LocalDate coverageYear;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {

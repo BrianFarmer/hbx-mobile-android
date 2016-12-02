@@ -11,6 +11,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
+import gov.dc.broker.models.brokeragency.ContactInfo;
+
 /**
  * Created by plast on 8/31/2016.
  */
@@ -56,7 +58,7 @@ public class ContactListAdapter extends BaseAdapter {
              contactInfos) {
             switch (listType){
                 case Email:
-                    if (!contactInfo.allEmailsEmpty()){
+                    if (!contactInfo.emails.isEmpty()){
                         listItems.add(new NameHeader(contactInfo));
                         for (String email:contactInfo.emails) {
                             listItems.add(new EmailWrapper(contactInfo, email, contactDialog));
@@ -83,13 +85,14 @@ public class ContactListAdapter extends BaseAdapter {
                     }
                     break;
                 case Directions:
-                    if (!contactInfo.isAddressEmpty()) {
+                    if (contactInfo.address1 != null
+                        && contactInfo.address1.length() > 0) {
                         listItems.add(new NameHeader(contactInfo));
                         listItems.add(new AddressWrapper(contactInfo, contactDialog));
                     }
                     break;
                 case Chat:
-                    if (!contactInfo.isPrimaryOffice()
+                    if (!BrokerUtilities.isPrimaryOffice(contactInfo)
                         && contactInfo.mobile != null
                         && !contactInfo.mobile.isEmpty()) {
                         listItems.add(new NameHeader(contactInfo));
@@ -278,7 +281,7 @@ class NameHeader extends ContactItemWrapperBase {
 
     public void fill(View view) {
         TextView contactName = (TextView) view.findViewById(R.id.textViewContactName);
-        contactName.setText(contactInfo.firstName + " " + contactInfo.lastName);
+        contactName.setText(contactInfo.first + " " + contactInfo.last);
     }
 }
 

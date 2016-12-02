@@ -1,5 +1,7 @@
 package gov.dc.broker;
 
+import org.joda.time.LocalDate;
+
 public interface Messages {
     void getEmployer(int employerId);
     void getLogin();
@@ -10,5 +12,5 @@ public interface Messages {
     void release();
     void getRoster(int employerId);
     void getEmployee(int employeeId, int employerId);
-    void coverageYearChanged(String year);
+    void coverageYearChanged(LocalDate coverageYear);
 }

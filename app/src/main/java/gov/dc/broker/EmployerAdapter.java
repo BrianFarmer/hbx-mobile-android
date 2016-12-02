@@ -2,6 +2,7 @@ package gov.dc.broker;
 
 import android.content.Context;
 import android.support.v4.app.DialogFragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -13,19 +14,23 @@ import android.widget.TextView;
 import com.daimajia.swipe.adapters.BaseSwipeAdapter;
 
 import org.joda.time.LocalDate;
-import org.joda.time.format.DateTimeFormat;
 
 import java.util.ArrayList;
+import java.util.List;
+
+import gov.dc.broker.models.brokeragency.BrokerClient;
+import gov.dc.broker.models.brokeragency.PlanYear;
 
 public class EmployerAdapter extends BaseSwipeAdapter {
     private static final String TAG = "EmployerAdapter";
 
     private MainActivity mainActivity;
-    private EmployerList employerList;
     private Context context;
     private LayoutInflater inflater;
     private ArrayList<ItemWrapperBase> wrapped_items = new ArrayList<ItemWrapperBase>();
 
+    private final List<BrokerClient> employerList;
+    private final LocalDate coverageYear;
     private ArrayList<OpenEnrollmentAlertedWrapper> alertedItems = new ArrayList<OpenEnrollmentAlertedWrapper>();
     private ArrayList<OpenEnrollmentNotAlertedWrapper> notAlertedItems = new ArrayList<OpenEnrollmentNotAlertedWrapper>();
     private ArrayList<RenewalWrapper> renewalItems = new ArrayList<RenewalWrapper>();
@@ -41,11 +46,13 @@ public class EmployerAdapter extends BaseSwipeAdapter {
     private static boolean othersState = false;
     public View notAlerted;
 
-    public EmployerAdapter(MainActivity mainActivity, Context context, EmployerList employerList){
+    public EmployerAdapter(MainActivity mainActivity, Context context,
+                           List<BrokerClient> employerList, LocalDate coverageYear) throws Exception {
         this.mainActivity = mainActivity;
         this.context = context;
         this.inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         this.employerList = employerList;
+        this.coverageYear = coverageYear;
 
         openEnrollmentHeader = new OpenEnrollmentHeader(this);
         openEnrollmentAlertHeader = new OpenEnrollmentAlertHeader(this);
@@ -53,19 +60,34 @@ public class EmployerAdapter extends BaseSwipeAdapter {
         renewalHeader = new RenewalHeader(this);
         otherItemsHeader = new OtherItemsHeader(this);
 
-        LocalDate today = new LocalDate();
+        LocalDate today = LocalDate.now();
         int i = 0;
-        for (BrokerClient brokerclient : employerList.brokerClients) {
-            if (brokerclient.isInOpenEnrollment(today)
-                && brokerclient.isAlerted()){
-                alertedItems.add(new OpenEnrollmentAlertedWrapper(brokerclient, i));
-            } else if (brokerclient.isInOpenEnrollment(today)
-                && !brokerclient.isAlerted()){
-                notAlertedItems.add(new OpenEnrollmentNotAlertedWrapper(brokerclient, i));
-            } else if (brokerclient.renewalInProgress){
-                renewalItems.add(new RenewalWrapper(brokerclient, i));
+
+        // The code makes some assumptions about plan years:
+        //   There can only be one plan year in open enrollment
+        //   There can only be one plan year in renewal
+        //   Being in open enrollment and renewal are mutually exclusive.
+
+        for (BrokerClient brokerClient : employerList) {
+            if (brokerClient.planYears != null
+                || brokerClient.planYears.size() > 0) {
+                for (PlanYear planYear : brokerClient.planYears) {
+                    if (BrokerUtilities.isInOpenEnrollment(planYear, today)){
+                        if (BrokerUtilities.isPlanYearAlerted(planYear)){
+                            alertedItems.add(new OpenEnrollmentAlertedWrapper(brokerClient, planYear, i));
+                        } else {
+                            notAlertedItems.add(new OpenEnrollmentNotAlertedWrapper(brokerClient, planYear, i));
+                        }
+                        break;
+                    } else {
+                        if (BrokerUtilities.isInRenewal(planYear)){
+                            new RenewalWrapper(brokerClient, planYear, i);
+                        }
+                        break;
+                    }
+                }
             }
-            otherItems.add(new OtherWrapper(brokerclient, i));
+            otherItems.add(new OtherWrapper(brokerClient, i));
             i ++;
         }
 
@@ -136,7 +158,11 @@ public class EmployerAdapter extends BaseSwipeAdapter {
 
     @Override
     public void fillValues(int position, View convertView) {
-        ((ItemWrapperBase)getItem(position)).fillValues(convertView, mainActivity);
+        try {
+            ((ItemWrapperBase)getItem(position)).fillValues(convertView, mainActivity);
+        } catch (Exception e) {
+            Log.e(TAG, "Exception in fillValues", e);
+        }
     }
 
     public ArrayList<OpenEnrollmentAlertedWrapper> getAlertedItems() {
@@ -224,14 +250,14 @@ abstract class ItemWrapperBase {
 
     /*fill values to your item layout returned from `generateView`.
       The position param here is passed from the BaseAdapter's 'getView()*/
-    public abstract void fillValues(View convertView, final MainActivity mainActivity);
+    public abstract void fillValues(View convertView, final MainActivity mainActivity) throws Exception;
 }
 
 class OpenEnrollmentHeader extends ItemWrapperBase {
 
     private final EmployerAdapter employerAdapter;
 
-    public OpenEnrollmentHeader(EmployerAdapter employerAdapter) {
+    OpenEnrollmentHeader(EmployerAdapter employerAdapter) {
         this.employerAdapter = employerAdapter;
     }
 
@@ -481,9 +507,11 @@ abstract class BrokerClientWrapper extends ItemWrapperBase {
 class OpenEnrollmentAlertedWrapper extends BrokerClientWrapper {
     private static final String TAG = "OpenEnrlmentAlertedWrpr";
     private static final String VIEW_TYPE = "OpenEnrollmentAlertedView";
+    private final PlanYear planYear;
 
-    public OpenEnrollmentAlertedWrapper(BrokerClient brokerclient, int i) {
+    public OpenEnrollmentAlertedWrapper(BrokerClient brokerclient, PlanYear planYear, int i) {
         super(brokerclient, i);
+        this.planYear = planYear;
     }
 
     @Override
@@ -492,13 +520,13 @@ class OpenEnrollmentAlertedWrapper extends BrokerClientWrapper {
     }
 
     @Override
-    public void fillValues(View convertView, final MainActivity mainActivity) {
+    public void fillValues(View convertView, final MainActivity mainActivity) throws Exception {
         TextView companyName = (TextView)convertView.findViewById(R.id.textViewCompanyName);
         companyName.setText(brokerClient.employerName);
         TextView employeesNeeded = (TextView)convertView.findViewById(R.id.textViewEmployessNeeded);
-        employeesNeeded.setText(String.valueOf(brokerClient.getEmployessNeeded()));
+        employeesNeeded.setText(String.valueOf(BrokerUtilities.getEmployeesNeeded(planYear)));
         TextView daysLeft = (TextView)convertView.findViewById(R.id.textViewDaysLeft);
-        daysLeft.setText(String.valueOf(BrokerUtilities.daysLeft(brokerClient)));
+        daysLeft.setText(String.valueOf(BrokerUtilities.daysLeft(planYear, LocalDate.now())));
         convertView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -528,9 +556,11 @@ class OpenEnrollmentAlertedWrapper extends BrokerClientWrapper {
 class OpenEnrollmentNotAlertedWrapper extends BrokerClientWrapper {
     private static final String TAG = "OpnEnrlmntNotAlertdWrpr";
     private static final String VIEW_TYPE = "OpenEnrollmentNotAlertedView";
+    private final PlanYear planYear;
 
-    public OpenEnrollmentNotAlertedWrapper(BrokerClient brokerclient, int i) {
+    public OpenEnrollmentNotAlertedWrapper(BrokerClient brokerclient, PlanYear planYear, int i) {
         super(brokerclient, i);
+        this.planYear = planYear;
     }
 
     @Override
@@ -543,14 +573,14 @@ class OpenEnrollmentNotAlertedWrapper extends BrokerClientWrapper {
         return true;
     }
 
-    protected void fillOpenEnrollmentItem(View view, MainActivity mainActivity) {
+    protected void fillOpenEnrollmentItem(View view, MainActivity mainActivity) throws Exception {
         final MainActivity mainActivityFinal = mainActivity;
         TextView companyName = (TextView)view.findViewById(R.id.textViewCompanyName);
         companyName.setText(brokerClient.employerName);
         TextView employeesNeeded = (TextView)view.findViewById(R.id.textViewEmployessNeeded);
-        employeesNeeded.setText(String.valueOf(brokerClient.employeesEnrolled));
+        employeesNeeded.setText(String.valueOf(planYear.employeesEnrolled));
         TextView daysLeft = (TextView)view.findViewById(R.id.textViewDaysLeft);
-        daysLeft.setText(String.valueOf(BrokerUtilities.daysLeft(brokerClient)));
+        daysLeft.setText(String.valueOf(BrokerUtilities.daysLeft(planYear, LocalDate.now())));
         View alertBar = view.findViewById(R.id.imageViewAlertBar);
         alertBar.setVisibility(View.GONE);
         view.setOnClickListener(new View.OnClickListener() {
@@ -562,7 +592,7 @@ class OpenEnrollmentNotAlertedWrapper extends BrokerClientWrapper {
         fillSwipeButtons(view, mainActivity, brokerClient);
     }
 
-    public View getView(View convertView, ViewGroup parent, MainActivity mainActivity, LayoutInflater inflater) {
+    public View getView(View convertView, ViewGroup parent, MainActivity mainActivity, LayoutInflater inflater) throws Exception {
         View view;
         Boolean createNewView = true;
         if (convertView != null){
@@ -596,7 +626,7 @@ class OpenEnrollmentNotAlertedWrapper extends BrokerClientWrapper {
     }
 
     @Override
-    public void fillValues(View convertView, MainActivity activity) {
+    public void fillValues(View convertView, MainActivity activity) throws Exception {
         fillOpenEnrollmentItem(convertView, activity);
     }
 }
@@ -604,9 +634,11 @@ class OpenEnrollmentNotAlertedWrapper extends BrokerClientWrapper {
 class RenewalWrapper extends BrokerClientWrapper {
     private static final String VIEW_TYPE = "RenewalView";
     private static final String TAG = "RenewalWrapper";
+    private final PlanYear planYear;
 
-    public RenewalWrapper(BrokerClient brokerclient, int i) {
-        super(brokerclient, i);
+    public RenewalWrapper(BrokerClient brokerClient, PlanYear planYear, int i) {
+        super(brokerClient, i);
+        this.planYear = planYear;
     }
 
     @Override
@@ -619,15 +651,17 @@ class RenewalWrapper extends BrokerClientWrapper {
         return 7;
     }
 
-    public void fillValues(View view, MainActivity mainActivity) {
+    public void fillValues(View view, MainActivity mainActivity) throws Exception {
         final MainActivity mainActivityFinal = mainActivity;
+
+        PlanYear pendingRenewalPlanYear = BrokerUtilities.getPendingRenewalPlanYear(brokerClient);
         TextView companyName = (TextView)view.findViewById(R.id.textViewCompanyName);
         companyName.setText((brokerClient).employerName);
         TextView planYear = (TextView)view.findViewById(R.id.textViewPlanYear);
-        CharSequence dateString = DateTimeFormat.forPattern("MMM yy").print(brokerClient.planYearBegins);
+        CharSequence dateString = Utilities.DateAsMonthYear(pendingRenewalPlanYear.planYearBegins);
         planYear.setText(dateString);
         TextView daysLeft = (TextView)view.findViewById(R.id.textViewDaysLeft);
-        daysLeft.setText(String.valueOf(BrokerUtilities.daysLeft(brokerClient)));
+        daysLeft.setText(String.valueOf(BrokerUtilities.daysLeftToRenewal(pendingRenewalPlanYear, LocalDate.now())));
         view.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -688,14 +722,19 @@ class OtherWrapper extends BrokerClientWrapper {
     }
 
     @Override
-    public void fillValues(View view, MainActivity mainActivity) {
+    public void fillValues(View view, MainActivity mainActivity) throws Exception {
         final MainActivity mainActivityFinal = mainActivity;
         TextView companyName = (TextView)view.findViewById(R.id.textViewCompanyName);
         companyName.setText((brokerClient).employerName);
-        if (brokerClient.planYearBegins != null) {
+
+        LocalDate today = LocalDate.now();
+        PlanYear curPlanYear = null;
+        int daysLeft = -1;
+
+        if (curPlanYear != null
+                && curPlanYear.planYearBegins != null) {
             TextView planYear = (TextView) view.findViewById(R.id.textViewPlanYear);
-            CharSequence dateString = DateTimeFormat.forPattern("MMM yy").print(brokerClient.planYearBegins);
-            planYear.setText(dateString);
+            planYear.setText(Utilities.DateAsMonthYear(curPlanYear.planYearBegins));
         }
         view.setOnClickListener(new View.OnClickListener() {
             @Override

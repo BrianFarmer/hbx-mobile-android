@@ -17,23 +17,26 @@ import android.widget.TextView;
 
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
-import org.joda.time.DateTime;
+import org.joda.time.LocalDate;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import gov.dc.broker.models.brokerclient.BrokerClientDetails;
+import gov.dc.broker.models.brokeragency.BrokerClient;
+import gov.dc.broker.models.employer.Employer;
 import gov.dc.broker.models.roster.Dependent;
-import gov.dc.broker.models.roster.Employee;
+import gov.dc.broker.models.roster.Enrollment;
 import gov.dc.broker.models.roster.Health;
+import gov.dc.broker.models.roster.RosterEntry;
 
 public class EmployeeDetailsActivity extends BrokerActivity {
 
     private int employeeId;
     private int employerId;
-    private Events.Employee employeeEvent;
-    private Events.BrokerClient brokerClient;
-    private String coverageYear;
+    private RosterEntry employee;
+    private BrokerClient brokerClient;
+    private Employer employer;
+    private LocalDate coverageYear;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -94,71 +97,76 @@ public class EmployeeDetailsActivity extends BrokerActivity {
 
 
     @Subscribe(threadMode = ThreadMode.MAIN)
-    public void doThis(Events.Employee  employeeEvent) {
-        this.employeeEvent = employeeEvent;
+    public void doThis(Events.Employee  employeeEvent) throws Exception {
+        this.employee = employeeEvent.getEmployee();
         populate();
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)
-    public void doThis(Events.BrokerClient brokerClient){
-        this.brokerClient = brokerClient;
+    public void doThis(Events.BrokerClient brokerClient) throws Exception {
+        this.brokerClient = brokerClient.getBrokerClient();
         populate();
     }
 
-    private void populate() {
-        if (employeeEvent == null
+    private void populate() throws Exception {
+        if (employee == null
             || brokerClient == null){
             return;
         }
 
-        BrokerClient brokerClient = this.brokerClient.getBrokerClient();
-        BrokerClientDetails brokerClientDetails = this.brokerClient.getBrokerClientDetails();
-        final Employee employee = employeeEvent.getEmployee();
-
         Resources resources = getResources();
+        LocalDate initialCoverageYear = new LocalDate(2100, 1, 1);
 
-        TextView textViewEmployeeName = (TextView) findViewById(R.id.textViewEmployeeName);
-        textViewEmployeeName.setText(employee.getFullName());
-        coverageYear = "active";
-        Spinner spinnerCoverageYear = (Spinner) findViewById(R.id.spinnerCoverageYear);
-        spinnerCoverageYear.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-            @Override
-            public void onItemSelected(AdapterView<?> adapterView, View view, int pos, long l) {
-                if (pos == 0){
-                    coverageYear = "active";
-                } else {
-                    coverageYear = "renewal";
+        if (employee.enrollments != null
+            && employee.enrollments.size() > 0) {
+
+            Enrollment enrollment = null;
+
+            for (Enrollment curEnrollment : employee.enrollments) {
+                if (curEnrollment .startOn.compareTo(initialCoverageYear) < 0) {
+                    initialCoverageYear = curEnrollment.startOn;
+                    enrollment = curEnrollment;
                 }
-                populateCoverageYearDependencies(employee, EmployeeDetailsActivity.this.getResources());
             }
 
-            @Override
-            public void onNothingSelected(AdapterView<?> adapterView) {
+
+            TextView textViewEmployeeName = (TextView) findViewById(R.id.textViewEmployeeName);
+            textViewEmployeeName.setText(BrokerUtilities.getFullName(employee));
+            Spinner spinnerCoverageYear = (Spinner) findViewById(R.id.spinnerCoverageYear);
+            spinnerCoverageYear.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+                @Override
+                public void onItemSelected(AdapterView<?> adapterView, View view, int pos, long l) {
+                    coverageYear = employee.enrollments.get(pos).startOn;
+                    try {
+                        Enrollment enrollment = BrokerUtilities.getEnrollmentForCoverageYear(employee, coverageYear);
+                        populateCoverageYearDependencies(enrollment, EmployeeDetailsActivity.this.getResources());
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                }
+
+                @Override
+                public void onNothingSelected(AdapterView<?> adapterView) {
+
+                }
+            });
+
+            List<String> list = new ArrayList<>();
+            for (Enrollment curEnrollment : employee.enrollments) {
+                String thisYear = String.format("%s - %s", Utilities.DateAsMonthYear(curEnrollment.startOn), Utilities.DateAsMonthYear(Utilities.calculateOneYearOut(curEnrollment.startOn)));
+                list.add(thisYear);
 
             }
-        });
 
-        DateTime planYearBegins = brokerClientDetails.planYearBegins;
-        DateTime oneYearOut = new DateTime(planYearBegins.getYear() + 1, planYearBegins.getMonthOfYear(), planYearBegins.getDayOfMonth(), planYearBegins.getHourOfDay(), planYearBegins.getMinuteOfHour());
+            ArrayAdapter<String> dataAdapter = new ArrayAdapter<String>(this,
+                    android.R.layout.simple_spinner_item, list);
+            spinnerCoverageYear.setAdapter(dataAdapter);
 
-        String thisYear = String.format("%s - %s", Utilities.DateAsMonthYear(brokerClientDetails.planYearBegins), Utilities.DateAsMonthYear(Utilities.calculateOneYearOut(brokerClientDetails.planYearBegins)));
-        String nextYear = String.format("%s - %s", Utilities.DateAsMonthYear(oneYearOut), Utilities.DateAsMonthYear(Utilities.calculateOneYearOut(oneYearOut)));
+            TextView textViewEnrollmentStatus = (TextView) findViewById(R.id.textViewEnrollmentStatus);
+            textViewEnrollmentStatus.setText(enrollment.health.status);
+            textViewEnrollmentStatus.setTextColor(ContextCompat.getColor(this, Utilities.colorFromEmployeeStatus(enrollment.health.status)));
 
-        List<String> list = new ArrayList<>();
-        list.add(thisYear);
-        list.add(nextYear);
-        ArrayAdapter<String> dataAdapter = new ArrayAdapter<String>(this,
-                android.R.layout.simple_spinner_item, list);
-        spinnerCoverageYear.setAdapter(dataAdapter);
-
-        TextView textViewEnrollmentStatus = (TextView) findViewById(R.id.textViewEnrollmentStatus);
-        textViewEnrollmentStatus.setText(employee.enrollments.active.health.status);
-        textViewEnrollmentStatus.setTextColor(ContextCompat.getColor(this, Utilities.colorFromEmployeeStatus(employee.enrollments.active.health.status)));
-
-        if (employee.enrollments.renewal != null){
-            TextView textViewEnrollmentStatusNextYear = (TextView) findViewById(R.id.textViewEnrollmentStatusNextYear);
-            textViewEnrollmentStatusNextYear.setText(employee.enrollments.renewal.health.status);
-            textViewEnrollmentStatus.setTextColor(ContextCompat.getColor(this, Utilities.colorFromEmployeeStatus(employee.enrollments.renewal.health.status)));
+            populateCoverageYearDependencies(enrollment, resources);
         }
 
         TextView textViewDobField = (TextView) findViewById(R.id.textViewDobField);
@@ -170,14 +178,13 @@ public class EmployeeDetailsActivity extends BrokerActivity {
         TextView textViewHiredOn = (TextView) findViewById(R.id.textViewHiredOn);
         textViewHiredOn.setText(String.format(resources.getString(R.string.hired_on_field_format), Utilities.DateAsString(employee.hiredOn)));
 
-        populateCoverageYearDependencies(employee, resources);
         // Populate the employee's dependants.
         RelativeLayout parent = (RelativeLayout) findViewById(R.id.relativeLayoutEmpoyeeDetails);
         int aboveId = R.id.textViewDependentsDrawer;
         for (Dependent dependent : employee.dependents) {
             View viewDependantRoot = LayoutInflater.from(this).inflate(R.layout.dependent_info, parent, false);
             TextView textViewName = (TextView) viewDependantRoot.findViewById(R.id.textViewName);
-            textViewName.setText(Utilities.getFullName(dependent));
+            textViewName.setText(BrokerUtilities.getFullName(dependent));
 
             TextView textViewGender = (TextView) viewDependantRoot.findViewById(R.id.textViewGender);
             textViewGender.setText(dependent.gender);
@@ -199,13 +206,9 @@ public class EmployeeDetailsActivity extends BrokerActivity {
         setVisibility(R.string.dependents_group_tag, false, R.id.imageViewDependentsDrawer, R.drawable.blue_uparrow, R.drawable.blue_circle_plus);
     }
 
-    private void populateCoverageYearDependencies(Employee employee, Resources resources) {
-        Health health;
-        if (coverageYear.compareToIgnoreCase("active") == 0){
-            health = employee.enrollments.active.health;
-        } else {
-            health = employee.enrollments.renewal.health;
-        }
+    private void populateCoverageYearDependencies(Enrollment enrollment, Resources resources) throws Exception {
+
+        Health health = enrollment.health;
 
         TextView textViewBenefitGroupField = (TextView) findViewById(R.id.textViewBenefitGroupField);
         if (health.benefitGroupName != null) {

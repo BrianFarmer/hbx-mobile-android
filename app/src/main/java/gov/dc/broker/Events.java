@@ -2,12 +2,12 @@ package gov.dc.broker;
 
 import android.widget.ImageView;
 
-import gov.dc.broker.models.brokerclient.BrokerClientDetails;
+import org.joda.time.LocalDate;
+
+import gov.dc.broker.models.brokeragency.BrokerAgency;
+import gov.dc.broker.models.employer.Employer;
 import gov.dc.broker.models.roster.Roster;
 
-/**
- * Created by plast on 7/26/2016.
- */
 public class Events {
     static int lastCancelableRequestId = 0;
 
@@ -132,39 +132,36 @@ public class Events {
     }
 
     static public class EmployerList extends ResponseToRequest{
-        private gov.dc.broker.EmployerList employerList;
 
-        public EmployerList(int id, gov.dc.broker.EmployerList employerList) {
+        private final BrokerAgency brokerAgency;
+
+        public EmployerList(int id, gov.dc.broker.models.brokeragency.BrokerAgency brokerAgency) {
             super(id);
-            this.employerList = employerList;
+            this.brokerAgency = brokerAgency;
         }
 
-        public gov.dc.broker.EmployerList getEmployerList() {
-            return employerList;
-        }
-
-        public void setEmployerList(gov.dc.broker.EmployerList employerList) {
-            this.employerList = employerList;
+        public BrokerAgency getBrokerAgency() {
+            return brokerAgency;
         }
     }
 
     static public class BrokerClient extends ResponseToRequest{
-        private final gov.dc.broker.BrokerClient brokerClient;
-        private final BrokerClientDetails brokerClientDetails;
 
-        public BrokerClient(int id, gov.dc.broker.BrokerClient brokerClient,
-                            BrokerClientDetails brokerClientDetails) {
+        private final gov.dc.broker.models.brokeragency.BrokerClient brokerClient;
+        private final Employer employer;
+
+        public BrokerClient(int id, gov.dc.broker.models.brokeragency.BrokerClient brokerClient, Employer employer) {
             super(id);
             this.brokerClient = brokerClient;
-            this.brokerClientDetails = brokerClientDetails;
+            this.employer = employer;
         }
 
-        public gov.dc.broker.BrokerClient getBrokerClient() {
+        public Employer getEmployer() {
+            return employer;
+        }
+
+        public gov.dc.broker.models.brokeragency.BrokerClient getBrokerClient() {
             return brokerClient;
-        }
-
-        public BrokerClientDetails getBrokerClientDetails() {
-            return brokerClientDetails;
         }
     }
 
@@ -317,28 +314,28 @@ public class Events {
     static public class Employee {
         private final int employeeId;
         private final int employerId;
-        private final gov.dc.broker.models.roster.Employee employee;
+        private final gov.dc.broker.models.roster.RosterEntry employee;
 
-        public Employee(int employeeId, int employerId, gov.dc.broker.models.roster.Employee employee) {
+        public Employee(int employeeId, int employerId, gov.dc.broker.models.roster.RosterEntry employee) {
 
             this.employeeId = employeeId;
             this.employerId = employerId;
             this.employee = employee;
         }
 
-        public gov.dc.broker.models.roster.Employee getEmployee() {
+        public gov.dc.broker.models.roster.RosterEntry getEmployee() {
             return employee;
         }
     }
 
     static public class CoverageYear {
-        private final String year;
+        private final LocalDate year;
 
-        public CoverageYear(String year) {
+        public CoverageYear(LocalDate year) {
             this.year = year;
         }
 
-        public String getYear() {
+        public LocalDate getYear() {
             return year;
         }
     }

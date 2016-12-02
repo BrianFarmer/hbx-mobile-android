@@ -20,7 +20,9 @@ import com.wdullaer.swipeactionadapter.SwipeActionAdapter;
 
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
+import org.joda.time.LocalDate;
 
+import gov.dc.broker.models.brokeragency.BrokerAgency;
 
 
 public class MainActivity extends BrokerActivity {
@@ -41,6 +43,8 @@ public class MainActivity extends BrokerActivity {
     private Broker broker;
     private Account account = new Account(broker);
     private int scrollPosition = -1;
+    private BrokerAgency brokerAgency;
+    private LocalDate coverageYear;
 
 
     public MainActivity(){
@@ -196,14 +200,16 @@ public class MainActivity extends BrokerActivity {
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)
-    public void doThis(Events.EmployerList employerListEvent) {
-        EmployerList employerList = employerListEvent.getEmployerList();
+    public void doThis(Events.EmployerList employerListEvent) throws Exception {
         if (employerListEvent == null
-            || employerListEvent.getEmployerList() == null){
+            || employerListEvent.getBrokerAgency() == null){
             showLogin();
             return;
         }
-        final EmployerAdapter employerAdapter = new EmployerAdapter(this, this.getBaseContext(), employerList);
+        brokerAgency = employerListEvent.getBrokerAgency();
+
+        coverageYear = brokerAgency.brokerClients.get(0).planYearBegins;
+        final EmployerAdapter employerAdapter = new EmployerAdapter(this, this.getBaseContext(), brokerAgency.brokerClients, coverageYear);
         listViewEmployers.setAdapter(employerAdapter);
         listViewEmployers.setSelectionFromTop(scrollPosition, 0);
         //swipeActionAdapter = new SwipeActionAdapter(employerAdapter);
@@ -212,9 +218,9 @@ public class MainActivity extends BrokerActivity {
 
         Resources resources = getResources();
         String welcomeMessageFormat = resources.getString(R.string.welcome_html);
-        String welcomeMessage = String.format(welcomeMessageFormat, employerList.brokerName,
-                Integer.toString(employerList.getAllClients().size()),
-                Integer.toString(employerList.getOpenEnrollmentsAlerted().size()));
+        String welcomeMessage = String.format(welcomeMessageFormat, brokerAgency.brokerName,
+                Integer.toString(brokerAgency.brokerClients.size()),
+                Integer.toString(BrokerUtilities.getBrokerClientsInOpenEnrollment(brokerAgency, LocalDate.now()).size()));
         webViewWelcome.loadDataWithBaseURL("", welcomeMessage, "text/html", "UTF-8", "");
         //webViewWelcome.setText(Html.fromHtml(welcomeMessage));
     }

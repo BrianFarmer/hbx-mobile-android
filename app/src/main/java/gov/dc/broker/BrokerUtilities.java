@@ -1,38 +1,241 @@
 package gov.dc.broker;
 
+import org.joda.time.Days;
 import org.joda.time.LocalDate;
 
+import java.util.ArrayList;
 import java.util.List;
 
-import gov.dc.broker.models.roster.Employee;
-import gov.dc.broker.models.roster.Health;
+import gov.dc.broker.models.brokeragency.BrokerAgency;
+import gov.dc.broker.models.brokeragency.BrokerClient;
+import gov.dc.broker.models.brokeragency.ContactInfo;
+import gov.dc.broker.models.employer.Employer;
+import gov.dc.broker.models.employer.PlanYear;
+import gov.dc.broker.models.roster.Dependent;
+import gov.dc.broker.models.roster.Enrollment;
 import gov.dc.broker.models.roster.Roster;
+import gov.dc.broker.models.roster.RosterEntry;
 
 /**
  * Created by plast on 11/16/2016.
  */
 
 public class BrokerUtilities {
-    public static long daysLeft(BrokerClient brokerClient) {
-        LocalDate today = new LocalDate();
-        if (BrokerUtilities.isInOpenEnrollment(brokerClient, today)){
-            return Utilities.dateDifferenceDays(today, brokerClient.openEnrollmentEnds.toLocalDate());
+    public static long daysLeft(gov.dc.broker.models.brokeragency.PlanYear planYear, LocalDate today) throws Exception {
+        if (BrokerUtilities.isInOpenEnrollment(planYear, today)){
+            return Utilities.dateDifferenceDays(today, planYear.openEnrollmentEnds);
         }
-        return Utilities.dateDifferenceDays(today, brokerClient.renewalApplicationDue.toLocalDate());
+        return Utilities.dateDifferenceDays(today, planYear.renewalApplicationDue);
     }
 
-    public static boolean isInOpenEnrollment(BrokerClient brokerClient, LocalDate date){
-        if (brokerClient.openEnrollmentBegins == null
-                || brokerClient.openEnrollmentEnds == null){
+    private static gov.dc.broker.models.brokeragency.PlanYear getPlanYear(BrokerClient brokerClient, LocalDate planYear) throws Exception {
+        for (gov.dc.broker.models.brokeragency.PlanYear year : brokerClient.planYears) {
+            if (year.planYearBegins == planYear){
+                return year;
+            }
+        }
+        throw new Exception("Plan year not found");
+    }
+
+    private static gov.dc.broker.models.employer.PlanYear getPlanYear(Employer employer, LocalDate planYear) {
+        for (PlanYear year : employer.planYears) {
+            if (year.planYearBegins == planYear){
+                return year;
+            }
+        }
+        return null;
+    }
+
+    public static boolean isInOpenEnrollment(PlanYear planYear, LocalDate date){
+        if (planYear.openEnrollmentBegins == null
+                || planYear.openEnrollmentEnds == null){
             return false;
         }
-        if (brokerClient.openEnrollmentBegins.toLocalDate().isAfter(date)){
+        if (planYear.openEnrollmentBegins.isAfter(date)){
             return false;
         }
-        if (brokerClient.openEnrollmentEnds.toLocalDate().isBefore(date)){
+        if (planYear.openEnrollmentEnds.isBefore(date)){
             return false;
         }
         return true;
+
+    }
+
+    public static boolean isInOpenEnrollment(gov.dc.broker.models.brokeragency.PlanYear planYear, LocalDate date){
+        if (planYear.openEnrollmentBegins == null
+                || planYear.openEnrollmentEnds == null){
+            return false;
+        }
+        if (planYear.openEnrollmentBegins.isAfter(date)){
+            return false;
+        }
+        if (planYear.openEnrollmentEnds.isBefore(date)){
+            return false;
+        }
+        return true;
+
+    }
+
+    public static boolean anyAddresses(BrokerClient brokerClient) {
+        for (ContactInfo contactInfo : brokerClient.contactInfo) {
+            if (contactInfo.address1 != null
+                && contactInfo.address1.length() > 0){
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public static boolean anyPhoneNumbers(BrokerClient brokerClient) {
+        for (ContactInfo contactInfo : brokerClient.contactInfo) {
+            if (contactInfo.phone != null
+                && contactInfo.phone.length() > 0){
+                return true;
+            }
+            if (contactInfo.mobile != null
+                && contactInfo.mobile.length() > 0){
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public static boolean anyMobileNumbers(BrokerClient brokerClient) {
+        for (ContactInfo contactInfo : brokerClient.contactInfo) {
+            if (contactInfo.mobile != null
+                    && contactInfo.mobile.length() > 0){
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public static boolean anyEmailAddresses(BrokerClient brokerClient) {
+        for (ContactInfo contactInfo : brokerClient.contactInfo) {
+            if (contactInfo.emails != null
+                && contactInfo.emails.size() > 0){
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public static String getFullName(RosterEntry employee) {
+        StringBuilder builder = new StringBuilder();
+        if (employee.firstName != null
+            && employee.firstName.length() > 0){
+            builder.append(employee.firstName);
+        }
+
+        if (employee.middleName != null
+            && employee.middleName.length() > 0){
+            if (builder.length() > 0){
+                builder.append(' ');
+            }
+            builder.append(employee.middleName);
+        }
+
+        if (employee.lastName != null
+            && employee.lastName.length() > 0){
+            if (builder.length() > 0){
+                builder.append(' ');
+            }
+            builder.append(employee.lastName);
+        }
+
+        if (employee.nameSuffix != null
+            && employee.nameSuffix.length() > 0){
+            if (builder.length() > 0){
+                builder.append(' ');
+            }
+            builder.append(employee.nameSuffix);
+        }
+
+        return builder.toString();
+    }
+
+    public static Enrollment getEnrollmentForCoverageYear(RosterEntry employee, LocalDate date) throws Exception {
+        for (Enrollment enrollment : employee.enrollments) {
+            if (enrollment.startOn.compareTo(date) == 0){
+                return enrollment;
+            }
+        }
+        throw new Exception("bad date, no enrollment found with the date");
+    }
+
+    public static boolean isAddressEmpty(ContactInfo contactInfo) {
+        return contactInfo.address1 == null || contactInfo.address1.length() < 1;
+    }
+
+    public static boolean isPrimaryOffice(ContactInfo contactInfo) {
+        return contactInfo.first.equalsIgnoreCase("primary")
+                && contactInfo.last.equalsIgnoreCase("office");
+    }
+
+    public static boolean isAlerted(gov.dc.broker.models.brokeragency.PlanYear planYear) {
+        return false;
+    }
+
+    public static gov.dc.broker.models.brokeragency.PlanYear getPlanYearForCoverageYear(BrokerClient brokerclient, LocalDate coverageYear) throws Exception {
+        for (gov.dc.broker.models.brokeragency.PlanYear planYear : brokerclient.planYears) {
+            if (planYear.planYearBegins == coverageYear){
+                return planYear;
+            }
+        }
+        throw new Exception("coverageYear not found in plan years");
+    }
+
+    public static PlanYear getPlanYearForCoverageYear(Employer employer, LocalDate coverageYear) throws Exception {
+        for (PlanYear planYear : employer.planYears) {
+            if (planYear.planYearBegins.compareTo(coverageYear) == 0){
+                return planYear;
+            }
+        }
+        throw new Exception("coverageYear not found in plan years");
+    }
+
+    public static int getEmployeesNeeded(gov.dc.broker.models.brokeragency.PlanYear planYearForCoverageYear) {
+        return planYearForCoverageYear.minimumParticipationRequired - (planYearForCoverageYear.employeesEnrolled + planYearForCoverageYear.employeesWaived);
+    }
+
+    public static List<BrokerClient> getBrokerClientsInOpenEnrollment(BrokerAgency brokerAgency, LocalDate date) {
+        ArrayList<BrokerClient> brokerClientsInOpenEnrollment = new ArrayList<>();
+        for (BrokerClient brokerClient : brokerAgency.brokerClients) {
+            if (isInOpenEnrollment(brokerClient, date)){
+                brokerClientsInOpenEnrollment.add(brokerClient);
+            }
+        }
+        return brokerClientsInOpenEnrollment;
+    }
+
+    private static boolean isInOpenEnrollment(BrokerClient brokerClient, LocalDate date) {
+        for (gov.dc.broker.models.brokeragency.PlanYear planYear : brokerClient.planYears) {
+            if (isInOpenEnrollment(planYear, date)){
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public static gov.dc.broker.models.brokeragency.PlanYear getPendingRenewalPlanYear(BrokerClient brokerClient) throws Exception {
+        for (gov.dc.broker.models.brokeragency.PlanYear planYear : brokerClient.planYears) {
+            if (planYear.renewalInProgress){
+                return planYear;
+            }
+        }
+        throw new Exception("No plan year in renewal");
+    }
+
+    public static int daysLeftToRenewal(gov.dc.broker.models.brokeragency.PlanYear planYear, LocalDate now) {
+        return Days.daysBetween(now, planYear.openEnrollmentBegins).getDays();
+    }
+
+    public static boolean isPlanYearAlerted(gov.dc.broker.models.brokeragency.PlanYear planYear) {
+        return (planYear.employeesEnrolled + planYear.employeesWaived < planYear.minimumParticipationRequired);
+    }
+
+    public static boolean isInRenewal(gov.dc.broker.models.brokeragency.PlanYear planYear) {
+        return planYear.renewalInProgress;
     }
 
     static class EmployeeCounts {
@@ -42,30 +245,24 @@ public class BrokerUtilities {
         public int Total;
     }
 
-    public static EmployeeCounts getEmployeeCounts(Roster roster, String coverageYear) {
+    public static EmployeeCounts getEmployeeCounts(Roster roster, LocalDate coverageDate) {
         EmployeeCounts employeeCounts = new EmployeeCounts();
 
-        for (Employee employee : roster.roster) {
-            Health health;
-            if (coverageYear.compareToIgnoreCase("active") == 0){
-                health = employee.enrollments.active.health;
-            } else {
-                health = employee.enrollments.renewal.health;
-            }
-
-            if (health != null) {
-                if (health.status.compareToIgnoreCase("Enrolled") == 0) {
-                    employeeCounts.Enrolled++;
-                } else if (health.status.compareToIgnoreCase("Waived") == 0) {
-                    employeeCounts.Waived++;
-                } else if (health.status.compareToIgnoreCase("Not Enrolled") == 0) {
-                    employeeCounts.NotEnrolled++;
+        for (RosterEntry entry : roster.roster) {
+            for (Enrollment enrollment : entry.enrollments) {
+                if (enrollment.startOn.compareTo(coverageDate) == 0
+                        && enrollment.health != null) {
+                    if (enrollment.health.status.compareToIgnoreCase("Enrolled") == 0) {
+                        employeeCounts.Enrolled++;
+                    } else if (enrollment.health.status.compareToIgnoreCase("Waived") == 0) {
+                        employeeCounts.Waived++;
+                    } else if (enrollment.health.status.compareToIgnoreCase("Not Enrolled") == 0) {
+                        employeeCounts.NotEnrolled++;
+                    }
+                    employeeCounts.Total++;
                 }
-
-                employeeCounts.Total ++;
             }
         }
-
         return employeeCounts;
     }
 
@@ -75,28 +272,45 @@ public class BrokerUtilities {
         public double total = 0.0f;
     }
 
-    public static Totals calcTotals(List<Employee> employees, boolean active){
+    public static Totals calcTotals(Roster roster, LocalDate startOnDate){
         Totals totals = new Totals();
 
-        for (Employee employee : employees) {
-            if (active){
-                if (employee.enrollments != null
-                    && employee.enrollments.active != null
-                    && employee.enrollments.active.health != null) {
-                    totals.employeeTotal += employee.enrollments.active.health.employeeCost;
-                    totals.employerTotal += employee.enrollments.active.health.employerContribution;
-                    totals.total += employee.enrollments.active.health.totalPremium;
-                }
-            } else {
-                if (employee.enrollments != null
-                    && employee.enrollments.renewal != null
-                    && employee.enrollments.renewal.health != null) {
-                    totals.employeeTotal += employee.enrollments.renewal.health.employeeCost;
-                    totals.employerTotal += employee.enrollments.renewal.health.employerContribution;
-                    totals.total += employee.enrollments.renewal.health.totalPremium;
+        for (RosterEntry rosterEntry: roster.roster) {
+            for (Enrollment enrollment : rosterEntry.enrollments) {
+                if (enrollment.startOn.compareTo(startOnDate) == 0
+                    && enrollment.health != null
+                    && enrollment.health.status.compareToIgnoreCase("not enrolled") != 0){
+                    totals.employeeTotal += enrollment.health.employeeCost;
+                    totals.employerTotal += enrollment.health.employerContribution;
+                    totals.total += enrollment.health.totalPremium;
                 }
             }
         }
         return totals;
+    }
+
+    public static String getFullName(Dependent dependent) {
+        String fullName = "";
+        if (dependent.firstName != null
+                && !dependent.firstName.isEmpty()){
+            fullName = dependent.firstName;
+        }
+
+        if (dependent.middleName != null
+                && !dependent.middleName.isEmpty()){
+            if (!fullName.isEmpty()){
+                fullName += " ";
+            }
+            fullName += dependent.middleName;
+        }
+
+        if (dependent.lastName != null){
+            if (!fullName.isEmpty()){
+                fullName += " ";
+            }
+            fullName += dependent.lastName;
+        }
+
+        return fullName;
     }
 }

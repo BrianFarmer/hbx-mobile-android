@@ -20,18 +20,7 @@ public class Intents {
     }
 
     static public void launchEmployerDetails(MainActivity mainActivity, int index) {
-        if (BuildConfig2.isBrokerBuild()) {
-            launchClientDetailsActivity(mainActivity, index);
-        } else {
-            launchEmployerDetailsActivity(mainActivity, index);
-        }
-    }
-
-
-    static public void launchClientDetailsActivity(MainActivity mainActivity, int index) {
-        Intent intent = new Intent(mainActivity, ClientDetailsActivity.class);
-        intent.putExtra(BROKER_CLIENT_ID, index);
-        mainActivity.startActivity(intent);
+        launchEmployerDetailsActivity(mainActivity, index);
     }
 
     static public void launchEmployerDetailsActivity(MainActivity mainActivity, int index) {

@@ -9,10 +9,13 @@ import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.TextView;
 
+import org.joda.time.LocalDate;
+
 import java.util.ArrayList;
 
-import gov.dc.broker.models.roster.Employee;
+import gov.dc.broker.models.roster.Enrollment;
 import gov.dc.broker.models.roster.Health;
+import gov.dc.broker.models.roster.RosterEntry;
 
 /**
  * Created by plast on 11/2/2016.
@@ -23,17 +26,17 @@ public class RosterAdapter extends BaseAdapter {
 
     private final BrokerFragment fragment;
     private final Context context;
-    private final ArrayList<Employee> employees;
+    private final ArrayList<RosterEntry> employees;
     private final int brokerClientId;
-    private final boolean active;
+    private final LocalDate active;
 
-    public RosterAdapter(BrokerFragment fragment, Context context, ArrayList<Employee> employees,
-                         int brokerClientId, boolean active){
+    public RosterAdapter(BrokerFragment fragment, Context context, ArrayList<RosterEntry> employees,
+                         int brokerClientId, LocalDate coverageDate){
         this.fragment = fragment;
         this.context = context;
         this.employees = employees;
         this.brokerClientId = brokerClientId;
-        this.active = active;
+        this.active = coverageDate;
     }
 
     @Override
@@ -69,15 +72,12 @@ public class RosterAdapter extends BaseAdapter {
         }
 
         try {
-            final Employee employee = employees.get(i);
+            final RosterEntry employee = employees.get(i);
             Health health;
-            if (active){
-                health = employee.enrollments.active.health;
-            } else {
-                health = employee.enrollments.renewal.health;
-            }
+            Enrollment enrollmentForCoverageYear = BrokerUtilities.getEnrollmentForCoverageYear(employee, active);
+            health = enrollmentForCoverageYear.health;
             TextView employeeName = (TextView) view.findViewById(R.id.textViewEmployeeName);
-            employeeName.setText(employee.getFullName());
+            employeeName.setText(BrokerUtilities.getFullName(employee));
             TextView statusThisYear = (TextView) view.findViewById(R.id.textViewStatusThisYear);
             statusThisYear.setText(health.status);
             statusThisYear.setTextColor(ContextCompat.getColor(context, Utilities.colorFromEmployeeStatus(health.status)));

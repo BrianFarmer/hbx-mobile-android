@@ -21,10 +21,13 @@ import android.widget.TextView;
 
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
-import org.joda.time.DateTime;
 import org.joda.time.LocalDate;
 
 import java.util.ArrayList;
+
+import gov.dc.broker.models.brokeragency.BrokerClient;
+import gov.dc.broker.models.brokeragency.ContactInfo;
+import gov.dc.broker.models.brokeragency.PlanYear;
 
 /**
  * Created by plast on 10/21/2016.
@@ -44,8 +47,7 @@ public class EmployerDetailsActivity extends BrokerActivity {
     private int clientId;
     BrokerClient brokerClient;
     private FragmentTabHost tabHost;
-    private String coverageYear = "active";
-
+    private LocalDate coverageYear;
 
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void doThis(Events.BrokerClient  brokerClientEvent) {
@@ -56,26 +58,27 @@ public class EmployerDetailsActivity extends BrokerActivity {
 
         Spinner spinnerCoverageYear = (Spinner) findViewById(R.id.spinnerCoverageYear);
 
-        DateTime planYearBegins = brokerClient.planYearBegins;
-        DateTime oneYearOut = new DateTime(planYearBegins.getYear() + 1, planYearBegins.getMonthOfYear(), planYearBegins.getDayOfMonth(), planYearBegins.getHourOfDay(), planYearBegins.getMinuteOfHour());
-
-        String thisYear = String.format("%s - %s", Utilities.DateAsMonthYear(brokerClient.planYearBegins), Utilities.DateAsMonthYear(Utilities.calculateOneYearOut(brokerClient.planYearBegins)));
-        String nextYear = String.format("%s - %s", Utilities.DateAsMonthYear(oneYearOut), Utilities.DateAsMonthYear(Utilities.calculateOneYearOut(oneYearOut)));
-
         ArrayList<String> list = new ArrayList<>();
-        list.add(thisYear);
-        list.add(nextYear);
+
+        // set coverage year to the lowsest playYearBegins in the planYears
+        LocalDate initialCoverageYear = new LocalDate(2100, 1, 1);
+        for (PlanYear planYear : brokerClient.planYears) {
+            if (planYear.planYearBegins != null
+                && planYear.planYearBegins.compareTo(initialCoverageYear) < 0){
+                initialCoverageYear = planYear.planYearBegins;
+            }
+            list.add(String.format("%s - %s", Utilities.DateAsMonthYear(planYear.planYearBegins), Utilities.DateAsMonthYear(Utilities.calculateOneYearOut(planYear.planYearBegins))));
+        }
+        coverageYear = initialCoverageYear;
+
+
         ArrayAdapter<String> dataAdapter = new ArrayAdapter<String>(this,
                 android.R.layout.simple_spinner_item, list);
         spinnerCoverageYear.setAdapter(dataAdapter);
         spinnerCoverageYear.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> adapterView, View view, int pos, long l) {
-                if (pos == 0){
-                    coverageYear = "active";
-                } else {
-                    coverageYear = "renewal";
-                }
+                coverageYear = brokerClient.planYears.get(pos).planYearBegins;
                 getMessages().coverageYearChanged(coverageYear);
             }
 
@@ -86,8 +89,10 @@ public class EmployerDetailsActivity extends BrokerActivity {
         });
 
         TextView textViewEnrollmentStatus = (TextView) findViewById(R.id.textViewEnrollmentStatus);
-        if (brokerClient.isInOpenEnrollment(new LocalDate())) {
-            if (brokerClient.isAlerted()){
+        PlanYear planYear = brokerClient.planYears.get(0);
+        LocalDate today = new LocalDate();
+        if (BrokerUtilities.isInOpenEnrollment(planYear, today)) {
+            if (BrokerUtilities.isAlerted(planYear)){
                 textViewEnrollmentStatus.setText(R.string.minimum_not_met);
                 textViewEnrollmentStatus.setTextColor(ContextCompat.getColor(this, R.color.alertColor));
             } else {
@@ -95,7 +100,7 @@ public class EmployerDetailsActivity extends BrokerActivity {
                 textViewEnrollmentStatus.setTextColor(ContextCompat.getColor(this, R.color.open_enrollment_minimum_met));
             }
         } else {
-            if (brokerClient.renewalInProgress){
+            if (planYear.renewalInProgress){
                 textViewEnrollmentStatus.setText(R.string.renewal_in_progress);
                 textViewEnrollmentStatus.setTextColor(ContextCompat.getColor(this, R.color.in_renewal));
             } else {
@@ -131,7 +136,7 @@ public class EmployerDetailsActivity extends BrokerActivity {
         ContactInfo curContactInfo = brokerClient.contactInfo.get(0);
 
         ImageButton emailButton = (ImageButton)findViewById(R.id.imageButtonEmail);
-        if (brokerClient.anyEmailAddresses()) {
+        if (BrokerUtilities.anyEmailAddresses(brokerClient)) {
             emailButton.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
@@ -144,7 +149,7 @@ public class EmployerDetailsActivity extends BrokerActivity {
             emailButton.setEnabled(false);
         }
         ImageButton chatButton = (ImageButton) findViewById(R.id.imageButtonChat);
-        if (brokerClient.anyMobileNumbers()) {
+        if (BrokerUtilities.anyMobileNumbers(brokerClient)) {
             chatButton.setEnabled(true);
             chatButton.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -159,7 +164,7 @@ public class EmployerDetailsActivity extends BrokerActivity {
         }
 
         ImageButton phoneButton = (ImageButton) findViewById(R.id.imageButtonPhone);
-        if (brokerClient.anyPhoneNumbers()) {
+        if (BrokerUtilities.anyPhoneNumbers(brokerClient)) {
             phoneButton.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
@@ -172,7 +177,7 @@ public class EmployerDetailsActivity extends BrokerActivity {
             phoneButton.setEnabled(false);
         }
         ImageButton locationButton = (ImageButton) findViewById(R.id.imageButtonLocation);
-        if (brokerClient.anyAddresses()) {
+        if (BrokerUtilities.anyAddresses(brokerClient)) {
             locationButton.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
@@ -267,7 +272,7 @@ public class EmployerDetailsActivity extends BrokerActivity {
         return tabIndicator;
     }
 
-    public String getCoverageYear() {
+    public LocalDate getCoverageYear() {
         return coverageYear;
     }
 }

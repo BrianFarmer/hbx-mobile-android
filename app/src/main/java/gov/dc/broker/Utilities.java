@@ -6,8 +6,6 @@ import org.joda.time.Duration;
 import org.joda.time.LocalDate;
 import org.joda.time.format.DateTimeFormat;
 
-import gov.dc.broker.models.roster.Dependent;
-
 /**
  * Created by plast on 10/28/2016.
  */
@@ -19,11 +17,23 @@ public class Utilities {
         return oneYearOut.minus(new Duration(1000*60*60*24));
     }
 
+    public static LocalDate calculateOneYearOut(LocalDate startDate) {
+        LocalDate oneYearOut = startDate.plusYears(1);
+        return oneYearOut.minusDays(1);
+    }
+
     public static String DateAsString(DateTime date){
+        return DateTimeFormat.forPattern("MM/dd/yyyy").print(date);
+    }
+    public static String DateAsString(LocalDate date){
         return DateTimeFormat.forPattern("MM/dd/yyyy").print(date);
     }
 
     public static String DateAsMonthYear(DateTime date){
+        return DateTimeFormat.forPattern("MMM dd, yyyy").print(date);
+    }
+
+    public static String DateAsMonthYear(LocalDate date){
         return DateTimeFormat.forPattern("MMM dd, yyyy").print(date);
     }
 
@@ -44,30 +54,5 @@ public class Utilities {
         //if (statusString.compareToIgnoreCase("enrolled") == 0){
         // Everything else is getting the enrolled color...Maybe this should throw?
         return R.color.enrolled_color;
-    }
-
-    public static String getFullName(Dependent dependent) {
-        String fullName = "";
-        if (dependent.firstName != null
-            && !dependent.firstName.isEmpty()){
-            fullName = dependent.firstName;
-        }
-
-        if (dependent.middleName != null
-                && !dependent.middleName.isEmpty()){
-            if (!fullName.isEmpty()){
-                fullName += " ";
-            }
-            fullName += dependent.middleName;
-        }
-
-        if (dependent.last_name != null){
-            if (!fullName.isEmpty()){
-                fullName += " ";
-            }
-            fullName += dependent.last_name;
-        }
-
-        return fullName;
     }
 }

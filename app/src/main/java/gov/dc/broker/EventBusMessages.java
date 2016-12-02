@@ -1,6 +1,7 @@
 package gov.dc.broker;
 
 import org.greenrobot.eventbus.EventBus;
+import org.joda.time.LocalDate;
 
 /**
  * Created by plast on 10/27/2016.
@@ -64,7 +65,7 @@ public class EventBusMessages implements Messages {
     }
 
     @Override
-    public void coverageYearChanged(String year) {
+    public void coverageYearChanged(LocalDate year) {
         eventBus.post(new Events.CoverageYear(year));
     }
 }

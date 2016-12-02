@@ -19,10 +19,12 @@ import com.github.mikephil.charting.utils.ViewPortHandler;
 
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
+import org.joda.time.LocalDate;
 
 import java.util.ArrayList;
 
-import gov.dc.broker.models.brokerclient.BrokerClientDetails;
+import gov.dc.broker.models.brokeragency.BrokerClient;
+import gov.dc.broker.models.brokeragency.PlanYear;
 import gov.dc.broker.models.roster.Roster;
 
 /**
@@ -35,7 +37,6 @@ public class InfoFragment extends BrokerFragment {
     private int brokerClientId;
     private Roster roster = null;
     private BrokerClient brokerClient = null;
-    private BrokerClientDetails brokerClientDetails = null;
     private View view;
     private static boolean renewalsInitiallyOpen = true;
     private static boolean participationInitiallyOpen = false;
@@ -43,7 +44,7 @@ public class InfoFragment extends BrokerFragment {
     private boolean currentRenewalsOpen;
     private boolean currentParticipationOpen;
     private boolean currentMonthlyCostsOpen;
-    private String coverageYear;
+    private LocalDate coverageYear;
 
 
     public InfoFragment(){
@@ -77,7 +78,11 @@ public class InfoFragment extends BrokerFragment {
             getMessages().getEmployer(brokerClientId);
             getMessages().getRoster(brokerClientId);
         } else {
-            populateField();
+            try {
+                populateField();
+            } catch (Exception e) {
+                Log.e(TAG, "exception populating InfoFragment", e);
+            }
         }
 
         return view;
@@ -92,11 +97,14 @@ public class InfoFragment extends BrokerFragment {
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void doThis(Events.BrokerClient brokerClientEvent) {
         brokerClient = brokerClientEvent.getBrokerClient();
-        brokerClientDetails = brokerClientEvent.getBrokerClientDetails();
         EmployerDetailsActivity activity = (EmployerDetailsActivity) getActivity();
         this.coverageYear = activity.getCoverageYear();
         configureDrawers();
-        populateField();
+        try {
+            populateField();
+        } catch (Exception e) {
+            Log.e(TAG, "exception populting fields in dothis(BrokerClient");
+        }
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)
@@ -105,13 +113,21 @@ public class InfoFragment extends BrokerFragment {
         EmployerDetailsActivity activity = (EmployerDetailsActivity) getActivity();
         this.coverageYear = activity.getCoverageYear();
         configureDrawers();
-        populateField();
+        try {
+            populateField();
+        } catch (Exception e) {
+            Log.e(TAG, "exception populating infofragment in dothis(RosterResult)", e);
+        }
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void doThis(Events.CoverageYear coverageYear) {
         this.coverageYear = coverageYear.getYear();
-        populateField();
+        try {
+            populateField();
+        } catch (Exception e) {
+            Log.e(TAG, "exception populating infofragment in dothis(CoverageYear)", e);
+        }
     }
 
     private void configureDrawers(){
@@ -141,33 +157,35 @@ public class InfoFragment extends BrokerFragment {
         });
     }
 
-    private void populateField() {
+    private void populateField() throws Exception {
         if (brokerClient == null
             || roster == null){
             return;
         }
 
-        TextView openEnrollmentBegins = (TextView) view.findViewById(R.id.textViewOpenEnrollmentBegins);
-        openEnrollmentBegins.setText(Utilities.DateAsString(brokerClient.openEnrollmentBegins));
-        TextView openEnrollmentEnds = (TextView) view.findViewById(R.id.textViewOpenEnrollmentEnds);
-        openEnrollmentEnds.setText(Utilities.DateAsString(brokerClient.openEnrollmentEnds));
-        TextView daysLeft = (TextView) view.findViewById(R.id.textViewDaysLeft);
-        daysLeft.setText(Long.toString(BrokerUtilities.daysLeft(brokerClient)));
-        //daysLeft.setText(Long.toString(Utilities.dateDifferenceDays(brokerClient.openEnrollmentBegins, brokerClient.openEnrollmentEnds)));
+        if (brokerClient.planYears != null
+            && brokerClient.planYears.size() > 0) {
+            PlanYear planYearForCoverageYear = BrokerUtilities.getPlanYearForCoverageYear(brokerClient, coverageYear);
 
-        BrokerUtilities.EmployeeCounts employeeCounts = BrokerUtilities.getEmployeeCounts(roster, coverageYear);
-        TextView textViewEnrolled = (TextView) view.findViewById(R.id.textViewEnrolled);
-        textViewEnrolled.setText(Integer.toString(employeeCounts.Enrolled));
-        TextView textViewWaived = (TextView)view.findViewById(R.id.textViewWaived);
-        textViewWaived.setText(Integer.toString(employeeCounts.Waived));
-        TextView textViewNotEnrolled = (TextView)view.findViewById(R.id.textViewNotEnrolled);
-        textViewNotEnrolled.setText(Integer.toString(employeeCounts.NotEnrolled));
-        TextView textViewTotalEmployees = (TextView)view.findViewById(R.id.textViewTotalEmployees);
-        textViewTotalEmployees.setText(Integer.toString(employeeCounts.Enrolled + employeeCounts.NotEnrolled + employeeCounts.Waived));
+            TextView openEnrollmentBegins = (TextView) view.findViewById(R.id.textViewOpenEnrollmentBegins);
+            openEnrollmentBegins.setText(Utilities.DateAsString(planYearForCoverageYear.openEnrollmentBegins));
+            TextView openEnrollmentEnds = (TextView) view.findViewById(R.id.textViewOpenEnrollmentEnds);
+            openEnrollmentEnds.setText(Utilities.DateAsString(planYearForCoverageYear.openEnrollmentEnds));
+            TextView daysLeft = (TextView) view.findViewById(R.id.textViewDaysLeft);
+            daysLeft.setText(Long.toString(BrokerUtilities.daysLeft(planYearForCoverageYear, LocalDate.now())));
+            BrokerUtilities.EmployeeCounts employeeCounts = BrokerUtilities.getEmployeeCounts(roster, coverageYear);
+            TextView textViewEnrolled = (TextView) view.findViewById(R.id.textViewEnrolled);
+            textViewEnrolled.setText(Integer.toString(employeeCounts.Enrolled));
+            TextView textViewWaived = (TextView) view.findViewById(R.id.textViewWaived);
+            textViewWaived.setText(Integer.toString(employeeCounts.Waived));
+            TextView textViewNotEnrolled = (TextView) view.findViewById(R.id.textViewNotEnrolled);
+            textViewNotEnrolled.setText(Integer.toString(employeeCounts.NotEnrolled));
+            TextView textViewTotalEmployees = (TextView) view.findViewById(R.id.textViewTotalEmployees);
+            textViewTotalEmployees.setText(Integer.toString(employeeCounts.Enrolled + employeeCounts.NotEnrolled + employeeCounts.Waived));
 
-        configurePieChartData();
-
-        BrokerUtilities.Totals totals = BrokerUtilities.calcTotals(roster.roster, coverageYear.compareToIgnoreCase("active") == 0);
+            configurePieChartData(employeeCounts);
+        }
+        BrokerUtilities.Totals totals = BrokerUtilities.calcTotals(roster, coverageYear);
         TextView textViewEmployerContribution = (TextView)view.findViewById(R.id.textViewEmployerContribution);
         textViewEmployerContribution.setText(String.format("$%.2f", totals.employerTotal));
         TextView textViewEmployeeContribution = (TextView)view.findViewById(R.id.textViewEmployeeContribution);
@@ -176,7 +194,7 @@ public class InfoFragment extends BrokerFragment {
         textViewTotal.setText(String.format("$%.2f", totals.total));
     }
 
-    private void configurePieChartData() {
+    private void configurePieChartData(BrokerUtilities.EmployeeCounts employeeCounts) {
         PieChart pieChart = (PieChart) view.findViewById(R.id.pieChart);
         pieChart.setUsePercentValues(false);
         pieChart.setDrawEntryLabels(true);
@@ -188,9 +206,9 @@ public class InfoFragment extends BrokerFragment {
 
         ArrayList<PieEntry> yValues = new ArrayList<>();
 
-        yValues.add(new PieEntry(2*brokerClient.employeesEnrolled, Integer.toString(brokerClient.employeesEnrolled)));
-        yValues.add(new PieEntry(2*brokerClient.employessWaived, Integer.toString(brokerClient.employessWaived)));
-        int notEnrolledCount = 2*(brokerClient.employeesTotal - (brokerClient.employeesEnrolled + brokerClient.employessWaived));
+        yValues.add(new PieEntry(2*employeeCounts.Enrolled, Integer.toString(employeeCounts.Enrolled)));
+        yValues.add(new PieEntry(2*employeeCounts.Waived, Integer.toString(employeeCounts.Waived)));
+        int notEnrolledCount = 2*(brokerClient.employeesTotal - (employeeCounts.Enrolled + employeeCounts.Waived));
         yValues.add(new PieEntry(notEnrolledCount, Integer.toString(notEnrolledCount)));
 
         PieDataSet dataSet = new PieDataSet(yValues, "");

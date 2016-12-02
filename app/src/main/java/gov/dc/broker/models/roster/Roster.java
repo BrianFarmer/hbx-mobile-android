@@ -17,6 +17,5 @@ public class Roster {
     public String employerName;
     @SerializedName("roster")
     @Expose
-    public List<Employee> roster = new ArrayList<Employee>();
-
+    public List<RosterEntry> roster = new ArrayList<>();
 }

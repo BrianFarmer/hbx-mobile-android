@@ -1,13 +1,16 @@
 
-package gov.dc.broker.models.brokerclient;
+package gov.dc.broker.models.employer;
 
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import javax.annotation.Generated;
 
 @Generated("org.jsonschema2pojo")
-public class Health {
+public class Dental {
 
     @SerializedName("reference_plan_name")
     @Expose
@@ -21,9 +24,6 @@ public class Health {
     @SerializedName("plan_type")
     @Expose
     public String planType;
-    @SerializedName("metal_level")
-    @Expose
-    public String metalLevel;
     @SerializedName("plan_option_kind")
     @Expose
     public String planOptionKind;
@@ -33,17 +33,20 @@ public class Health {
     @SerializedName("plans_by_summary_text")
     @Expose
     public String plansBySummaryText;
+    @SerializedName("elected_dental_plans")
+    @Expose
+    public List<ElectedDentalPlan> electedDentalPlans = new ArrayList<ElectedDentalPlan>();
     @SerializedName("employer_contribution_by_relationship")
     @Expose
     public EmployerContributionByRelationship employerContributionByRelationship;
     @SerializedName("estimated_employer_max_monthly_cost")
     @Expose
-    public Integer estimatedEmployerMaxMonthlyCost;
+    public int estimatedEmployerMaxMonthlyCost;
     @SerializedName("estimated_plan_participant_min_monthly_cost")
     @Expose
-    public Integer estimatedPlanParticipantMinMonthlyCost;
+    public int estimatedPlanParticipantMinMonthlyCost;
     @SerializedName("estimated_plan_participant_max_monthly_cost")
     @Expose
-    public Integer estimatedPlanParticipantMaxMonthlyCost;
+    public int estimatedPlanParticipantMaxMonthlyCost;
 
 }

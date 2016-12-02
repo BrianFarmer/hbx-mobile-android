@@ -1,32 +1,35 @@
 package gov.dc.broker.models.roster;
 
+import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
-import org.joda.time.DateTime;
+import org.joda.time.LocalDate;
 
-/**
- * Created by plast on 11/10/2016.
- */
+import javax.annotation.Generated;
 
+@Generated("org.jsonschema2pojo")
 public class Dependent {
+
     @SerializedName("first_name")
+    @Expose
     public String firstName;
-
     @SerializedName("middle_name")
+    @Expose
     public String middleName;
-
     @SerializedName("last_name")
-    public String last_name;
-
+    @Expose
+    public String lastName;
     @SerializedName("name_suffix")
-    public String name_suffix;
-
+    @Expose
+    public String nameSuffix;
     @SerializedName("date_of_birth")
-    public DateTime dateOfBirth;
-
+    @Expose
+    public LocalDate dateOfBirth;
     @SerializedName("ssn_masked")
+    @Expose
     public String ssnMasked;
-
     @SerializedName("gender")
+    @Expose
     public String gender;
+
 }

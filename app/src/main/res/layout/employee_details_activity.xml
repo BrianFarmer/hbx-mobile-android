@@ -31,31 +31,12 @@
         style="@style/Title2"
         />
 
-    <TextView
-        android:text="TextView"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/textViewEmployeeName"
-        android:layout_alignParentLeft="true"
-        android:id="@+id/textViewEnrollmentStatus"
-        style="@style/Subtitle2"
-        />
-
-    <TextView
-        android:text="TextView"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/textViewEnrollmentStatus"
-        android:layout_alignParentLeft="true"
-        android:id="@+id/textViewEnrollmentStatusNextYear"
-        style="@style/Subtitle2"
-        />
     <LinearLayout
         android:id="@+id/action_buttons_row"
         android:orientation="horizontal"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@id/textViewEnrollmentStatusNextYear"
+        android:layout_below="@+id/textViewEmployeeName"
         android:visibility="gone"
         android:layout_centerHorizontal="true" >
         <ImageButton
@@ -87,11 +68,20 @@
         android:layout_below="@+id/spinnerCoverageYear"
         style="@style/Subtitle2"
         />
+    <TextView
+        android:text="TextView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/textViewCoverageYearLabel"
+        android:layout_alignParentLeft="true"
+        android:id="@+id/textViewEnrollmentStatus"
+        style="@style/Subtitle2"
+        />
     <ScrollView
         xmlns:android="http://schemas.android.com/apk/res/android"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_below="@+id/textViewCoverageYearLabel"
+        android:layout_below="@+id/textViewEnrollmentStatus"
         android:layout_alignParentBottom="true">
         <RelativeLayout
             android:orientation="vertical"

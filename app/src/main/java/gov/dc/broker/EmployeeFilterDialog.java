@@ -3,6 +3,7 @@ package gov.dc.broker;
 import android.content.Context;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatDialogFragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -14,6 +15,7 @@ import android.widget.TextView;
  */
 
 public class EmployeeFilterDialog extends AppCompatDialogFragment {
+    private String TAG = "EmployeeFilterDialog";
     View view;
     EmployeeFilterDialog dialog;
     private Context context;
@@ -27,7 +29,7 @@ public class EmployeeFilterDialog extends AppCompatDialogFragment {
 
     public interface OnDialogFinishedListener {
         void canceled();
-        void filter(String filterName);
+        void filter(String filterName) throws Exception;
     }
 
     public static EmployeeFilterDialog build(RosterFragment rosterFragment) {
@@ -55,7 +57,11 @@ public class EmployeeFilterDialog extends AppCompatDialogFragment {
             @Override
             public void onClick(View view) {
                 if (onDialogFinishedListener != null){
-                    onDialogFinishedListener.filter("enrolled");
+                    try {
+                        onDialogFinishedListener.filter("enrolled");
+                    } catch (Exception e) {
+                        Log.e(TAG, "exception filtering roster for enrolled", e);
+                    }
                 }
                 dialog.dismiss();
             }
@@ -65,7 +71,11 @@ public class EmployeeFilterDialog extends AppCompatDialogFragment {
             @Override
             public void onClick(View view) {
                 if (onDialogFinishedListener != null){
-                    onDialogFinishedListener.filter("waived");
+                    try {
+                        onDialogFinishedListener.filter("waived");
+                    } catch (Exception e) {
+                        Log.e(TAG, "exception filtering roster for waived", e);
+                    }
                 }
                 dialog.dismiss();            }
         });
@@ -74,7 +84,11 @@ public class EmployeeFilterDialog extends AppCompatDialogFragment {
             @Override
             public void onClick(View view) {
                 if (onDialogFinishedListener != null){
-                    onDialogFinishedListener.filter("not_enrolled");
+                    try {
+                        onDialogFinishedListener.filter("not_enrolled");
+                    } catch (Exception e) {
+                        Log.e(TAG, "exception filtering roster for not enrolled", e);
+                    }
                 }
                 dialog.dismiss();
             }
@@ -84,7 +98,11 @@ public class EmployeeFilterDialog extends AppCompatDialogFragment {
             @Override
             public void onClick(View view) {
                 if (onDialogFinishedListener != null){
-                    onDialogFinishedListener.filter("terminated");
+                    try {
+                        onDialogFinishedListener.filter("terminated");
+                    } catch (Exception e) {
+                        Log.e(TAG, "exception filtering roster for terminated", e);
+                    }
                 }
                 dialog.dismiss();
             }

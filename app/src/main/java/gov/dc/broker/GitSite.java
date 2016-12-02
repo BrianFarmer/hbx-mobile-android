@@ -10,10 +10,9 @@ import java.io.IOException;
 
 public class GitSite extends Site {
     private final String TAG = "GitSite";
-    private static EmployerList employerList;
     JsonParser parser = new JsonParser();
 
-    String employersList = "https://raw.githubusercontent.com/dchealthlink/HBX-mobile-app-APIs/master/enroll/broker/employers_list/response/example.json";
+    private static String BrokerAgencyUrl = "https://raw.githubusercontent.com/dchealthlink/HBX-mobile-app-APIs/v0.2/enroll/broker/employers_list/response/example.json";
 
     public GitSite(){
         Log.d(TAG, "GitSite: In GitSite.GitSite");
@@ -30,8 +29,8 @@ public class GitSite extends Site {
     }
 
     @Override
-    public String GetEmployerList(Events.GetEmployerList getEmployerList, AccountInfo accountInfo) throws IOException {
-        return getUrl(employersList);
+    public String GetBrokerAgency(Events.GetEmployerList getEmployerList, AccountInfo accountInfo) throws IOException {
+        return getUrl(BrokerAgencyUrl);
     }
 
     @Override
@@ -52,10 +51,5 @@ public class GitSite extends Site {
     @Override
     public void checkSecurityAnswer(AccountInfo accountInfo) {
 
-    }
-
-    @Override
-    public String getEmployee(Events.GetEmployee getEmployee, BrokerClient client) {
-        return null;
     }
 }

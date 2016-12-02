@@ -13,13 +13,15 @@ import android.widget.TextView;
 
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
+import org.joda.time.LocalDate;
 
 import java.util.ArrayList;
 import java.util.Map;
 import java.util.TreeMap;
 
-import gov.dc.broker.models.roster.Employee;
+import gov.dc.broker.models.roster.Enrollment;
 import gov.dc.broker.models.roster.Roster;
+import gov.dc.broker.models.roster.RosterEntry;
 
 import static com.bumptech.glide.gifdecoder.GifHeaderParser.TAG;
 
@@ -32,7 +34,7 @@ public class RosterFragment extends BrokerFragment implements EmployeeFilterDial
     private Roster rosterResult;
     private int brokerClientId;
     private Roster roster;
-    private String coverageYear;
+    private LocalDate coverageYear;
     private String filterName = "";
     private String filterLetter;
 
@@ -60,7 +62,7 @@ public class RosterFragment extends BrokerFragment implements EmployeeFilterDial
     private void populateSideIndex() {
         TreeMap<Character, Integer> foundChars = new TreeMap<>();
         for (int i = 0; i < roster.roster.size(); i ++){
-            Employee employee = roster.roster.get(i);
+            RosterEntry employee = roster.roster.get(i);
             if (employee.lastName != null
                 && employee.lastName.length() > 0
                 && foundChars.get(employee.lastName.charAt(0)) == null){
@@ -77,7 +79,11 @@ public class RosterFragment extends BrokerFragment implements EmployeeFilterDial
                 @Override
                 public void onClick(View view) {
                     RosterFragment.this.filterLetter = entry.getKey().toString();
-                    RosterFragment.this.filter();
+                    try {
+                        RosterFragment.this.filter();
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
                 }
             });
             linearLayoutSideIndex.addView(sideIndexItem);
@@ -86,9 +92,19 @@ public class RosterFragment extends BrokerFragment implements EmployeeFilterDial
 
     private void populateRosterList() {
         ListView listViewRoster = (ListView) view.findViewById(R.id.listViewRoster);
+        ArrayList<RosterEntry> rosterEntries = new ArrayList<>();
+        for (RosterEntry rosterEntry : roster.roster) {
+            for (Enrollment enrollment : rosterEntry.enrollments) {
+                if (enrollment.startOn.compareTo(coverageYear) == 0){
+                    rosterEntries.add(rosterEntry);
+                    break;
+                }
+            }
+        }
+
         RosterAdapter rosterAdapter = new RosterAdapter(this, this.getActivity(),
-                                                        new ArrayList<>(roster.roster), brokerClientId,
-                                                        coverageYear.compareToIgnoreCase("active")==0);
+                                                        rosterEntries, brokerClientId,
+                                                        coverageYear);
         listViewRoster.setAdapter(rosterAdapter);
         ImageView imageViewDownArrow = (ImageView) view.findViewById(R.id.imageViewDownArrow);
         imageViewDownArrow.setOnClickListener(new View.OnClickListener() {
@@ -129,13 +145,12 @@ public class RosterFragment extends BrokerFragment implements EmployeeFilterDial
     }
 
     @Override
-    public void filter(String filterName) {
+    public void filter(String filterName) throws Exception {
         this.filterName = filterName;
         filter();
     }
 
-    public void filter() {
-        boolean active = coverageYear.compareToIgnoreCase("active") == 0;
+    public void filter() throws Exception {
         char lowerCaseLetter = 'a';
         boolean compareLetter = false;
         if (filterLetter != null
@@ -144,10 +159,10 @@ public class RosterFragment extends BrokerFragment implements EmployeeFilterDial
             compareLetter = true;
         }
 
-        ArrayList<Employee> filteredEmployees = new ArrayList<>();
+        ArrayList<RosterEntry> filteredEmployees = new ArrayList<>();
         if (filterName == null
             || filterName.length() == 0){
-            for(Employee employee : roster.roster){
+            for(RosterEntry employee : roster.roster){
                 if (compareLetter) {
                     if (employee.lastName.toLowerCase().charAt(0) == lowerCaseLetter) {
                         filteredEmployees.add(employee);
@@ -157,37 +172,23 @@ public class RosterFragment extends BrokerFragment implements EmployeeFilterDial
                 }
             }
         } else {
-            if (active) {
-                for(Employee employee : roster.roster){
-                    if (compareLetter) {
-                        if (employee.lastName.charAt(0) == lowerCaseLetter
-                            && employee.enrollments.active.health.status.compareToIgnoreCase(filterName) == 0) {
-                            filteredEmployees.add(employee);
-                        }
-                    } else {
-                        if (employee.enrollments.active.health.status.compareToIgnoreCase(filterName) == 0) {
-                            filteredEmployees.add(employee);
-                        }
+            for(RosterEntry employee : roster.roster){
+                Enrollment enrollmentForCoverageYear = BrokerUtilities.getEnrollmentForCoverageYear(employee, coverageYear);
+                if (compareLetter) {
+                    if (employee.lastName.charAt(0) == lowerCaseLetter
+                        && enrollmentForCoverageYear.health.status.compareToIgnoreCase(filterName) == 0) {
+                        filteredEmployees.add(employee);
                     }
-                }
-            } else {
-                for(Employee employee : roster.roster){
-                    if (compareLetter) {
-                        if (employee.lastName.charAt(0) == lowerCaseLetter
-                            && employee.enrollments.renewal.health.status.compareToIgnoreCase(filterName) == 0) {
-                            filteredEmployees.add(employee);
-                        }
-                    } else {
-                        if (employee.enrollments.renewal.health.status.compareToIgnoreCase(filterName) == 0) {
-                            filteredEmployees.add(employee);
-                        }
+                } else {
+                    if (enrollmentForCoverageYear.health.status.compareToIgnoreCase(filterName) == 0) {
+                        filteredEmployees.add(employee);
                     }
                 }
             }
         }
 
         RosterAdapter rosterAdapter = new RosterAdapter(this, this.getActivity(), filteredEmployees,
-                                                        brokerClientId, active);
+                                                        brokerClientId, coverageYear);
         ListView listViewRoster = (ListView) view.findViewById(R.id.listViewRoster);
         listViewRoster.setAdapter(rosterAdapter);
     }
