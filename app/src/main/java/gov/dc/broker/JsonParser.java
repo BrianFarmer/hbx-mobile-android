@@ -15,12 +15,12 @@ import gov.dc.broker.models.roster.Roster;
  */
 
 public class JsonParser {
-    public gov.dc.broker.models.brokeragency.BrokerAgency parseEmployerList(String string){
+    public gov.dc.broker.models.brokeragency.BrokerAgency   parseEmployerList(String string){
         GsonBuilder gsonBuilder = new GsonBuilder();
-        gsonBuilder.registerTypeAdapter(DateTime.class, new DateTimeDeserializer());
         gsonBuilder.registerTypeAdapter(LocalDate.class, new LocalDateDeserializer());
+        gsonBuilder.registerTypeAdapter(DateTime.class, new DateTimeDeserializer());
         Gson gson = gsonBuilder.create();
-        return gson.fromJson(string, BrokerAgency.class);
+        return gson.fromJson(string.replace("\"\"", "null"), BrokerAgency.class);
     }
 
     public Employer parseEmployerDetails(String s){
@@ -29,7 +29,7 @@ public class JsonParser {
         gsonBuilder.registerTypeAdapter(LocalDate.class, new LocalDateDeserializer());
         Gson gson = gsonBuilder.create();
 
-        return gson.fromJson(s, Employer.class);
+        return gson.fromJson(s.replace("\"\"", "null"), Employer.class);
     }
 
     public Roster parseRoster(String s){
@@ -38,7 +38,7 @@ public class JsonParser {
         gsonBuilder.registerTypeAdapter(LocalDate.class, new LocalDateDeserializer());
         Gson gson = gsonBuilder.create();
 
-        return gson.fromJson(s, Roster.class);
+        return gson.fromJson(s.replace("\"\"", "null"), Roster.class);
     }
 
     public Carriers parseCarriers(String s) {
@@ -46,7 +46,7 @@ public class JsonParser {
         gsonBuilder.registerTypeAdapter(DateTime.class, new DateTimeDeserializer());
         gsonBuilder.registerTypeAdapter(LocalDate.class, new LocalDateDeserializer());
         Gson gson = gsonBuilder.create();
-        return gson.fromJson(s, Carriers.class);
+        return gson.fromJson(s.replace("\"\"", "null"), Carriers.class);
     }
 
     public Roster parseEmployeDetails(String employee) {
@@ -54,6 +54,6 @@ public class JsonParser {
         gsonBuilder.registerTypeAdapter(DateTime.class, new DateTimeDeserializer());
         gsonBuilder.registerTypeAdapter(LocalDate.class, new LocalDateDeserializer());
         Gson gson = gsonBuilder.create();
-        return gson.fromJson(employee, Roster.class);
+        return gson.fromJson(employee.replace("\"\"", "null"), Roster.class);
     }
 }

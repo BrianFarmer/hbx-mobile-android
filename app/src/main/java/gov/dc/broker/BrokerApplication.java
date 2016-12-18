@@ -15,7 +15,7 @@ import static gov.dc.broker.BrokerWorker.eventBus;
 public class BrokerApplication extends Application {
 
     private static final String TAG = "BrokerApplication";
-    private BrokerWorker brokerWorker = new BrokerWorker();
+    private BrokerWorker brokerWorker = null;
     private boolean fingerprintSupported;
     private static BrokerApplication brokerApplication;
 
@@ -34,7 +34,8 @@ public class BrokerApplication extends Application {
         //Intent intent = new Intent(this, LoginActivity.class);
         JodaTimeAndroid.init(this);
         HbxSite.initClients();
-        brokerWorker.onHandleIntent(null);
+        brokerWorker = new BrokerWorker();
+        brokerWorker.onHandleIntent(null); // this causes the background working to be initialized.
     }
 
     public void finish(BrokerActivity activity) {

@@ -238,7 +238,7 @@
                 android:layout_below="@id/textViewNextCoverageYearBeginsLabel"
                 android:layout_toLeftOf="@+id/textViewOpenEnrollmentEnds"
                 android:keepScreenOn="true"
-                android:text="@string/open_enrollment_ends_labell"
+                android:text="@string/open_enrollment_ends_label_future"
                 />
             <TextView
                 android:id="@+id/textViewOpenEnrollmentEnds"

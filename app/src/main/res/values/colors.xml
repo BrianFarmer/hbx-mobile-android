@@ -40,4 +40,5 @@
     <color name="employer_costs">@color/blueish_green</color>
     <color name="total_costs">@color/purple</color>
     <color name="contribution_text">#044972</color>
+    <color name="coverage_year">#E0FFFF</color>
 </resources>

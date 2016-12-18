@@ -76,8 +76,8 @@ public class MobileServerSite extends HbxSite {
 
             int code = response.code();
             if (code < 200
-                    || code > 299
-                    || response.header("location", null) == null) {
+                    || code > 299){
+                    //|| response.header("location", null) == null) {
                 throw new Exception("error getting session");
             }
             String responseBody = response.body().string();
@@ -128,7 +128,7 @@ public class MobileServerSite extends HbxSite {
         Gson gson = gsonBuilder.create();
         SecurityAnswerResponse securityAnswerResponse = gson.fromJson(body, SecurityAnswerResponse.class);
 
-        accountInfo.enrollServer = securityAnswerResponse.enroll_server;
+        //accountInfo.enrollServer = securityAnswerResponse.enroll_server;
         accountInfo.sessionId = securityAnswerResponse.session_id;
 
         initEnrollServerInfo(securityAnswerResponse.enroll_server);

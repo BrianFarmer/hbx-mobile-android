@@ -66,23 +66,23 @@ public class Events {
     }
 
     static public class GetEmployer extends CancelableRequest {
-        private int employerId;
+        private String employerId;
 
-        public GetEmployer(int employerId){
+        public GetEmployer(String employerId){
             this.employerId = employerId;
         }
-        public int getEmployerId() {
+        public String getEmployerId() {
             return employerId;
         }
     }
 
     static public class GetRoster extends CancelableRequest {
-        private int employerId;
+        private String employerId;
 
-        public GetRoster(int employerId){
+        public GetRoster(String employerId){
             this.employerId = employerId;
         }
-        public int getEmployerId() {
+        public String getEmployerId() {
             return employerId;
         }
     }
@@ -197,6 +197,7 @@ public class Events {
         static final int Error = 2;
 
         private final int loginResult;
+
         public LoginRequestResult(int loginResult) {
             this.loginResult = loginResult;
         }
@@ -212,6 +213,7 @@ public class Events {
         static final int Error = 2;
 
         private final int loginResult;
+
         public SecurityAnswerResult(int loginResult) {
             this.loginResult = loginResult;
         }
@@ -226,12 +228,14 @@ public class Events {
         private CharSequence password;
         private CharSequence securityAnswer;
         private boolean rememberMe;
+        private UserType userType;
 
-        public GetLoginResult(CharSequence accountName, CharSequence password, CharSequence securityAnswer, Boolean rememberMe){
+        public GetLoginResult(CharSequence accountName, CharSequence password, CharSequence securityAnswer, Boolean rememberMe, UserType userType){
             this.accountName = accountName;
             this.password = password;
             this.securityAnswer = securityAnswer;
             this.rememberMe = rememberMe;
+            this.userType = userType;
         }
 
         public CharSequence getAccountName() {
@@ -253,6 +257,17 @@ public class Events {
 
         public CharSequence getSecurityAnswer() {
             return securityAnswer;
+        }
+
+        public UserType getUserType() {
+            return userType;
+        }
+
+        public enum UserType {
+            Broker,
+            Employer,
+            Employee,
+            Unknown
         }
     }
 
@@ -294,29 +309,30 @@ public class Events {
     }
 
     static public class GetEmployee extends CancelableRequest {
-        private final int employeeId;
-        private final int employerId;
+        private final String employeeId;
+        private final String employerId;
 
-        public GetEmployee(int employeeId, int employerId) {
+        public GetEmployee(String employeeId, String employerId) {
             this.employeeId = employeeId;
             this.employerId = employerId;
         }
 
-        public int getEmployerId() {
+        public String getEmployerId() {
             return employerId;
         }
 
-        public int getEmployeeId(){
+        public String getEmployeeId(){
             return employeeId;
         }
     }
 
-    static public class Employee {
-        private final int employeeId;
-        private final int employerId;
+    static public class Employee extends ResponseToRequest {
+        private final String employeeId;
+        private final String employerId;
         private final gov.dc.broker.models.roster.RosterEntry employee;
 
-        public Employee(int employeeId, int employerId, gov.dc.broker.models.roster.RosterEntry employee) {
+        public Employee(int id, String employeeId, String employerId, gov.dc.broker.models.roster.RosterEntry employee) {
+            super(id);
 
             this.employeeId = employeeId;
             this.employerId = employerId;
@@ -337,6 +353,14 @@ public class Events {
 
         public LocalDate getYear() {
             return year;
+        }
+    }
+
+    static public class Finish {
+        private final String reason;
+
+        public Finish(String reason) {
+            this.reason = reason;
         }
     }
 }

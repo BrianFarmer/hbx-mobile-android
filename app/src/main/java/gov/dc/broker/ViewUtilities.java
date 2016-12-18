@@ -5,6 +5,7 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 
 /**
  * Created by plast on 11/10/2016.
@@ -34,6 +35,38 @@ public class ViewUtilities {
         getViewsByTag(views, viewGroup, BrokerApplication.getBrokerApplication().getString(tagResourceId));
         for (View view : views) {
             view.setVisibility(state);
+        }
+    }
+
+    public static void setVisibility(ViewGroup viewGroup, int tagResourceId, boolean visible, ArrayList<Integer> idsToInclude, ArrayList<Integer> idsToSkip) {
+        ArrayList<View> views = new ArrayList<>();
+        int state = View.GONE;
+        if (visible){
+            state = View.VISIBLE;
+        }
+        HashSet<Integer> idsToIncludeSet = null;
+        HashSet<Integer> idsToSkipSet = null;
+        if (idsToInclude != null){
+            idsToIncludeSet = new HashSet<>(idsToInclude);
+        } else {
+            idsToSkipSet = new HashSet<>(idsToSkip);
+        }
+
+        getViewsByTag(views, viewGroup, BrokerApplication.getBrokerApplication().getString(tagResourceId));
+        for (View view : views) {
+            if (idsToIncludeSet != null) {
+                if (idsToIncludeSet.contains(view.getId())){
+                    view.setVisibility(View.VISIBLE);
+                } else {
+                    view.setVisibility(View.GONE);
+                }
+            } else {
+                if (!idsToSkipSet.contains(view.getId())){
+                    view.setVisibility(View.VISIBLE);
+                } else {
+                    view.setVisibility(View.GONE);
+                }
+            }
         }
     }
 

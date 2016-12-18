@@ -23,7 +23,7 @@ import gov.dc.broker.models.roster.RosterEntry;
 public class BrokerUtilities {
     public static long daysLeft(gov.dc.broker.models.brokeragency.PlanYear planYear, LocalDate today) throws Exception {
         if (BrokerUtilities.isInOpenEnrollment(planYear, today)){
-            return Utilities.dateDifferenceDays(today, planYear.openEnrollmentEnds);
+            return Utilities.dateDifferenceDays(today, planYear.planYearBegins);
         }
         return Utilities.dateDifferenceDays(today, planYear.renewalApplicationDue);
     }
@@ -238,10 +238,84 @@ public class BrokerUtilities {
         return planYear.renewalInProgress;
     }
 
+    public static gov.dc.broker.models.brokeragency.PlanYear getLastestPlanYear(List<gov.dc.broker.models.brokeragency.PlanYear> planYears) {
+        if (planYears == null) {
+            return null;
+        }
+        LocalDate date = new LocalDate(2000, 1, 1);
+        gov.dc.broker.models.brokeragency.PlanYear foundPlanYear = null;
+        for (gov.dc.broker.models.brokeragency.PlanYear planYear : planYears) {
+            if (planYear.planYearBegins.compareTo(date) > 0){
+                date = planYear.planYearBegins;
+                foundPlanYear = planYear;
+            }
+        }
+        return foundPlanYear;
+    }
+
+    public static String getBrokerClientId(BrokerAgency brokerAgency, int index){
+        BrokerClient brokerClient = brokerAgency.brokerClients.get(index);
+        return getBrokerClientId(brokerClient);
+    }
+
+    public static String getBrokerClientId(BrokerClient brokerClient){
+        return brokerClient.employerDetailsUrl;
+    }
+
+    public static BrokerClient getBrokerClient(BrokerAgency brokerAgency, String employerId) throws Exception {
+        for (BrokerClient brokerClient : brokerAgency.brokerClients) {
+            if (brokerClient.employerDetailsUrl.compareTo(employerId) == 0){
+                return brokerClient;
+            }
+        }
+        throw new Exception("broker client not found");
+    }
+
+    public enum BrokerClientStatus {
+        InOpenEnrollmentAlerted,
+        InOpenEnrollmentNotAlerted,
+        InRenewal,
+        Other
+    };
+    public static BrokerClientStatus getBrokerClientStatus(gov.dc.broker.models.brokeragency.PlanYear planYear, LocalDate date) {
+        if (planYear.planYearBegins == null){
+            return BrokerClientStatus.Other;
+        }
+
+        if (planYear.planYearBegins.compareTo(date) < 0){
+            return BrokerClientStatus.Other;
+        }
+
+
+        if (planYear.openEnrollmentBegins != null
+                && planYear.openEnrollmentEnds != null
+                && planYear.openEnrollmentBegins.compareTo(date) <=0
+                && planYear.openEnrollmentEnds.compareTo(date) >= 0) {
+            if (planYear.employeesEnrolled == null
+                && (planYear.employeesWaived == null
+                    || planYear.employeesWaived < planYear.minimumParticipationRequired)){
+                return BrokerClientStatus.InOpenEnrollmentAlerted;
+            }
+            if (planYear.employeesWaived == null
+                && planYear.employeesEnrolled < planYear.minimumParticipationRequired) {
+                return BrokerClientStatus.InOpenEnrollmentAlerted;
+            }
+            if (planYear.employeesEnrolled + planYear.employeesWaived < planYear.minimumParticipationRequired) {
+                return BrokerClientStatus.InOpenEnrollmentAlerted;
+            }
+            return BrokerClientStatus.InOpenEnrollmentNotAlerted;
+        }
+        if (planYear.renewalInProgress){
+            return BrokerClientStatus.InRenewal;
+        }
+        return BrokerClientStatus.Other;
+    }
+
     static class EmployeeCounts {
         public int Enrolled;
         public int Waived;
         public int NotEnrolled;
+        public int Terminated;
         public int Total;
     }
 
@@ -258,11 +332,13 @@ public class BrokerUtilities {
                         employeeCounts.Waived++;
                     } else if (enrollment.health.status.compareToIgnoreCase("Not Enrolled") == 0) {
                         employeeCounts.NotEnrolled++;
+                    } else if (enrollment.health.status.compareToIgnoreCase("Terminated") == 0){
+                        employeeCounts.Terminated ++;
                     }
-                    employeeCounts.Total++;
                 }
             }
         }
+        employeeCounts.Total = employeeCounts.Enrolled + employeeCounts.Waived + employeeCounts.NotEnrolled;
         return employeeCounts;
     }
 

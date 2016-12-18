@@ -35,19 +35,15 @@
         android:id="@+id/buttonCount"
         android:layout_height="0dp"
         android:layout_width="0dp"
-        android:paddingTop="11sp"
-        android:paddingBottom="7sp"
         android:layout_marginRight="12sp"
         android:layout_alignParentRight="true"
         android:layout_alignTop="@+id/textViewSectionName"
         android:layout_alignBottom="@+id/textViewSectionName"
         android:layout_alignLeft="@+id/imageViewCircle"
         android:layout_alignRight="@+id/imageViewCircle"
-        android:textColor="#ffffff"
-        android:textSize="15sp"
-        android:gravity="center"
         android:text="1"
-        android:background="@android:color/transparent"/>
+        style="@style/broker_detail_header_count_button"
+        />
     <RelativeLayout
         android:id="@+id/relativeLayoutColumnHeaders"
         android:layout_width="match_parent"
@@ -65,18 +61,50 @@
             android:layout_alignParentTop="true"
             android:layout_alignParentLeft="true"
             android:layout_alignParentStart="true"
-            android:layout_toLeftOf="@+id/textViewPlanYearLabel" />
+            android:layout_toLeftOf="@+id/imageViewCompanyNameSortIndicator" />
+        <ImageView
+            android:layout_width="12sp"
+            android:layout_height="0dp"
+            android:layout_alignTop="@+id/textViewCompanyNameLabel"
+            android:layout_alignBottom="@+id/textViewCompanyNameLabel"
+            android:layout_toLeftOf="@+id/imageViewVerticalSeperator"
+            android:layout_marginRight="7sp"
+            android:src="@drawable/open_carrot"
+            android:scaleType="fitCenter"
+            android:id="@+id/imageViewCompanyNameSortIndicator"
+            />
+        <ImageView
+            android:layout_width="1sp"
+            android:layout_height="0dp"
+            android:layout_alignTop="@+id/textViewCompanyNameLabel"
+            android:layout_alignBottom="@+id/textViewCompanyNameLabel"
+            android:layout_toLeftOf="@+id/textViewPlanYearLabel"
+            android:src="@drawable/open_carrot"
+            android:background="@color/textgray"
+            android:id="@+id/imageViewVerticalSeperator"
+            />
         <TextView
             android:id="@+id/textViewPlanYearLabel"
             style="@style/TextColumnHeaderStyle"
-            android:layout_width="70dp"
+            android:layout_width="120sp"
             android:layout_height="wrap_content"
+            android:paddingLeft="4sp"
             android:text="@string/plan_year"
-            android:layout_marginRight="23dp"
-            android:gravity="center"
+            android:gravity="left"
+            android:layout_alignTop="@+id/textViewCompanyNameLabel"
+            android:layout_alignBottom="@+id/textViewCompanyNameLabel"
+            android:layout_toLeftOf="@+id/imageViewPlanYearSortIndicator"
+            />
+        <ImageView
+            android:layout_width="12sp"
+            android:layout_height="0dp"
             android:layout_alignTop="@+id/textViewCompanyNameLabel"
             android:layout_alignBottom="@+id/textViewCompanyNameLabel"
             android:layout_alignParentRight="true"
+            android:layout_marginRight="7sp"
+            android:src="@drawable/open_carrot"
+            android:scaleType="fitCenter"
+            android:id="@+id/imageViewPlanYearSortIndicator"
             />
     </RelativeLayout>
 </RelativeLayout>

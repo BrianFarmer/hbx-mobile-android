@@ -10,11 +10,29 @@
         android:layout_below="@+id/toolbar"
         style="@style/Title2"
         />
+    <Spinner
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/textViewCompanyName"
+        android:layout_centerHorizontal="true"
+        android:id="@+id/spinnerCoverageYear"
+        style="@style/Subtitle2"
+    />
+    <TextView
+        android:id="@+id/textViewCoverageYearLabel"
+        android:text="@string/coverage_year_label"
+        android:layout_alignLeft="@+id/spinnerCoverageYear"
+        android:layout_alignStart="@+id/spinnerCoverageYear"
+        android:layout_alignEnd="@+id/spinnerCoverageYear"
+        android:layout_alignRight="@+id/spinnerCoverageYear"
+        android:layout_below="@+id/spinnerCoverageYear"
+        style="@style/Subtitle2"
+        />
     <TextView
         android:id="@+id/textViewEnrollmentStatus"
         style="@style/Subtitle2"
         android:text=""
-        android:layout_below="@id/textViewCompanyName"
+        android:layout_below="@id/textViewCoverageYearLabel"
         />
     <LinearLayout
         android:id="@+id/action_buttons_row"
@@ -43,18 +61,4 @@
             android:src="@drawable/emailicon"
             style="@style/IconButton" />
     </LinearLayout>
-    <Spinner
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/action_buttons_row"
-        android:layout_centerHorizontal="true"
-        android:id="@+id/spinnerCoverageYear"
-        style="@style/Subtitle2"
-        />
-    <TextView
-        android:id="@+id/textViewCoverageYearLabel"
-        android:text="@string/coverage_year_label"
-        android:layout_below="@+id/spinnerCoverageYear"
-        style="@style/Subtitle2"
-        />
 </RelativeLayout>

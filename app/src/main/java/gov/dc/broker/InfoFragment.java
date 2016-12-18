@@ -34,7 +34,7 @@ import gov.dc.broker.models.roster.Roster;
 public class InfoFragment extends BrokerFragment {
     private static String TAG = "BrokerFragment";
 
-    private int brokerClientId;
+    private String brokerClientId;
     private Roster roster = null;
     private BrokerClient brokerClient = null;
     private View view;
@@ -68,8 +68,8 @@ public class InfoFragment extends BrokerFragment {
         view = LayoutInflater.from(getActivity()).inflate(R.layout.info_fragment, null);
 
         if (brokerClient == null) {
-            brokerClientId = getBrokerActivity().getIntent().getIntExtra(Intents.BROKER_CLIENT_ID, -1);
-            if (brokerClientId == -1) {
+            brokerClientId = getBrokerActivity().getIntent().getStringExtra(Intents.BROKER_CLIENT_ID);
+            if (brokerClientId == null) {
                 // If we get here the employer id in the intent wasn't initialized and
                 // we are in a bad state.
                 Log.e(TAG, "onCreate: no client id found in intent");
@@ -165,14 +165,64 @@ public class InfoFragment extends BrokerFragment {
 
         if (brokerClient.planYears != null
             && brokerClient.planYears.size() > 0) {
+            LocalDate now = LocalDate.now();
             PlanYear planYearForCoverageYear = BrokerUtilities.getPlanYearForCoverageYear(brokerClient, coverageYear);
 
+            TextView textViewEmployerApplicationDueLabel = (TextView) view.findViewById(R.id.textViewEmployerApplicationDueLabel);
+            TextView textViewEmployerApplicationDue = (TextView) view.findViewById(R.id.textViewEmployerApplicationDue);
+            if (planYearForCoverageYear.renewalApplicationDue != null) {
+                textViewEmployerApplicationDue.setVisibility(View.VISIBLE);
+                textViewEmployerApplicationDueLabel.setVisibility(View.VISIBLE);
+                textViewEmployerApplicationDue.setText(Utilities.DateAsString(planYearForCoverageYear.renewalApplicationDue));
+            } else {
+                textViewEmployerApplicationDue.setVisibility(View.GONE);
+                textViewEmployerApplicationDueLabel.setVisibility(View.GONE);
+            }
+
+            TextView openEnrollmentBeginsLabel = (TextView) view.findViewById(R.id.textViewOpenEnrollmentBeginsLabel);
             TextView openEnrollmentBegins = (TextView) view.findViewById(R.id.textViewOpenEnrollmentBegins);
-            openEnrollmentBegins.setText(Utilities.DateAsString(planYearForCoverageYear.openEnrollmentBegins));
+            if (planYearForCoverageYear.openEnrollmentBegins != null) {
+                openEnrollmentBeginsLabel.setVisibility(View.VISIBLE);
+                openEnrollmentBegins.setVisibility(View.VISIBLE);
+                if (planYearForCoverageYear.openEnrollmentBegins.compareTo(now) < 0) {
+                    openEnrollmentBeginsLabel.setText(getResources().getText(R.string.open_enrollment_begins_label_past));
+                } else {
+                    openEnrollmentBeginsLabel.setText(getResources().getText(R.string.open_enrollment_begins_label_future));
+                }
+                openEnrollmentBegins.setText(Utilities.DateAsString(planYearForCoverageYear.openEnrollmentBegins));
+            } else {
+                openEnrollmentBeginsLabel.setVisibility(View.GONE);
+                openEnrollmentBegins.setVisibility(View.GONE);
+            }
+
+            TextView openEnrollmentEndsLabel = (TextView) view.findViewById(R.id.textViewOpenEnrollmentEndsLabel);
             TextView openEnrollmentEnds = (TextView) view.findViewById(R.id.textViewOpenEnrollmentEnds);
-            openEnrollmentEnds.setText(Utilities.DateAsString(planYearForCoverageYear.openEnrollmentEnds));
+            if (planYearForCoverageYear.openEnrollmentEnds != null) {
+                openEnrollmentEnds.setVisibility(View.VISIBLE);
+                openEnrollmentEndsLabel.setVisibility(View.VISIBLE);
+                if (planYearForCoverageYear.openEnrollmentEnds.compareTo(now) < 0) {
+                    openEnrollmentEndsLabel.setText(R.string.open_enrollment_ends_label_past);
+                } else {
+                    openEnrollmentEndsLabel.setText(R.string.open_enrollment_ends_label_future);
+                }
+                openEnrollmentEnds.setText(Utilities.DateAsString(planYearForCoverageYear.openEnrollmentEnds));
+            } else {
+                openEnrollmentEnds.setVisibility(View.GONE);
+                openEnrollmentEndsLabel.setVisibility(View.GONE);
+            }
+
+            TextView textViewCoverageBeginsLabel = (TextView) view.findViewById(R.id.textViewCoverageBeginsLabel);
+            TextView textViewCoverageBegins = (TextView) view.findViewById(R.id.textViewCoverageBegins);
+            if (planYearForCoverageYear.planYearBegins != null){
+                textViewCoverageBeginsLabel.setVisibility(View.VISIBLE);
+                textViewCoverageBegins.setVisibility(View.VISIBLE);
+                textViewCoverageBegins.setText(Utilities.DateAsString(planYearForCoverageYear.planYearBegins));
+            } else {
+                textViewCoverageBeginsLabel.setVisibility(View.GONE);
+                textViewCoverageBegins.setVisibility(View.GONE);
+            }
             TextView daysLeft = (TextView) view.findViewById(R.id.textViewDaysLeft);
-            daysLeft.setText(Long.toString(BrokerUtilities.daysLeft(planYearForCoverageYear, LocalDate.now())));
+            daysLeft.setText(now.compareTo(coverageYear) < 0 ? Long.toString(BrokerUtilities.daysLeft(planYearForCoverageYear, now)):"");
             BrokerUtilities.EmployeeCounts employeeCounts = BrokerUtilities.getEmployeeCounts(roster, coverageYear);
             TextView textViewEnrolled = (TextView) view.findViewById(R.id.textViewEnrolled);
             textViewEnrolled.setText(Integer.toString(employeeCounts.Enrolled));
@@ -183,6 +233,31 @@ public class InfoFragment extends BrokerFragment {
             TextView textViewTotalEmployees = (TextView) view.findViewById(R.id.textViewTotalEmployees);
             textViewTotalEmployees.setText(Integer.toString(employeeCounts.Enrolled + employeeCounts.NotEnrolled + employeeCounts.Waived));
 
+
+            TextView textViewEnrolledLabel = (TextView) view.findViewById(R.id.textViewEnrolledLabel);
+            textViewEnrolledLabel.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    EmployerDetailsActivity activity = (EmployerDetailsActivity) getActivity();
+                    activity.showRoster(RosterFragment.EnrolledStatus);
+                }
+            });
+            TextView textViewNotEnrolledLabel = (TextView) view.findViewById(R.id.textViewNotEnrolledLabel);
+            textViewNotEnrolledLabel.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    EmployerDetailsActivity activity = (EmployerDetailsActivity) getActivity();
+                    activity.showRoster(RosterFragment.NotEnrolledStatus);
+                }
+            });
+            TextView textViewWaivedLabel = (TextView) view.findViewById(R.id.textViewWaivedLabel);
+            textViewWaivedLabel.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    EmployerDetailsActivity activity = (EmployerDetailsActivity) getActivity();
+                    activity.showRoster(RosterFragment.WaivedStatus);
+                }
+            });
             configurePieChartData(employeeCounts);
         }
         BrokerUtilities.Totals totals = BrokerUtilities.calcTotals(roster, coverageYear);

@@ -207,6 +207,8 @@
     <style name="employee_field" parent="Subtitle2">
         <item name="android:textSize">14sp</item>
         <item name="android:padding">3sp</item>
+        <item name="android:paddingStart">25sp</item>
+        <item name="android:paddingLeft">25sp</item>
         <item name="android:gravity">left</item>
     </style>
 
@@ -590,7 +592,7 @@
 
 
     <style name="plan_type" parent="plan_text_field">
-        <item name="android:textStyle">bold</item>
+        <item name="android:textStyle">bold</item>c
     </style>
 
     <style name="plan_label" parent="plan_text_field">
@@ -613,5 +615,26 @@
         <item name="android:textColor">@color/contribution_text</item>
         <item name="android:maxLines">1</item>
         <item name="android:layout_marginTop">14sp</item>
+    </style>
+
+    <style name="broker_detail_header_count_button">
+        <item name="android:paddingTop">5sp</item>
+        <item name="android:paddingBottom">5sp</item>
+        <item name="android:textColor">#ffffff</item>
+        <item name="android:textSize">14sp</item>
+        <item name="android:gravity">center</item>
+        <item name="android:background">@android:color/transparent</item>
+    </style>
+
+    <style name="dependent_name">
+        <item name="android:textSize">14sp</item>
+        <item name="android:textColor">@color/textgray</item>
+        <item name="android:textStyle">bold</item>c
+    </style>
+
+    <style name="dependent_details">
+        <item name="android:textSize">12sp</item>
+        <item name="android:textColor">@color/textgray</item>
+        <item name="android:textStyle">normal</item>c
     </style>
 </resources>

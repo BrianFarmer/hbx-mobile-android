@@ -30,13 +30,19 @@ import static com.bumptech.glide.gifdecoder.GifHeaderParser.TAG;
  */
 
 public class RosterFragment extends BrokerFragment implements EmployeeFilterDialog.OnDialogFinishedListener{
+    public static String NotEnrolledStatus = "Not Enrolled";
+    public static String EnrolledStatus = "Enrolled";
+    public static String WaivedStatus = "waived";
     private View view;
     private Roster rosterResult;
-    private int brokerClientId;
+    private String brokerClientId;
     private Roster roster;
     private LocalDate coverageYear;
     private String filterName = "";
     private String filterLetter;
+    private ArrayList<RosterEntry> rosterEntries;
+    private ListView listViewRoster;
+    ArrayList<RosterEntry> filteredEmployees = null;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -45,24 +51,23 @@ public class RosterFragment extends BrokerFragment implements EmployeeFilterDial
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)
-    public void doThis(Events.CoverageYear coverageYear) {
+    public void doThis(Events.CoverageYear coverageYear) throws Exception {
         this.coverageYear = coverageYear.getYear();
         populateRosterList();
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)
-    public void doThis(final Events.RosterResult rosterResult) {
+    public void doThis(final Events.RosterResult rosterResult) throws Exception {
         roster = rosterResult.getRoster();
         EmployerDetailsActivity activity = (EmployerDetailsActivity) getActivity();
         this.coverageYear = activity.getCoverageYear();
         populateRosterList();
-        populateSideIndex();
    }
 
     private void populateSideIndex() {
         TreeMap<Character, Integer> foundChars = new TreeMap<>();
-        for (int i = 0; i < roster.roster.size(); i ++){
-            RosterEntry employee = roster.roster.get(i);
+        for (int i = 0; i < filteredEmployees.size(); i ++){
+            RosterEntry employee = filteredEmployees.get(i);
             if (employee.lastName != null
                 && employee.lastName.length() > 0
                 && foundChars.get(employee.lastName.charAt(0)) == null){
@@ -71,16 +76,18 @@ public class RosterFragment extends BrokerFragment implements EmployeeFilterDial
         }
 
         LinearLayout linearLayoutSideIndex = (LinearLayout)view.findViewById(R.id.linearLayoutSideIndex);
+        linearLayoutSideIndex.removeAllViews();
         LayoutInflater layoutInflater = LayoutInflater.from(getActivity());
         for (final Map.Entry<Character, Integer> entry: foundChars.entrySet()) {
             TextView sideIndexItem = (TextView) layoutInflater.inflate(R.layout.side_index_item, null);
             sideIndexItem.setText(entry.getKey().toString());
+            sideIndexItem.setTag(entry.getValue());
             sideIndexItem.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
                     RosterFragment.this.filterLetter = entry.getKey().toString();
                     try {
-                        RosterFragment.this.filter();
+                        listViewRoster.setSelection((Integer)view.getTag());
                     } catch (Exception e) {
                         e.printStackTrace();
                     }
@@ -90,32 +97,30 @@ public class RosterFragment extends BrokerFragment implements EmployeeFilterDial
         }
     }
 
-    private void populateRosterList() {
-        ListView listViewRoster = (ListView) view.findViewById(R.id.listViewRoster);
-        ArrayList<RosterEntry> rosterEntries = new ArrayList<>();
-        for (RosterEntry rosterEntry : roster.roster) {
-            for (Enrollment enrollment : rosterEntry.enrollments) {
-                if (enrollment.startOn.compareTo(coverageYear) == 0){
-                    rosterEntries.add(rosterEntry);
-                    break;
-                }
-            }
-        }
-
-        RosterAdapter rosterAdapter = new RosterAdapter(this, this.getActivity(),
-                                                        rosterEntries, brokerClientId,
-                                                        coverageYear);
-        listViewRoster.setAdapter(rosterAdapter);
+    private void populateRosterList() throws Exception {
+        filterName = ((EmployerDetailsActivity) getActivity()).getRosterFilter();
+        listViewRoster = (ListView) view.findViewById(R.id.listViewRoster);
+        filter();
         ImageView imageViewDownArrow = (ImageView) view.findViewById(R.id.imageViewDownArrow);
         imageViewDownArrow.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                EmployeeFilterDialog dialog = EmployeeFilterDialog.build(RosterFragment.this);
-                dialog.setStyle(DialogFragment.STYLE_NO_TITLE, R.style.DialogStyle);
-                dialog.show(RosterFragment.this.getFragmentManager(), "SecurityQuestionDialog");
+                launchEmployeeFilterDialog();
             }
         });
+        TextView textViewStatusColumnHeader = (TextView) view.findViewById(R.id.textViewStatusColumnHeader);
+        textViewStatusColumnHeader.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                launchEmployeeFilterDialog();
+            }
+        });
+    }
 
+    private void launchEmployeeFilterDialog() {
+        EmployeeFilterDialog dialog = EmployeeFilterDialog.build(RosterFragment.this);
+        dialog.setStyle(DialogFragment.STYLE_NO_TITLE, R.style.DialogStyle);
+        dialog.show(RosterFragment.this.getFragmentManager(), "SecurityQuestionDialog");
     }
 
     @Override
@@ -123,12 +128,14 @@ public class RosterFragment extends BrokerFragment implements EmployeeFilterDial
                              Bundle savedInstanceState) {
         init();
 
+        Log.d(TAG, "RosterFragment.onCreateView()");
+
         view = LayoutInflater.from(getActivity()).inflate(R.layout.roster_fragment,
                 null);
 
         if (rosterResult == null) {
-            brokerClientId = getBrokerActivity().getIntent().getIntExtra(Intents.BROKER_CLIENT_ID, -1);
-            if (brokerClientId == -1) {
+            brokerClientId = getBrokerActivity().getIntent().getStringExtra(Intents.BROKER_CLIENT_ID);
+            if (brokerClientId == null) {
                 // If we get here the employer id in the intent wasn't initialized and
                 // we are in a bad state.
                 Log.e(TAG, "onCreate: no client id found in intent");
@@ -159,7 +166,7 @@ public class RosterFragment extends BrokerFragment implements EmployeeFilterDial
             compareLetter = true;
         }
 
-        ArrayList<RosterEntry> filteredEmployees = new ArrayList<>();
+        filteredEmployees = new ArrayList<>();
         if (filterName == null
             || filterName.length() == 0){
             for(RosterEntry employee : roster.roster){
@@ -191,5 +198,6 @@ public class RosterFragment extends BrokerFragment implements EmployeeFilterDial
                                                         brokerClientId, coverageYear);
         ListView listViewRoster = (ListView) view.findViewById(R.id.listViewRoster);
         listViewRoster.setAdapter(rosterAdapter);
+        populateSideIndex();
     }
 }

@@ -108,6 +108,21 @@ public class EmployeeFilterDialog extends AppCompatDialogFragment {
             }
         });
 
+        TextView textViewClearFilter = (TextView) view.findViewById(R.id.textViewClearFilter);
+        textViewClearFilter.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if (onDialogFinishedListener != null){
+                    try {
+                        onDialogFinishedListener.filter(null);
+                    } catch (Exception e) {
+                        Log.e(TAG, "exception filtering roster cleared", e);
+                    }
+                }
+                dialog.dismiss();
+            }
+        });
+
         Button cancelButton = (Button) view.findViewById(R.id.buttonCancel);
         cancelButton.setOnClickListener(new View.OnClickListener() {
             @Override

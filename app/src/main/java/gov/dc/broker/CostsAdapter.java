@@ -27,10 +27,10 @@ public class CostsAdapter extends BaseAdapter {
     private final BrokerFragment fragment;
     private final Context context;
     private final ArrayList<RosterEntry> employees;
-    private final int brokerClientId;
+    private final String brokerClientId;
     private final LocalDate coverageYear;
 
-    public CostsAdapter(BrokerFragment fragment, Context context, ArrayList<RosterEntry> employees, int brokerClientId, LocalDate coverageYear){
+    public CostsAdapter(BrokerFragment fragment, Context context, ArrayList<RosterEntry> employees, String brokerClientId, LocalDate coverageYear){
         this.fragment = fragment;
         this.context = context;
         this.employees = employees;
@@ -72,7 +72,13 @@ public class CostsAdapter extends BaseAdapter {
 
         try {
             final RosterEntry rosterEntry = employees.get(i);
-            Enrollment enrollmentForCoverageYear = BrokerUtilities.getEnrollmentForCoverageYear(rosterEntry, coverageYear);
+            Enrollment enrollmentForCoverageYear = null;
+            try {
+                enrollmentForCoverageYear = BrokerUtilities.getEnrollmentForCoverageYear(rosterEntry, coverageYear);
+            } catch (Exception e){
+                Log.e(TAG, "exception get coverate year!!!");
+                return view;
+            }
             Health health = enrollmentForCoverageYear.health;
             TextView employeeName = (TextView) view.findViewById(R.id.textViewEmployeeName);
             employeeName.setText(BrokerUtilities.getFullName(rosterEntry));

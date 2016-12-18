@@ -5,6 +5,11 @@ import android.support.v7.app.AppCompatActivity;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 
+import org.greenrobot.eventbus.Subscribe;
+import org.greenrobot.eventbus.ThreadMode;
+
+import java.util.ArrayList;
+
 /**
  * Created by plast on 10/27/2016.
  */
@@ -58,6 +63,19 @@ public class BrokerActivity extends AppCompatActivity {
         }
     }
 
+    protected void setVisibility(int tagResourceId, boolean visible, int imageViewId, int openImageId, int closedImageId, ArrayList<Integer> idsToInclcude, ArrayList<Integer> idsToSkip) {
+        final ViewGroup viewGroup = (ViewGroup) ((ViewGroup) this
+                .findViewById(android.R.id.content)).getChildAt(0);
+
+        ViewUtilities.setVisibility(viewGroup, tagResourceId, visible, idsToInclcude, idsToSkip);
+        ImageView imageView = (ImageView) viewGroup.findViewById(imageViewId);
+        if (visible){
+            imageView.setImageResource(openImageId);
+        } else {
+            imageView.setImageResource(closedImageId);
+        }
+    }
+
     protected void invertGroup(int tagResourceId, int imageViewId, int openImageId, int closedImageId) {
         final ViewGroup viewGroup = (ViewGroup) ((ViewGroup) this
                 .findViewById(android.R.id.content)).getChildAt(0);
@@ -66,5 +84,10 @@ public class BrokerActivity extends AppCompatActivity {
 
     public Messages getMessages() {
         return messages;
+    }
+
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void doThis(Events.Finish eventFinish){
+        finish();
     }
 }

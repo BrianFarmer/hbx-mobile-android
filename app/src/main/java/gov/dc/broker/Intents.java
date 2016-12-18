@@ -1,5 +1,6 @@
 package gov.dc.broker;
 
+import android.app.Activity;
 import android.content.Intent;
 
 /**
@@ -12,20 +13,30 @@ public class Intents {
     public static final String BROKER_CLIENT_ID = "BrokerClientId";
     public static final String EMPLOYEE_ID = "EmployeeId";
 
-    static public void launchEmployeeDetails(BrokerActivity activity, int employeeId, int brokerClientId) {
+    static public void launchEmployeeDetails(BrokerActivity activity, String employeeId, String brokerClientId) {
         Intent intent = new Intent(activity, EmployeeDetailsActivity .class);
         intent.putExtra(EMPLOYEE_ID, employeeId);
         intent.putExtra(BROKER_CLIENT_ID, brokerClientId);
         activity.startActivity(intent);
     }
 
-    static public void launchEmployerDetails(MainActivity mainActivity, int index) {
-        launchEmployerDetailsActivity(mainActivity, index);
+    static public void launchEmployerDetails(MainActivity mainActivity, String id) {
+        launchEmployerDetailsActivity(mainActivity, id);
     }
 
-    static public void launchEmployerDetailsActivity(MainActivity mainActivity, int index) {
+    static public void launchEmployerDetailsActivity(Activity activity) {
+        Intent intent = new Intent(activity, EmployerDetailsActivity.class);
+        activity.startActivity(intent);
+    }
+
+    static public void launchEmployerDetailsActivity(Activity mainActivity, String id) {
         Intent intent = new Intent(mainActivity, EmployerDetailsActivity.class);
-        intent.putExtra(BROKER_CLIENT_ID, index);
+        intent.putExtra(BROKER_CLIENT_ID, id);
         mainActivity.startActivity(intent);
+    }
+
+    public static void launchBrokerActivity(LoginActivity loginActivity) {
+        Intent intent = new Intent(loginActivity, MainActivity.class);
+        loginActivity.startActivity(intent);
     }
 }

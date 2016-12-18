@@ -101,7 +101,7 @@
                 android:layout_toStartOf="@+id/textViewOpenEnrollmentBegins"
                 android:layout_toLeftOf="@+id/textViewOpenEnrollmentBegins"
                 android:layout_below="@id/textViewCoverageInfoSubheadingLabel"
-                android:text="@string/open_enrollment_begins_label"
+                android:text="@string/open_enrollment_begins_label_future"
             />
             <TextView
                 android:id="@+id/textViewOpenEnrollmentBegins"
@@ -114,7 +114,7 @@
                 style="@style/BrokerClientLabel"
                 android:layout_below="@id/textViewOpenEnrollmentBeginsLabel"
                 android:layout_toLeftOf="@+id/textViewOpenEnrollmentEnds"
-                android:text="@string/open_enrollment_ends_labell"
+                android:text="@string/open_enrollment_ends_label_future"
             />
             <TextView
                 android:id="@+id/textViewOpenEnrollmentEnds"

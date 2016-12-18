@@ -32,6 +32,8 @@ public class ContactDialog extends AppCompatDialogFragment {
         view = inflater.inflate(R.layout.contact_action_selection,container, false);
 
         Bundle arguments = getArguments();
+        listType = ContactListAdapter.ListType.fromInt(arguments.getInt("ListType"));
+
         ContactListAdapter listAdapter;
         brokerClient = (BrokerClient) arguments.getSerializable("BrokerClient");
         if (brokerClient == null){

@@ -30,7 +30,7 @@ public class PlansFragment extends BrokerFragment {
     private Employer employer;
     private LocalDate coverageYear;
     private View view;
-    private int brokerClientId;
+    private String brokerClientId;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -46,8 +46,8 @@ public class PlansFragment extends BrokerFragment {
         view = LayoutInflater.from(getActivity()).inflate(R.layout.plans_fragment, null);
 
         if (employer == null) {
-            brokerClientId = getBrokerActivity().getIntent().getIntExtra(Intents.BROKER_CLIENT_ID, -1);
-            if (brokerClientId == -1) {
+            brokerClientId = getBrokerActivity().getIntent().getStringExtra(Intents.BROKER_CLIENT_ID);
+            if (brokerClientId == null) {
                 // If we get here the employer id in the intent wasn't initialized and
                 // we are in a bad state.
                 Log.e(TAG, "onCreate: no client id found in intent");
@@ -122,13 +122,13 @@ public class PlansFragment extends BrokerFragment {
             TextView textViewEligibility = (TextView) planRoot.findViewById(R.id.textViewEligibility);
             textViewEligibility.setText(planOffering.eligibilityRule);
             TextView textViewEmployeeContribution = (TextView) planRoot.findViewById(R.id.textViewEmployeeContribution);
-            textViewEmployeeContribution.setText(Integer.toString(planOffering.health.employerContributionByRelationship.employee));
+            textViewEmployeeContribution.setText(Double.toString(planOffering.health.employerContributionByRelationship.employee));
             TextView textViewSpouseContribution = (TextView) planRoot.findViewById(R.id.textViewSpouseContribution);
-            textViewSpouseContribution.setText(Integer.toString(planOffering.health.employerContributionByRelationship.spouse));
+            textViewSpouseContribution.setText(Double.toString(planOffering.health.employerContributionByRelationship.spouse));
             TextView textViewDomesticPartnerLevel = (TextView) planRoot.findViewById(R.id.textViewDomesticPartnerLevel);
-            textViewDomesticPartnerLevel.setText(Integer.toString(planOffering.health.employerContributionByRelationship.domesticPartner));
+            textViewDomesticPartnerLevel.setText(Double.toString(planOffering.health.employerContributionByRelationship.domesticPartner));
             TextView textViewChildContributionLevel = (TextView) planRoot.findViewById(R.id.textViewChildContributionLevel);
-            textViewChildContributionLevel.setText(Integer.toString(planOffering.health.employerContributionByRelationship.childUnder26));
+            textViewChildContributionLevel.setText(Double.toString(planOffering.health.employerContributionByRelationship.childUnder26));
             TextView textViewReferencePlan = (TextView) planRoot.findViewById(R.id.textViewReferencePlan);
             if (planOffering.health.planOptionKind.compareToIgnoreCase("single_carrier") == 0) {
                 planRoot.findViewById(R.id.textViewReferencePlanLabel).setVisibility(View.GONE);
@@ -174,13 +174,13 @@ public class PlansFragment extends BrokerFragment {
                     textViewNoDentalPlansLabel.setVisibility(View.VISIBLE);
                 }
                 TextView textViewDentalEmployeeContribution = (TextView) planRoot.findViewById(R.id.textViewDentalEmployeeContribution);
-                textViewDentalEmployeeContribution.setText(Integer.toString(planOffering.dental.employerContributionByRelationship.employee));
+                textViewDentalEmployeeContribution.setText(Double.toString(planOffering.dental.employerContributionByRelationship.employee));
                 TextView textViewDentalSpouseContribution = (TextView) planRoot.findViewById(R.id.textViewDentalSpouseContribution);
-                textViewDentalSpouseContribution.setText(Integer.toString(planOffering.dental.employerContributionByRelationship.spouse));
+                textViewDentalSpouseContribution.setText(Double.toString(planOffering.dental.employerContributionByRelationship.spouse));
                 TextView textViewDentalDomesticPartnerLevel = (TextView) planRoot.findViewById(R.id.textViewDentalDomesticPartnerLevel);
-                textViewDentalDomesticPartnerLevel.setText(Integer.toString(planOffering.dental.employerContributionByRelationship.domesticPartner));
+                textViewDentalDomesticPartnerLevel.setText(Double.toString(planOffering.dental.employerContributionByRelationship.domesticPartner));
                 TextView textViewDentalChildContributionLevel = (TextView) planRoot.findViewById(R.id.textViewDentalChildContributionLevel);
-                textViewDentalChildContributionLevel.setText(Integer.toString(planOffering.dental.employerContributionByRelationship.childUnder26));
+                textViewDentalChildContributionLevel.setText(Double.toString(planOffering.dental.employerContributionByRelationship.childUnder26));
                 TextView textViewDentalReferencePlan = (TextView) planRoot.findViewById(R.id.textViewDentalReferencePlan);
                 textViewDentalReferencePlan.setText(planOffering.dental.referencePlanName);
             }

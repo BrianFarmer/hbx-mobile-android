@@ -3,7 +3,7 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     xmlns:android="http://schemas.android.com/apk/res/android"
->
+    >
     <TextView
         android:id="@+id/textViewCompanyName"
         android:text=""
@@ -11,20 +11,34 @@
         style="@style/Title2"
         />
     <TextView
-        android:id="@+id/textViewCoverageYear"
-        android:text=""
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
         android:layout_below="@+id/textViewCompanyName"
+        android:layout_centerHorizontal="true"
+        android:id="@+id/textViewCoverageYear"
         style="@style/Subtitle2"
-        />
+    />
+    <Spinner
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/textViewCompanyName"
+        android:layout_centerHorizontal="true"
+        android:id="@+id/spinnerCoverageYear"
+        android:spinnerMode="dropdown"
+        style="@style/Subtitle2"
+    />
     <TextView
         android:id="@+id/textViewCoverageYearLabel"
         android:text="@string/coverage_year_label"
-        android:layout_below="@+id/textViewCoverageYear"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:layout_below="@+id/spinnerCoverageYear"
         style="@style/Subtitle2"
         />
     <TextView
         android:id="@+id/textViewEnrollmentStatus"
-        style="@style/enrollment_status_subtitle"
+        style="@style/Subtitle2"
         android:text=""
         android:layout_below="@id/textViewCoverageYearLabel"
         />
@@ -34,7 +48,6 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_below="@id/textViewEnrollmentStatus"
-        android:layout_marginBottom="20dp"
         android:layout_centerHorizontal="true" >
         <ImageButton
             android:id="@+id/imageButtonPhone"

@@ -40,7 +40,7 @@ public class RosterEntry {
     public LocalDate hiredOn;
     @SerializedName("id")
     @Expose
-    public Integer id;
+    public String id;
     @SerializedName("enrollments")
     @Expose
     public List<Enrollment> enrollments = new ArrayList<Enrollment>();

@@ -174,10 +174,23 @@
                 style="@style/expandable_image_employee"
                 />
             <TextView
-                android:text="@string/benefit_group_field"
+                android:text="Not enrolled in any plan for this year"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_below="@id/textViewHealthPlanDrawer"
+                android:layout_alignParentLeft="true"
+                android:layout_alignParentStart="true"
+                android:layout_marginLeft="25sp"
+                android:layout_marginStart="25sp"
+                android:id="@+id/textViewNotEnrolled"
+                android:tag="@string/health_plan_group_tag"
+                style="@style/employee_field"
+                />
+            <TextView
+                android:text="@string/benefit_group_field"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/textViewHealthPlanDrawer"
                 android:layout_alignParentLeft="true"
                 android:layout_alignParentStart="true"
                 android:id="@+id/textViewBenefitGroupField"

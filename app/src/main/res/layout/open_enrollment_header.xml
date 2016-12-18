@@ -33,17 +33,13 @@
         android:id="@+id/buttonCount"
         android:layout_height="0dp"
         android:layout_width="0dp"
-        android:paddingTop="11sp"
-        android:paddingBottom="7sp"
         android:layout_marginRight="12sp"
         android:layout_alignParentRight="true"
         android:layout_alignTop="@+id/textViewSectionName"
         android:layout_alignBottom="@+id/textViewSectionName"
         android:layout_alignLeft="@+id/imageViewCircle"
         android:layout_alignRight="@+id/imageViewCircle"
-        android:textColor="#ffffff"
-        android:textSize="15sp"
-        android:gravity="center"
         android:text="1"
-        android:background="@android:color/transparent"/>
+        style="@style/broker_detail_header_count_button"
+    />
 </RelativeLayout>

@@ -27,11 +27,11 @@ public class RosterAdapter extends BaseAdapter {
     private final BrokerFragment fragment;
     private final Context context;
     private final ArrayList<RosterEntry> employees;
-    private final int brokerClientId;
+    private final String brokerClientId;
     private final LocalDate active;
 
     public RosterAdapter(BrokerFragment fragment, Context context, ArrayList<RosterEntry> employees,
-                         int brokerClientId, LocalDate coverageDate){
+                         String brokerClientId, LocalDate coverageDate){
         this.fragment = fragment;
         this.context = context;
         this.employees = employees;

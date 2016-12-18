@@ -24,7 +24,7 @@ import static com.bumptech.glide.gifdecoder.GifHeaderParser.TAG;
 public class CostsFragment extends BrokerFragment {
     private View view;
     private Roster rosterResult;
-    private int brokerClientId;
+    private String brokerClientId;
     private Roster roster;
     private LocalDate coverageYear;
 
@@ -67,8 +67,8 @@ public class CostsFragment extends BrokerFragment {
                 null);
 
         if (rosterResult == null) {
-            brokerClientId = getBrokerActivity().getIntent().getIntExtra(Intents.BROKER_CLIENT_ID, -1);
-            if (brokerClientId == -1) {
+            brokerClientId = getBrokerActivity().getIntent().getStringExtra(Intents.BROKER_CLIENT_ID);
+            if (brokerClientId == null) {
                 // If we get here the employer id in the intent wasn't initialized and
                 // we are in a bad state.
                 Log.e(TAG, "onCreate: no client id found in intent");

@@ -39,9 +39,10 @@ public abstract class HbxSite extends Site {
         public final String scheme;
         public final String host;
         public final int port;
+        public final String root;
 
         public ServerSiteConfig(String scheme, String host){
-
+            this.root = null;
             this.scheme = scheme;
             this.host = host;
             if (scheme.compareToIgnoreCase("http") == 0) {
@@ -61,15 +62,33 @@ public abstract class HbxSite extends Site {
             this.scheme = scheme;
             this.host = host;
             this.port = port;
+            this.root = null;
         }
+
+        public ServerSiteConfig(String scheme, String host, int port, String root){
+            this.scheme = scheme;
+            this.host = host;
+            this.port = port;
+            this.root = root;
+        }
+
 
         public boolean isSchemeHttps(){
             return scheme.compareToIgnoreCase("https") == 0;
+        }
+
+        public String builtUrlRoot(){
+            String url = scheme + "://" + host + ":" + Integer.toString(port) + "/";
+            if (root == null){
+                return url;
+            }
+            return url + root + "/";
         }
     }
 
     private static String TAG = "HbxSite";
     private static String employersList = "/api/v1/mobile_api/employers_list";
+    private static String employer = "/api/v1/mobile_api/employer_details";
     protected final ServerSiteConfig siteConfig;
     private ServerSiteConfig enrollServerSiteConfig;
     static protected OkHttpClient client = null;
@@ -118,7 +137,7 @@ public abstract class HbxSite extends Site {
                 port = 443;
             }
         }
-        enrollServerSiteConfig = new HbxSite.ServerSiteConfig(uri.getScheme(), uri.getHost(), port);
+        enrollServerSiteConfig = BuildConfig2.getServerSiteConfig();
     }
 
     public static SSLContext getSSLContext() {
@@ -265,13 +284,18 @@ public abstract class HbxSite extends Site {
     }
 
     @Override
-    public String GetBrokerAgency(Events.GetEmployerList getEmployerList, AccountInfo accountInfo) throws Exception {
+    public String GetBrokerAgency(AccountInfo accountInfo) throws Exception {
         String result = getRelativeUrl(enrollServerSiteConfig, employersList, accountInfo);
         return result;
     }
 
     @Override
-    public String GetEmployer(Events.GetEmployer getEmployer, String url, AccountInfo accountInfo) throws Exception {
+    public String GetEmployer(AccountInfo accountInfo) throws Exception {
+        return GetEmployer(employer, accountInfo);
+    }
+
+    @Override
+    public String GetEmployer(String url, AccountInfo accountInfo) throws Exception {
         return getRelativeUrl(enrollServerSiteConfig, url, accountInfo);
     }
 

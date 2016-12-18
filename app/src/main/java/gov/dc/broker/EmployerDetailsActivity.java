@@ -44,10 +44,16 @@ public class EmployerDetailsActivity extends BrokerActivity {
 
 
     private Toolbar toolbar;
-    private int clientId;
+    private String clientId;
     BrokerClient brokerClient;
     private FragmentTabHost tabHost;
     private LocalDate coverageYear;
+    private String rosterFilter = null;
+
+
+    public EmployerDetailsActivity(){
+        Log.d(TAG, "In EmployerDetailsActivity Ctor");
+    }
 
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void doThis(Events.BrokerClient  brokerClientEvent) {
@@ -57,36 +63,54 @@ public class EmployerDetailsActivity extends BrokerActivity {
         textViewCompanyName.setText(brokerClient.employerName);
 
         Spinner spinnerCoverageYear = (Spinner) findViewById(R.id.spinnerCoverageYear);
+        TextView textViewCoverageYear = (TextView) findViewById(R.id.textViewCoverageYear);
 
         ArrayList<String> list = new ArrayList<>();
 
         // set coverage year to the lowsest playYearBegins in the planYears
-        LocalDate initialCoverageYear = new LocalDate(2100, 1, 1);
-        for (PlanYear planYear : brokerClient.planYears) {
-            if (planYear.planYearBegins != null
-                && planYear.planYearBegins.compareTo(initialCoverageYear) < 0){
-                initialCoverageYear = planYear.planYearBegins;
+        LocalDate initialCoverageYear = new LocalDate(2000, 1, 1);
+        if (brokerClient.planYears.size() > 1) {
+            spinnerCoverageYear.setVisibility(View.VISIBLE);
+            textViewCoverageYear.setVisibility(View.INVISIBLE);
+            int i = 0;
+            int selectedIndex = 0;
+            for (PlanYear planYear : brokerClient.planYears) {
+                if (planYear.planYearBegins != null
+                        && planYear.planYearBegins.compareTo(initialCoverageYear) > 0) {
+                    initialCoverageYear = planYear.planYearBegins;
+                    selectedIndex = i;
+                }
+                list.add(String.format("%s (%s)", Utilities.DateAsMonthDayYear(planYear.planYearBegins), planYear.state));
+                i++;
+
+                ArrayAdapter<String> dataAdapter = new ArrayAdapter<String>(this,
+                        android.R.layout.simple_spinner_item, list);
+                spinnerCoverageYear.setAdapter(dataAdapter);
+                spinnerCoverageYear.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+                    @Override
+                    public void onItemSelected(AdapterView<?> adapterView, View view, int pos, long l) {
+                        coverageYear = brokerClient.planYears.get(pos).planYearBegins;
+                        getMessages().coverageYearChanged(coverageYear);
+                    }
+
+                    @Override
+                    public void onNothingSelected(AdapterView<?> adapterView) {
+
+                    }
+                });
+                spinnerCoverageYear.setSelection(selectedIndex);
             }
-            list.add(String.format("%s - %s", Utilities.DateAsMonthYear(planYear.planYearBegins), Utilities.DateAsMonthYear(Utilities.calculateOneYearOut(planYear.planYearBegins))));
+            coverageYear = initialCoverageYear;
+        } else {
+            spinnerCoverageYear.setVisibility(View.INVISIBLE);
+            textViewCoverageYear.setVisibility(View.VISIBLE);
+            if (brokerClient.planYears.size() == 1) {
+                PlanYear planYear = brokerClient.planYears.get(0);
+                coverageYear = planYear.planYearBegins;
+                textViewCoverageYear.setText(String.format("%s (%s)", Utilities.DateAsMonthDayYear(planYear.planYearBegins), planYear.state));
+            }
         }
-        coverageYear = initialCoverageYear;
 
-
-        ArrayAdapter<String> dataAdapter = new ArrayAdapter<String>(this,
-                android.R.layout.simple_spinner_item, list);
-        spinnerCoverageYear.setAdapter(dataAdapter);
-        spinnerCoverageYear.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-            @Override
-            public void onItemSelected(AdapterView<?> adapterView, View view, int pos, long l) {
-                coverageYear = brokerClient.planYears.get(pos).planYearBegins;
-                getMessages().coverageYearChanged(coverageYear);
-            }
-
-            @Override
-            public void onNothingSelected(AdapterView<?> adapterView) {
-
-            }
-        });
 
         TextView textViewEnrollmentStatus = (TextView) findViewById(R.id.textViewEnrollmentStatus);
         PlanYear planYear = brokerClient.planYears.get(0);
@@ -197,8 +221,8 @@ public class EmployerDetailsActivity extends BrokerActivity {
 
         if (brokerClient == null) {
             Intent intent = getIntent();
-            clientId = intent.getIntExtra(BROKER_CLIENT_ID, -1);
-            if (clientId == -1) {
+            clientId = intent.getStringExtra(BROKER_CLIENT_ID);
+            if (clientId == null) {
                 Log.e(TAG, "onCreate: no client id found in intent");
                 return;
             }
@@ -209,7 +233,7 @@ public class EmployerDetailsActivity extends BrokerActivity {
         LayoutInflater inflater = getLayoutInflater();
         setContentView(R.layout.employer_details);
         tabHost = (FragmentTabHost)findViewById(R.id.tabhost);
-        tabHost.setup(this, getSupportFragmentManager(), R.id.fragment_content);
+        tabHost.setup(this, getSupportFragmentManager(), android.R.id.tabcontent);
 
         Drawable drawable = ContextCompat.getDrawable(this, R.drawable.info_tab_normal);
         tabHost.addTab(
@@ -235,6 +259,12 @@ public class EmployerDetailsActivity extends BrokerActivity {
                 selectedTabChanged(tabId);
             }
         });
+    }
+
+    public void showRoster(String filter){
+        tabHost.setCurrentTab(1);
+        rosterFilter = filter;
+        selectedTabChanged(ROSTER_TAB);
     }
 
     private void selectedTabChanged(String tabId) {
@@ -274,5 +304,9 @@ public class EmployerDetailsActivity extends BrokerActivity {
 
     public LocalDate getCoverageYear() {
         return coverageYear;
+    }
+
+    public String getRosterFilter() {
+        return rosterFilter;
     }
 }

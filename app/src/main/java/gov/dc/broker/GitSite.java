@@ -12,7 +12,7 @@ public class GitSite extends Site {
     private final String TAG = "GitSite";
     JsonParser parser = new JsonParser();
 
-    private static String BrokerAgencyUrl = "https://raw.githubusercontent.com/dchealthlink/HBX-mobile-app-APIs/v0.2/enroll/broker/employers_list/response/example.json";
+    private static String BrokerAgencyUrl = "https://raw.githubusercontent.com/dchealthlink/HBX-mobile-app-APIs/v0.2.1/enroll/broker/employers_list/response/example.json";
 
     public GitSite(){
         Log.d(TAG, "GitSite: In GitSite.GitSite");
@@ -29,12 +29,17 @@ public class GitSite extends Site {
     }
 
     @Override
-    public String GetBrokerAgency(Events.GetEmployerList getEmployerList, AccountInfo accountInfo) throws IOException {
+    public String GetBrokerAgency(AccountInfo accountInfo) throws IOException {
         return getUrl(BrokerAgencyUrl);
     }
 
     @Override
-    public String GetEmployer(Events.GetEmployer getEmployer, String url, AccountInfo accountInfo) throws IOException{
+    public String GetEmployer(AccountInfo accountInfo) throws Exception {
+        throw new Exception("Not implemented");
+    }
+
+    @Override
+    public String GetEmployer(String url, AccountInfo accountInfo) throws IOException{
         return getUrl(url);
     }
 

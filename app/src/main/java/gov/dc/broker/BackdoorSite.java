@@ -41,11 +41,15 @@ public class BackdoorSite extends HbxSite {
 
     static String root = "http://ec2-54-234-22-53.compute-1.amazonaws.com:3001";
     static String home = root;
-    static String login = root + "/users/sign_in";
+    static String login = "/users/sign_in";
     private CookieManager cookieManager;
     private String sessionId;
     private boolean haveAccountInfo = false;
     private String accountId;
+
+    private String brokerUrl = "api/v1/mobile_api/employers_list";
+    private String employerUrl = "api/v1/mobile_api/employer_details";
+    private String employerRosterUrl = "api/v1/mobile_api/employer_roster";
 
     BackdoorSite(ServerSiteConfig serverSiteConfig){
         super(serverSiteConfig, serverSiteConfig);
@@ -57,7 +61,6 @@ public class BackdoorSite extends HbxSite {
 
     @Override
     public void Login(AccountInfo accountInfo) throws Exception {
-
         BrokerWorker.BodyAndSession bodyAndSession = getUrl(login, "");
         if (bodyAndSession == null){
             return;
@@ -85,8 +88,8 @@ public class BackdoorSite extends HbxSite {
     }
 
 
-    private BrokerWorker.BodyAndSession getUrl(String urlString, String sessionId) throws Exception {
-        return getUrlHttpUrlConnection(urlString, sessionId);
+    private BrokerWorker.BodyAndSession getUrl(String path, String sessionId) throws Exception {
+        return getUrlHttpUrlConnection(path, sessionId);
     }
 
     private BrokerWorker.BodyAndSession getUrlOkHttp(String urlString, String sessionId) throws Exception {
@@ -117,10 +120,10 @@ public class BackdoorSite extends HbxSite {
         return bodyAndSession;
     }
 
-    private BrokerWorker.BodyAndSession getUrlHttpUrlConnection(String urlString, String sessionId) {
+    private BrokerWorker.BodyAndSession getUrlHttpUrlConnection(String path, String sessionId) {
         URL url = null;
         try {
-            String str = siteConfig.scheme + "://" + siteConfig.host + ":" + siteConfig.port + "/users/sign_in";
+            String str = siteConfig.scheme + "://" + siteConfig.host + ":" + siteConfig.port + path;
 
             url = new URL(str);
 
@@ -410,7 +413,6 @@ public class BackdoorSite extends HbxSite {
 
     @Override
     public void checkSecurityAnswer(AccountInfo accountInfo) {
-        accountInfo.enrollServer = root;
-
+        //accountInfo.enrollServer = root;
     }
 }

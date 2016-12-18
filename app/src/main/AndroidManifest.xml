@@ -2,6 +2,7 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
           xmlns:tools="http://schemas.android.com/tools"
           package="gov.dc.broker"
+
     >
 
     <uses-sdk
@@ -54,12 +55,6 @@
             android:name=".BrokerWorker"
             android:exported="false"/
         -->
-        <activity
-            android:name=".ClientDetailsActivity"
-            android:configChanges="orientation|keyboardHidden|screenSize"
-            android:label="@string/title_activity_client_details"
-            android:screenOrientation="portrait"
-            />
         <activity android:name=".CarriersActivity"/>
         <activity
             android:name=".EmployerDetailsActivity"
@@ -73,6 +68,7 @@
             android:label="@string/title_activity_client_details"
             android:screenOrientation="portrait"
             />
+        <meta-data android:name="net.hockeyapp.android.appIdentifier" android:value="${HOCKEYAPP_APP_ID}" />
     </application>
 
 </manifest>

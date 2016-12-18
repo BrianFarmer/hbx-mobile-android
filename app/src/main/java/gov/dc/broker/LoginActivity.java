@@ -123,6 +123,9 @@ public class LoginActivity extends BrokerActivity {
             finish();
             return;
         }
+
+        // Did the use enter bad info?
+
         if (loginRequestResult.getLoginResult() == Events.LoginRequestResult.Failure){
             AlertDialog alertDialog = new AlertDialog.Builder(this)
                     .setTitle("Log In")
@@ -135,6 +138,9 @@ public class LoginActivity extends BrokerActivity {
                     .setIcon(android.R.drawable.ic_dialog_alert)
                     .show();
         }
+
+        // did an error happen?
+
         if (loginRequestResult.getLoginResult() == Events.LoginRequestResult.Error){
             hideProgress();
             AlertDialog alertDialog = new AlertDialog.Builder(this)

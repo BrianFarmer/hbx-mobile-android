@@ -18,6 +18,9 @@ import android.widget.TextView;
 
 import com.wdullaer.swipeactionadapter.SwipeActionAdapter;
 
+import net.hockeyapp.android.CrashManager;
+import net.hockeyapp.android.UpdateManager;
+
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 import org.joda.time.LocalDate;
@@ -59,6 +62,8 @@ public class MainActivity extends BrokerActivity {
             Log.d(TAG, "exception in setContentView: " + e.getClass().getName());
             throw e;
         }
+
+        checkForUpdates();
 
         Intent intent = new Intent(this, BrokerWorker.class);
         intent.setData(Uri.parse("http://dc.gov"));
@@ -149,11 +154,13 @@ public class MainActivity extends BrokerActivity {
     protected void onPause() {
         super.onPause();
         scrollPosition = listViewEmployers.getFirstVisiblePosition();
+        unregisterManagers();
     }
 
     @Override
     protected void onDestroy(){
         super.onDestroy();
+        unregisterManagers();
     }
 
     @Override
@@ -161,13 +168,18 @@ public class MainActivity extends BrokerActivity {
         super.onResume();
 
         getMessages().getLogin();
+        checkForCrashes();
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void doThis(Events.GetLoginResult getLoginResult){
-        if (getLoginResult.isLoggedIn()){
-            Log.d(TAG, "requesting employer list");
-            getMessages().getEmployerList();
+        if (getLoginResult.isLoggedIn()) {
+            if (getLoginResult.getUserType() == Events.GetLoginResult.UserType.Broker) {
+                Log.d(TAG, "requesting employer list");
+                getMessages().getEmployerList();
+            } else {
+                showEmployer();
+            }
         } else {
             showLogin();
             return;
@@ -177,6 +189,11 @@ public class MainActivity extends BrokerActivity {
 
     private void showLogin() {
         Intent intent = new Intent(this, LoginActivity.class);
+        startActivity(intent);
+    }
+
+    private void showEmployer() {
+        Intent intent = new Intent(this, EmployerDetailsActivity.class);
         startActivity(intent);
     }
 
@@ -223,5 +240,18 @@ public class MainActivity extends BrokerActivity {
                 Integer.toString(BrokerUtilities.getBrokerClientsInOpenEnrollment(brokerAgency, LocalDate.now()).size()));
         webViewWelcome.loadDataWithBaseURL("", welcomeMessage, "text/html", "UTF-8", "");
         //webViewWelcome.setText(Html.fromHtml(welcomeMessage));
+    }
+
+    private void checkForCrashes() {
+        CrashManager.register(this);
+    }
+
+    private void checkForUpdates() {
+        // Remove this for store builds!
+        UpdateManager.register(this);
+    }
+
+    private void unregisterManagers() {
+        UpdateManager.unregister();
     }
 }

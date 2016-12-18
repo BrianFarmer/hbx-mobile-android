@@ -11,15 +11,16 @@ import java.net.URL;
  * Created by plast on 9/23/2016.
  */
 
-public abstract class Site {
+public abstract class Site{
 
     abstract void Login(AccountInfo accountInfo) throws IOException, Exception;
     abstract void Logout(Events.LogoutRequest logout) throws IOException;
 
     public void initEnrollServerInfo(String enrollServerBaseUrl) throws URISyntaxException {}
 
-    abstract String GetBrokerAgency(Events.GetEmployerList getEmployerList, AccountInfo accountInfo) throws Exception;
-    abstract String GetEmployer(Events.GetEmployer getEmployer, String url, AccountInfo accountInfo) throws Exception;
+    abstract String GetBrokerAgency(AccountInfo accountInfo) throws Exception;
+    public abstract String GetEmployer(AccountInfo accountInfo) throws Exception;
+    abstract String GetEmployer(String url, AccountInfo accountInfo) throws Exception;
     abstract String getRoster(Events.GetRoster getRoster, String url, AccountInfo accountInfo) throws Exception;
     abstract String GetCarriers(Events.GetCarriers getCarriers) throws IOException;
     abstract void checkSecurityAnswer(AccountInfo accountInfo) throws Exception;
@@ -42,5 +43,4 @@ public abstract class Site {
         }
         return response.toString();
     }
-
 }

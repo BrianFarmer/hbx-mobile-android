@@ -5,6 +5,7 @@ import android.content.res.Resources;
 import android.os.Bundle;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -30,13 +31,18 @@ import gov.dc.broker.models.roster.Health;
 import gov.dc.broker.models.roster.RosterEntry;
 
 public class EmployeeDetailsActivity extends BrokerActivity {
+    private static String TAG = "EmployeeDetailsActivity";
 
-    private int employeeId;
-    private int employerId;
+    private String employeeId;
+    private String employerId;
     private RosterEntry employee;
     private BrokerClient brokerClient;
     private Employer employer;
     private LocalDate coverageYear;
+
+    private boolean detailsVisible = true;
+    private boolean healthPlanVisible = false;
+    private boolean dependentsVisible = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -45,8 +51,8 @@ public class EmployeeDetailsActivity extends BrokerActivity {
         setContentView(R.layout.employee_details_activity);
 
         Intent intent = getIntent();
-        employeeId = intent.getIntExtra(Intents.EMPLOYEE_ID, -1);
-        employerId = intent.getIntExtra(Intents.BROKER_CLIENT_ID, -1);
+        employeeId = intent.getStringExtra(Intents.EMPLOYEE_ID);
+        employerId = intent.getStringExtra(Intents.BROKER_CLIENT_ID);
         getMessages().getEmployee(employeeId, employerId);
         getMessages().getEmployer(employerId);
 
@@ -56,27 +62,44 @@ public class EmployeeDetailsActivity extends BrokerActivity {
         imageViewDetailsDrawer.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                invertGroup(R.string.details_group, R.id.imageViewDetailsDrawer, R.drawable.blue_uparrow, R.drawable.blue_circle_plus);
+                setVisibility(R.string.details_group, !detailsVisible, R.id.imageViewDetailsDrawer, R.drawable.blue_uparrow, R.drawable.blue_circle_plus);
+                detailsVisible = !detailsVisible;
             }
         });
         ImageView imageViewHealthPlanDrawer = (ImageView)findViewById(R.id.imageViewHealthPlanDrawer);
         imageViewHealthPlanDrawer.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                invertGroup(R.string.health_plan_group_tag, R.id.imageViewHealthPlanDrawer, R.drawable.blue_uparrow, R.drawable.blue_circle_plus);
+                healthPlanVisible = !healthPlanVisible;
+                if (healthPlanVisible){
+                    ArrayList<Integer> ids = new ArrayList<Integer>();
+                    ids.add(R.id.textViewNotEnrolled);
+                    try {
+                        if (BrokerUtilities.getEnrollmentForCoverageYear(employee, coverageYear).health != null) {
+                            setVisibility(R.string.health_plan_group_tag, true, R.id.imageViewHealthPlanDrawer, R.drawable.blue_uparrow, R.drawable.blue_circle_plus, null, ids);
+                        } else {
+                            setVisibility(R.string.health_plan_group_tag, true, R.id.imageViewHealthPlanDrawer, R.drawable.blue_uparrow, R.drawable.blue_circle_plus, ids, null);
+                        }
+                    } catch (Exception e) {
+                        Log.e(TAG, "Error setting health plan visibility", e);
+                    }
+                } else {
+                    setVisibility(R.string.health_plan_group_tag, false, R.id.imageViewHealthPlanDrawer, R.drawable.blue_uparrow, R.drawable.blue_circle_plus);
+                }
             }
         });
         ImageView imageViewDependentsDrawer = (ImageView)findViewById(R.id.imageViewDependentsDrawer);
         imageViewDependentsDrawer.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                invertGroup(R.string.dependents_group_tag, R.id.imageViewDependentsDrawer, R.drawable.blue_uparrow, R.drawable.blue_circle_plus);
+                setVisibility(R.string.dependents_group_tag, !dependentsVisible, R.id.imageViewDependentsDrawer, R.drawable.blue_uparrow, R.drawable.blue_circle_plus);
+                dependentsVisible = !dependentsVisible;
             }
         });
 
-        setVisibility(R.string.details_group, true, R.id.imageViewDetailsDrawer, R.drawable.blue_uparrow, R.drawable.blue_circle_plus);
-        setVisibility(R.string.health_plan_group_tag, false, R.id.imageViewHealthPlanDrawer, R.drawable.blue_uparrow, R.drawable.blue_circle_plus);
-        setVisibility(R.string.dependents_group_tag, false, R.id.imageViewDependentsDrawer, R.drawable.blue_uparrow, R.drawable.blue_circle_plus);
+        setVisibility(R.string.details_group, detailsVisible, R.id.imageViewDetailsDrawer, R.drawable.blue_uparrow, R.drawable.blue_circle_plus);
+        setVisibility(R.string.health_plan_group_tag, healthPlanVisible, R.id.imageViewHealthPlanDrawer, R.drawable.blue_uparrow, R.drawable.blue_circle_plus);
+        setVisibility(R.string.dependents_group_tag, dependentsVisible, R.id.imageViewDependentsDrawer, R.drawable.blue_uparrow, R.drawable.blue_circle_plus);
     }
 
     private void configToolbar() {
@@ -115,7 +138,7 @@ public class EmployeeDetailsActivity extends BrokerActivity {
         }
 
         Resources resources = getResources();
-        LocalDate initialCoverageYear = new LocalDate(2100, 1, 1);
+        LocalDate initialCoverageYear = new LocalDate(2000, 1, 1);
 
         if (employee.enrollments != null
             && employee.enrollments.size() > 0) {
@@ -123,11 +146,12 @@ public class EmployeeDetailsActivity extends BrokerActivity {
             Enrollment enrollment = null;
 
             for (Enrollment curEnrollment : employee.enrollments) {
-                if (curEnrollment .startOn.compareTo(initialCoverageYear) < 0) {
+                if (curEnrollment .startOn.compareTo(initialCoverageYear) > 0) {
                     initialCoverageYear = curEnrollment.startOn;
                     enrollment = curEnrollment;
                 }
             }
+            coverageYear = initialCoverageYear;
 
 
             TextView textViewEmployeeName = (TextView) findViewById(R.id.textViewEmployeeName);
@@ -152,15 +176,21 @@ public class EmployeeDetailsActivity extends BrokerActivity {
             });
 
             List<String> list = new ArrayList<>();
+            int i = 0;
+            int coverageYearIndex = 0;
             for (Enrollment curEnrollment : employee.enrollments) {
-                String thisYear = String.format("%s - %s", Utilities.DateAsMonthYear(curEnrollment.startOn), Utilities.DateAsMonthYear(Utilities.calculateOneYearOut(curEnrollment.startOn)));
+                String thisYear = String.format("%s - %s", Utilities.DateAsMonthDayYear(curEnrollment.startOn), Utilities.DateAsMonthDayYear(Utilities.calculateOneYearOut(curEnrollment.startOn)));
                 list.add(thisYear);
-
+                if (curEnrollment.startOn.compareTo(coverageYear) == 0){
+                    coverageYearIndex = i;
+                }
+                i ++;
             }
 
             ArrayAdapter<String> dataAdapter = new ArrayAdapter<String>(this,
                     android.R.layout.simple_spinner_item, list);
             spinnerCoverageYear.setAdapter(dataAdapter);
+            spinnerCoverageYear.setSelection(coverageYearIndex);
 
             TextView textViewEnrollmentStatus = (TextView) findViewById(R.id.textViewEnrollmentStatus);
             textViewEnrollmentStatus.setText(enrollment.health.status);
@@ -190,7 +220,7 @@ public class EmployeeDetailsActivity extends BrokerActivity {
             textViewGender.setText(dependent.gender);
 
             TextView textViewDob = (TextView) viewDependantRoot.findViewById(R.id.textViewDob);
-            textViewDob.setText(Utilities.DateAsMonthYear(dependent.dateOfBirth));
+            textViewDob.setText(Utilities.DateAsMonthDayYear(dependent.dateOfBirth));
 
             parent.addView(viewDependantRoot);
             int id = findId();
@@ -207,7 +237,6 @@ public class EmployeeDetailsActivity extends BrokerActivity {
     }
 
     private void populateCoverageYearDependencies(Enrollment enrollment, Resources resources) throws Exception {
-
         Health health = enrollment.health;
 
         TextView textViewBenefitGroupField = (TextView) findViewById(R.id.textViewBenefitGroupField);
@@ -227,7 +256,7 @@ public class EmployeeDetailsActivity extends BrokerActivity {
         if (health.terminatedOn != null){
             textViewPlanStartField.setText(String.format(resources.getString(R.string.plan_start_field), health.terminatedOn));
         } else {
-            textViewPlanStartField.setText(String.format(resources.getString(R.string.plan_start_field), health.status));
+            textViewPlanStartField.setText(String.format(resources.getString(R.string.plan_start_field), Utilities.DateAsString(coverageYear)));
         }
         TextView textViewMetalLevelField = (TextView) findViewById(R.id.textViewMetalLevelField);
         if (health.metalLevel != null){
@@ -236,13 +265,13 @@ public class EmployeeDetailsActivity extends BrokerActivity {
             textViewMetalLevelField.setText(String.format(resources.getString(R.string.metal_level_field), health.status));
         }
         TextView textViewPremiums = (TextView) findViewById(R.id.textViewPremiums);
-        textViewPremiums.setText(String.format("%.2f", health.totalPremium));
+        textViewPremiums.setText(String.format("$%.2f", health.totalPremium));
 
         TextView textViewEmployerContribution = (TextView) findViewById(R.id.textViewEmployerContribution);
-        textViewEmployerContribution.setText(String.format("%.2f", health.employerContribution));
+        textViewEmployerContribution.setText(String.format("$%.2f", health.employerContribution));
 
         TextView textViewEmployeeCost = (TextView) findViewById(R.id.textViewEmployeeCost);
-        textViewEmployeeCost.setText(String.format("%.2f", health.employeeCost));
+        textViewEmployeeCost.setText(String.format("$%.2f", health.employeeCost));
     }
 
     public int findId(){

@@ -14,7 +14,7 @@
     <string name="permission_rationale">"Contacts permissions are needed for providing email
         completions."
     </string>
-    <string name="all_other_clients">All Other Clients</string>
+    <string name="all_other_clients">All Clients</string>
     <string name="open_enrollment_in_progress">Open Enrollment In Progress</string>
     <string name="renewals_in_progress">Pending Renewals</string>
     <string name="drawer_open">Open navigation drawer</string>
@@ -73,13 +73,15 @@
     <string name="not_completed_label">Not Completed</string>
     <string name="total_employees_label">Total Employees</string>
     <string name="open_enrollment_label">Open Enrollment</string>
-    <string name="open_enrollment_begins_label">Open Enrollment Begins</string>
-    <string name="open_enrollment_ends_labell">Open Enrollment Closes</string>
+    <string name="open_enrollment_begins_label_future">Open Enrollment Begins</string>
+    <string name="open_enrollment_begins_label_past">Open Enrollment Began</string>
+    <string name="open_enrollment_ends_label_future">Open Enrollment Closes</string>
+    <string name="open_enrollment_ends_label_past">Open Enrollment Closed</string>
     <string name="days_left_label">Days Left</string>
     <string name="call_dc_healthlink">Call DC HealthLink</string>
     <string name="estimated_cost_label">Monthly Estimated Costs-</string>
     <string name="employer_contribution_label">Employer Contribution</string>
-    <string name="employee_contribution_label">Employee Contribution</string>
+    <string name="employee_contribution_label">Employee Pays</string>
     <string name="total">Total</string>
     <string name="minimum_not_met">Open enrollment in progress &#8226; Minimum not met</string>
     <string name="minimum_met">Open enrollment in progress</string>
@@ -149,7 +151,7 @@
     <string name="plan_name_field">Plan Name: %s</string>
     <string name="benefit_group_field">Benefit Group: %s</string>
     <string name="health_plan_group_tag">health_plan_group</string>
-    <string name="premiums_label">Premiums</string>
+    <string name="premiums_label">Premium</string>
     <string name="plan_start_field">Plan Start: %s</string>
     <string name="metal_level_field">Metal Level: %s</string>
     <string name="unknown">Unknown</string>
@@ -170,4 +172,9 @@
     <string name="employee_label">Employee</string>
     <string name="no_dental_plans_label">No Dental Plans</string>
     <string name="elected_dental_plans">Elected Dental Plans</string>
+    <string name="dob_abbreviation_label">dob:</string>
+    <string name="gender_label">gender:</string>
+    <string name="employer_application_due_label">Employer Application Due</string>
+    <string name="coverage_begins_label">Coverage Begins</string>
+    <string name="shared_preference_user_type">userType</string>
 </resources>

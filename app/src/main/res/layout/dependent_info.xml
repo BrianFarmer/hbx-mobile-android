@@ -11,27 +11,54 @@
         android:layout_alignParentTop="true"
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true"
+        android:layout_marginLeft="25sp"
         android:tag="@string/dependents_group_tag"
+        style="@style/dependent_name"
         android:id="@+id/textViewName"
         />
 
     <TextView
-        android:text=""
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignParentLeft="true"
         android:layout_below="@+id/textViewName"
+        android:layout_marginLeft="25sp"
+        android:layout_marginBottom="15sp"
+        android:text="@string/dob_abbreviation_label"
         android:tag="@string/dependents_group_tag"
-        android:id="@+id/textViewDob"
+        style="@style/dependent_details"
+        android:id="@+id/textViewDobLabel"
         />
 
     <TextView
         android:text=""
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_toRightOf="@+id/textViewDob"
-        android:layout_alignBottom="@+id/textViewDob"
+        android:layout_toRightOf="@+id/textViewDobLabel"
+        android:layout_alignTop="@+id/textViewDobLabel"
         android:tag="@string/dependents_group_tag"
+        style="@style/dependent_details"
+        android:id="@+id/textViewDob"
+        />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:layout_marginLeft="150sp"
+        android:layout_alignTop="@+id/textViewDobLabel"
+        android:text="@string/gender_label"
+        android:tag="@string/dependents_group_tag"
+        style="@style/dependent_details"
+        android:id="@+id/textViewGenderLabel"
+        />
+    <TextView
+        android:text=""
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_toRightOf="@+id/textViewGenderLabel"
+        android:layout_alignTop="@+id/textViewDobLabel"
+        android:tag="@string/dependents_group_tag"
+        style="@style/dependent_details"
         android:id="@+id/textViewGender"
         />
 </RelativeLayout>
