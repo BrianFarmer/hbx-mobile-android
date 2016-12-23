@@ -18,8 +18,6 @@ import android.widget.TextView;
 
 import com.wdullaer.swipeactionadapter.SwipeActionAdapter;
 
-import net.hockeyapp.android.CrashManager;
-import net.hockeyapp.android.UpdateManager;
 
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
@@ -56,6 +54,10 @@ public class MainActivity extends BrokerActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        BuildConfig2.initMobileCenter();
+
+
         try {
             setContentView(R.layout.activity_main);
         } catch (Exception e){
@@ -63,7 +65,6 @@ public class MainActivity extends BrokerActivity {
             throw e;
         }
 
-        checkForUpdates();
 
         Intent intent = new Intent(this, BrokerWorker.class);
         intent.setData(Uri.parse("http://dc.gov"));
@@ -154,13 +155,11 @@ public class MainActivity extends BrokerActivity {
     protected void onPause() {
         super.onPause();
         scrollPosition = listViewEmployers.getFirstVisiblePosition();
-        unregisterManagers();
     }
 
     @Override
     protected void onDestroy(){
         super.onDestroy();
-        unregisterManagers();
     }
 
     @Override
@@ -168,7 +167,6 @@ public class MainActivity extends BrokerActivity {
         super.onResume();
 
         getMessages().getLogin();
-        checkForCrashes();
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)
@@ -242,7 +240,7 @@ public class MainActivity extends BrokerActivity {
         //webViewWelcome.setText(Html.fromHtml(welcomeMessage));
     }
 
-    private void checkForCrashes() {
+    /*private void checkForCrashes() {
         CrashManager.register(this);
     }
 
@@ -253,5 +251,5 @@ public class MainActivity extends BrokerActivity {
 
     private void unregisterManagers() {
         UpdateManager.unregister();
-    }
+    }*/
 }

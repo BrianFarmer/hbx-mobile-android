@@ -1,5 +1,9 @@
 package gov.dc.broker;
 
+import com.microsoft.azure.mobile.MobileCenter;
+import com.microsoft.azure.mobile.analytics.Analytics;
+import com.microsoft.azure.mobile.crashes.Crashes;
+
 import org.joda.time.Duration;
 
 import static gov.dc.broker.ServerConfiguration.HostInfo;
@@ -75,5 +79,10 @@ class BuildConfig2 {
 
     private ConnectionHandler getConnectionHandler() {
         return new ConnectionHandler(serverConfiguration);
+    }
+
+    public static void initMobileCenter() {
+        MobileCenter.start(BrokerApplication.getBrokerApplication(), "3f262857-3956-470c-acc1-c23fc38d8118",
+                Analytics.class, Crashes.class);
     }
 }
