@@ -165,6 +165,7 @@ public class InfoFragment extends BrokerFragment {
 
         if (brokerClient.planYears != null
             && brokerClient.planYears.size() > 0) {
+
             LocalDate now = LocalDate.now();
             PlanYear planYearForCoverageYear = BrokerUtilities.getPlanYearForCoverageYear(brokerClient, coverageYear);
 

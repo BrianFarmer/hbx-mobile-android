@@ -2,8 +2,6 @@ package gov.dc.broker;
 
 import org.joda.time.Duration;
 
-import static gov.dc.broker.ServerConfiguration.HostInfo;
-
 class BuildConfig2 {
     private static int cacheTimeoutSeconds = 120;
     private static IDataCache dataCache = new DataCache();
@@ -29,11 +27,13 @@ class BuildConfig2 {
             return serverConfiguration;
         }
         serverConfiguration = new ServerConfiguration();
-        serverConfiguration.dataInfo = new HostInfo();
-        serverConfiguration.dataInfo.host = "raw.githubusercontent.com";
-        serverConfiguration.dataInfo.scheme = "https";
-        serverConfiguration.dataInfo.port = 443;
-        serverConfiguration.employerListPath = "dchealthlink/HBX-mobile-app-APIs/v0.2.1/enroll/broker/employers_list/response/example.json";
+        serverConfiguration.dataInfo = new ServerConfiguration.HostInfo();
+        //serverConfiguration.dataInfo.host = "ec2-54-234-22-53.compute-1.amazonaws.com";
+        serverConfiguration.dataInfo.host = "mobile.dcmic.org";
+        serverConfiguration.dataInfo.scheme = "http";
+        serverConfiguration.dataInfo.port = 3000;
+        serverConfiguration.employerListPath = "api/v1/mobile_api/employers_list";
+        serverConfiguration.loginPath = ServerConfiguration.defaultDevLogin;
         return serverConfiguration;
     }
 
@@ -54,7 +54,7 @@ class BuildConfig2 {
 
 
     public UrlHandler getUrlHandler() {
-        return new GitUrlHandler(getServerConfiguration());
+        return new DevUrlHandler(getServerConfiguration());
     }
 
     public void logout() {
@@ -66,7 +66,7 @@ class BuildConfig2 {
     }
 
     public CoverageConnection getCoverageConnection() {
-        return new GithubCoverageConnection(getUrlHandler(), getConnectionHandler(), getServerConfiguration(), getParser(), getDataCache());
+        return new DevCoverageConnection(getUrlHandler(), getConnectionHandler(), getServerConfiguration(), getParser(), getDataCache());
     }
 
     private JsonParser getParser() {

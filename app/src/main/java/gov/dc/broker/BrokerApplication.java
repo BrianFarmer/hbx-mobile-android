@@ -33,7 +33,7 @@ public class BrokerApplication extends Application {
         Log.d(TAG, "In BrokerApplicaiton.onCreate");
         //Intent intent = new Intent(this, LoginActivity.class);
         JodaTimeAndroid.init(this);
-        HbxSite.initClients();
+        // ConnectionHandler.initClients();
         brokerWorker = new BrokerWorker();
         brokerWorker.onHandleIntent(null); // this causes the background working to be initialized.
     }

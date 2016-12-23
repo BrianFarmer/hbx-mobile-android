@@ -19,6 +19,7 @@ public class DataCache implements IDataCache {
     private HashMap<String, CachedData<Employer>> employers = new HashMap<>();
     private HashMap<String, CachedData<Roster>> rosters = new HashMap<>();
 
+
     @Override
     public void store(BrokerAgency brokerAgency, DateTime time) {
         this.brokerAgency = brokerAgency;
@@ -47,7 +48,8 @@ public class DataCache implements IDataCache {
 
     @Override
     public BrokerAgency getBrokerAgency(DateTime time) {
-        if (time.compareTo(brokerAgencyTime.plus(BuildConfig2.getCacheTimeout()))<=0){
+        if (brokerAgencyTime != null
+        && time.compareTo(brokerAgencyTime.plus(BuildConfig2.getCacheTimeout()))<=0){
             return brokerAgency;
         }
         return null;

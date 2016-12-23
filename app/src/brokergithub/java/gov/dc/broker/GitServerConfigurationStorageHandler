@@ -1,0 +1,7 @@
+public class GitServerConfigurationStorageHandler extends IServerConfigurationStorageHandler{
+
+    @Override
+    public void store(ServerConfiguration serverConfiguration) {
+
+    }
+}

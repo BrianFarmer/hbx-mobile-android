@@ -9,8 +9,8 @@ android {
         applicationId "gov.dc.broker"
         minSdkVersion 16
         targetSdkVersion 25
-        versionCode 2
-        versionName "1.0.2"
+        versionCode 3
+        versionName "1.0.3"
         manifestPlaceholders = [HOCKEYAPP_APP_ID: "d30dc328cc794774bc4dd9ba286df1b5"]
 
         testInstrumentationRunner 'android.support.test.runner.AndroidJUnitRunner'
@@ -32,8 +32,8 @@ android {
             applicationId "dc.gov.brokergithub"
             versionName "1.0-broker-githug"
         }
-        employer {
-            applicationId 'dc.gov.employer'
+        dev {
+            applicationId 'dc.gov.dev'
             versionName "1.0-employer"
         }
         enrollfeature {
@@ -71,6 +71,10 @@ dependencies {
     compile 'com.github.PhilJay:MPAndroidChart:v3.0.0'
     compile 'net.hockeyapp.android:HockeySDK:4.1.1'
 
+
+
+
+    
     androidTestCompile 'com.android.support.test:testing-support-lib:0.1'
     androidTestCompile 'com.android.support:support-annotations:25.0.0'
     androidTestCompile 'com.android.support.test:runner:0.5'

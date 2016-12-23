@@ -268,7 +268,25 @@ public class BrokerUtilities {
                 return brokerClient;
             }
         }
-        throw new Exception("broker client not found");
+        throw new CoverageException("broker client not found");
+    }
+
+    public static String getEmployeeId(BrokerAgency brokerAgency, String employerId, String rosterId) {
+        return null;
+    }
+
+    public static String getRosterUrl(BrokerAgency brokerAgency, String employerId) throws Exception {
+        BrokerClient brokerClient = getBrokerClient(brokerAgency, employerId);
+        return brokerClient.employeeRosterUrl;
+    }
+
+    public static RosterEntry getRosterEntry(Roster roster, String employeeId) throws CoverageException {
+        for (RosterEntry rosterEntry : roster.roster) {
+            if (rosterEntry.id.compareTo(employeeId) == 0) {
+                return rosterEntry;
+            }
+        }
+        throw new CoverageException("Roster entry not found");
     }
 
     public enum BrokerClientStatus {
