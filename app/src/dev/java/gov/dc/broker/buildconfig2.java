@@ -33,7 +33,7 @@ class BuildConfig2 {
         serverConfiguration.dataInfo.scheme = "http";
         serverConfiguration.dataInfo.port = 3000;
         serverConfiguration.employerListPath = "api/v1/mobile_api/employers_list";
-        serverConfiguration.loginPath = ServerConfiguration.defaultDevLogin;
+        serverConfiguration.loginPath = "/users/sign_in";
         return serverConfiguration;
     }
 
@@ -53,8 +53,8 @@ class BuildConfig2 {
 
 
 
-    public UrlHandler getUrlHandler() {
-        return new DevUrlHandler(getServerConfiguration());
+    public DevUrlHandler getUrlHandler() {
+        return new DevUrlHandler(getServerConfiguration(), new JsonParser());
     }
 
     public void logout() {

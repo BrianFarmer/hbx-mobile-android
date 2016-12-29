@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 
 import gov.dc.broker.models.Security.SecurityAnswerResponse;
+import gov.dc.broker.models.brokeragency.BrokerAgency;
 import okhttp3.FormBody;
 import okhttp3.HttpUrl;
 
@@ -12,6 +13,7 @@ import okhttp3.HttpUrl;
  */
 
 public abstract class UrlHandler {
+
     public class PutParameters {
         FormBody body;
         HttpUrl url;
@@ -33,9 +35,11 @@ public abstract class UrlHandler {
     }
 
     protected final ServerConfiguration serverConfiguration;
+    private final JsonParser parser;
 
-    public UrlHandler(ServerConfiguration serverConfiguration){
+    public UrlHandler(ServerConfiguration serverConfiguration, JsonParser parser){
         this.serverConfiguration = serverConfiguration;
+        this.parser = parser;
     }
 
     public abstract HttpUrl getLoginUrl();
@@ -104,6 +108,10 @@ public abstract class UrlHandler {
                 .build();
     }
 
+
+    public BrokerAgency processBrokerAgency(IConnectionHandler.GetReponse getReponse){
+        return parser.parseEmployerList(getReponse.body);
+    }
 
 
     abstract FormBody getSecurityAnswerFormBody(String securityAnswer);

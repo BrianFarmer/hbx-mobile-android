@@ -131,8 +131,8 @@ public abstract class CoverageConnection {
         BrokerAgency brokerAgency = dataCache.getBrokerAgency(DateTime.now());
         if (brokerAgency == null){
             UrlHandler.GetParameters getParameters = urlHandler.getBrokerAgencyParameters();
-            String response = connectionHandler.get(getParameters, null);
-            brokerAgency = parser.parseEmployerList(response);
+            IConnectionHandler.GetReponse getReponse = connectionHandler.get(getParameters);
+            brokerAgency = urlHandler.processBrokerAgency(getReponse);
             dataCache.store(brokerAgency, DateTime.now());
         }
 

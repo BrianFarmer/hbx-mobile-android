@@ -1,7 +1,6 @@
 package gov.dc.broker;
 
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -14,14 +13,20 @@ public interface IConnectionHandler {
     public static class PostResponse {
         public String body;
         public int responseCode;
-        public HashMap<String, ArrayList<String>> cookies;
+        public HashMap<String, List<String>> cookies;
         public Map<String, List<String>> headers;
     }
 
     public static class PutResponse {
         public String body;
         public int responseCode;
-        public HashMap<String, ArrayList<String>> cookies;
+        public HashMap<String, List<String>> cookies;
+    }
+
+    public static class GetResponse {
+        public String body;
+        public int responseCode;
+        public HashMap<String, List<String>> cookies;
     }
 
 
@@ -39,11 +44,6 @@ public interface IConnectionHandler {
     PostResponse post(UrlHandler.PostParameters postParameters) throws IOException, CoverageException;
     PostResponse postHttpURLConnection(UrlHandler.PostParameters loginPostParameters, String accountName, String password, Boolean rememberMe, String sessionId, String authenticityToken) throws Exception;
 
-    String get(UrlHandler.GetParameters getParameters, HashMap<String, ArrayList<String>> responseCookies) throws IOException, CoverageException;
-
-    String get(HttpUrl url) throws Exception;
-
+    GetReponse get(UrlHandler.GetParameters getParameters) throws IOException, CoverageException;
     String get(HttpUrl url, String cookie) throws Exception;
-
-    String get(HttpUrl url, String cookie, HashMap<String, ArrayList<String>> responsseCookies) throws Exception;
 }

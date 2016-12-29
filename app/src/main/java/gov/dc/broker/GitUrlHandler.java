@@ -9,8 +9,8 @@ import okhttp3.HttpUrl;
 
 public class GitUrlHandler extends UrlHandler {
 
-    public GitUrlHandler(ServerConfiguration serverConfiguration){
-        super(serverConfiguration);
+    public GitUrlHandler(ServerConfiguration serverConfiguration, JsonParser parser){
+        super(serverConfiguration, parser);
     }
 
 

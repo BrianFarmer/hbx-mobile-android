@@ -14,7 +14,7 @@ public class EnrollUrlHandler extends UrlHandler {
     private final JsonParser parser;
 
     public EnrollUrlHandler(ServerConfiguration serverConfiguration, JsonParser parser){
-        super(serverConfiguration);
+        super(serverConfiguration, parser);
         this.parser = parser;
     }
     @Override

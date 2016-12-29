@@ -11,8 +11,17 @@ import okhttp3.HttpUrl;
 public class DevUrlHandler extends UrlHandler {
     private static String TAG = "DevUrlHandler";
 
-    public DevUrlHandler(ServerConfiguration serverConfiguration){
-        super(serverConfiguration);
+    public DevUrlHandler(ServerConfiguration serverConfiguration, JsonParser parser){
+        super(serverConfiguration, parser);
+    }
+
+    public GetParameters getLoginUrlParameters() {
+        GetParameters getParameters = new GetParameters();
+        getParameters.url = getLoginUrl();
+        getParameters.cookies = new HashMap<>();
+        getParameters.cookies.put("_session_id", serverConfiguration.sessionId);
+
+        return getParameters;
     }
 
     @Override
@@ -91,14 +100,17 @@ public class DevUrlHandler extends UrlHandler {
     }
 
     @Override
-    public void processLoginReponse(String accountName, String password, Boolean rememberMe, IConnectionHandler.PostResponse loginPostResponse){
+    public void processLoginReponse(String accountName, String password, Boolean rememberMe, IConnectionHandler.PostResponse response) throws CoverageException {
+        if (response.responseCode <200 || response.responseCode >= 300){
+            throw new CoverageException("Error logging in.");
+        }
         serverConfiguration.accountName = accountName;
         serverConfiguration.password = password;
         serverConfiguration.rememberMe = rememberMe;
         serverConfiguration.securityQuestion = "this is a test question.";
         serverConfiguration.securityAnswer = null;
-        if (loginPostResponse != null){
-            serverConfiguration.sessionId = loginPostResponse.cookies.get("_session_id").get(0);
+        if (response.cookies.get("_session_id") != null) {
+            serverConfiguration.sessionId = response.cookies.get("_session_id").get(0);
         }
     }
 }

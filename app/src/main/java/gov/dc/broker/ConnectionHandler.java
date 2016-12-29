@@ -29,7 +29,6 @@ import javax.net.ssl.SSLContext;
 import javax.net.ssl.TrustManagerFactory;
 
 import okhttp3.FormBody;
-import okhttp3.Headers;
 import okhttp3.HttpUrl;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
@@ -184,20 +183,8 @@ public class ConnectionHandler implements IConnectionHandler{
         connection.setInstanceFollowRedirects(false);
         connection.setRequestMethod("POST");
 
-        //connection.setRequestProperty("Host", siteConfig.host + siteConfig.port);
-        //connection.setRequestProperty("Connection", "keep-alive");
-        //connection.setRequestProperty("Pragma", "no-cache");
-        //connection.setRequestProperty("Cache-Control", "no-cache");
-        //connection.setRequestProperty("Origin", siteConfig.scheme + "://" + siteConfig.host + siteConfig.port);
         connection.setRequestProperty("Cookie", "_session_id=" + sessionId);
-        //connection.setRequestProperty("DNT", "1");
         connection.setRequestProperty("Content-Type", "application/x-www-form-urlencoded");
-        //connection.setRequestProperty("Accept", "text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8");
-        //connection.setRequestProperty("Accept-Encoding", "gzip, deflate");
-        //connection.setRequestProperty("Accept-Language", "en-US,en;q=0.8");
-        //connection.setRequestProperty("Referer", siteConfig.scheme + "://" + siteConfig.host + siteConfig.port + "/users/sign_in");
-        //connection.setRequestProperty("Upgrade-Insecure-Requests", "1");
-        //connection.setRequestProperty("User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/53.0.2785.116 Safari/537.36");
 
         HashMap<String, String> params = new HashMap<>();
         params.put("utf8", "✓");
@@ -239,20 +226,14 @@ public class ConnectionHandler implements IConnectionHandler{
         Log.d (TAG, "body: " + string);
 
         Log.d(TAG, "response code;" + responseCode);
-        if (responseCode != 302){
-            throw new CoverageException("Bad email or password");
-        }
 
-        String newSessionId = getSessionCookie(connection);
-        Log.d(TAG, "SessionId for processing: " + newSessionId);
         PostResponse postResponse = new PostResponse();
         postResponse.headers = connection.getHeaderFields();
         postResponse.body = string;
-        postResponse.cookies = new HashMap<>();
         ArrayList<String> list = new ArrayList<>();
-        list.add(newSessionId);
+        Map<String, List<String>> headerFields = connection.getHeaderFields();
+        postResponse.cookies = getCookies(headerFields);
         postResponse.responseCode = responseCode;
-        postResponse.cookies.put("_session_id", list);
         return postResponse;
     }
 
@@ -286,8 +267,7 @@ public class ConnectionHandler implements IConnectionHandler{
         postResponse.body = response.body().string();
         postResponse.headers = response.headers().toMultimap();
         postResponse.responseCode = response.code();
-        postResponse.cookies = new HashMap<>();
-        getCookies(response.headers(), postResponse.cookies);
+        postResponse.cookies = getCookies(response.headers().toMultimap());
         return postResponse;
     }
 
@@ -313,13 +293,12 @@ public class ConnectionHandler implements IConnectionHandler{
         PutResponse putResponse = new PutResponse();
         putResponse.body =response.body().string();
         putResponse.responseCode = response.code();
-        putResponse.cookies = new HashMap<>();
-        getCookies(response.headers(), putResponse.cookies);
+        putResponse.cookies = getCookies(response.headers().toMultimap());
         return putResponse;
     }
 
     @Override
-    public String get(UrlHandler.GetParameters getParameters, HashMap<String, ArrayList<String>> responseCookies) throws IOException, CoverageException {
+    public GetReponse get(UrlHandler.GetParameters getParameters) throws IOException, CoverageException {
         Request.Builder builder = new Request.Builder()
                 .url(getParameters.url);
 
@@ -336,24 +315,16 @@ public class ConnectionHandler implements IConnectionHandler{
             throw new CoverageException("error getting: " + getParameters.url.toString());
         }
 
-        if (responseCookies != null){
-            getCookies(response.headers(), responseCookies);
-        }
+        GetReponse getReponse = new GetReponse();
 
-        return response.body().string();
+        getReponse.body = response.body().string();
+        getReponse.cookies = getCookies(response.headers().toMultimap());
 
+        return getReponse;
     }
 
-
-    public String get(HttpUrl url) throws Exception {
-        return get(url, null, null);
-    }
 
     public String get(HttpUrl url, String cookie) throws Exception {
-        return get(url, cookie, null);
-    }
-
-    public String get(HttpUrl url, String cookie, HashMap<String, ArrayList<String>> responseCookies) throws Exception {
         Request.Builder builder = new Request.Builder()
                 .url(url);
 
@@ -367,27 +338,26 @@ public class ConnectionHandler implements IConnectionHandler{
             throw new Exception("error getting session");
         }
 
-        if (responseCookies != null){
-            getCookies(response.headers(), responseCookies);
-        }
-
         return response.body().string();
     }
 
-    private HashMap<String, ArrayList<String>> getCookies(Headers headers, HashMap<String, ArrayList<String>> map){
-        for (String name : headers.names()) {
-            if (name.compareToIgnoreCase("set-cookie") == 0) {
-                String headerValue = headers.get(name);
-                String[] cookieParts = headerValue.split(Pattern.quote(";"));
-                if (cookieParts.length >= 1){
-                    String[] cookieNameAndValue = cookieParts[0].split(Pattern.quote("="));
-                    if (cookieNameAndValue.length == 2){
-                        if (map.containsKey(cookieNameAndValue[0])) {
-                            map.get(cookieNameAndValue[0]).add(cookieNameAndValue[1]);
-                        } else {
-                            ArrayList<String> values = new ArrayList<>();
-                            values.add(cookieNameAndValue[1]);
-                            map.put(cookieNameAndValue[0], values);
+    private HashMap<String, List<String>> getCookies(Map<String, List<String>> headers){
+        HashMap<String, List<String>> map = new HashMap<>();
+        for (Map.Entry<String, List<String>> entry: headers.entrySet()) {
+            if (entry.getKey() != null
+                && entry.getKey().compareToIgnoreCase("set-cookie") == 0) {
+                for (String headerValue : entry.getValue()) {
+                    String[] cookieParts = headerValue.split(Pattern.quote(";"));
+                    if (cookieParts.length >= 1){
+                        String[] cookieNameAndValue = cookieParts[0].split(Pattern.quote("="));
+                        if (cookieNameAndValue.length == 2){
+                            if (map.containsKey(cookieNameAndValue[0])) {
+                                map.get(cookieNameAndValue[0]).add(cookieNameAndValue[1]);
+                            } else {
+                                ArrayList<String> values = new ArrayList<>();
+                                values.add(cookieNameAndValue[1]);
+                                map.put(cookieNameAndValue[0], values);
+                            }
                         }
                     }
                 }
