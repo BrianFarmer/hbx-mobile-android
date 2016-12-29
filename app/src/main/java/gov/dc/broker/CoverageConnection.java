@@ -2,18 +2,13 @@ package gov.dc.broker;
 
 import android.util.Log;
 
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
-
 import org.joda.time.DateTime;
 
-import gov.dc.broker.models.Security.SecurityAnswerResponse;
 import gov.dc.broker.models.brokeragency.BrokerAgency;
 import gov.dc.broker.models.brokeragency.BrokerClient;
 import gov.dc.broker.models.employer.Employer;
 import gov.dc.broker.models.roster.Roster;
 import gov.dc.broker.models.roster.RosterEntry;
-import okhttp3.FormBody;
 import okhttp3.HttpUrl;
 
 
@@ -22,7 +17,7 @@ public abstract class CoverageConnection {
     protected final UrlHandler urlHandler;
     protected final IConnectionHandler connectionHandler;
     protected final ServerConfiguration serverConfiguration;
-    private final JsonParser parser;
+    protected final JsonParser parser;
     private final IDataCache dataCache;
 
     public CoverageConnection(UrlHandler urlHandler, IConnectionHandler connectionHandler,
@@ -40,17 +35,7 @@ public abstract class CoverageConnection {
 
 
     public void checkSecurityAnswer(String securityAnswer) throws Exception {
-        HttpUrl securityAnswerUrl = urlHandler.getSecurityAnswerUrl();
-        // returning null means security question answer can be ignored.
-        if (securityAnswerUrl == null){
-            return;
-        }
-        FormBody formBody = urlHandler.getSecurityAnswerFormBody(securityAnswer);
-        ConnectionHandler.PostResponse postResponse = connectionHandler.post(securityAnswerUrl, formBody);
-        GsonBuilder gsonBuilder = new GsonBuilder();
-        Gson gson = gsonBuilder.create();
-        SecurityAnswerResponse securityAnswerResponse = gson.fromJson(postResponse.body, SecurityAnswerResponse.class);
-        serverConfiguration.securityAnswer = securityAnswer;
+        return;
     }
 
     private Employer getEmployer(UrlHandler urlHandler, ServerConfiguration serverConfiguration) throws Exception {

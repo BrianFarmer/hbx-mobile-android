@@ -6,6 +6,8 @@ import com.google.gson.GsonBuilder;
 import org.joda.time.DateTime;
 import org.joda.time.LocalDate;
 
+import gov.dc.broker.models.Security.LoginResponse;
+import gov.dc.broker.models.Security.SecurityAnswerResponse;
 import gov.dc.broker.models.brokeragency.BrokerAgency;
 import gov.dc.broker.models.employer.Employer;
 import gov.dc.broker.models.roster.Roster;
@@ -55,5 +57,21 @@ public class JsonParser {
         gsonBuilder.registerTypeAdapter(LocalDate.class, new LocalDateDeserializer());
         Gson gson = gsonBuilder.create();
         return gson.fromJson(employee.replace("\"\"", "null"), Roster.class);
+    }
+
+    public LoginResponse parseLogin(String body) {
+        GsonBuilder gsonBuilder = new GsonBuilder();
+        gsonBuilder.registerTypeAdapter(DateTime.class, new DateTimeDeserializer());
+        gsonBuilder.registerTypeAdapter(LocalDate.class, new LocalDateDeserializer());
+        Gson gson = gsonBuilder.create();
+        return gson.fromJson(body.replace("\"\"", "null"), LoginResponse.class);
+    }
+
+    public SecurityAnswerResponse parseSecurityAnswerResponse(String body) {
+        GsonBuilder gsonBuilder = new GsonBuilder();
+        gsonBuilder.registerTypeAdapter(DateTime.class, new DateTimeDeserializer());
+        gsonBuilder.registerTypeAdapter(LocalDate.class, new LocalDateDeserializer());
+        Gson gson = gsonBuilder.create();
+        return gson.fromJson(body.replace("\"\"", "null"), SecurityAnswerResponse.class);
     }
 }

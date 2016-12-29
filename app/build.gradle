@@ -24,29 +24,17 @@ android {
     }
 
     productFlavors {
-        broker {
-            applicationId "dc.gov.broker"
-            versionName "1.0-broker"
-        }
-        brokergithub {
-            applicationId "dc.gov.brokergithub"
-            versionName "1.0-broker-githug"
+        github {
+            applicationId "dc.gov.github"
+            versionName "1.0-broker-github"
         }
         dev {
             applicationId 'dc.gov.dev'
-            versionName "1.0-employer"
+            versionName "1.0-dev"
         }
-        enrollfeature {
-            applicationId 'dc.gov.enrollfeature'
-            versionName "1.0-employer-enrollfeature"
-        }
-        enrollfeaturebackdoor {
-            applicationId 'dc.gov.enrollfeaturebackdoor'
-            versionName "1.0-employer-enrollfeaturebackdoor"
-        }
-        devbackdoor {
-            applicationId 'dc.gov.devbackdoor'
-            versionName "1.0-employer-devbackdoor"
+        enroll {
+            applicationId 'dc.gov.enroll'
+            versionName "1.0-enroll"
         }
     }
 }

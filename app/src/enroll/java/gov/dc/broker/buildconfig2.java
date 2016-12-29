@@ -27,13 +27,20 @@ class BuildConfig2 {
             return serverConfiguration;
         }
         serverConfiguration = new ServerConfiguration();
+
         serverConfiguration.dataInfo = new ServerConfiguration.HostInfo();
-        //serverConfiguration.dataInfo.host = "ec2-54-234-22-53.compute-1.amazonaws.com";
         serverConfiguration.dataInfo.host = "mobile.dcmic.org";
         serverConfiguration.dataInfo.scheme = "http";
         serverConfiguration.dataInfo.port = 3000;
+
+        serverConfiguration.loginInfo = new ServerConfiguration.HostInfo();
+        serverConfiguration.loginInfo.host = "hbx-mobile.dchbx.org";
+        serverConfiguration.loginInfo.scheme = "https";
+        serverConfiguration.loginInfo.port = 443;
+
+
         serverConfiguration.employerListPath = "api/v1/mobile_api/employers_list";
-        serverConfiguration.loginPath = ServerConfiguration.defaultDevLogin;
+        serverConfiguration.loginPath = "login";
         return serverConfiguration;
     }
 
@@ -53,8 +60,8 @@ class BuildConfig2 {
 
 
 
-    public UrlHandler getUrlHandler() {
-        return new DevUrlHandler(getServerConfiguration());
+    public EnrollUrlHandler getUrlHandler() {
+        return new EnrollUrlHandler(getServerConfiguration(), new JsonParser());
     }
 
     public void logout() {
@@ -66,7 +73,7 @@ class BuildConfig2 {
     }
 
     public CoverageConnection getCoverageConnection() {
-        return new DevCoverageConnection(getUrlHandler(), getConnectionHandler(), getServerConfiguration(), getParser(), getDataCache());
+        return new EnrollCoverageConnection(getUrlHandler(), getConnectionHandler(), getServerConfiguration(), getParser(), getDataCache());
     }
 
     private JsonParser getParser() {
@@ -74,7 +81,7 @@ class BuildConfig2 {
     }
 
     private ConnectionHandler getConnectionHandler() {
-        return new ConnectionHandler(serverConfiguration);
+        return new EnrollConnectionHandler(serverConfiguration);
     }
 
     public static void initMobileCenter() {

@@ -12,6 +12,13 @@ import okhttp3.HttpUrl;
  */
 
 public abstract class UrlHandler {
+    public class PutParameters {
+        FormBody body;
+        HttpUrl url;
+        public HashMap<String, String> cookies;
+        public HashMap<String, String> headers;
+    }
+
     public class PostParameters {
         FormBody body;
         HttpUrl url;
@@ -32,12 +39,16 @@ public abstract class UrlHandler {
     }
 
     public abstract HttpUrl getLoginUrl();
-    abstract HttpUrl getSecurityAnswerUrl();
+
+    public abstract PutParameters getSecurityAnswerPutParameters(String securityAnswer);
+    public abstract void processSecurityAnswerResponse(IConnectionHandler.PutResponse putResponse) throws CoverageException;
 
     public GetParameters getBrokerAgencyParameters() {
         GetParameters getParameters = new GetParameters();
-        getParameters.cookies = new HashMap<>();
-        getParameters.cookies.put("_session_id", serverConfiguration.sessionId);
+        if (serverConfiguration.sessionId != null) {
+            getParameters.cookies = new HashMap<>();
+            getParameters.cookies.put("_session_id", serverConfiguration.sessionId);
+        }
         getParameters.url = new HttpUrl.Builder()
                 .scheme(serverConfiguration.dataInfo.scheme)
                 .host(serverConfiguration.dataInfo.host)
@@ -102,5 +113,5 @@ public abstract class UrlHandler {
     public abstract String getSessionCookie(HashMap<String, ArrayList<String>> cookieMap);
     public abstract HashMap<String,ArrayList<String>> getNeededLoginCookes();
     public abstract PostParameters getLoginPostParameters(String accountName, String password, String sessionId, String authenticityToken);
-    public abstract void processLoginReponse(String accountName, String password, Boolean rememberMe, IConnectionHandler.PostResponse loginPostResponse);
+    public abstract void processLoginReponse(String accountName, String password, Boolean rememberMe, IConnectionHandler.PostResponse loginPostResponse) throws CoverageException;
 }

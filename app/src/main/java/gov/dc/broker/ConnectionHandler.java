@@ -48,12 +48,13 @@ public class ConnectionHandler implements IConnectionHandler{
         this.serverConfiguration = serverConfiguration;
     }
 
-    private OkHttpClient client = new OkHttpClient()
+
+    private OkHttpClient clientHttp = new OkHttpClient()
             .newBuilder()
             .followRedirects(true)
             .build();
 
-    private OkHttpClient clientDontFollow = new OkHttpClient()
+    private OkHttpClient clientDontFollowHttp = new OkHttpClient()
             .newBuilder()
             .followRedirects(false)
             .followSslRedirects(false)
@@ -72,7 +73,7 @@ public class ConnectionHandler implements IConnectionHandler{
         Request request = builder.post(formBody)
                 .build();
 
-        Response response = client.newCall(request).execute();
+        Response response = getClient(url.scheme(), true).newCall(request).execute();
 
         int code = response.code();
         if (code < 200
@@ -82,8 +83,16 @@ public class ConnectionHandler implements IConnectionHandler{
         }
         PostResponse postResponse = new PostResponse();
         postResponse.body =response.body().string();
-        postResponse.location = response.header("location");
+        postResponse.headers = response.headers().toMultimap();
         return postResponse;
+    }
+
+    protected OkHttpClient getClient(String scheme, boolean follow) {
+        if (follow){
+            return clientHttp;
+        } else {
+            return clientDontFollowHttp;
+        }
     }
 
     public static SSLContext getSSLContext() {
@@ -237,6 +246,7 @@ public class ConnectionHandler implements IConnectionHandler{
         String newSessionId = getSessionCookie(connection);
         Log.d(TAG, "SessionId for processing: " + newSessionId);
         PostResponse postResponse = new PostResponse();
+        postResponse.headers = connection.getHeaderFields();
         postResponse.body = string;
         postResponse.cookies = new HashMap<>();
         ArrayList<String> list = new ArrayList<>();
@@ -264,15 +274,48 @@ public class ConnectionHandler implements IConnectionHandler{
         Request request = builder.post(postParameters.body)
                 .build();
 
-        Response response = client.newCall(request).execute();
+        Response response;
+        try {
+            response = getClient(postParameters.url.scheme(), true).newCall(request).execute();
+        } catch (Throwable t){
+            Log.e(TAG, "exception during post", t);
+            throw t;
+        }
 
         PostResponse postResponse = new PostResponse();
-        postResponse.body =response.body().string();
-        postResponse.location = response.header("location");
+        postResponse.body = response.body().string();
+        postResponse.headers = response.headers().toMultimap();
         postResponse.responseCode = response.code();
         postResponse.cookies = new HashMap<>();
         getCookies(response.headers(), postResponse.cookies);
         return postResponse;
+    }
+
+    public PutResponse put(UrlHandler.PutParameters putParameters) throws IOException, CoverageException {
+        Request.Builder builder = new Request.Builder()
+                .url(putParameters.url);
+
+        if (putParameters.cookies != null) {
+            for (String key : putParameters.cookies.keySet()) {
+                builder.header("cookie", key + "=" + putParameters.cookies.get(key));
+            }
+        }
+        if (putParameters.headers != null){
+            for (String key : putParameters.headers.keySet()) {
+                builder.header(key, putParameters.headers.get(key));
+            }
+        }
+        Request request = builder.put(putParameters.body)
+                .build();
+
+        Response response = getClient(putParameters.url.scheme(), true).newCall(request).execute();
+
+        PutResponse putResponse = new PutResponse();
+        putResponse.body =response.body().string();
+        putResponse.responseCode = response.code();
+        putResponse.cookies = new HashMap<>();
+        getCookies(response.headers(), putResponse.cookies);
+        return putResponse;
     }
 
     @Override
@@ -287,7 +330,7 @@ public class ConnectionHandler implements IConnectionHandler{
         }
 
         Request request = builder.get().build();
-        Response response = client.newCall(request).execute();
+        Response response = getClient(getParameters.url.scheme(), true).newCall(request).execute();
 
         if (response.code() != 200){
             throw new CoverageException("error getting: " + getParameters.url.toString());
@@ -318,7 +361,7 @@ public class ConnectionHandler implements IConnectionHandler{
             builder = builder.header("cookie", cookie);
         }
         Request request = builder.get().build();
-        Response response = client.newCall(request).execute();
+        Response response = getClient(url.scheme(), true).newCall(request).execute();
 
         if (response.code() != 200){
             throw new Exception("error getting session");

@@ -44,7 +44,6 @@ public class ServerConfiguration {
     public static String defaultEmployersList = "/api/v1/mobile_api/employers_list";
     public static String defaultEmployerDetails = "/api/v1/mobile_api/employer_details";
     public static String defaultEmployerRoster = "/api/v1/mobile_api/employer_details";
-    public static String defaultDevLogin = "users/sign_in";
 
     public boolean isPasswordEmpty() {
         return password == null

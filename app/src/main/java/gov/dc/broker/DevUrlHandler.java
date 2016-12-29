@@ -26,6 +26,16 @@ public class DevUrlHandler extends UrlHandler {
     }
 
     @Override
+    public PutParameters getSecurityAnswerPutParameters(String securityAnswer) {
+        return null;
+    }
+
+    @Override
+    public void processSecurityAnswerResponse(IConnectionHandler.PutResponse putResponse) {
+
+    }
+
+    @Override
     public HashMap<String, ArrayList<String>> getNeededLoginCookes() {
         HashMap<String, ArrayList<String>> neededCookies = new HashMap<>();
         neededCookies.put("_session_id", new ArrayList<String>());
@@ -51,18 +61,6 @@ public class DevUrlHandler extends UrlHandler {
         postParameters.cookies.put("_session_id", sessionId);
         return postParameters;
     }
-
-    @Override
-    HttpUrl getSecurityAnswerUrl() {
-        return null;
-        /*return new HttpUrl.Builder()
-                .scheme(serverConfiguration.dataInfo.scheme)
-                .host(serverConfiguration.dataInfo.host)
-                .addPathSegments(serverConfiguration.securityAnswerPath)
-                .port(serverConfiguration.dataInfo.port)
-                .build();*/
-    }
-
 
     @Override
     FormBody getSecurityAnswerFormBody(String securityAnswer) {
