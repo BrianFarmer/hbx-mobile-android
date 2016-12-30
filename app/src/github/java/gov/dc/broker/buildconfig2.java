@@ -58,7 +58,7 @@ class BuildConfig2 {
 
 
     public UrlHandler getUrlHandler() {
-        return new GitUrlHandler(getServerConfiguration());
+        return new GitUrlHandler(getServerConfiguration(), new JsonParser());
     }
 
     public void logout() {
