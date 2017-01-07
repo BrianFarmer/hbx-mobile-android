@@ -8,8 +8,10 @@ import android.util.Log;
 public class GithubCoverageConnection extends CoverageConnection {
     private static String TAG = "GithubCoverage";
 
-    public GithubCoverageConnection(UrlHandler urlHandler, ConnectionHandler connectionHandler, ServerConfiguration serverConfiguration, JsonParser parser, IDataCache dataCache) {
-        super(urlHandler, connectionHandler, serverConfiguration, parser, dataCache);
+    public GithubCoverageConnection(UrlHandler urlHandler, ConnectionHandler connectionHandler,
+                                    ServerConfiguration serverConfiguration, JsonParser parser,
+                                    IDataCache dataCache, IServerConfigurationStorageHandler configurationStorageHandler) {
+        super(urlHandler, connectionHandler, serverConfiguration, parser, dataCache, configurationStorageHandler);
     }
 
     @Override

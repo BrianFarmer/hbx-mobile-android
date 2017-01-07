@@ -19,6 +19,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Switch;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
@@ -181,6 +182,7 @@ public class LoginActivity extends BrokerActivity {
     public void doThis(Events.GetSecurityAnswer getSecurityAnswer){
         hideProgress();
         if (getSecurityAnswer.question == null){
+            Toast.makeText(this, R.string.no_security_question, Toast.LENGTH_LONG);
             return;
         }
         SecurityQuestionDialog dialog = SecurityQuestionDialog.build(getSecurityAnswer.question);

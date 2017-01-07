@@ -25,7 +25,7 @@ class BuildConfig2 {
     }
 
     public static IServerConfigurationStorageHandler getServerConfigurationStorageHandler() {
-        return new DevConfigurationStorageHandler();
+        return new ConfigurationStorageHandler();
     }
 
     public static ServerConfiguration getServerConfiguration() {
@@ -37,7 +37,8 @@ class BuildConfig2 {
         serverConfiguration.dataInfo.host = "raw.githubusercontent.com";
         serverConfiguration.dataInfo.scheme = "https";
         serverConfiguration.dataInfo.port = 443;
-        serverConfiguration.employerListPath = "dchealthlink/HBX-mobile-app-APIs/v0.2.1/enroll/broker/employers_list/response/example.json";
+        //serverConfiguration.employerListPath = "dchealthlink/HBX-mobile-app-APIs/v0.2.1/enroll/broker/employers_list/response/example.json";
+        serverConfiguration.brokerDetailPath = "dchealthlink/HBX-mobile-app-APIs/master/enroll/broker/employers_list/response/example.json";
         return serverConfiguration;
     }
 
@@ -70,7 +71,7 @@ class BuildConfig2 {
     }
 
     public CoverageConnection getCoverageConnection() {
-        return new GithubCoverageConnection(getUrlHandler(), getConnectionHandler(), getServerConfiguration(), getParser(), getDataCache());
+        return new GithubCoverageConnection(getUrlHandler(), getConnectionHandler(), getServerConfiguration(), getParser(), getDataCache(), getServerConfigurationStorageHandler());
     }
 
     private JsonParser getParser() {

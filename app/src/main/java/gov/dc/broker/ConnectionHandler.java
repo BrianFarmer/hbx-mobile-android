@@ -88,7 +88,11 @@ public class ConnectionHandler implements IConnectionHandler{
 
     protected OkHttpClient getClient(String scheme, boolean follow) {
         if (follow){
-            return clientHttp;
+            return  new OkHttpClient()
+                    .newBuilder()
+                    .followRedirects(true)
+                    .build();
+            //return clientHttp;
         } else {
             return clientDontFollowHttp;
         }
@@ -173,8 +177,8 @@ public class ConnectionHandler implements IConnectionHandler{
         throw new Exception("Session cookie not found");
     }
 
-    public PostResponse postHttpURLConnection(UrlHandler.PostParameters postParameters, String accountName, String password, Boolean rememberMe, String sessionId, String authenticityToken) throws Exception {
-        URL url = postParameters.url.url();
+    public PostResponse postHttpURLConnection(UrlHandler.PostParameters postParameters, String accountName, String password, Boolean rememberMe) throws Exception {
+        URL url = new URL("http://mobile.dcmic.org:3000/users/sign_in");//postParameters.url.url();
         HttpURLConnection connection = (HttpURLConnection)url.openConnection();
         if (postParameters.url.scheme().compareToIgnoreCase("https") == 0){
             HttpsURLConnection httpsURLConnection = (HttpsURLConnection)connection;
@@ -183,12 +187,12 @@ public class ConnectionHandler implements IConnectionHandler{
         connection.setInstanceFollowRedirects(false);
         connection.setRequestMethod("POST");
 
-        connection.setRequestProperty("Cookie", "_session_id=" + sessionId);
+        connection.setRequestProperty("Cookie", "_session_id=" + serverConfiguration.sessionId);
         connection.setRequestProperty("Content-Type", "application/x-www-form-urlencoded");
 
         HashMap<String, String> params = new HashMap<>();
         params.put("utf8", "✓");
-        params.put("authenticity_token", authenticityToken);
+        params.put("authenticity_token", serverConfiguration.authenticityToken);
         params.put("user[login]", accountName);
         params.put("user[password]", password);
         params.put("user[remember_me]", rememberMe?"1":"0");
@@ -212,6 +216,30 @@ public class ConnectionHandler implements IConnectionHandler{
 
         connection.connect();
         int responseCode = connection.getResponseCode();
+
+        if (responseCode != 302){
+            return null;
+        }
+
+        while (responseCode == 302){
+            HashMap<String, List<String>> cookies = getCookies(connection.getHeaderFields());
+            serverConfiguration.sessionId = cookies.get("_session_id").get(0);
+            String newSessionId = "_session_id=" + cookies.get("_session_id").get(0);
+            String redirectUrlString = connection.getHeaderField("location");
+            URL redirectUrl = new URL(redirectUrlString);
+            connection = (HttpURLConnection)redirectUrl.openConnection();
+            if (redirectUrl.getProtocol().compareToIgnoreCase("https") == 0){
+                HttpsURLConnection httpsURLConnection = (HttpsURLConnection)connection;
+                httpsURLConnection.setSSLSocketFactory(getSSLContext().getSocketFactory());
+            }
+            connection.setInstanceFollowRedirects(false);
+            connection.setRequestMethod("GET");
+
+            connection.setRequestProperty("Cookie", serverConfiguration.sessionId);
+            connection.connect();
+            responseCode = connection.getResponseCode();
+        }
+
 
         InputStream inputStream = connection.getInputStream();
         InputStreamReader streamReader = new InputStreamReader(inputStream);
@@ -304,12 +332,21 @@ public class ConnectionHandler implements IConnectionHandler{
 
         if (getParameters.cookies != null) {
             for (Map.Entry<String, String> entry : getParameters.cookies.entrySet()) {
-                builder = builder.header("cookie", entry.getKey() + "=" + entry.getValue());
+                builder = builder.header("Cookie", entry.getKey() + "=" + entry.getValue());
+                Log.d(TAG, "cookie value:->" + entry.getValue() + "<-");
             }
         }
 
         Request request = builder.get().build();
-        Response response = getClient(getParameters.url.scheme(), true).newCall(request).execute();
+        Response response = getClient(getParameters.url.scheme(), false).newCall(request).execute();
+
+
+        OkHttpClient client = new OkHttpClient()
+                .newBuilder()
+                //.followRedirects(true)
+                .build();
+
+        client.newCall(request).execute();
 
         if (response.code() != 200){
             throw new CoverageException("error getting: " + getParameters.url.toString());

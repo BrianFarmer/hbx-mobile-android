@@ -30,10 +30,10 @@ public class ServerConfiguration {
     public HostInfo carrierInfo;
 
     public String employerListPath;
-    public String employerDetailPathForBroker;
-    public String employerDetailPathForEmployer;
+    public String employerDetailPath;
+    public String brokerDetailPath;
     public String employerRosterPathForBroker;
-    public String employerRosterPathForEmployer;
+    public String employerRosterPathRoot = "/api/v1/mobile_api/employer_details";
     public String loginPath;
     public String securityAnswerPath;
     public String carrierPath;

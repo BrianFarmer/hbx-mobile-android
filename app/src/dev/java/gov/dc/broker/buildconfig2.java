@@ -19,7 +19,7 @@ class BuildConfig2 {
     }
 
     public static IServerConfigurationStorageHandler getServerConfigurationStorageHandler() {
-        return new DevConfigurationStorageHandler();
+        return new ConfigurationStorageHandler();
     }
 
     public static ServerConfiguration getServerConfiguration() {
@@ -32,7 +32,10 @@ class BuildConfig2 {
         serverConfiguration.dataInfo.host = "mobile.dcmic.org";
         serverConfiguration.dataInfo.scheme = "http";
         serverConfiguration.dataInfo.port = 3000;
-        serverConfiguration.employerListPath = "api/v1/mobile_api/employers_list";
+        serverConfiguration.brokerDetailPath = "api/v1/mobile_api/employers_list";
+        serverConfiguration.employerDetailPath = "api/v1/mobile_api/employer_details";
+        serverConfiguration.employerRosterPathRoot = "api/v1/mobile_api/employee_roster";
+
         serverConfiguration.loginPath = "/users/sign_in";
         return serverConfiguration;
     }
@@ -66,7 +69,7 @@ class BuildConfig2 {
     }
 
     public CoverageConnection getCoverageConnection() {
-        return new DevCoverageConnection(getUrlHandler(), getConnectionHandler(), getServerConfiguration(), getParser(), getDataCache());
+        return new DevCoverageConnection(getUrlHandler(), getConnectionHandler(), getServerConfiguration(), getParser(), getDataCache(), getServerConfigurationStorageHandler());
     }
 
     private JsonParser getParser() {

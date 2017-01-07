@@ -18,7 +18,6 @@ import android.widget.TextView;
 
 import com.wdullaer.swipeactionadapter.SwipeActionAdapter;
 
-
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 import org.joda.time.LocalDate;
@@ -172,11 +171,17 @@ public class MainActivity extends BrokerActivity {
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void doThis(Events.GetLoginResult getLoginResult){
         if (getLoginResult.isLoggedIn()) {
-            if (getLoginResult.getUserType() == Events.GetLoginResult.UserType.Broker) {
-                Log.d(TAG, "requesting employer list");
-                getMessages().getEmployerList();
-            } else {
-                showEmployer();
+            switch (getLoginResult.getUserType()) {
+                case Broker:
+                    Log.d(TAG, "requesting employer list");
+                    getMessages().getEmployerList();
+                    break;
+                case Employer:
+                    showEmployer();
+                    break;
+                default:
+                    showLogin();
+                    return;
             }
         } else {
             showLogin();

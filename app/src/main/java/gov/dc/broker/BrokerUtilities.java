@@ -195,6 +195,21 @@ public class BrokerUtilities {
     }
 
     public static int getEmployeesNeeded(gov.dc.broker.models.brokeragency.PlanYear planYearForCoverageYear) {
+        if (planYearForCoverageYear.minimumParticipationRequired == null) {
+            return -1;
+        }
+
+        if (planYearForCoverageYear.employeesEnrolled == null){
+            if (planYearForCoverageYear.employeesWaived == null){
+                return planYearForCoverageYear.minimumParticipationRequired;
+            }
+            return planYearForCoverageYear.minimumParticipationRequired - planYearForCoverageYear.employeesWaived;
+        }
+
+        if (planYearForCoverageYear.employeesWaived == null){
+            return planYearForCoverageYear.minimumParticipationRequired - planYearForCoverageYear.employeesEnrolled;
+        }
+
         return planYearForCoverageYear.minimumParticipationRequired - (planYearForCoverageYear.employeesEnrolled + planYearForCoverageYear.employeesWaived);
     }
 

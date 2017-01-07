@@ -19,7 +19,7 @@ class BuildConfig2 {
     }
 
     public static IServerConfigurationStorageHandler getServerConfigurationStorageHandler() {
-        return new DevConfigurationStorageHandler();
+        return new ConfigurationStorageHandler();
     }
 
     public static ServerConfiguration getServerConfiguration() {
@@ -73,7 +73,7 @@ class BuildConfig2 {
     }
 
     public CoverageConnection getCoverageConnection() {
-        return new EnrollCoverageConnection(getUrlHandler(), getConnectionHandler(), getServerConfiguration(), getParser(), getDataCache());
+        return new EnrollCoverageConnection(getUrlHandler(), getConnectionHandler(), getServerConfiguration(), getParser(), getDataCache(), new ConfigurationStorageHandler());
     }
 
     private JsonParser getParser() {

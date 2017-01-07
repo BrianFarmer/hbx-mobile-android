@@ -1,8 +1,12 @@
 package gov.dc.broker;
 
 
+import android.util.Log;
+
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import gov.dc.broker.models.Security.SecurityAnswerResponse;
 import okhttp3.FormBody;
@@ -18,8 +22,8 @@ public class DevUrlHandler extends UrlHandler {
     public GetParameters getLoginUrlParameters() {
         GetParameters getParameters = new GetParameters();
         getParameters.url = getLoginUrl();
-        getParameters.cookies = new HashMap<>();
-        getParameters.cookies.put("_session_id", serverConfiguration.sessionId);
+        //getParameters.cookies = new HashMap<>();
+        //getParameters.cookies.put("_session_id", nuserverConfiguration.sessionId);
 
         return getParameters;
     }
@@ -35,16 +39,6 @@ public class DevUrlHandler extends UrlHandler {
     }
 
     @Override
-    public PutParameters getSecurityAnswerPutParameters(String securityAnswer) {
-        return null;
-    }
-
-    @Override
-    public void processSecurityAnswerResponse(IConnectionHandler.PutResponse putResponse) {
-
-    }
-
-    @Override
     public HashMap<String, ArrayList<String>> getNeededLoginCookes() {
         HashMap<String, ArrayList<String>> neededCookies = new HashMap<>();
         neededCookies.put("_session_id", new ArrayList<String>());
@@ -52,13 +46,13 @@ public class DevUrlHandler extends UrlHandler {
     }
 
     @Override
-    public PostParameters getLoginPostParameters(String accountName, String password, String sessionId, String authenticityToken) {
+    public PostParameters getLoginPostParameters(String accountName, String password) {
         PostParameters postParameters = new PostParameters();
 
         postParameters.url = getLoginUrl();
         postParameters.body = new FormBody.Builder()
                 .add("utf8", "✓")
-                .add("authenticity_token", authenticityToken)
+                .add("authenticity_token", serverConfiguration.authenticityToken)
                 .add("user[login]", accountName)
                 .add("user[password]", password)
                 .add("user[remember_me]", "0")
@@ -67,7 +61,7 @@ public class DevUrlHandler extends UrlHandler {
         postParameters.headers = new HashMap<>();
         postParameters.headers.put("Content-Type", "application/x-www-form-urlencoded");
         postParameters.cookies = new HashMap<>();
-        postParameters.cookies.put("_session_id", sessionId);
+        postParameters.cookies.put("_session_id", serverConfiguration.sessionId);
         return postParameters;
     }
 
@@ -101,7 +95,9 @@ public class DevUrlHandler extends UrlHandler {
 
     @Override
     public void processLoginReponse(String accountName, String password, Boolean rememberMe, IConnectionHandler.PostResponse response) throws CoverageException {
-        if (response.responseCode <200 || response.responseCode >= 300){
+        if (response == null
+            ||response.responseCode <200
+            || response.responseCode >= 300) {
             throw new CoverageException("Error logging in.");
         }
         serverConfiguration.accountName = accountName;
@@ -110,7 +106,21 @@ public class DevUrlHandler extends UrlHandler {
         serverConfiguration.securityQuestion = "this is a test question.";
         serverConfiguration.securityAnswer = null;
         if (response.cookies.get("_session_id") != null) {
-            serverConfiguration.sessionId = response.cookies.get("_session_id").get(0);
+            //serverConfiguration.sessionId = response.cookies.get("_session_id").get(0);
         }
+    }
+
+    public void processLoginPageReponse(IConnectionHandler.GetReponse getReponse) throws CoverageException {
+        serverConfiguration.sessionId = getReponse.cookies.get("_session_id").get(0);
+        Pattern pattern = Pattern.compile("<meta name=\\\"csrf-token\\\" content=\\\"([^\"]+)\\\"");
+        Matcher matcher = pattern.matcher(getReponse.body);
+        String authenticityToken = null;
+        if (matcher.find()){
+            serverConfiguration.authenticityToken = matcher.group(1);
+        } else {
+            throw new CoverageException("error getting authenticity token");
+        }
+        Log.d(TAG, "got session id");
+
     }
 }

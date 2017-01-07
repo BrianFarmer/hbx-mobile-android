@@ -7,21 +7,24 @@ public class EnrollCoverageConnection extends CoverageConnection {
     private static String TAG = "EnrollCvrgConnection";
     private final EnrollUrlHandler enrollUrlHandler;
 
-    public EnrollCoverageConnection(EnrollUrlHandler urlHandler, IConnectionHandler connectionHandler, ServerConfiguration serverConfiguration, JsonParser parser, IDataCache dataCache) {
-        super(urlHandler, connectionHandler, serverConfiguration, parser, dataCache);
+    public EnrollCoverageConnection(EnrollUrlHandler urlHandler, IConnectionHandler connectionHandler,
+                                    ServerConfiguration serverConfiguration, JsonParser parser,
+                                    IDataCache dataCache, ConfigurationStorageHandler storageHandler) {
+        super(urlHandler, connectionHandler, serverConfiguration, parser, dataCache, storageHandler);
         this.enrollUrlHandler = urlHandler;
     }
 
     @Override
     public void validateUserAndPassword(String accountName, String password, Boolean rememberMe) throws Exception {
-        UrlHandler.PostParameters loginPostParameters = enrollUrlHandler.getLoginPostParameters(accountName, password, null, null);
+        UrlHandler.PostParameters loginPostParameters = enrollUrlHandler.getLoginPostParameters(accountName, password);
         IConnectionHandler.PostResponse postResponse = connectionHandler.post(loginPostParameters);
         enrollUrlHandler.processLoginReponse(accountName, password, rememberMe, postResponse);
     }
 
     public void checkSecurityAnswer(String securityAnswer) throws Exception {
-        UrlHandler.PutParameters securityAnswerPutParameters = urlHandler.getSecurityAnswerPutParameters(securityAnswer);
-        ConnectionHandler.PutResponse putResponse = connectionHandler.put(securityAnswerPutParameters);
-        urlHandler.processSecurityAnswerResponse(putResponse);
+        UrlHandler.PostParameters securityAnswerPutParameters = enrollUrlHandler.getSecurityAnswerPostParameters(securityAnswer);
+        ConnectionHandler.PostResponse postResponse = connectionHandler.post(securityAnswerPutParameters);
+        enrollUrlHandler.processSecurityAnswerResponse(postResponse);
+        storageHandler.store(serverConfiguration);
     }
 }

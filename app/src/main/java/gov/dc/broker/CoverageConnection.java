@@ -19,34 +19,38 @@ public abstract class CoverageConnection {
     protected final ServerConfiguration serverConfiguration;
     protected final JsonParser parser;
     private final IDataCache dataCache;
+    protected final IServerConfigurationStorageHandler storageHandler;
 
     public CoverageConnection(UrlHandler urlHandler, IConnectionHandler connectionHandler,
                               ServerConfiguration serverConfiguration,
-                              JsonParser parser, IDataCache dataCache){
+                              JsonParser parser, IDataCache dataCache,
+                              IServerConfigurationStorageHandler storageHandler){
 
         this.urlHandler = urlHandler;
         this.connectionHandler = connectionHandler;
         this.serverConfiguration = serverConfiguration;
         this.parser = parser;
         this.dataCache = dataCache;
+        this.storageHandler = storageHandler;
     }
 
     public abstract void validateUserAndPassword(String accountName, String password, Boolean rememberMe) throws Exception;
 
 
     public void checkSecurityAnswer(String securityAnswer) throws Exception {
+        storageHandler.store(serverConfiguration);
         return;
     }
 
     private Employer getEmployer(UrlHandler urlHandler, ServerConfiguration serverConfiguration) throws Exception {
-        HttpUrl employerDetailsUrl1 = urlHandler.getEmployerDetailsUrl();
-        String response = connectionHandler.get(employerDetailsUrl1, null);
-        return parser.parseEmployerDetails(response);
+        UrlHandler.GetParameters employerDetails = urlHandler.getEmployerDetailsParameters();
+        IConnectionHandler.GetReponse response = connectionHandler.get(employerDetails);
+        return urlHandler.processEmployerDetails(response);
     }
 
     public void determineUserType() throws Exception {
         try{
-            BrokerAgency brokerAgency = getBrokerAgency();
+            BrokerAgency brokerAgency = getBrokerAgency(DateTime.now());
             serverConfiguration.userType = gov.dc.broker.ServerConfiguration.UserType.Broker;
             dataCache.store(brokerAgency, DateTime.now());
             return;
@@ -115,25 +119,31 @@ public abstract class CoverageConnection {
         //validateUserAndPassword(serverConfiguration.accountName, serverConfiguration.password, serverConfiguration.rememberMe);
     }
 
-    public Roster getRoster(String employerId) throws Exception {
+    public Roster getRoster(String employerId, DateTime now) throws Exception {
         Log.d(TAG, "CoverageConnection.getRoster");
         checkSessionId();
 
-        BrokerAgency brokerAgency = getBrokerAgency();
+        BrokerAgency brokerAgency = getBrokerAgency(now);
         String rosterUrl = BrokerUtilities.getRosterUrl(brokerAgency, employerId);
         HttpUrl employerRosterUrl = urlHandler.getEmployerRosterUrl(rosterUrl);
         String response = connectionHandler.get(employerRosterUrl, urlHandler.buildSessionCookies());
         return parser.parseRoster(response);
     }
 
-    public BrokerAgency getBrokerAgency() throws Exception, CoverageException {
+    public BrokerAgency getBrokerAgency(DateTime now) throws Exception, CoverageException {
         checkSessionId();
         BrokerAgency brokerAgency = dataCache.getBrokerAgency(DateTime.now());
         if (brokerAgency == null){
-            UrlHandler.GetParameters getParameters = urlHandler.getBrokerAgencyParameters();
+            UrlHandler.GetParameters getParameters;
+            try{
+                getParameters = urlHandler.getBrokerAgencyParameters();
+            } catch (Exception e){
+                Log.e(TAG, "gettting parameters", e);
+                throw e;
+            }
             IConnectionHandler.GetReponse getReponse = connectionHandler.get(getParameters);
             brokerAgency = urlHandler.processBrokerAgency(getReponse);
-            dataCache.store(brokerAgency, DateTime.now());
+            dataCache.store(brokerAgency, now);
         }
 
         return brokerAgency;
@@ -146,8 +156,13 @@ public abstract class CoverageConnection {
     }
 
     public RosterEntry getEmployee(String employerId, String employeeId) throws Exception {
-        Roster roster = getRoster(employerId);
+        Roster roster = getRoster(employerId, DateTime.now());
         DateTime now = DateTime.now();
         return BrokerUtilities.getRosterEntry(roster, employeeId);
+    }
+
+    public ServerConfiguration getLogin(){
+        storageHandler.read(serverConfiguration);
+        return serverConfiguration;
     }
 }

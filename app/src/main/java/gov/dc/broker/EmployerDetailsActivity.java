@@ -18,6 +18,7 @@ import android.widget.Spinner;
 import android.widget.TabHost;
 import android.widget.TabWidget;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
@@ -53,6 +54,14 @@ public class EmployerDetailsActivity extends BrokerActivity {
 
     public EmployerDetailsActivity(){
         Log.d(TAG, "In EmployerDetailsActivity Ctor");
+    }
+
+
+
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void doThis(Events.Error error){
+        Toast toast = Toast.makeText(this, "Error retrieving employer data.", Toast.LENGTH_LONG);
+        toast.show();
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)

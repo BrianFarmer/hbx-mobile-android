@@ -96,6 +96,8 @@ public class EmployerAdapter extends BaseSwipeAdapter {
                         break;
                 }
                 otherItems.add(new OtherWrapper(brokerClient, i, lastestPlanYear));
+            } else {
+                otherItems.add(new OtherWrapper(brokerClient, i, null));
             }
             i ++;
         }
@@ -165,6 +167,9 @@ public class EmployerAdapter extends BaseSwipeAdapter {
         Collections.sort(otherItems, new Comparator<OtherWrapper>() {
             @Override
             public int compare(OtherWrapper otherWrapper, OtherWrapper t1) {
+                if (otherWrapper.planYear == null){
+                    return -1;
+                }
                 return -1 * otherWrapper.planYear.planYearBegins.compareTo(t1.planYear.planYearBegins);
             }
         });
@@ -646,8 +651,13 @@ class OpenEnrollmentAlertedWrapper extends BrokerClientWrapper {
     public void fillValues(View convertView, final MainActivity mainActivity) throws Exception {
         TextView companyName = (TextView)convertView.findViewById(R.id.textViewCompanyName);
         companyName.setText(brokerClient.employerName);
-        TextView employeesNeeded = (TextView)convertView.findViewById(R.id.textViewEmployessNeeded);
-        employeesNeeded.setText(String.valueOf(BrokerUtilities.getEmployeesNeeded(planYear)));
+
+        TextView employeesNeeded = (TextView) convertView.findViewById(R.id.textViewEmployessNeeded);
+        int employeesNeeded1 = BrokerUtilities.getEmployeesNeeded(planYear);
+        if (employeesNeeded1 >= 0){
+            employeesNeeded.setText(String.valueOf(employeesNeeded1));
+        }
+
         TextView daysLeft = (TextView)convertView.findViewById(R.id.textViewDaysLeft);
         daysLeft.setText(String.valueOf(BrokerUtilities.daysLeft(planYear, LocalDate.now())));
         convertView.setOnClickListener(new View.OnClickListener() {

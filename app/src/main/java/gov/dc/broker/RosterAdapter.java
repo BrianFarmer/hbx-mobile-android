@@ -74,13 +74,17 @@ public class RosterAdapter extends BaseAdapter {
         try {
             final RosterEntry employee = employees.get(i);
             Health health;
-            Enrollment enrollmentForCoverageYear = BrokerUtilities.getEnrollmentForCoverageYear(employee, active);
-            health = enrollmentForCoverageYear.health;
             TextView employeeName = (TextView) view.findViewById(R.id.textViewEmployeeName);
             employeeName.setText(BrokerUtilities.getFullName(employee));
-            TextView statusThisYear = (TextView) view.findViewById(R.id.textViewStatusThisYear);
-            statusThisYear.setText(health.status);
-            statusThisYear.setTextColor(ContextCompat.getColor(context, Utilities.colorFromEmployeeStatus(health.status)));
+            try {
+                Enrollment enrollmentForCoverageYear = BrokerUtilities.getEnrollmentForCoverageYear(employee, active);
+                health = enrollmentForCoverageYear.health;
+                TextView statusThisYear = (TextView) view.findViewById(R.id.textViewStatusThisYear);
+                statusThisYear.setTextColor(ContextCompat.getColor(context, Utilities.colorFromEmployeeStatus(health.status)));
+                statusThisYear.setText(health.status);
+            } catch (Exception e){
+                Log.e(TAG, "enrollment coverage year must be missing.", e);
+            }
 
             view.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -92,6 +96,7 @@ public class RosterAdapter extends BaseAdapter {
         } catch (Exception e){
             Log.e(TAG, "Exception getting employee item", e);
             return null;
+
         }
     }
 }

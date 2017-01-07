@@ -20,15 +20,6 @@ public class GitUrlHandler extends UrlHandler {
     }
 
     @Override
-    public PutParameters getSecurityAnswerPutParameters(String securityAnswer) {
-        return null;
-    }
-
-    @Override
-    public void processSecurityAnswerResponse(IConnectionHandler.PutResponse putResponse) {
-
-    }
-    @Override
     FormBody getSecurityAnswerFormBody(String securityAnswer) {
         return null;
     }
@@ -67,7 +58,7 @@ public class GitUrlHandler extends UrlHandler {
     }
 
     @Override
-    public PostParameters getLoginPostParameters(String accountName, String password, String sessionId, String authenticityToken) {
+    public PostParameters getLoginPostParameters(String accountName, String password) {
         return null;
     }
 

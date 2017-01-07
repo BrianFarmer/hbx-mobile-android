@@ -27,11 +27,10 @@ public class EnrollUrlHandler extends UrlHandler {
                 .build();
     }
 
-    @Override
-    public PutParameters getSecurityAnswerPutParameters(String securityAnswer) {
-        PutParameters putParameters = new PutParameters();
+    public PostParameters getSecurityAnswerPostParameters(String securityAnswer) {
+        PostParameters postParameters = new PostParameters();
 
-        putParameters.url = new HttpUrl.Builder()
+        postParameters.url = new HttpUrl.Builder()
                 .scheme(serverConfiguration.loginInfo.scheme)
                 .host(serverConfiguration.loginInfo.host)
                 .addPathSegments(serverConfiguration.securityAnswerPath)
@@ -47,16 +46,15 @@ public class EnrollUrlHandler extends UrlHandler {
                 .build();
 
 
-        putParameters.body = new FormBody.Builder()
+        postParameters.body = new FormBody.Builder()
                 .add("security_answer", securityAnswer)
                 .build();
 
 
-        return putParameters;
+        return postParameters;
     }
 
-    @Override
-    public void processSecurityAnswerResponse(IConnectionHandler.PutResponse putResponse) throws CoverageException {
+    public void processSecurityAnswerResponse(IConnectionHandler.PostResponse putResponse) throws CoverageException {
         if (putResponse.responseCode >= 300
             || putResponse.responseCode < 200){
             throw new CoverageException("Security answer not accepted");
@@ -64,6 +62,11 @@ public class EnrollUrlHandler extends UrlHandler {
         SecurityAnswerResponse securityAnswerResponse = parser.parseSecurityAnswerResponse(putResponse.body);
         serverConfiguration.enrollServer = securityAnswerResponse.enroll_server;
         serverConfiguration.sessionId = securityAnswerResponse.session_id;
+        serverConfiguration.employerDetailPath = securityAnswerResponse.employer_details_endpoint;
+        serverConfiguration.brokerDetailPath = securityAnswerResponse.broker_endpoint;
+        serverConfiguration.employerRosterPathForBroker = securityAnswerResponse.employee_roster_endpoint;
+
+
     }
 
     @Override
@@ -101,7 +104,7 @@ public class EnrollUrlHandler extends UrlHandler {
     }
 
     @Override
-    public PostParameters getLoginPostParameters(String accountName, String password, String sessionId, String authenticityToken) {
+    public PostParameters getLoginPostParameters(String accountName, String password) {
         PostParameters postParameters = new PostParameters();
         postParameters.url = getLoginUrl();
         FormBody formBody = new FormBody.Builder()
