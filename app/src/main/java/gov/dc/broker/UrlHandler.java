@@ -6,6 +6,7 @@ import java.util.HashMap;
 import gov.dc.broker.models.Security.SecurityAnswerResponse;
 import gov.dc.broker.models.brokeragency.BrokerAgency;
 import gov.dc.broker.models.employer.Employer;
+import gov.dc.broker.models.roster.Roster;
 import okhttp3.FormBody;
 import okhttp3.HttpUrl;
 
@@ -14,6 +15,9 @@ import okhttp3.HttpUrl;
  */
 
 public abstract class UrlHandler {
+
+
+
 
     public class PutParameters {
         FormBody body;
@@ -27,6 +31,7 @@ public abstract class UrlHandler {
         HttpUrl url;
         public HashMap<String, String> cookies;
         public HashMap<String, String> headers;
+        public HashMap<String, String> formParameters;
     }
 
     public class GetParameters {
@@ -89,20 +94,47 @@ public abstract class UrlHandler {
         return getParameters;
     }
 
+    GetParameters getEmployerDetailsParameters(String employerId) {
+        GetParameters getParameters = new GetParameters();
+
+        if (serverConfiguration.sessionId != null) {
+            getParameters.cookies = new HashMap<>();
+            getParameters.cookies.put("_session_id", serverConfiguration.sessionId);
+        }
+
+
+        if (employerId.substring(0,4).compareToIgnoreCase("http") == 0){
+            getParameters.url = HttpUrl.parse(employerId);
+        } else {
+            String path;
+            if (employerId.substring(0,1).compareTo("/") == 0){
+                path = employerId.substring(1, employerId.length());
+            } else {
+                path = employerId;
+            }
+            getParameters.url = new HttpUrl.Builder()
+                    .scheme(serverConfiguration.dataInfo.scheme)
+                    .host(serverConfiguration.dataInfo.host)
+                    .addPathSegments(path)
+                    .port(serverConfiguration.dataInfo.port)
+                    .build();
+        }
+        return getParameters;
+    }
+    /*
     protected HttpUrl getEmployerDetailsUrl(String employerId) {
         if (employerId.substring(0,4).compareToIgnoreCase("http") == 0){
             return HttpUrl.parse(employerId);
         }
 
         return HttpUrl.parse(serverConfiguration.enrollServer + employerId);
-        /*
         return new HttpUrl.Builder()
                 .scheme(serverConfiguration.dataInfo.scheme)
                 .host(serverConfiguration.dataInfo.host)
                 .addPathSegments(String.format(serverConfiguration.employerDetailPath, employerId))
                 .port(serverConfiguration.dataInfo.port)
-                .build();*/
-    }
+                .build();
+    }*/
 
     protected HttpUrl getEmployerRosterUrl() {
         return new HttpUrl.Builder()
@@ -113,19 +145,32 @@ public abstract class UrlHandler {
                 .build();
     }
 
-    protected HttpUrl getEmployerRosterUrl(String rosterId) {
-        if (rosterId.substring(0, 4).compareToIgnoreCase("http") == 0){
-            return HttpUrl.parse(rosterId);
+
+    GetParameters getEmployerRosterParameters(String rosterId) {
+        GetParameters getParameters = new GetParameters();
+
+        if (serverConfiguration.sessionId != null) {
+            getParameters.cookies = new HashMap<>();
+            getParameters.cookies.put("_session_id", serverConfiguration.sessionId);
         }
 
-        return HttpUrl.parse(serverConfiguration.enrollServer + rosterId);
 
-        /*return new HttpUrl.Builder()
-                .scheme(serverConfiguration.dataInfo.scheme)
-                .host(serverConfiguration.dataInfo.host)
-                .addPathSegments(String.format(serverConfiguration.employerRosterPathRoot, employerId))
-                .port(serverConfiguration.dataInfo.port)
-                .build();*/
+        if (rosterId.substring(0,4).compareToIgnoreCase("http") == 0){
+            getParameters.url = HttpUrl.parse(rosterId);
+        } else {
+            getParameters.url = new HttpUrl.Builder()
+                    .scheme(serverConfiguration.dataInfo.scheme)
+                    .host(serverConfiguration.dataInfo.host)
+                    .addPathSegments(rosterId)
+                    .port(serverConfiguration.dataInfo.port)
+                    .build();
+        }
+        return getParameters;
+    }
+
+
+    public Roster processRoster(IConnectionHandler.GetReponse response) {
+        return parser.parseRoster(response.body);
     }
 
     HttpUrl getCarriersUrl() {

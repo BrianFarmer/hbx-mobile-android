@@ -13,10 +13,8 @@ public interface IDataCache {
     void store(Roster roster, DateTime time);
     void store(String id, Roster roster, DateTime time);
     BrokerAgency getBrokerAgency(DateTime time);
-    BrokerAgency getBrokerAgency();
     Employer getEmployer(DateTime time);
     Employer getEmployer(String id, DateTime time);
-    Roster getRoster(DateTime time);
     Roster getRoster(String id, DateTime time);
     void clear();
 

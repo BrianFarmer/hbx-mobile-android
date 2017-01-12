@@ -2,7 +2,6 @@ package gov.dc.broker;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.UUID;
 
 import gov.dc.broker.models.Security.LoginResponse;
 import gov.dc.broker.models.Security.SecurityAnswerResponse;
@@ -108,11 +107,11 @@ public class EnrollUrlHandler extends UrlHandler {
         PostParameters postParameters = new PostParameters();
         postParameters.url = getLoginUrl();
         FormBody formBody = new FormBody.Builder()
-                .add("userid", accountName)
-                .add("pass", password)
-                .add("device_id", UUID.randomUUID().toString())
                 .build();
         postParameters.body = formBody;
+        postParameters.formParameters = new HashMap<>();
+        postParameters.formParameters.put("userid", accountName);
+        postParameters.formParameters.put("pass", password);
         return postParameters;
     }
 
@@ -129,5 +128,11 @@ public class EnrollUrlHandler extends UrlHandler {
         LoginResponse loginResponse = parser.parseLogin(loginPostResponse.body);
         serverConfiguration.securityQuestion = loginResponse.security_question;
         serverConfiguration.securityAnswerPath = loginPostResponse.headers.get("location").get(0);
+    }
+
+    public GetParameters getLoginFormParameters() {
+        GetParameters getParameters = new GetParameters();
+        getParameters.url = getLoginUrl();
+        return getParameters;
     }
 }

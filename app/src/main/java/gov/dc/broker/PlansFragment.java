@@ -88,7 +88,13 @@ public class PlansFragment extends BrokerFragment {
     }
 
     private void populate() throws Exception {
-        PlanYear planYearForCoverageYear = BrokerUtilities.getPlanYearForCoverageYear(employer, coverageYear);
+        PlanYear planYearForCoverageYear;
+        try {
+            planYearForCoverageYear = BrokerUtilities.getPlanYearForCoverageYear(employer, coverageYear);
+        } catch (Exception e){
+            Log.e(TAG, "No plan year found", e);
+            return;
+        }
 
 
         FragmentActivity activity = this.getActivity();

@@ -37,12 +37,15 @@ public interface IConnectionHandler {
 
     PutResponse put(UrlHandler.PutParameters putParameters) throws Exception;
 
+    public PostResponse simplePostHttpURLConnection(UrlHandler.PostParameters postParameters, String accountName, String password, Boolean rememberMe) throws Exception;
+    PostResponse postHttpURLConnection(UrlHandler.PostParameters postParameters, String accountName, String password, Boolean rememberMe) throws Exception;
+
     PostResponse post(HttpUrl url, FormBody formBody) throws Exception;
 
     PostResponse post(HttpUrl url, FormBody formBody, String cookie) throws Exception;
 
     PostResponse post(UrlHandler.PostParameters postParameters) throws IOException, CoverageException;
-    PostResponse postHttpURLConnection(UrlHandler.PostParameters loginPostParameters, String accountName, String password, Boolean rememberMe) throws Exception;
+    //PostResponse postHttpURLConnection(UrlHandler.PostParameters loginPostParameters, String accountName, String password, Boolean rememberMe) throws Exception;
 
     GetReponse get(UrlHandler.GetParameters getParameters) throws IOException, CoverageException;
     String get(HttpUrl url, String cookie) throws Exception;

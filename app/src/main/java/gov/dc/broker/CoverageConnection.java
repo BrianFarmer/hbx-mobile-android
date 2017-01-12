@@ -43,8 +43,8 @@ public abstract class CoverageConnection {
     }
 
     private Employer getEmployer(UrlHandler urlHandler, ServerConfiguration serverConfiguration) throws Exception {
-        UrlHandler.GetParameters employerDetails = urlHandler.getEmployerDetailsParameters();
-        IConnectionHandler.GetReponse response = connectionHandler.get(employerDetails);
+        UrlHandler.GetParameters getParameters = urlHandler.getEmployerDetailsParameters();
+        IConnectionHandler.GetReponse response = connectionHandler.get(getParameters);
         return urlHandler.processEmployerDetails(response);
     }
 
@@ -100,9 +100,9 @@ public abstract class CoverageConnection {
 
         BrokerAgency brokerAgency = dataCache.getBrokerAgency(time);
         BrokerClient brokerClient = BrokerUtilities.getBrokerClient(brokerAgency, employerId);
-        HttpUrl employerDetailsUrl = urlHandler.getEmployerDetailsUrl(employerId);
-        String body = connectionHandler.get(employerDetailsUrl, urlHandler.buildSessionCookies());
-        employer = parser.parseEmployerDetails(body);
+        UrlHandler.GetParameters employerDetailsParameters = urlHandler.getEmployerDetailsParameters(employerId);
+        IConnectionHandler.GetReponse getReponse = connectionHandler.get(employerDetailsParameters);
+        employer = urlHandler.processEmployerDetails(getReponse);
         dataCache.store(employerId, employer, time);
         return employer;
     }
@@ -125,9 +125,15 @@ public abstract class CoverageConnection {
 
         BrokerAgency brokerAgency = getBrokerAgency(now);
         String rosterUrl = BrokerUtilities.getRosterUrl(brokerAgency, employerId);
-        HttpUrl employerRosterUrl = urlHandler.getEmployerRosterUrl(rosterUrl);
-        String response = connectionHandler.get(employerRosterUrl, urlHandler.buildSessionCookies());
-        return parser.parseRoster(response);
+        Roster roster = dataCache.getRoster(rosterUrl, now);
+        if (roster != null){
+            return roster;
+        }
+        UrlHandler.GetParameters getParameters = urlHandler.getEmployerRosterParameters(rosterUrl);
+        IConnectionHandler.GetReponse response = connectionHandler.get(getParameters);
+        roster = urlHandler.processRoster(response);
+        dataCache.store(rosterUrl, roster, now);
+        return roster;
     }
 
     public BrokerAgency getBrokerAgency(DateTime now) throws Exception, CoverageException {

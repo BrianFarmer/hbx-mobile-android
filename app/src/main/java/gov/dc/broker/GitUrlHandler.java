@@ -62,10 +62,10 @@ public class GitUrlHandler extends UrlHandler {
         return null;
     }
 
-    @Override
+    /*@Override
     protected HttpUrl getEmployerDetailsUrl(String employerId) {
         return HttpUrl.parse(employerId);
-    }
+    }*/
 
     protected HttpUrl getEmployerRosterUrl(String employerId) {
         return HttpUrl.parse(employerId);

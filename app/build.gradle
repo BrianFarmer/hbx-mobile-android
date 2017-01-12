@@ -57,6 +57,7 @@ dependencies {
     compile project(path: ':swipeactionadapter')
     compile 'net.danlew:android.joda:2.9.4.3'
     compile 'com.github.PhilJay:MPAndroidChart:v3.0.0'
+    compile 'com.github.franmontiel:PersistentCookieJar:v1.0.0'
 
     def mobileCenterSdkVersion = '0.3.3'
     compile "com.microsoft.azure.mobile:mobile-center-analytics:${mobileCenterSdkVersion}"

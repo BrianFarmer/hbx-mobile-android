@@ -56,11 +56,6 @@ public class DataCache implements IDataCache {
     }
 
     @Override
-    public BrokerAgency getBrokerAgency() {
-        return brokerAgency;
-    }
-
-    @Override
     public Employer getEmployer(DateTime time) {
         return getEmployer(Default_Id, time);
     }
@@ -76,10 +71,10 @@ public class DataCache implements IDataCache {
         return null;
     }
 
-    @Override
-    public Roster getRoster(DateTime time) {
-        return getRoster(Default_Id, time);
-    }
+    //@Override
+    //public Roster getRoster(DateTime time) {
+    //    return getRoster(Default_Id, time);
+    //}
 
     @Override
     public Roster getRoster(String id, DateTime time) {

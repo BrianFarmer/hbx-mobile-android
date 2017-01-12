@@ -25,7 +25,8 @@ public class DevCoverageConnection extends CoverageConnection {
 
 
         UrlHandler.PostParameters loginPostParameters = urlHandler.getLoginPostParameters(accountName.trim(), password);
-        IConnectionHandler.PostResponse loginPostResponse = connectionHandler.postHttpURLConnection(loginPostParameters, accountName, password, rememberMe);
+        //IConnectionHandler.PostResponse loginPostResponse = connectionHandler.postHttpURLConnection(loginPostParameters, accountName, password, rememberMe);
+        IConnectionHandler.PostResponse loginPostResponse = connectionHandler.post(loginPostParameters);
         urlHandler.processLoginReponse(accountName, password, rememberMe, loginPostResponse);
     }
 }

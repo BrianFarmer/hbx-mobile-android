@@ -177,8 +177,85 @@ public class ConnectionHandler implements IConnectionHandler{
         throw new Exception("Session cookie not found");
     }
 
+    public PostResponse simplePostHttpURLConnection(UrlHandler.PostParameters postParameters, String accountName, String password, Boolean rememberMe) throws Exception {
+        URL url = new URL(postParameters.url.toString());//postParameters.url.url();
+        HttpURLConnection connection = (HttpURLConnection)url.openConnection();
+        if (postParameters.url.scheme().compareToIgnoreCase("https") == 0){
+            HttpsURLConnection httpsURLConnection = (HttpsURLConnection)connection;
+            httpsURLConnection.setSSLSocketFactory(getSSLContext().getSocketFactory());
+        }
+        connection.setInstanceFollowRedirects(true);
+        connection.setRequestMethod("POST");
+
+        connection.setRequestProperty("Content-Type", "application/x-www-form-urlencoded");
+
+
+        String output = getQuery(postParameters.formParameters);
+        //connection.setRequestProperty("Content-Length", Integer.toString(output.length()));
+
+        OutputStream os;
+        try {
+            os = connection.getOutputStream();
+        } catch (Throwable t){
+            Log.e(TAG, "getting output stream", t);
+            throw t;
+        }
+        BufferedWriter writer = new BufferedWriter(
+                new OutputStreamWriter(os, "UTF-8"));
+        writer.write(output);
+        writer.flush();
+        writer.close();
+        os.close();
+
+        connection.connect();
+        int responseCode = connection.getResponseCode();
+
+        while (responseCode == 302){
+            HashMap<String, List<String>> cookies = getCookies(connection.getHeaderFields());
+            serverConfiguration.sessionId = cookies.get("_session_id").get(0);
+            String newSessionId = "_session_id=" + cookies.get("_session_id").get(0);
+            String redirectUrlString = connection.getHeaderField("location");
+            URL redirectUrl = new URL(redirectUrlString);
+            connection = (HttpURLConnection)redirectUrl.openConnection();
+            if (redirectUrl.getProtocol().compareToIgnoreCase("https") == 0){
+                HttpsURLConnection httpsURLConnection = (HttpsURLConnection)connection;
+                httpsURLConnection.setSSLSocketFactory(getSSLContext().getSocketFactory());
+            }
+            connection.setInstanceFollowRedirects(false);
+            connection.setRequestMethod("GET");
+
+            connection.setRequestProperty("Cookie", serverConfiguration.sessionId);
+            connection.connect();
+            responseCode = connection.getResponseCode();
+        }
+
+
+        InputStream inputStream = connection.getInputStream();
+        InputStreamReader streamReader = new InputStreamReader(inputStream);
+        BufferedReader bufferedReader = new BufferedReader(streamReader);
+        StringBuilder result = new StringBuilder();
+        String line;
+        while((line = bufferedReader.readLine()) != null) {
+            result.append(line);
+        }
+
+        String string = result.toString();
+        Log.d (TAG, "body: " + string);
+
+        Log.d(TAG, "response code;" + responseCode);
+
+        PostResponse postResponse = new PostResponse();
+        postResponse.headers = connection.getHeaderFields();
+        postResponse.body = string;
+        ArrayList<String> list = new ArrayList<>();
+        Map<String, List<String>> headerFields = connection.getHeaderFields();
+        postResponse.cookies = getCookies(headerFields);
+        postResponse.responseCode = responseCode;
+        return postResponse;
+    }
+
     public PostResponse postHttpURLConnection(UrlHandler.PostParameters postParameters, String accountName, String password, Boolean rememberMe) throws Exception {
-        URL url = new URL("http://mobile.dcmic.org:3000/users/sign_in");//postParameters.url.url();
+        URL url = new URL(postParameters.url.toString());//postParameters.url.url();
         HttpURLConnection connection = (HttpURLConnection)url.openConnection();
         if (postParameters.url.scheme().compareToIgnoreCase("https") == 0){
             HttpsURLConnection httpsURLConnection = (HttpsURLConnection)connection;
@@ -265,15 +342,54 @@ public class ConnectionHandler implements IConnectionHandler{
         return postResponse;
     }
 
-    public PostResponse post(UrlHandler.PostParameters postParameters) throws IOException, CoverageException {
+    public PostResponse postLogin(UrlHandler.PostParameters postParameters) throws IOException, CoverageException {
+
         Request.Builder builder = new Request.Builder()
                 .url(postParameters.url);
 
+        /*
         if (postParameters.cookies != null) {
             for (String key : postParameters.cookies.keySet()) {
                 builder.header("cookie", key + "=" + postParameters.cookies.get(key));
             }
+        }*/
+
+        if (postParameters.headers != null){
+            for (String key : postParameters.headers.keySet()) {
+                builder.header(key, postParameters.headers.get(key));
+            }
+
         }
+        Request request = builder.post(postParameters.body)
+                .build();
+
+        Response response;
+        try {
+            response = getClient(postParameters.url.scheme(), true).newCall(request).execute();
+        } catch (Throwable t){
+            Log.e(TAG, "exception during post", t);
+            throw t;
+        }
+
+        PostResponse postResponse = new PostResponse();
+        postResponse.body = response.body().string();
+        postResponse.headers = response.headers().toMultimap();
+        postResponse.responseCode = response.code();
+        postResponse.cookies = getCookies(response.headers().toMultimap());
+        return postResponse;
+    }
+
+    public PostResponse post(UrlHandler.PostParameters postParameters) throws IOException, CoverageException {
+        Request.Builder builder = new Request.Builder()
+                .url(postParameters.url);
+
+        /*
+        if (postParameters.cookies != null) {
+            for (String key : postParameters.cookies.keySet()) {
+                builder.header("cookie", key + "=" + postParameters.cookies.get(key));
+            }
+        }*/
+
         if (postParameters.headers != null){
             for (String key : postParameters.headers.keySet()) {
                 builder.header(key, postParameters.headers.get(key));
@@ -341,12 +457,12 @@ public class ConnectionHandler implements IConnectionHandler{
         Response response = getClient(getParameters.url.scheme(), false).newCall(request).execute();
 
 
-        OkHttpClient client = new OkHttpClient()
+        /*OkHttpClient client = new OkHttpClient()
                 .newBuilder()
                 //.followRedirects(true)
                 .build();
 
-        client.newCall(request).execute();
+        client.newCall(request).execute();*/
 
         if (response.code() != 200){
             throw new CoverageException("error getting: " + getParameters.url.toString());

@@ -29,14 +29,14 @@ class BuildConfig2 {
         serverConfiguration = new ServerConfiguration();
 
         serverConfiguration.dataInfo = new ServerConfiguration.HostInfo();
-        serverConfiguration.dataInfo.host = "mobile.dcmic.org";
-        serverConfiguration.dataInfo.scheme = "http";
-        serverConfiguration.dataInfo.port = 3000;
+        serverConfiguration.dataInfo.host = "enroll-mobile.dchbx.org";
+        serverConfiguration.dataInfo.scheme = "https";
+        serverConfiguration.dataInfo.port = 443;
 
         serverConfiguration.loginInfo = new ServerConfiguration.HostInfo();
         serverConfiguration.loginInfo.host = "hbx-mobile.dchbx.org";
-        serverConfiguration.loginInfo.scheme = "https";
-        serverConfiguration.loginInfo.port = 443;
+        serverConfiguration.loginInfo.scheme = "http";
+        serverConfiguration.loginInfo.port = 80;
 
 
         serverConfiguration.employerListPath = "api/v1/mobile_api/employers_list";
