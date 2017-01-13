@@ -98,8 +98,8 @@ public class BrokerWorker extends IntentService {
             Log.d(TAG,"LoginRequest: Getting sessionid");
             config.getCoverageConnection().checkSecurityAnswer(securityAnswerString);
             Log.d(TAG,"LoginRequest: got sessionid");
-            config.getCoverageConnection().determineUserType();
-            BrokerWorker.eventBus.post(new Events.LoginRequestResult(Events.LoginRequestResult.Success));
+            ServerConfiguration.UserType userType = config.getCoverageConnection().determineUserType();
+            BrokerWorker.eventBus.post(new Events.LoginRequestResult(Events.LoginRequestResult.Success, userType));
         } catch (Exception e) {
             Log.e(TAG, "Exception processing SecurityAnswer");
             e.printStackTrace();
@@ -148,8 +148,15 @@ public class BrokerWorker extends IntentService {
 
             DateTime now = DateTime.now();
             CoverageConnection coverageConnection = config.getCoverageConnection();
-            BrokerClient brokerClient = BrokerUtilities.getBrokerClient(coverageConnection.getBrokerAgency(now), getEmployer.getEmployerId());
-            Employer employer = coverageConnection.getEmployer(getEmployer.getEmployerId(), now);
+            String employerId = getEmployer.getEmployerId();
+            BrokerClient brokerClient = null;
+            Employer employer = null;
+            if (employerId != null){
+                brokerClient = BrokerUtilities.getBrokerClient(coverageConnection.getBrokerAgency(now), employerId);
+                employer = coverageConnection.getEmployer(employerId, now);
+            } else {
+                employer = coverageConnection.getDefaultEmployer(now);
+            }
             BrokerWorker.eventBus.post(new Events.BrokerClient(getEmployer.getId(), brokerClient, employer));
         } catch (Exception e) {
             Log.e(TAG, "Exception processing GetEmployer");
@@ -162,8 +169,14 @@ public class BrokerWorker extends IntentService {
         try {
             Log.d(TAG, "Received GetRoster");
             DateTime now = DateTime.now();
-            config.getCoverageConnection().getRoster(getRoster.getEmployerId(), now);
-            Roster roster = config.getCoverageConnection().getRoster(getRoster.getEmployerId(), now);
+            String employerId = getRoster.getEmployerId();
+            Roster roster;
+
+            if (employerId == null){
+                roster = config.getCoverageConnection().getRoster(now);
+            }  else {
+                roster = config.getCoverageConnection().getRoster(employerId, now);
+            }
             BrokerWorker.eventBus.post(new Events.RosterResult (getRoster.getId(), roster));
         } catch (Exception e) {
             Log.e(TAG, "Exception processing GetEmployer");
@@ -216,7 +229,13 @@ public class BrokerWorker extends IntentService {
         try {
             Log.d(TAG, "Received GetEmployee message");
 
-            RosterEntry rosterEntry = config.getCoverageConnection().getEmployee(getEmployee.getEmployerId(), getEmployee.getEmployeeId());
+            RosterEntry rosterEntry;
+            String employerId = getEmployee.getEmployerId();
+            if (employerId == null){
+                rosterEntry = config.getCoverageConnection().getEmployee(getEmployee.getEmployeeId());
+            } else {
+                rosterEntry = config.getCoverageConnection().getEmployee(employerId, getEmployee.getEmployeeId());
+            }
             BrokerWorker.eventBus.post(new Events.Employee(getEmployee.getId(),getEmployee.getEmployeeId(), getEmployee.getEmployerId(), rosterEntry));
         } catch (Exception e) {
             Log.e(TAG, "Exception processing GetEmployee");

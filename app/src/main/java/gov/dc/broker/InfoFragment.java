@@ -24,7 +24,7 @@ import org.joda.time.LocalDate;
 import java.util.ArrayList;
 
 import gov.dc.broker.models.brokeragency.BrokerClient;
-import gov.dc.broker.models.brokeragency.PlanYear;
+import gov.dc.broker.models.employer.Employer;
 import gov.dc.broker.models.roster.Roster;
 
 /**
@@ -37,6 +37,7 @@ public class InfoFragment extends BrokerFragment {
     private String brokerClientId;
     private Roster roster = null;
     private BrokerClient brokerClient = null;
+    private Employer employer = null;
     private View view;
     private static boolean renewalsInitiallyOpen = true;
     private static boolean participationInitiallyOpen = false;
@@ -67,12 +68,12 @@ public class InfoFragment extends BrokerFragment {
         // TODO Auto-generated method stub
         view = LayoutInflater.from(getActivity()).inflate(R.layout.info_fragment, null);
 
-        if (brokerClient == null) {
+        if (employer == null) {
             brokerClientId = getBrokerActivity().getIntent().getStringExtra(Intents.BROKER_CLIENT_ID);
             if (brokerClientId == null) {
-                // If we get here the employer id in the intent wasn't initialized and
-                // we are in a bad state.
                 Log.e(TAG, "onCreate: no client id found in intent");
+                getMessages().getEmployer(null);
+                getMessages().getRoster(null);
                 return view;
             }
             getMessages().getEmployer(brokerClientId);
@@ -97,6 +98,7 @@ public class InfoFragment extends BrokerFragment {
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void doThis(Events.BrokerClient brokerClientEvent) {
         brokerClient = brokerClientEvent.getBrokerClient();
+        employer = brokerClientEvent.getEmployer();
         EmployerDetailsActivity activity = (EmployerDetailsActivity) getActivity();
         this.coverageYear = activity.getCoverageYear();
         configureDrawers();
@@ -158,16 +160,16 @@ public class InfoFragment extends BrokerFragment {
     }
 
     private void populateField() throws Exception {
-        if (brokerClient == null
+        if (employer == null
             || roster == null){
             return;
         }
 
-        if (brokerClient.planYears != null
-            && brokerClient.planYears.size() > 0) {
+        if (employer.planYears != null
+            && employer.planYears.size() > 0) {
 
             LocalDate now = LocalDate.now();
-            PlanYear planYearForCoverageYear = BrokerUtilities.getPlanYearForCoverageYear(brokerClient, coverageYear);
+            gov.dc.broker.models.employer.PlanYear planYearForCoverageYear = BrokerUtilities.getPlanYearForCoverageYear(employer, coverageYear);
 
             TextView textViewEmployerApplicationDueLabel = (TextView) view.findViewById(R.id.textViewEmployerApplicationDueLabel);
             TextView textViewEmployerApplicationDue = (TextView) view.findViewById(R.id.textViewEmployerApplicationDue);
@@ -284,7 +286,7 @@ public class InfoFragment extends BrokerFragment {
 
         yValues.add(new PieEntry(2*employeeCounts.Enrolled, Integer.toString(employeeCounts.Enrolled)));
         yValues.add(new PieEntry(2*employeeCounts.Waived, Integer.toString(employeeCounts.Waived)));
-        int notEnrolledCount = 2*(brokerClient.employeesTotal - (employeeCounts.Enrolled + employeeCounts.Waived));
+        int notEnrolledCount = 2*(employeeCounts.Total - (employeeCounts.Enrolled + employeeCounts.Waived));
         yValues.add(new PieEntry(notEnrolledCount, Integer.toString(notEnrolledCount)));
 
         PieDataSet dataSet = new PieDataSet(yValues, "");

@@ -23,8 +23,6 @@ import org.joda.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
-import gov.dc.broker.models.brokeragency.BrokerClient;
-import gov.dc.broker.models.employer.Employer;
 import gov.dc.broker.models.roster.Dependent;
 import gov.dc.broker.models.roster.Enrollment;
 import gov.dc.broker.models.roster.Health;
@@ -36,8 +34,8 @@ public class EmployeeDetailsActivity extends BrokerActivity {
     private String employeeId;
     private String employerId;
     private RosterEntry employee;
-    private BrokerClient brokerClient;
-    private Employer employer;
+    //private BrokerClient brokerClient;
+    //private Employer employer;
     private LocalDate coverageYear;
 
     private boolean detailsVisible = true;
@@ -54,7 +52,7 @@ public class EmployeeDetailsActivity extends BrokerActivity {
         employeeId = intent.getStringExtra(Intents.EMPLOYEE_ID);
         employerId = intent.getStringExtra(Intents.BROKER_CLIENT_ID);
         getMessages().getEmployee(employeeId, employerId);
-        getMessages().getEmployer(employerId);
+//        getMessages().getEmployer(employerId);
 
         configToolbar();
 
@@ -122,18 +120,15 @@ public class EmployeeDetailsActivity extends BrokerActivity {
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void doThis(Events.Employee  employeeEvent) throws Exception {
         this.employee = employeeEvent.getEmployee();
-        populate();
-    }
-
-    @Subscribe(threadMode = ThreadMode.MAIN)
-    public void doThis(Events.BrokerClient brokerClient) throws Exception {
-        this.brokerClient = brokerClient.getBrokerClient();
-        populate();
+        try {
+            populate();
+        } catch (Exception e){
+            Log.e(TAG, "exception populating activity", e);
+        }
     }
 
     private void populate() throws Exception {
-        if (employee == null
-            || brokerClient == null){
+        if (employee == null) {
             return;
         }
 

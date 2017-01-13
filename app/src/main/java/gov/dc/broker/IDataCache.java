@@ -15,6 +15,7 @@ public interface IDataCache {
     BrokerAgency getBrokerAgency(DateTime time);
     Employer getEmployer(DateTime time);
     Employer getEmployer(String id, DateTime time);
+    Roster getRoster(DateTime time);
     Roster getRoster(String id, DateTime time);
     void clear();
 

@@ -48,12 +48,12 @@ public abstract class CoverageConnection {
         return urlHandler.processEmployerDetails(response);
     }
 
-    public void determineUserType() throws Exception {
+    public ServerConfiguration.UserType determineUserType() throws Exception {
         try{
             BrokerAgency brokerAgency = getBrokerAgency(DateTime.now());
             serverConfiguration.userType = gov.dc.broker.ServerConfiguration.UserType.Broker;
             dataCache.store(brokerAgency, DateTime.now());
-            return;
+            return serverConfiguration.userType;
         } catch (Exception e){
             // Eatinng exceptions here is intentional. Failure to get broker object
             // will cause an exception and we then need to try to get an employer.
@@ -63,6 +63,7 @@ public abstract class CoverageConnection {
         Employer employer = getEmployer(urlHandler, serverConfiguration);
         dataCache.store(employer, DateTime.now());
         serverConfiguration.userType = gov.dc.broker.ServerConfiguration.UserType.Employer;
+        return serverConfiguration.userType;
     }
 
     public Events.GetLoginResult.UserType userTypeFromAccountInfo(){
@@ -90,7 +91,7 @@ public abstract class CoverageConnection {
 
 
     public Employer getEmployer(String employerId, DateTime time) throws CoverageException, Exception {
-        Log.d(TAG, "CoverageConnection.getEmployer");
+        Log.d(TAG, "CoverageConnection.getEmployer by id");
         checkSessionId();
 
         Employer employer = dataCache.getEmployer(employerId, time);
@@ -119,6 +120,21 @@ public abstract class CoverageConnection {
         //validateUserAndPassword(serverConfiguration.accountName, serverConfiguration.password, serverConfiguration.rememberMe);
     }
 
+    public Roster getRoster(DateTime now) throws Exception {
+        Log.d(TAG, "CoverageConnection.getRoster");
+        checkSessionId();
+
+        Roster roster = dataCache.getRoster(now);
+        if (roster != null){
+            return roster;
+        }
+        UrlHandler.GetParameters getParameters = urlHandler.getEmployerRosterParameters();
+        IConnectionHandler.GetReponse response = connectionHandler.get(getParameters);
+        roster = urlHandler.processRoster(response);
+        dataCache.store(roster, now);
+        return roster;
+    }
+
     public Roster getRoster(String employerId, DateTime now) throws Exception {
         Log.d(TAG, "CoverageConnection.getRoster");
         checkSessionId();
@@ -136,7 +152,8 @@ public abstract class CoverageConnection {
         return roster;
     }
 
-    public BrokerAgency getBrokerAgency(DateTime now) throws Exception, CoverageException {
+    public BrokerAgency getBrokerAgency(DateTime now) throws
+            Exception, CoverageException {
         checkSessionId();
         BrokerAgency brokerAgency = dataCache.getBrokerAgency(DateTime.now());
         if (brokerAgency == null){
@@ -161,6 +178,12 @@ public abstract class CoverageConnection {
         return parser.parseCarriers(response);
     }
 
+    public RosterEntry getEmployee(String employeeId) throws Exception {
+        Roster roster = getRoster(DateTime.now());
+        DateTime now = DateTime.now();
+        return BrokerUtilities.getRosterEntry(roster, employeeId);
+    }
+
     public RosterEntry getEmployee(String employerId, String employeeId) throws Exception {
         Roster roster = getRoster(employerId, DateTime.now());
         DateTime now = DateTime.now();
@@ -170,5 +193,22 @@ public abstract class CoverageConnection {
     public ServerConfiguration getLogin(){
         storageHandler.read(serverConfiguration);
         return serverConfiguration;
+    }
+
+    public Employer getDefaultEmployer(DateTime time) throws Exception {
+        Log.d(TAG, "CoverageConnection.getEmployer by id");
+        checkSessionId();
+
+        Employer employer = dataCache.getEmployer(time);
+        if (employer != null){
+            return employer;
+        }
+
+        BrokerAgency brokerAgency = dataCache.getBrokerAgency(time);
+        UrlHandler.GetParameters employerDetailsParameters = urlHandler.getEmployerDetailsParameters();
+        IConnectionHandler.GetReponse getReponse = connectionHandler.get(employerDetailsParameters);
+        employer = urlHandler.processEmployerDetails(getReponse);
+        dataCache.store(employer, time);
+        return employer;
     }
 }

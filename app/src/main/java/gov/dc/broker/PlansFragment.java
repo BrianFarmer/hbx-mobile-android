@@ -48,9 +48,8 @@ public class PlansFragment extends BrokerFragment {
         if (employer == null) {
             brokerClientId = getBrokerActivity().getIntent().getStringExtra(Intents.BROKER_CLIENT_ID);
             if (brokerClientId == null) {
-                // If we get here the employer id in the intent wasn't initialized and
-                // we are in a bad state.
                 Log.e(TAG, "onCreate: no client id found in intent");
+                getMessages().getEmployer(null);
                 return view;
             }
             getMessages().getEmployer(brokerClientId);

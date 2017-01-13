@@ -197,9 +197,11 @@ public class Events {
         static final int Error = 2;
 
         private final int loginResult;
+        private final ServerConfiguration.UserType userType;
 
-        public LoginRequestResult(int loginResult) {
+        public LoginRequestResult(int loginResult, ServerConfiguration.UserType userType) {
             this.loginResult = loginResult;
+            this.userType = userType;
         }
 
         public int getLoginResult(){

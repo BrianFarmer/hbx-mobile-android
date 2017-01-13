@@ -21,6 +21,13 @@ import gov.dc.broker.models.roster.RosterEntry;
  */
 
 public class BrokerUtilities {
+    public static long daysLeft(gov.dc.broker.models.employer.PlanYear planYear, LocalDate today) throws Exception {
+        if (BrokerUtilities.isInOpenEnrollment(planYear, today)){
+            return Utilities.dateDifferenceDays(today, planYear.planYearBegins);
+        }
+        return Utilities.dateDifferenceDays(today, planYear.renewalApplicationDue);
+    }
+
     public static long daysLeft(gov.dc.broker.models.brokeragency.PlanYear planYear, LocalDate today) throws Exception {
         if (BrokerUtilities.isInOpenEnrollment(planYear, today)){
             return Utilities.dateDifferenceDays(today, planYear.planYearBegins);
@@ -173,6 +180,10 @@ public class BrokerUtilities {
     }
 
     public static boolean isAlerted(gov.dc.broker.models.brokeragency.PlanYear planYear) {
+        return false;
+    }
+
+    public static boolean isAlerted(PlanYear planYear) {
         return false;
     }
 

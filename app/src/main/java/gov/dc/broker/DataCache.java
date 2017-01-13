@@ -88,6 +88,17 @@ public class DataCache implements IDataCache {
     }
 
     @Override
+    public Roster getRoster(DateTime time) {
+        if (rosters.containsKey(Default_Id)){
+            CachedData<Roster> rosterCachedData = rosters.get(Default_Id);
+            if (time.compareTo(rosterCachedData.time.plus(BuildConfig2.getCacheTimeout())) <= 0){
+                return rosterCachedData.storedData;
+            }
+        }
+        return null;
+    }
+
+    @Override
     public void clear() {
         brokerAgency = null;
         employers.clear();

@@ -1,7 +1,6 @@
 package gov.dc.broker;
 
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -14,8 +13,6 @@ import org.joda.time.LocalDate;
 import java.util.ArrayList;
 
 import gov.dc.broker.models.roster.Roster;
-
-import static com.bumptech.glide.gifdecoder.GifHeaderParser.TAG;
 
 /**
  * Created by plast on 10/21/2016.
@@ -69,9 +66,7 @@ public class CostsFragment extends BrokerFragment {
         if (rosterResult == null) {
             brokerClientId = getBrokerActivity().getIntent().getStringExtra(Intents.BROKER_CLIENT_ID);
             if (brokerClientId == null) {
-                // If we get here the employer id in the intent wasn't initialized and
-                // we are in a bad state.
-                Log.e(TAG, "onCreate: no client id found in intent");
+                getMessages().getRoster();
                 return view;
             }
             getMessages().getRoster(brokerClientId);

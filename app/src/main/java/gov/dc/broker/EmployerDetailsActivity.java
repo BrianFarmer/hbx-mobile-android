@@ -28,7 +28,7 @@ import java.util.ArrayList;
 
 import gov.dc.broker.models.brokeragency.BrokerClient;
 import gov.dc.broker.models.brokeragency.ContactInfo;
-import gov.dc.broker.models.brokeragency.PlanYear;
+import gov.dc.broker.models.employer.Employer;
 
 /**
  * Created by plast on 10/21/2016.
@@ -46,11 +46,11 @@ public class EmployerDetailsActivity extends BrokerActivity {
 
     private Toolbar toolbar;
     private String clientId;
-    BrokerClient brokerClient;
     private FragmentTabHost tabHost;
     private LocalDate coverageYear;
     private String rosterFilter = null;
-
+    private Employer employer;
+    private BrokerClient brokerClient;
 
     public EmployerDetailsActivity(){
         Log.d(TAG, "In EmployerDetailsActivity Ctor");
@@ -62,14 +62,16 @@ public class EmployerDetailsActivity extends BrokerActivity {
     public void doThis(Events.Error error){
         Toast toast = Toast.makeText(this, "Error retrieving employer data.", Toast.LENGTH_LONG);
         toast.show();
+        this.finish();
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void doThis(Events.BrokerClient  brokerClientEvent) {
         brokerClient = brokerClientEvent.getBrokerClient();
+        employer = brokerClientEvent.getEmployer();
 
         TextView textViewCompanyName = (TextView) findViewById(R.id.textViewCompanyName);
-        textViewCompanyName.setText(brokerClient.employerName);
+        textViewCompanyName.setText(employer.employerName);
 
         Spinner spinnerCoverageYear = (Spinner) findViewById(R.id.spinnerCoverageYear);
         TextView textViewCoverageYear = (TextView) findViewById(R.id.textViewCoverageYear);
@@ -78,12 +80,12 @@ public class EmployerDetailsActivity extends BrokerActivity {
 
         // set coverage year to the lowsest playYearBegins in the planYears
         LocalDate initialCoverageYear = new LocalDate(2000, 1, 1);
-        if (brokerClient.planYears.size() > 1) {
+        if (employer.planYears.size() > 1) {
             spinnerCoverageYear.setVisibility(View.VISIBLE);
             textViewCoverageYear.setVisibility(View.INVISIBLE);
             int i = 0;
             int selectedIndex = 0;
-            for (PlanYear planYear : brokerClient.planYears) {
+            for (gov.dc.broker.models.employer.PlanYear planYear : employer.planYears) {
                 if (planYear.planYearBegins != null
                         && planYear.planYearBegins.compareTo(initialCoverageYear) > 0) {
                     initialCoverageYear = planYear.planYearBegins;
@@ -98,7 +100,7 @@ public class EmployerDetailsActivity extends BrokerActivity {
                 spinnerCoverageYear.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
                     @Override
                     public void onItemSelected(AdapterView<?> adapterView, View view, int pos, long l) {
-                        coverageYear = brokerClient.planYears.get(pos).planYearBegins;
+                        coverageYear = employer.planYears.get(pos).planYearBegins;
                         getMessages().coverageYearChanged(coverageYear);
                     }
 
@@ -113,8 +115,8 @@ public class EmployerDetailsActivity extends BrokerActivity {
         } else {
             spinnerCoverageYear.setVisibility(View.INVISIBLE);
             textViewCoverageYear.setVisibility(View.VISIBLE);
-            if (brokerClient.planYears.size() == 1) {
-                PlanYear planYear = brokerClient.planYears.get(0);
+            if (employer.planYears.size() == 1) {
+                gov.dc.broker.models.employer.PlanYear planYear = employer.planYears.get(0);
                 coverageYear = planYear.planYearBegins;
                 textViewCoverageYear.setText(String.format("%s (%s)", Utilities.DateAsMonthDayYear(planYear.planYearBegins), planYear.state));
             }
@@ -122,7 +124,7 @@ public class EmployerDetailsActivity extends BrokerActivity {
 
 
         TextView textViewEnrollmentStatus = (TextView) findViewById(R.id.textViewEnrollmentStatus);
-        PlanYear planYear = brokerClient.planYears.get(0);
+        gov.dc.broker.models.employer.PlanYear planYear = employer.planYears.get(0);
         LocalDate today = new LocalDate();
         if (BrokerUtilities.isInOpenEnrollment(planYear, today)) {
             if (BrokerUtilities.isAlerted(planYear)){
@@ -162,10 +164,13 @@ public class EmployerDetailsActivity extends BrokerActivity {
     }
 
     private void configButtons(){
-        if (brokerClient == null){
+        if (employer == null){
             return;
         }
 
+        if (brokerClient == null){
+            return;
+        }
         ContactInfo curContactInfo = brokerClient.contactInfo.get(0);
 
         ImageButton emailButton = (ImageButton)findViewById(R.id.imageButtonEmail);
@@ -228,15 +233,15 @@ public class EmployerDetailsActivity extends BrokerActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        if (brokerClient == null) {
+        if (employer == null) {
             Intent intent = getIntent();
             clientId = intent.getStringExtra(BROKER_CLIENT_ID);
             if (clientId == null) {
-                Log.e(TAG, "onCreate: no client id found in intent");
-                return;
+                Log.e(TAG, "onCreate: logged in as client since no client id found in intent");
+                getMessages().getEmployer();
+            } else {
+                getMessages().getEmployer(clientId);
             }
-
-            getMessages().getEmployer(clientId);
         }
 
         LayoutInflater inflater = getLayoutInflater();

@@ -136,12 +136,16 @@ public class RosterFragment extends BrokerFragment implements EmployeeFilterDial
         if (rosterResult == null) {
             brokerClientId = getBrokerActivity().getIntent().getStringExtra(Intents.BROKER_CLIENT_ID);
             if (brokerClientId == null) {
-                // If we get here the employer id in the intent wasn't initialized and
-                // we are in a bad state.
-                Log.e(TAG, "onCreate: no client id found in intent");
-                return view;
+                getMessages().getRoster();
+            } else {
+                getMessages().getRoster(brokerClientId);
             }
-            getMessages().getRoster(brokerClientId);
+        } else {
+            try {
+                populateRosterList();
+            } catch (Exception e) {
+                Log.e(TAG, "exception populating InfoFragment", e);
+            }
         }
         return view;
     }

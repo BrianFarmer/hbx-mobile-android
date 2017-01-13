@@ -84,13 +84,16 @@ public abstract class UrlHandler {
             getParameters.cookies.put("_session_id", serverConfiguration.sessionId);
         }
 
-        getParameters.url = new HttpUrl.Builder()
-                .scheme(serverConfiguration.dataInfo.scheme)
-                .host(serverConfiguration.dataInfo.host)
-                .addPathSegments(serverConfiguration.employerDetailPath)
-                .port(serverConfiguration.dataInfo.port)
-                .build();
-
+        if (serverConfiguration.employerDetailPath.substring(0,4).compareToIgnoreCase("http") == 0){
+            getParameters.url = HttpUrl.parse(serverConfiguration.employerDetailPath);
+        } else {
+            getParameters.url = new HttpUrl.Builder()
+                    .scheme(serverConfiguration.dataInfo.scheme)
+                    .host(serverConfiguration.dataInfo.host)
+                    .addPathSegments(serverConfiguration.employerDetailPath)
+                    .port(serverConfiguration.dataInfo.port)
+                    .build();
+        }
         return getParameters;
     }
 
@@ -145,7 +148,6 @@ public abstract class UrlHandler {
                 .build();
     }
 
-
     GetParameters getEmployerRosterParameters(String rosterId) {
         GetParameters getParameters = new GetParameters();
 
@@ -162,6 +164,28 @@ public abstract class UrlHandler {
                     .scheme(serverConfiguration.dataInfo.scheme)
                     .host(serverConfiguration.dataInfo.host)
                     .addPathSegments(rosterId)
+                    .port(serverConfiguration.dataInfo.port)
+                    .build();
+        }
+        return getParameters;
+    }
+
+    GetParameters getEmployerRosterParameters() {
+        GetParameters getParameters = new GetParameters();
+
+        if (serverConfiguration.sessionId != null) {
+            getParameters.cookies = new HashMap<>();
+            getParameters.cookies.put("_session_id", serverConfiguration.sessionId);
+        }
+
+
+        if (serverConfiguration.employerRosterPathForBroker.substring(0,4).compareToIgnoreCase("http") == 0){
+            getParameters.url = HttpUrl.parse(serverConfiguration.employerRosterPathForBroker);
+        } else {
+            getParameters.url = new HttpUrl.Builder()
+                    .scheme(serverConfiguration.dataInfo.scheme)
+                    .host(serverConfiguration.dataInfo.host)
+                    .addPathSegments(serverConfiguration.employerRosterPathForBroker)
                     .port(serverConfiguration.dataInfo.port)
                     .build();
         }
