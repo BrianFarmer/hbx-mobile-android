@@ -228,7 +228,11 @@ public class MainActivity extends BrokerActivity {
         }
         brokerAgency = employerListEvent.getBrokerAgency();
 
-        coverageYear = brokerAgency.brokerClients.get(0).planYearBegins;
+        if (brokerAgency.brokerClients.size() == 0){
+            coverageYear = null;
+        } else {
+            coverageYear = brokerAgency.brokerClients.get(0).planYearBegins;
+        }
         final EmployerAdapter employerAdapter = new EmployerAdapter(this, this.getBaseContext(), brokerAgency.brokerClients, coverageYear);
         listViewEmployers.setAdapter(employerAdapter);
         listViewEmployers.setSelectionFromTop(scrollPosition, 0);
