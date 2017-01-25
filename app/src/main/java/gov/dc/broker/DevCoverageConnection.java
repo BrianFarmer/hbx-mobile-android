@@ -18,7 +18,7 @@ public class DevCoverageConnection extends CoverageConnection {
     }
 
     @Override
-    public void validateUserAndPassword(String accountName, String password, Boolean rememberMe) throws Exception {
+    public boolean validateUserAndPassword(String accountName, String password, Boolean rememberMe) throws Exception {
         UrlHandler.GetParameters getParameters = devUrlHandler.getLoginUrlParameters();
         IConnectionHandler.GetReponse getReponse = connectionHandler.get(getParameters);
         devUrlHandler.processLoginPageReponse(getReponse);
@@ -28,5 +28,6 @@ public class DevCoverageConnection extends CoverageConnection {
         //IConnectionHandler.PostResponse loginPostResponse = connectionHandler.postHttpURLConnection(loginPostParameters, accountName, password, rememberMe);
         IConnectionHandler.PostResponse loginPostResponse = connectionHandler.post(loginPostParameters);
         urlHandler.processLoginReponse(accountName, password, rememberMe, loginPostResponse);
+        return false;
     }
 }

@@ -41,7 +41,7 @@ public abstract class UrlHandler {
     }
 
     protected final ServerConfiguration serverConfiguration;
-    private final JsonParser parser;
+    protected final JsonParser parser;
 
     public UrlHandler(ServerConfiguration serverConfiguration, JsonParser parser){
         this.serverConfiguration = serverConfiguration;
@@ -118,6 +118,7 @@ public abstract class UrlHandler {
             getParameters.url = new HttpUrl.Builder()
                     .scheme(serverConfiguration.dataInfo.scheme)
                     .host(serverConfiguration.dataInfo.host)
+                    .addPathSegments(serverConfiguration.employerRosterPathForBroker)
                     .addPathSegments(path)
                     .port(serverConfiguration.dataInfo.port)
                     .build();
@@ -163,6 +164,7 @@ public abstract class UrlHandler {
             getParameters.url = new HttpUrl.Builder()
                     .scheme(serverConfiguration.dataInfo.scheme)
                     .host(serverConfiguration.dataInfo.host)
+                    .addPathSegments(serverConfiguration.employerRosterPathForBroker)
                     .addPathSegments(rosterId)
                     .port(serverConfiguration.dataInfo.port)
                     .build();

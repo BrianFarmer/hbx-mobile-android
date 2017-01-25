@@ -15,14 +15,21 @@ import android.util.TypedValue;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.Spinner;
 import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
+
+import java.util.ArrayList;
+
+import gov.dc.broker.models.gitaccounts.GitAccounts;
 
 /**
  * A login screen that offers login via email/password.
@@ -38,10 +45,15 @@ public class LoginActivity extends BrokerActivity {
     private Switch rememberMe;
     private View mProgressView;
     private View mLoginFormView;
+    private Spinner urlsSpinner;
+    private Spinner accountsSpinner;
+    private ArrayList<String> urls;
 
     private ProgressDialog progressDialog;
 
     private CountingIdlingResource idlingResource = new CountingIdlingResource("Login");
+    private ArrayList<String> urlLabels;
+    private GitAccounts gitAccounts;
 
 
     public CountingIdlingResource getIdlingResource() {
@@ -54,26 +66,52 @@ public class LoginActivity extends BrokerActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        setContentView(R.layout.activity_login);
+        setContentView(BuildConfig2.getLoginLayout());
         // Set up the login form.
-        emailAddress = (EditText) findViewById(R.id.editTextAcountName);
-        password = (EditText) findViewById(R.id.editTextPassword);
-        rememberMe = (Switch)findViewById(R.id.switchRememberMe);
-        password.setTypeface(Typeface.DEFAULT_BOLD);
-        //password.setTypeface(password.getTypeface(), Typeface.DEFAULT);
-        password.setTextSize(TypedValue.COMPLEX_UNIT_SP, 20);
-        password.setTransformationMethod(new PasswordTransformationMethod());
-        password.setOnEditorActionListener(new TextView.OnEditorActionListener() {
-            @Override
-            public boolean onEditorAction(TextView textView, int id, KeyEvent keyEvent) {
-                if (keyEvent == null
-                    || keyEvent.getAction() != KeyEvent.ACTION_DOWN) {
-                    return false;
+        if (BuildConfig2.isGit()){
+            urls = BuildConfig2.getUrls();
+            urlLabels = BuildConfig2.getUrlLabels();
+            urlsSpinner = (Spinner)findViewById(R.id.spinnerUrlRoot);
+            ArrayAdapter<String> dataAdapter = new ArrayAdapter<String>(this,
+                    android.R.layout.simple_spinner_item, urlLabels);
+            dataAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+            urlsSpinner.setAdapter(dataAdapter);
+            urlsSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+                @Override
+                public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
+                    if (i == 0){
+                        return;
+                    }
+                    getMessages().getGitAccounts(urls.get(i));
                 }
-                attemptLogin();
-                return true;
-            }
-        });
+
+                @Override
+                public void onNothingSelected(AdapterView<?> adapterView) {
+
+                }
+            });
+            accountsSpinner = (Spinner)findViewById(R.id.spinnerAccounts);
+        } else {
+            emailAddress = (EditText) findViewById(R.id.editTextAcountName);
+            password = (EditText) findViewById(R.id.editTextPassword);
+            rememberMe = (Switch) findViewById(R.id.switchRememberMe);
+            password.setTypeface(Typeface.DEFAULT_BOLD);
+            //password.setTypeface(password.getTypeface(), Typeface.DEFAULT);
+            password.setTextSize(TypedValue.COMPLEX_UNIT_SP, 20);
+            password.setTransformationMethod(new PasswordTransformationMethod());
+            password.setOnEditorActionListener(new TextView.OnEditorActionListener() {
+                @Override
+                public boolean onEditorAction(TextView textView, int id, KeyEvent keyEvent) {
+                    if (keyEvent == null
+                            || keyEvent.getAction() != KeyEvent.ACTION_DOWN) {
+                        return false;
+                    }
+                    attemptLogin();
+                    return true;
+                }
+            });
+        }
+
 
         Button logInButton = (Button) findViewById(R.id.buttonLogIn);
         logInButton.setOnClickListener(new OnClickListener() {
@@ -84,10 +122,39 @@ public class LoginActivity extends BrokerActivity {
         });
 
         idlingResource.increment();
-        getMessages().getLogin();
+        if (!BuildConfig2.isGit()) {
+            getMessages().getLogin();
+        }
     }
 
     private void attemptLogin() {
+        if (BuildConfig2.isGit()){
+            if (urlsSpinner == null
+                || accountsSpinner == null){
+                return;
+            }
+            long urlItemId = urlsSpinner.getSelectedItemId();
+            long accountsItemId = accountsSpinner.getSelectedItemId();
+            if (urlItemId == 0
+                || accountsItemId == 0) {
+                return;
+            }
+            int accountId = (int)accountsItemId - 1;
+            String accountName;
+            boolean isBroker;
+            if (accountId > gitAccounts.brokers.size()) {
+                accountId = accountId - gitAccounts.brokers.size();
+                accountName = gitAccounts.employers.get(accountId);
+                isBroker = false;
+            } else {
+                accountName = gitAccounts.brokers.get(accountId);
+                isBroker = true;
+            }
+
+            getMessages().loginRequest(new Events.LoginRequest(urls.get((int)urlItemId - 1), accountName, isBroker));
+            return;
+        }
+
         showProgress();
         getMessages().loginRequest(new Events.LoginRequest(emailAddress.getText(), password.getText(), rememberMe.isChecked()));
     }
@@ -114,6 +181,19 @@ public class LoginActivity extends BrokerActivity {
             rememberMe.setChecked(true);
 
         }
+    }
+
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void doThis(final Events.GitAccounts gitAccounts) {
+        this.gitAccounts = gitAccounts.getGitAccounts();
+
+        ArrayList<String> accounts = new ArrayList<>();
+        accounts.add("Choose Account");
+        accounts.addAll(this.gitAccounts.brokers);
+        accounts.addAll(this.gitAccounts.employers);
+        ArrayAdapter<String> arrayAdapter = new ArrayAdapter<String>(this,
+                android.R.layout.simple_spinner_item, accounts);
+        accountsSpinner.setAdapter(arrayAdapter);
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)

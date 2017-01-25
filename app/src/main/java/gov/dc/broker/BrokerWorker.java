@@ -21,6 +21,7 @@ import java.lang.reflect.Type;
 import gov.dc.broker.models.brokeragency.BrokerAgency;
 import gov.dc.broker.models.brokeragency.BrokerClient;
 import gov.dc.broker.models.employer.Employer;
+import gov.dc.broker.models.gitaccounts.GitAccounts;
 import gov.dc.broker.models.roster.Roster;
 import gov.dc.broker.models.roster.RosterEntry;
 
@@ -63,6 +64,24 @@ public class BrokerWorker extends IntentService {
 
 
     @Subscribe(threadMode = ThreadMode.BACKGROUND)
+    public void doThis(Events.GetGitAccounts getGitAccounts) {
+        try {
+            Log.d(TAG, "Getting git accounts");
+            ServerConfiguration serverConfiguration = config.getServerConfiguration();
+            UrlHandler urlHandler = config.getUrlHandler();
+            String urlRoot = getGitAccounts.getUrlRoot();
+            GitAccounts gitAccounts = config.getCoverageConnection().getGitAccounts(urlRoot);
+            Log.d(TAG,"got git accounts");
+            BrokerWorker.eventBus.post(new Events.GitAccounts(gitAccounts));
+
+        } catch (Exception e){
+            Log.e(TAG, "Exception processing getGitAaccounts", e);
+            e.printStackTrace();
+            BrokerWorker.eventBus.post(new Events.Error("Error getting git account information"));
+        }
+    }
+
+    @Subscribe(threadMode = ThreadMode.BACKGROUND)
     public void doThis(Events.LoginRequest loginRequest) {
 
         try {
@@ -73,8 +92,13 @@ public class BrokerWorker extends IntentService {
             String password = loginRequest.getPassword().toString();
             Boolean rememberMe = loginRequest.getRememberMe();
             Log.d(TAG,"LoginRequest: Getting sessionid");
-            config.getCoverageConnection().validateUserAndPassword(accountName, password, rememberMe);
+            boolean result = config.getCoverageConnection().validateUserAndPassword(accountName, password, rememberMe);
             Log.d(TAG,"LoginRequest: got sessionid");
+            if (result){
+                ServerConfiguration.UserType userType = config.getCoverageConnection().determineUserType();
+                BrokerWorker.eventBus.post(new Events.LoginRequestResult(Events.LoginRequestResult.Success, userType));
+                return;
+            }
             BrokerWorker.eventBus.post(new Events.GetSecurityAnswer(serverConfiguration.securityQuestion));
         }
         catch (Exception e) {

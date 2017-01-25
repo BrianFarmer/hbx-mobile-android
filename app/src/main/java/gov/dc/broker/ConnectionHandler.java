@@ -429,8 +429,7 @@ public class ConnectionHandler implements IConnectionHandler{
                 builder.header(key, putParameters.headers.get(key));
             }
         }
-        Request request = builder.put(putParameters.body)
-                .build();
+        Request request = builder.put(putParameters.body).build();
 
         Response response = getClient(putParameters.url.scheme(), true).newCall(request).execute();
 
@@ -443,6 +442,14 @@ public class ConnectionHandler implements IConnectionHandler{
 
     @Override
     public GetReponse get(UrlHandler.GetParameters getParameters) throws IOException, CoverageException {
+        if (getParameters == null){
+            throw new IllegalArgumentException  ("getParameters is null");
+        }
+        if (getParameters.url == null
+            || getParameters.url.toString().length() == 0){
+            throw new IllegalArgumentException  ("url is empty or null");
+        }
+
         Request.Builder builder = new Request.Builder()
                 .url(getParameters.url);
 
@@ -469,7 +476,7 @@ public class ConnectionHandler implements IConnectionHandler{
         }
 
         GetReponse getReponse = new GetReponse();
-
+        getReponse.responseCode = response.code();
         getReponse.body = response.body().string();
         getReponse.cookies = getCookies(response.headers().toMultimap());
 

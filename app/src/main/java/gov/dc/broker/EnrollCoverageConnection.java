@@ -15,11 +15,12 @@ public class EnrollCoverageConnection extends CoverageConnection {
     }
 
     @Override
-    public void validateUserAndPassword(String accountName, String password, Boolean rememberMe) throws Exception {
+    public boolean validateUserAndPassword(String accountName, String password, Boolean rememberMe) throws Exception {
         UrlHandler.PostParameters loginPostParameters = enrollUrlHandler.getLoginPostParameters(accountName, password);
         IConnectionHandler.PostResponse postResponse = connectionHandler.simplePostHttpURLConnection(loginPostParameters, accountName, password, rememberMe);
         //IConnectionHandler.PostResponse postResponse = connectionHandler.post(loginPostParameters);
         enrollUrlHandler.processLoginReponse(accountName, password, rememberMe, postResponse);
+        return false;
     }
 
     public void checkSecurityAnswer(String securityAnswer) throws Exception {

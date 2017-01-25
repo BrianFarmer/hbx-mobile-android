@@ -7,6 +7,7 @@ import org.joda.time.DateTime;
 import gov.dc.broker.models.brokeragency.BrokerAgency;
 import gov.dc.broker.models.brokeragency.BrokerClient;
 import gov.dc.broker.models.employer.Employer;
+import gov.dc.broker.models.gitaccounts.GitAccounts;
 import gov.dc.broker.models.roster.Roster;
 import gov.dc.broker.models.roster.RosterEntry;
 import okhttp3.HttpUrl;
@@ -34,7 +35,7 @@ public abstract class CoverageConnection {
         this.storageHandler = storageHandler;
     }
 
-    public abstract void validateUserAndPassword(String accountName, String password, Boolean rememberMe) throws Exception;
+    public abstract boolean validateUserAndPassword(String accountName, String password, Boolean rememberMe) throws Exception;
 
 
     public void checkSecurityAnswer(String securityAnswer) throws Exception {
@@ -210,5 +211,9 @@ public abstract class CoverageConnection {
         employer = urlHandler.processEmployerDetails(getReponse);
         dataCache.store(employer, time);
         return employer;
+    }
+
+    public GitAccounts getGitAccounts(String urlRoot) throws Exception {
+        return null;
     }
 }

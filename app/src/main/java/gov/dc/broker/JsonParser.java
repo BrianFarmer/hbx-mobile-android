@@ -10,6 +10,7 @@ import gov.dc.broker.models.Security.LoginResponse;
 import gov.dc.broker.models.Security.SecurityAnswerResponse;
 import gov.dc.broker.models.brokeragency.BrokerAgency;
 import gov.dc.broker.models.employer.Employer;
+import gov.dc.broker.models.gitaccounts.GitAccounts;
 import gov.dc.broker.models.roster.Roster;
 
 /**
@@ -73,5 +74,13 @@ public class JsonParser {
         gsonBuilder.registerTypeAdapter(LocalDate.class, new LocalDateDeserializer());
         Gson gson = gsonBuilder.create();
         return gson.fromJson(body.replace("\"\"", "null"), SecurityAnswerResponse.class);
+    }
+
+    public GitAccounts parseGitAccounts(String body) {
+        GsonBuilder gsonBuilder = new GsonBuilder();
+        gsonBuilder.registerTypeAdapter(DateTime.class, new DateTimeDeserializer());
+        gsonBuilder.registerTypeAdapter(LocalDate.class, new LocalDateDeserializer());
+        Gson gson = gsonBuilder.create();
+        return gson.fromJson(body.replace("\"\"", "null"), GitAccounts.class);
     }
 }

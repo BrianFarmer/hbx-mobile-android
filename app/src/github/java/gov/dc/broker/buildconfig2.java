@@ -6,6 +6,8 @@ import com.microsoft.azure.mobile.crashes.Crashes;
 
 import org.joda.time.Duration;
 
+import java.util.ArrayList;
+
 import static gov.dc.broker.ServerConfiguration.HostInfo;
 
 class BuildConfig2 {
@@ -56,9 +58,16 @@ class BuildConfig2 {
         return new BuildConfig2();
     }
 
+    public static boolean isGit() {
+        return true;
+    }
+
+    public static int getLoginLayout() {
+        return R.layout.activity_login_git;
+    }
 
 
-    public UrlHandler getUrlHandler() {
+    public GitUrlHandler getUrlHandler() {
         return new GitUrlHandler(getServerConfiguration(), new JsonParser());
     }
 
@@ -86,4 +95,19 @@ class BuildConfig2 {
         MobileCenter.start(BrokerApplication.getBrokerApplication(), "3f262857-3956-470c-acc1-c23fc38d8118",
                 Analytics.class, Crashes.class);
     }
-}
+
+    public static ArrayList<String> getUrls() {
+        ArrayList urls = new ArrayList();
+        urls.add("https://raw.githubusercontent.com/BrianFarmer/HBX-mobile-app-APIs/TemplatedTests/accounts");
+        urls.add("https://raw.githubusercontent.com/BrianFarmer/HBX-mobile-app-APIs/TemplatedTests/accounts");
+        urls.add("https://raw.githubusercontent.com/BrianFarmer/HBX-mobile-app-APIs/TemplatedTests/accounts");
+        return urls;
+    }
+
+    public static ArrayList<String> getUrlLabels() {
+        ArrayList urls = new ArrayList();
+        urls.add("Choose a repository");
+        urls.add("Brian's Fork");
+        urls.add("HBX Main Repository");
+        return urls;
+    }}

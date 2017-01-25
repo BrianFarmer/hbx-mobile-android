@@ -1,0 +1,121 @@
+<RelativeLayout
+    xmlns:tools="http://schemas.android.com/tools"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/mainblue"
+>
+    <ImageView
+        android:id="@+id/imageViewDcHealthLinkLogo"
+        android:layout_width="match_parent"
+        android:scaleType="fitXY"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="40dp"
+        android:layout_marginRight="40dp"
+        android:layout_marginBottom="30dp"
+        android:layout_marginTop="30dp"
+        android:src="@drawable/app_header_two_inches"
+        android:adjustViewBounds="true"
+        />
+
+    <Spinner
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/imageViewDcHealthLinkLogo"
+        android:layout_marginLeft="40dp"
+        android:layout_marginRight="40dp"
+        android:id="@+id/spinnerUrlRoot"
+        />
+
+    <View
+        android:id="@+id/viewAccountSeparator"
+        style="@style/Separator"
+        android:layout_below="@+id/spinnerUrlRoot"
+        android:layout_marginLeft="40dp"
+        android:layout_marginRight="40dp"
+        android:background="@android:color/white"
+        />
+
+    <Spinner
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/viewAccountSeparator"
+        android:layout_marginLeft="40dp"
+        android:layout_marginRight="40dp"
+        android:id="@+id/spinnerAccounts"
+        />
+
+    <View
+        android:id="@+id/viewPasswordSeparator"
+        style="@style/Separator"
+        android:layout_below="@+id/spinnerAccounts"
+        android:layout_marginLeft="40dp"
+        android:layout_marginRight="40dp"
+        android:background="#ffffff"
+        />
+
+    <Switch
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/remember_me"
+        android:id="@+id/switchRememberMe"
+        android:layout_below="@+id/viewPasswordSeparator"
+        android:checked="false"
+        android:layout_marginLeft="40dp"
+        android:layout_marginRight="40dp"
+        android:textSize="20sp"
+        android:layout_marginTop="10dp"
+        android:layout_marginBottom="10dp"
+        android:textColor="@color/white"
+        android:thumb="@drawable/switchselector"
+        android:track="@drawable/trackselector"
+        />
+
+    <Button
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/log_in"
+        android:textAllCaps="true"
+        android:id="@+id/buttonLogIn"
+        android:layout_below="@+id/switchRememberMe"
+        android:background="@drawable/login_button"
+        android:layout_marginLeft="40dp"
+        android:layout_marginRight="40dp"
+        android:textSize="20sp"
+        android:textStyle="bold"
+        android:textColor="@color/mainblue"
+        />
+
+    <TextView
+        android:id="@+id/textViewExistingCustomer"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/existing_customers"
+        android:maxLines="3"
+        android:layout_below="@+id/buttonLogIn"
+        android:layout_marginTop="40dp"
+        android:layout_marginLeft="75dp"
+        android:layout_marginRight="75dp"
+        android:textColor="@color/white"
+        android:textAlignment="center"
+        android:textSize="18sp"
+        />
+
+    <TextView
+        android:id="@+id/textView2"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/not_existing"
+        android:maxLines="3"
+        android:layout_below="@+id/textViewExistingCustomer"
+        android:layout_marginTop="20dp"
+        android:layout_marginLeft="75dp"
+        android:layout_marginRight="75dp"
+        android:textColor="@color/white"
+        android:textAlignment="center"
+        android:textSize="18sp"
+        />
+
+
+
+</RelativeLayout>

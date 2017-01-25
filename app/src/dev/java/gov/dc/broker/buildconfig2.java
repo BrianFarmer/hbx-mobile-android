@@ -54,7 +54,13 @@ class BuildConfig2 {
         return new BuildConfig2();
     }
 
+    public static boolean isGit() {
+        return false;
+    }
 
+    public static int getLoginLayout() {
+        return R.layout.activity_login;
+    }
 
     public DevUrlHandler getUrlHandler() {
         return new DevUrlHandler(getServerConfiguration(), new JsonParser());
@@ -83,4 +89,6 @@ class BuildConfig2 {
     public static void initMobileCenter() {
 
     }
+
+    public static ArrayList<String> getUrls() { return null;  }
 }

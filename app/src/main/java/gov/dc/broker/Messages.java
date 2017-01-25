@@ -15,4 +15,5 @@ public interface Messages {
     void getRoster(String employerId);
     void getEmployee(String employeeId, String employerId);
     void coverageYearChanged(LocalDate coverageYear);
+    void getGitAccounts(String s);
 }

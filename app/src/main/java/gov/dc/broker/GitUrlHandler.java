@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 
 import gov.dc.broker.models.Security.SecurityAnswerResponse;
+import gov.dc.broker.models.gitaccounts.GitAccounts;
 import okhttp3.FormBody;
 import okhttp3.HttpUrl;
 
@@ -69,5 +70,20 @@ public class GitUrlHandler extends UrlHandler {
 
     protected HttpUrl getEmployerRosterUrl(String employerId) {
         return HttpUrl.parse(employerId);
+    }
+
+    public GetParameters getGitAccountGetParameters(String urlRoot) {
+        GetParameters getParameters = new GetParameters();
+        getParameters.url = HttpUrl.parse(urlRoot + "/accounts.json");
+        return getParameters;
+    }
+
+    public GitAccounts processGetGitAccounts(IConnectionHandler.GetReponse getReponse, String urlRoot) throws Exception {
+        if (getReponse.responseCode < 200
+            || getReponse.responseCode >= 300){
+            throw new Exception("Error getting accounts");
+        }
+
+        return parser.parseGitAccounts(getReponse.body);
     }
 }

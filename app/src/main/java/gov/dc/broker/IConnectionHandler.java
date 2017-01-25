@@ -33,6 +33,7 @@ public interface IConnectionHandler {
     public static class GetReponse {
         String body;
         HashMap<String, List<String>> cookies;
+        public int responseCode;
     }
 
     PutResponse put(UrlHandler.PutParameters putParameters) throws Exception;

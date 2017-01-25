@@ -365,4 +365,28 @@ public class Events {
             this.reason = reason;
         }
     }
+
+    static public class GetGitAccounts {
+        private final String urlRoot;
+
+        public GetGitAccounts(String urlRoot) {
+            this.urlRoot = urlRoot;
+        }
+
+        public String getUrlRoot() {
+            return urlRoot;
+        }
+    }
+
+    static public class GitAccounts {
+        private final gov.dc.broker.models.gitaccounts.GitAccounts gitAccounts;
+
+        public GitAccounts(gov.dc.broker.models.gitaccounts.GitAccounts gitAccounts) {
+            this.gitAccounts = gitAccounts;
+        }
+
+        public gov.dc.broker.models.gitaccounts.GitAccounts getGitAccounts() {
+            return gitAccounts;
+        }
+    }
 }

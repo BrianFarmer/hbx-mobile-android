@@ -78,5 +78,10 @@ public class EventBusMessages implements Messages {
     public void coverageYearChanged(LocalDate year) {
         eventBus.post(new Events.CoverageYear(year));
     }
+
+    @Override
+    public void getGitAccounts(String s) {
+        eventBus.post(new Events.GetGitAccounts(s));
+    }
 }
 
