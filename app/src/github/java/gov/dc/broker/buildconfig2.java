@@ -100,7 +100,7 @@ class BuildConfig2 {
         ArrayList urls = new ArrayList();
         urls.add("https://raw.githubusercontent.com/BrianFarmer/HBX-mobile-app-APIs/TemplatedTests/accounts");
         urls.add("https://raw.githubusercontent.com/BrianFarmer/HBX-mobile-app-APIs/TemplatedTests/accounts");
-        urls.add("https://raw.githubusercontent.com/BrianFarmer/HBX-mobile-app-APIs/TemplatedTests/accounts");
+        urls.add("https://raw.githubusercontent.com/dchealthlink/HBX-mobile-app-APIs/TemplatedTests/accounts");
         return urls;
     }
 
@@ -108,6 +108,6 @@ class BuildConfig2 {
         ArrayList urls = new ArrayList();
         urls.add("Choose a repository");
         urls.add("Brian's Fork");
-        urls.add("HBX Main Repository");
+        urls.add("HBX Mobile app api test data repository");
         return urls;
     }}
