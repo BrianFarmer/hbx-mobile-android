@@ -83,6 +83,9 @@ public class EmployerAdapter extends BaseSwipeAdapter {
         for (BrokerClient brokerClient : employerList) {
             if (brokerClient.planYears != null
                 && brokerClient.planYears.size() > 0) {
+                if (brokerClient.employerName.indexOf("Grig") >= 0){
+                    Log.d(TAG, "found grig");
+                }
                 PlanYear lastestPlanYear = BrokerUtilities.getLastestPlanYear(brokerClient.planYears);
                 switch (BrokerUtilities.getBrokerClientStatus(lastestPlanYear, today)){
                     case InOpenEnrollmentAlerted:
@@ -102,8 +105,7 @@ public class EmployerAdapter extends BaseSwipeAdapter {
             i ++;
         }
 
-        if (openEnrollmentState == false
-            && alertedItems.size() == 0
+        if (alertedItems.size() == 0
             && notAlertedItems.size() == 0){
             openEnrollmentState = false;
         }
@@ -372,6 +374,10 @@ class OpenEnrollmentHeader extends ItemWrapperBase {
         openButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                if (employerAdapter.getAlertedItems().size() == 0
+                    && employerAdapter.getNotAlertedItems().size() == 0) {
+                    return;
+                }
                 employerAdapter.toggleOpenEnrollments();
             }
         });
@@ -474,6 +480,9 @@ class RenewalHeader extends ItemWrapperBase {
         openButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                if (employerAdapter.getRenewalItems().size() == 0){
+                    return;
+                }
                 employerAdapter.toggleRenewals();
             }
         });
@@ -521,6 +530,10 @@ class OtherItemsHeader extends ItemWrapperBase {
         openButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                if (employerAdapter.getOtherItems().size() == 0){
+                    return;
+                }
+
                 View parent = (View) v.getParent();
                 RelativeLayout relativeLayoutColumnHeaders = (RelativeLayout) (parent.findViewById(R.id.relativeLayoutColumnHeaders));
 

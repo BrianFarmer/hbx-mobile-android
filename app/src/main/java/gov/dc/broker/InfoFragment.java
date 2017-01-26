@@ -160,8 +160,7 @@ public class InfoFragment extends BrokerFragment {
     }
 
     private void populateField() throws Exception {
-        if (employer == null
-            || roster == null){
+        if (employer == null){
             return;
         }
 
@@ -224,52 +223,74 @@ public class InfoFragment extends BrokerFragment {
                 textViewCoverageBeginsLabel.setVisibility(View.GONE);
                 textViewCoverageBegins.setVisibility(View.GONE);
             }
+
             TextView daysLeft = (TextView) view.findViewById(R.id.textViewDaysLeft);
-            daysLeft.setText(now.compareTo(coverageYear) < 0 ? Long.toString(BrokerUtilities.daysLeft(planYearForCoverageYear, now)):"");
-            BrokerUtilities.EmployeeCounts employeeCounts = BrokerUtilities.getEmployeeCounts(roster, coverageYear);
-            TextView textViewEnrolled = (TextView) view.findViewById(R.id.textViewEnrolled);
-            textViewEnrolled.setText(Integer.toString(employeeCounts.Enrolled));
-            TextView textViewWaived = (TextView) view.findViewById(R.id.textViewWaived);
-            textViewWaived.setText(Integer.toString(employeeCounts.Waived));
-            TextView textViewNotEnrolled = (TextView) view.findViewById(R.id.textViewNotEnrolled);
-            textViewNotEnrolled.setText(Integer.toString(employeeCounts.NotEnrolled));
-            TextView textViewTotalEmployees = (TextView) view.findViewById(R.id.textViewTotalEmployees);
-            textViewTotalEmployees.setText(Integer.toString(employeeCounts.Enrolled + employeeCounts.NotEnrolled + employeeCounts.Waived));
+            if (BrokerUtilities.isInOpenEnrollment(planYearForCoverageYear, now)) {
+                daysLeft.setText(now.compareTo(coverageYear) < 0 ? Long.toString(BrokerUtilities.daysLeft(planYearForCoverageYear, now)) : "");
+            } else {
+                TextView daysLeftLabel = (TextView)view.findViewById(R.id.textViewDaysLeftLabel);
+                daysLeftLabel.setVisibility(View.GONE);
+                daysLeft.setVisibility(View.GONE);
+            }
+
+            if (roster == null
+                || roster.roster == null
+                || roster.roster.size() == 0) {
+                TextView textViewEnrolled = (TextView) view.findViewById(R.id.textViewEnrolled);
+                textViewEnrolled.setText("0");
+                TextView textViewWaived = (TextView) view.findViewById(R.id.textViewWaived);
+                textViewWaived.setText("0");
+                TextView textViewNotEnrolled = (TextView) view.findViewById(R.id.textViewNotEnrolled);
+                textViewNotEnrolled.setText("0");
+                TextView textViewTotalEmployees = (TextView) view.findViewById(R.id.textViewTotalEmployees);
+                textViewTotalEmployees.setText("0");
+            } else {
+                BrokerUtilities.EmployeeCounts employeeCounts = BrokerUtilities.getEmployeeCounts(roster, coverageYear);
+                TextView textViewEnrolled = (TextView) view.findViewById(R.id.textViewEnrolled);
+                textViewEnrolled.setText(Integer.toString(employeeCounts.Enrolled));
+                TextView textViewWaived = (TextView) view.findViewById(R.id.textViewWaived);
+                textViewWaived.setText(Integer.toString(employeeCounts.Waived));
+                TextView textViewNotEnrolled = (TextView) view.findViewById(R.id.textViewNotEnrolled);
+                textViewNotEnrolled.setText(Integer.toString(employeeCounts.NotEnrolled));
+                TextView textViewTotalEmployees = (TextView) view.findViewById(R.id.textViewTotalEmployees);
+                textViewTotalEmployees.setText(Integer.toString(employeeCounts.Enrolled + employeeCounts.NotEnrolled + employeeCounts.Waived));
 
 
-            TextView textViewEnrolledLabel = (TextView) view.findViewById(R.id.textViewEnrolledLabel);
-            textViewEnrolledLabel.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    EmployerDetailsActivity activity = (EmployerDetailsActivity) getActivity();
-                    activity.showRoster(RosterFragment.EnrolledStatus);
-                }
-            });
-            TextView textViewNotEnrolledLabel = (TextView) view.findViewById(R.id.textViewNotEnrolledLabel);
-            textViewNotEnrolledLabel.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    EmployerDetailsActivity activity = (EmployerDetailsActivity) getActivity();
-                    activity.showRoster(RosterFragment.NotEnrolledStatus);
-                }
-            });
-            TextView textViewWaivedLabel = (TextView) view.findViewById(R.id.textViewWaivedLabel);
-            textViewWaivedLabel.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    EmployerDetailsActivity activity = (EmployerDetailsActivity) getActivity();
-                    activity.showRoster(RosterFragment.WaivedStatus);
-                }
-            });
-            configurePieChartData(employeeCounts);
+                TextView textViewEnrolledLabel = (TextView) view.findViewById(R.id.textViewEnrolledLabel);
+                textViewEnrolledLabel.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        EmployerDetailsActivity activity = (EmployerDetailsActivity) getActivity();
+                        activity.showRoster(RosterFragment.EnrolledStatus);
+                    }
+                });
+                TextView textViewNotEnrolledLabel = (TextView) view.findViewById(R.id.textViewNotEnrolledLabel);
+                textViewNotEnrolledLabel.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        EmployerDetailsActivity activity = (EmployerDetailsActivity) getActivity();
+                        activity.showRoster(RosterFragment.NotEnrolledStatus);
+                    }
+                });
+                TextView textViewWaivedLabel = (TextView) view.findViewById(R.id.textViewWaivedLabel);
+                textViewWaivedLabel.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        EmployerDetailsActivity activity = (EmployerDetailsActivity) getActivity();
+                        activity.showRoster(RosterFragment.WaivedStatus);
+                    }
+                });
+                configurePieChartData(employeeCounts);
+
+                BrokerUtilities.Totals totals = BrokerUtilities.calcTotals(roster, coverageYear);
+                TextView textViewEmployerContribution = (TextView)view.findViewById(R.id.textViewEmployerContribution);
+                textViewEmployerContribution.setText(String.format("$%.2f", totals.employerTotal));
+                TextView textViewEmployeeContribution = (TextView)view.findViewById(R.id.textViewEmployeeContribution);
+                textViewEmployeeContribution.setText(String.format("$%.2f", totals.employeeTotal));
+                TextView textViewTotal = (TextView)view.findViewById(R.id.textViewTotal);
+                textViewTotal.setText(String.format("$%.2f", totals.total));
+            }
         }
-        BrokerUtilities.Totals totals = BrokerUtilities.calcTotals(roster, coverageYear);
-        TextView textViewEmployerContribution = (TextView)view.findViewById(R.id.textViewEmployerContribution);
-        textViewEmployerContribution.setText(String.format("$%.2f", totals.employerTotal));
-        TextView textViewEmployeeContribution = (TextView)view.findViewById(R.id.textViewEmployeeContribution);
-        textViewEmployeeContribution.setText(String.format("$%.2f", totals.employeeTotal));
-        TextView textViewTotal = (TextView)view.findViewById(R.id.textViewTotal);
-        textViewTotal.setText(String.format("$%.2f", totals.total));
     }
 
     private void configurePieChartData(BrokerUtilities.EmployeeCounts employeeCounts) {

@@ -142,6 +142,10 @@ public abstract class CoverageConnection {
 
         BrokerAgency brokerAgency = getBrokerAgency(now);
         String rosterUrl = BrokerUtilities.getRosterUrl(brokerAgency, employerId);
+        if (rosterUrl == null){
+            // this is most likely valid, just means the url in the broker agency was null.
+            return null;
+        }
         Roster roster = dataCache.getRoster(rosterUrl, now);
         if (roster != null){
             return roster;

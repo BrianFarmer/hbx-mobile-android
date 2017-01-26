@@ -24,6 +24,8 @@
         android:layout_below="@id/imageViewDcHealthLinkLogo"
         android:layout_marginLeft="40dp"
         android:layout_marginRight="40dp"
+        android:textSize="20sp"
+        android:textColor="@color/white"
         android:id="@+id/spinnerUrlRoot"
         />
 
@@ -42,6 +44,8 @@
         android:layout_below="@+id/viewAccountSeparator"
         android:layout_marginLeft="40dp"
         android:layout_marginRight="40dp"
+        android:textSize="20sp"
+        android:textColor="@color/white"
         android:id="@+id/spinnerAccounts"
         />
 
