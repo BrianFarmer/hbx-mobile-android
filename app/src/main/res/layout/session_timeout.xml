@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                xmlns:tools="http://schemas.android.com/tools"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                style="@style/DialogStyle">
+
+    <TextView
+        android:id="@+id/sessionTimeoutTitleBar"
+        style="@style/contactInfoTitleBar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:maxLines="2"
+        android:text="@string/session_security_title"
+        />
+    <TextView
+        android:id="@+id/textViewSessionTimeout"
+        style="@style/security_question"
+        android:layout_below="@+id/sessionTimeoutTitleBar"
+        android:text="@string/timeout_message"
+        android:maxLines="4"
+        />
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="20dp"
+        android:orientation="horizontal"
+        android:layout_below="@+id/textViewSessionTimeout"
+        >
+        <Button
+            android:id="@+id/buttonStayLoggedIn"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="20dp"
+            android:background="@color/alertRed"
+            android:textColor="@color/white"
+            android:textAllCaps="true"
+            android:textSize="15sp"
+            android:text="@string/stay_logged_in" />
+    </LinearLayout>
+
+</RelativeLayout>

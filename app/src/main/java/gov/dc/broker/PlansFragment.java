@@ -11,9 +11,14 @@ import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import com.microsoft.azure.mobile.analytics.Analytics;
+
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 import org.joda.time.LocalDate;
+
+import java.util.HashMap;
+import java.util.Map;
 
 import gov.dc.broker.models.employer.ElectedDentalPlan;
 import gov.dc.broker.models.employer.Employer;
@@ -48,9 +53,8 @@ public class PlansFragment extends BrokerFragment {
         if (employer == null) {
             brokerClientId = getBrokerActivity().getIntent().getStringExtra(Intents.BROKER_CLIENT_ID);
             if (brokerClientId == null) {
-                // If we get here the employer id in the intent wasn't initialized and
-                // we are in a bad state.
                 Log.e(TAG, "onCreate: no client id found in intent");
+                getMessages().getEmployer(null);
                 return view;
             }
             getMessages().getEmployer(brokerClientId);
@@ -68,6 +72,11 @@ public class PlansFragment extends BrokerFragment {
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void doThis(Events.CoverageYear coverageYear) throws Exception {
         this.coverageYear = coverageYear.getYear();
+
+        Map<String,String> properties=new HashMap<String,String>();
+        properties.put("CurrentTab", "Plans");
+        Analytics.trackEvent("Coverage Year Changed", properties);
+
         try{
             populate();
         } catch (Exception e){
@@ -77,6 +86,7 @@ public class PlansFragment extends BrokerFragment {
 
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void doThis(Events.BrokerClient brokerClient) throws Exception {
+
         employer = brokerClient.getEmployer();
         EmployerDetailsActivity activity = (EmployerDetailsActivity) getActivity();
         this.coverageYear = activity.getCoverageYear();
@@ -88,7 +98,14 @@ public class PlansFragment extends BrokerFragment {
     }
 
     private void populate() throws Exception {
-        PlanYear planYearForCoverageYear = BrokerUtilities.getPlanYearForCoverageYear(employer, coverageYear);
+        PlanYear planYearForCoverageYear;
+        try {
+            planYearForCoverageYear = BrokerUtilities.getPlanYearForCoverageYear(employer, coverageYear);
+        } catch (Exception e){
+            Log.e(TAG, "No plan year found", e);
+            return;
+        }
+
 
 
         FragmentActivity activity = this.getActivity();

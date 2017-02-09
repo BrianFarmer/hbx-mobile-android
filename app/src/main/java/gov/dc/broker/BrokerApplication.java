@@ -63,4 +63,8 @@ public class BrokerApplication extends Application {
     public Messages getMessages(BrokerFragment fragment) {
         return new EventBusMessages(fragment);
     }
+
+    public Messages getMessages(BrokerAppCompatDialogFragment brokerAppCompatDialogFragment) {
+            return new EventBusMessages(brokerAppCompatDialogFragment);
+    }
 }

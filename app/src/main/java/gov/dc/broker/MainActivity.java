@@ -14,16 +14,15 @@ import android.view.View;
 import android.webkit.WebView;
 import android.widget.ListView;
 import android.widget.RelativeLayout;
-import android.widget.TextView;
 
-import com.wdullaer.swipeactionadapter.SwipeActionAdapter;
-
-import net.hockeyapp.android.CrashManager;
-import net.hockeyapp.android.UpdateManager;
+import com.microsoft.azure.mobile.analytics.Analytics;
 
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 import org.joda.time.LocalDate;
+
+import java.util.HashMap;
+import java.util.Map;
 
 import gov.dc.broker.models.brokeragency.BrokerAgency;
 
@@ -33,18 +32,11 @@ public class MainActivity extends BrokerActivity {
 
     private RelativeLayout contentView;
     private DrawerLayout mDrawerLayout;
-    private ListView menuView;
     private ListView listViewEmployers;
     private NavigationView navigationView;
-    private ActionBarDrawerToggle mDrawerToggle;
-    private String mActivityTitle;
     private Toolbar toolbar;
     private WebView webViewWelcome;
-    private TextView textViewStatus;
-    private SwipeActionAdapter swipeActionAdapter;
 
-    private Broker broker;
-    private Account account = new Account(broker);
     private int scrollPosition = -1;
     private BrokerAgency brokerAgency;
     private LocalDate coverageYear;
@@ -56,6 +48,9 @@ public class MainActivity extends BrokerActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+
+
         try {
             setContentView(R.layout.activity_main);
         } catch (Exception e){
@@ -63,12 +58,11 @@ public class MainActivity extends BrokerActivity {
             throw e;
         }
 
-        checkForUpdates();
+        //Intent intent = new Intent(this, BrokerWorker.class);
+        //intent.setData(Uri.parse("http://dc.gov"));
+        //this.startService(intent);
 
-        Intent intent = new Intent(this, BrokerWorker.class);
-        intent.setData(Uri.parse("http://dc.gov"));
-        this.startService(intent);
-
+        this.webViewWelcome = (WebView)findViewById(R.id.webViewWelcome);
         this.mDrawerLayout = (DrawerLayout)findViewById(R.id.drawer_layout);
         this.navigationView = (NavigationView)findViewById(R.id.navigation);
         this.contentView = (RelativeLayout)mDrawerLayout.findViewById(R.id.relative_layout);
@@ -112,6 +106,9 @@ public class MainActivity extends BrokerActivity {
                         return true;
                     case R.id.nav_logout:
                         getMessages().logoutRequest();
+                        Intent i = new Intent(MainActivity.this, RootActivity.class);
+                        i.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                        startActivity(i);
                         return true;
                     case R.id.nav_carriers:
                         Intent carrierIntent = new Intent(mainActivity, CarriersActivity.class);
@@ -136,96 +133,77 @@ public class MainActivity extends BrokerActivity {
         actionBarDrawerToggle.syncState();
     }
 
-    private void setupDrawer() {
-        mDrawerToggle = new ActionBarDrawerToggle(this, mDrawerLayout,
-                R.string.drawer_open, R.string.drawer_close) {
-
-            /** Called when a drawer has settled in a completely open state. */
-            public void onDrawerOpened(View drawerView) {
-            }
-
-            /** Called when a drawer has settled in a completely closed state. */
-            public void onDrawerClosed(View view) {
-            }
-        };
-    }
-
     @Override
     protected void onPause() {
         super.onPause();
         scrollPosition = listViewEmployers.getFirstVisiblePosition();
-        unregisterManagers();
     }
 
     @Override
+
     protected void onDestroy(){
         super.onDestroy();
-        unregisterManagers();
     }
 
     @Override
     protected void onResume() {
         super.onResume();
 
-        getMessages().getLogin();
-        checkForCrashes();
-    }
-
-    @Subscribe(threadMode = ThreadMode.MAIN)
-    public void doThis(Events.GetLoginResult getLoginResult){
-        if (getLoginResult.isLoggedIn()) {
-            if (getLoginResult.getUserType() == Events.GetLoginResult.UserType.Broker) {
-                Log.d(TAG, "requesting employer list");
-                getMessages().getEmployerList();
-            } else {
-                showEmployer();
-            }
-        } else {
-            showLogin();
-            return;
-        }
-        webViewWelcome = (WebView)findViewById(R.id.webViewWelcome);
-    }
-
-    private void showLogin() {
-        Intent intent = new Intent(this, LoginActivity.class);
-        startActivity(intent);
+        getMessages().getBrokerAgency();
     }
 
     private void showEmployer() {
         Intent intent = new Intent(this, EmployerDetailsActivity.class);
+        //intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
         startActivity(intent);
-    }
-
-    @Subscribe(threadMode = ThreadMode.MAIN)
-    public void doThis(BrokerResult brokerResult) {
-        //Toast.makeText(this, (CharSequence) brokerResult.getBroker().getName(), Toast.LENGTH_SHORT).show();
-
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void doThis(Events.LoggedOutResult loggedOutResult){
         BrokerManager.getDefault().setLoggedIn(false);
-        if (!BrokerManager.getDefault().isLoggedIn()) {
-            showLogin();
-        }
+        finish();
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void doThis(Events.Error error) {
-        showLogin();
+        alertDialog("Error! What should I be showing?", new DialogClosed() {
+            @Override
+            public void closed() {
+                BrokerManager.getDefault().setLoggedIn(false);
+                finish();
+            }
+        });
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)
-    public void doThis(Events.EmployerList employerListEvent) throws Exception {
-        if (employerListEvent == null
-            || employerListEvent.getBrokerAgency() == null){
-            showLogin();
+    public void doThis(Events.GetBrokerAgencyResult getBrokerAgencyResult) throws Exception {
+        if (getBrokerAgencyResult == null
+            || getBrokerAgencyResult.getBrokerAgency() == null){
+            alertDialog("Should be logging out now.", new DialogClosed() {
+                @Override
+                public void closed() {
+                    Intents.restartApp(MainActivity.this);
+                    finish();
+                }
+            });
             return;
         }
-        brokerAgency = employerListEvent.getBrokerAgency();
 
-        coverageYear = brokerAgency.brokerClients.get(0).planYearBegins;
+        brokerAgency = getBrokerAgencyResult.getBrokerAgency();
+
+        Map<String,String> properties=new HashMap<String,String>();
+        if (brokerAgency.brokerClients == null){
+            properties.put("Employer Count", "0");
+        } else {
+            properties.put("Employer Count", Integer.toString(brokerAgency.brokerClients.size()));
+        }
+        Analytics.trackEvent("Broker Details", properties);
+
+        if (brokerAgency.brokerClients.size() == 0){
+            coverageYear = null;
+        } else {
+            coverageYear = brokerAgency.brokerClients.get(0).planYearBegins;
+        }
         final EmployerAdapter employerAdapter = new EmployerAdapter(this, this.getBaseContext(), brokerAgency.brokerClients, coverageYear);
         listViewEmployers.setAdapter(employerAdapter);
         listViewEmployers.setSelectionFromTop(scrollPosition, 0);
@@ -240,18 +218,5 @@ public class MainActivity extends BrokerActivity {
                 Integer.toString(BrokerUtilities.getBrokerClientsInOpenEnrollment(brokerAgency, LocalDate.now()).size()));
         webViewWelcome.loadDataWithBaseURL("", welcomeMessage, "text/html", "UTF-8", "");
         //webViewWelcome.setText(Html.fromHtml(welcomeMessage));
-    }
-
-    private void checkForCrashes() {
-        CrashManager.register(this);
-    }
-
-    private void checkForUpdates() {
-        // Remove this for store builds!
-        UpdateManager.register(this);
-    }
-
-    private void unregisterManagers() {
-        UpdateManager.unregister();
     }
 }

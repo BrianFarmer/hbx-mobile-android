@@ -72,26 +72,32 @@ public class CostsAdapter extends BaseAdapter {
 
         try {
             final RosterEntry rosterEntry = employees.get(i);
+            TextView employeeName = (TextView) view.findViewById(R.id.textViewEmployeeName);
+            employeeName.setText(BrokerUtilities.getFullName(rosterEntry));
+
+            TextView textViewEmployerCost = (TextView) view.findViewById(R.id.textViewEmployerCost);
+            TextView textViewEmployeeCost = (TextView) view.findViewById(R.id.textViewEmployeeCost);
+
             Enrollment enrollmentForCoverageYear = null;
             try {
                 enrollmentForCoverageYear = BrokerUtilities.getEnrollmentForCoverageYear(rosterEntry, coverageYear);
             } catch (Exception e){
                 Log.e(TAG, "exception get coverate year!!!");
-                return view;
             }
-            Health health = enrollmentForCoverageYear.health;
-            TextView employeeName = (TextView) view.findViewById(R.id.textViewEmployeeName);
-            employeeName.setText(BrokerUtilities.getFullName(rosterEntry));
-            TextView textViewEmployerCost = (TextView) view.findViewById(R.id.textViewEmployerCost);
-            TextView textViewEmployeeCost = (TextView) view.findViewById(R.id.textViewEmployeeCost);
-            if (health.status.compareToIgnoreCase("enrolled") == 0) {
-                textViewEmployerCost.setText(String.format("$%.2f", health.employerContribution));
-                textViewEmployeeCost.setText(String.format("$%.2f", health.employeeCost));
+            if (enrollmentForCoverageYear != null) {
+                Health health = enrollmentForCoverageYear.health;
+                if (health.status.compareToIgnoreCase("enrolled") == 0) {
+                    textViewEmployerCost.setText(String.format("$%.2f", health.employerContribution));
+                    textViewEmployeeCost.setText(String.format("$%.2f", health.employeeCost));
+                } else {
+                    textViewEmployerCost.setText(health.status);
+                    textViewEmployerCost.setTextColor(ContextCompat.getColor(context, Utilities.colorFromEmployeeStatus(health.status)));
+                    textViewEmployeeCost.setText(health.status);
+                    textViewEmployeeCost.setTextColor(ContextCompat.getColor(context, Utilities.colorFromEmployeeStatus(health.status)));
+                }
             } else {
-                textViewEmployerCost.setText(health.status);
-                textViewEmployerCost.setTextColor(ContextCompat.getColor(context, Utilities.colorFromEmployeeStatus(health.status)));
-                textViewEmployeeCost.setText(health.status);
-                textViewEmployeeCost.setTextColor(ContextCompat.getColor(context, Utilities.colorFromEmployeeStatus(health.status)));
+                textViewEmployeeCost.setText("");
+                textViewEmployerCost.setText("");
             }
             view.setOnClickListener(new View.OnClickListener() {
                 @Override

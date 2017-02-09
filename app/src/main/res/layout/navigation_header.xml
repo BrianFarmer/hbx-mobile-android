@@ -10,6 +10,6 @@
         android:id="@+id/imageViewDcHealthLinkLogo"
         android:layout_alignParentTop="true"
         android:layout_alignParentLeft="true"
-        android:src="@drawable/dchealthlink_logo_white"
+        android:src="@drawable/app_header"
         android:padding="30dp" />
 </RelativeLayout>

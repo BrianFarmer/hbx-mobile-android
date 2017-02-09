@@ -2,6 +2,8 @@ package gov.dc.broker;
 
 import org.joda.time.Duration;
 
+import java.util.ArrayList;
+
 class BuildConfig2 {
     private static int cacheTimeoutSeconds = 120;
     private static IDataCache dataCache = new DataCache();
@@ -19,7 +21,7 @@ class BuildConfig2 {
     }
 
     public static IServerConfigurationStorageHandler getServerConfigurationStorageHandler() {
-        return new DevConfigurationStorageHandler();
+        return new ConfigurationStorageHandler(new IdentityEncryptionImpl());
     }
 
     public static ServerConfiguration getServerConfiguration() {
@@ -32,8 +34,10 @@ class BuildConfig2 {
         serverConfiguration.dataInfo.host = "mobile.dcmic.org";
         serverConfiguration.dataInfo.scheme = "http";
         serverConfiguration.dataInfo.port = 3000;
-        serverConfiguration.employerListPath = "api/v1/mobile_api/employers_list";
-        serverConfiguration.loginPath = ServerConfiguration.defaultDevLogin;
+        serverConfiguration.brokerDetailPath = "api/v1/mobile_api/employers_list";
+        serverConfiguration.employerDetailPath = "api/v1/mobile_api/employer_details";
+
+        serverConfiguration.loginPath = "/users/sign_in";
         return serverConfiguration;
     }
 
@@ -51,10 +55,16 @@ class BuildConfig2 {
         return new BuildConfig2();
     }
 
+    public static boolean isGit() {
+        return false;
+    }
 
+    public static int getLoginLayout() {
+        return R.layout.activity_login;
+    }
 
-    public UrlHandler getUrlHandler() {
-        return new DevUrlHandler(getServerConfiguration());
+    public DevUrlHandler getUrlHandler() {
+        return new DevUrlHandler(getServerConfiguration(), new JsonParser());
     }
 
     public void logout() {
@@ -66,7 +76,7 @@ class BuildConfig2 {
     }
 
     public CoverageConnection getCoverageConnection() {
-        return new DevCoverageConnection(getUrlHandler(), getConnectionHandler(), getServerConfiguration(), getParser(), getDataCache());
+        return new DevCoverageConnection(getUrlHandler(), getConnectionHandler(), getServerConfiguration(), getParser(), getDataCache(), getServerConfigurationStorageHandler());
     }
 
     private JsonParser getParser() {
@@ -75,5 +85,23 @@ class BuildConfig2 {
 
     private ConnectionHandler getConnectionHandler() {
         return new ConnectionHandler(serverConfiguration);
+    }
+
+    public static void initMobileCenter() {
+
+    }
+
+    public static ArrayList<String> getUrls() { return null;  }
+
+    public static int getSessionTimeoutSeconds() {
+        return 30;
+    }
+
+    public static int getTimeoutCountdownSeconds() {
+        return 15;
+    }
+
+    public static ArrayList<String> getUrlLabels() {
+        return null;
     }
 }

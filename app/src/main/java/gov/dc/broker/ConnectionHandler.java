@@ -29,7 +29,6 @@ import javax.net.ssl.SSLContext;
 import javax.net.ssl.TrustManagerFactory;
 
 import okhttp3.FormBody;
-import okhttp3.Headers;
 import okhttp3.HttpUrl;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
@@ -48,12 +47,13 @@ public class ConnectionHandler implements IConnectionHandler{
         this.serverConfiguration = serverConfiguration;
     }
 
-    private OkHttpClient client = new OkHttpClient()
+
+    private OkHttpClient clientHttp = new OkHttpClient()
             .newBuilder()
             .followRedirects(true)
             .build();
 
-    private OkHttpClient clientDontFollow = new OkHttpClient()
+    private OkHttpClient clientDontFollowHttp = new OkHttpClient()
             .newBuilder()
             .followRedirects(false)
             .followSslRedirects(false)
@@ -72,7 +72,7 @@ public class ConnectionHandler implements IConnectionHandler{
         Request request = builder.post(formBody)
                 .build();
 
-        Response response = client.newCall(request).execute();
+        Response response = getClient(url.scheme(), true).newCall(request).execute();
 
         int code = response.code();
         if (code < 200
@@ -82,8 +82,20 @@ public class ConnectionHandler implements IConnectionHandler{
         }
         PostResponse postResponse = new PostResponse();
         postResponse.body =response.body().string();
-        postResponse.location = response.header("location");
+        postResponse.headers = response.headers().toMultimap();
         return postResponse;
+    }
+
+    protected OkHttpClient getClient(String scheme, boolean follow) {
+        if (follow){
+            return  new OkHttpClient()
+                    .newBuilder()
+                    .followRedirects(true)
+                    .build();
+            //return clientHttp;
+        } else {
+            return clientDontFollowHttp;
+        }
     }
 
     public static SSLContext getSSLContext() {
@@ -165,8 +177,88 @@ public class ConnectionHandler implements IConnectionHandler{
         throw new Exception("Session cookie not found");
     }
 
-    public PostResponse postHttpURLConnection(UrlHandler.PostParameters postParameters, String accountName, String password, Boolean rememberMe, String sessionId, String authenticityToken) throws Exception {
-        URL url = postParameters.url.url();
+    public PostResponse simplePostHttpURLConnection(UrlHandler.PostParameters postParameters, String accountName, String password, Boolean rememberMe) throws Exception {
+        URL url = new URL(postParameters.url.toString());//postParameters.url.url();
+        HttpURLConnection connection = (HttpURLConnection)url.openConnection();
+        if (postParameters.url.scheme().compareToIgnoreCase("https") == 0){
+            HttpsURLConnection httpsURLConnection = (HttpsURLConnection)connection;
+            httpsURLConnection.setSSLSocketFactory(getSSLContext().getSocketFactory());
+        }
+        connection.setInstanceFollowRedirects(true);
+        connection.setRequestMethod("POST");
+
+        connection.setRequestProperty("Content-Type", "application/x-www-form-urlencoded");
+
+
+        String output = getQuery(postParameters.formParameters);
+        //connection.setRequestProperty("Content-Length", Integer.toString(output.length()));
+
+        OutputStream os;
+        try {
+            os = connection.getOutputStream();
+        } catch (Throwable t){
+            Log.e(TAG, "getting output stream", t);
+            throw t;
+        }
+        BufferedWriter writer = new BufferedWriter(
+                new OutputStreamWriter(os, "UTF-8"));
+        writer.write(output);
+        writer.flush();
+        writer.close();
+        os.close();
+
+        connection.connect();
+        int responseCode = connection.getResponseCode();
+
+        PostResponse postResponse = new PostResponse();
+
+        if (responseCode < 400) {
+
+            while (responseCode == 302) {
+                HashMap<String, List<String>> cookies = getCookies(connection.getHeaderFields());
+                serverConfiguration.sessionId = cookies.get("_session_id").get(0);
+                String newSessionId = "_session_id=" + cookies.get("_session_id").get(0);
+                String redirectUrlString = connection.getHeaderField("location");
+                URL redirectUrl = new URL(redirectUrlString);
+                connection = (HttpURLConnection) redirectUrl.openConnection();
+                if (redirectUrl.getProtocol().compareToIgnoreCase("https") == 0) {
+                    HttpsURLConnection httpsURLConnection = (HttpsURLConnection) connection;
+                    httpsURLConnection.setSSLSocketFactory(getSSLContext().getSocketFactory());
+                }
+                connection.setInstanceFollowRedirects(false);
+                connection.setRequestMethod("GET");
+
+                connection.setRequestProperty("Cookie", serverConfiguration.sessionId);
+                connection.connect();
+                responseCode = connection.getResponseCode();
+            }
+
+
+            InputStream inputStream = connection.getInputStream();
+            InputStreamReader streamReader = new InputStreamReader(inputStream);
+            BufferedReader bufferedReader = new BufferedReader(streamReader);
+            StringBuilder result = new StringBuilder();
+            String line;
+            while ((line = bufferedReader.readLine()) != null) {
+                result.append(line);
+            }
+
+            String string = result.toString();
+            Log.d(TAG, "body: " + string);
+            postResponse.body = string;
+        }
+
+        Log.d(TAG, "response code;" + responseCode);
+        postResponse.headers = connection.getHeaderFields();
+        ArrayList<String> list = new ArrayList<>();
+        Map<String, List<String>> headerFields = connection.getHeaderFields();
+        postResponse.cookies = getCookies(headerFields);
+        postResponse.responseCode = responseCode;
+        return postResponse;
+    }
+
+    public PostResponse postHttpURLConnection(UrlHandler.PostParameters postParameters, String accountName, String password, Boolean rememberMe) throws Exception {
+        URL url = new URL(postParameters.url.toString());//postParameters.url.url();
         HttpURLConnection connection = (HttpURLConnection)url.openConnection();
         if (postParameters.url.scheme().compareToIgnoreCase("https") == 0){
             HttpsURLConnection httpsURLConnection = (HttpsURLConnection)connection;
@@ -175,24 +267,12 @@ public class ConnectionHandler implements IConnectionHandler{
         connection.setInstanceFollowRedirects(false);
         connection.setRequestMethod("POST");
 
-        //connection.setRequestProperty("Host", siteConfig.host + siteConfig.port);
-        //connection.setRequestProperty("Connection", "keep-alive");
-        //connection.setRequestProperty("Pragma", "no-cache");
-        //connection.setRequestProperty("Cache-Control", "no-cache");
-        //connection.setRequestProperty("Origin", siteConfig.scheme + "://" + siteConfig.host + siteConfig.port);
-        connection.setRequestProperty("Cookie", "_session_id=" + sessionId);
-        //connection.setRequestProperty("DNT", "1");
+        connection.setRequestProperty("Cookie", "_session_id=" + serverConfiguration.sessionId);
         connection.setRequestProperty("Content-Type", "application/x-www-form-urlencoded");
-        //connection.setRequestProperty("Accept", "text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8");
-        //connection.setRequestProperty("Accept-Encoding", "gzip, deflate");
-        //connection.setRequestProperty("Accept-Language", "en-US,en;q=0.8");
-        //connection.setRequestProperty("Referer", siteConfig.scheme + "://" + siteConfig.host + siteConfig.port + "/users/sign_in");
-        //connection.setRequestProperty("Upgrade-Insecure-Requests", "1");
-        //connection.setRequestProperty("User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/53.0.2785.116 Safari/537.36");
 
         HashMap<String, String> params = new HashMap<>();
         params.put("utf8", "✓");
-        params.put("authenticity_token", authenticityToken);
+        params.put("authenticity_token", serverConfiguration.authenticityToken);
         params.put("user[login]", accountName);
         params.put("user[password]", password);
         params.put("user[remember_me]", rememberMe?"1":"0");
@@ -217,6 +297,30 @@ public class ConnectionHandler implements IConnectionHandler{
         connection.connect();
         int responseCode = connection.getResponseCode();
 
+        if (responseCode != 302){
+            return null;
+        }
+
+        while (responseCode == 302){
+            HashMap<String, List<String>> cookies = getCookies(connection.getHeaderFields());
+            serverConfiguration.sessionId = cookies.get("_session_id").get(0);
+            String newSessionId = "_session_id=" + cookies.get("_session_id").get(0);
+            String redirectUrlString = connection.getHeaderField("location");
+            URL redirectUrl = new URL(redirectUrlString);
+            connection = (HttpURLConnection)redirectUrl.openConnection();
+            if (redirectUrl.getProtocol().compareToIgnoreCase("https") == 0){
+                HttpsURLConnection httpsURLConnection = (HttpsURLConnection)connection;
+                httpsURLConnection.setSSLSocketFactory(getSSLContext().getSocketFactory());
+            }
+            connection.setInstanceFollowRedirects(false);
+            connection.setRequestMethod("GET");
+
+            connection.setRequestProperty("Cookie", serverConfiguration.sessionId);
+            connection.connect();
+            responseCode = connection.getResponseCode();
+        }
+
+
         InputStream inputStream = connection.getInputStream();
         InputStreamReader streamReader = new InputStreamReader(inputStream);
         BufferedReader bufferedReader = new BufferedReader(streamReader);
@@ -230,31 +334,29 @@ public class ConnectionHandler implements IConnectionHandler{
         Log.d (TAG, "body: " + string);
 
         Log.d(TAG, "response code;" + responseCode);
-        if (responseCode != 302){
-            throw new CoverageException("Bad email or password");
-        }
 
-        String newSessionId = getSessionCookie(connection);
-        Log.d(TAG, "SessionId for processing: " + newSessionId);
         PostResponse postResponse = new PostResponse();
+        postResponse.headers = connection.getHeaderFields();
         postResponse.body = string;
-        postResponse.cookies = new HashMap<>();
         ArrayList<String> list = new ArrayList<>();
-        list.add(newSessionId);
+        Map<String, List<String>> headerFields = connection.getHeaderFields();
+        postResponse.cookies = getCookies(headerFields);
         postResponse.responseCode = responseCode;
-        postResponse.cookies.put("_session_id", list);
         return postResponse;
     }
 
-    public PostResponse post(UrlHandler.PostParameters postParameters) throws IOException, CoverageException {
+    public PostResponse postLogin(UrlHandler.PostParameters postParameters) throws IOException, CoverageException {
+
         Request.Builder builder = new Request.Builder()
                 .url(postParameters.url);
 
+        /*
         if (postParameters.cookies != null) {
             for (String key : postParameters.cookies.keySet()) {
                 builder.header("cookie", key + "=" + postParameters.cookies.get(key));
             }
-        }
+        }*/
+
         if (postParameters.headers != null){
             for (String key : postParameters.headers.keySet()) {
                 builder.header(key, postParameters.headers.get(key));
@@ -264,53 +366,128 @@ public class ConnectionHandler implements IConnectionHandler{
         Request request = builder.post(postParameters.body)
                 .build();
 
-        Response response = client.newCall(request).execute();
+        Response response;
+        try {
+            response = getClient(postParameters.url.scheme(), true).newCall(request).execute();
+        } catch (Throwable t){
+            Log.e(TAG, "exception during post", t);
+            throw t;
+        }
 
         PostResponse postResponse = new PostResponse();
-        postResponse.body =response.body().string();
-        postResponse.location = response.header("location");
+        postResponse.body = response.body().string();
+        postResponse.headers = response.headers().toMultimap();
         postResponse.responseCode = response.code();
-        postResponse.cookies = new HashMap<>();
-        getCookies(response.headers(), postResponse.cookies);
+        postResponse.cookies = getCookies(response.headers().toMultimap());
         return postResponse;
     }
 
+    public PostResponse post(UrlHandler.PostParameters postParameters) throws IOException, CoverageException {
+        Request.Builder builder = new Request.Builder()
+                .url(postParameters.url);
+
+        /*
+        if (postParameters.cookies != null) {
+            for (String key : postParameters.cookies.keySet()) {
+                builder.header("cookie", key + "=" + postParameters.cookies.get(key));
+            }
+        }*/
+
+        if (postParameters.headers != null){
+            for (String key : postParameters.headers.keySet()) {
+                builder.header(key, postParameters.headers.get(key));
+            }
+
+        }
+        Request request = builder.post(postParameters.body)
+                .build();
+
+        Response response;
+        try {
+            response = getClient(postParameters.url.scheme(), true).newCall(request).execute();
+        } catch (Throwable t){
+            Log.e(TAG, "exception during post", t);
+            throw t;
+        }
+
+        PostResponse postResponse = new PostResponse();
+        postResponse.body = response.body().string();
+        postResponse.headers = response.headers().toMultimap();
+        postResponse.responseCode = response.code();
+        postResponse.cookies = getCookies(response.headers().toMultimap());
+        return postResponse;
+    }
+
+    public PutResponse put(UrlHandler.PutParameters putParameters) throws IOException, CoverageException {
+        Request.Builder builder = new Request.Builder()
+                .url(putParameters.url);
+
+        if (putParameters.cookies != null) {
+            for (String key : putParameters.cookies.keySet()) {
+                builder.header("cookie", key + "=" + putParameters.cookies.get(key));
+            }
+        }
+        if (putParameters.headers != null){
+            for (String key : putParameters.headers.keySet()) {
+                builder.header(key, putParameters.headers.get(key));
+            }
+        }
+        Request request = builder.put(putParameters.body).build();
+
+        Response response = getClient(putParameters.url.scheme(), true).newCall(request).execute();
+
+        PutResponse putResponse = new PutResponse();
+        putResponse.body =response.body().string();
+        putResponse.responseCode = response.code();
+        putResponse.cookies = getCookies(response.headers().toMultimap());
+        return putResponse;
+    }
+
     @Override
-    public String get(UrlHandler.GetParameters getParameters, HashMap<String, ArrayList<String>> responseCookies) throws IOException, CoverageException {
+    public GetReponse get(UrlHandler.GetParameters getParameters) throws IOException, CoverageException {
+        if (getParameters == null){
+            throw new IllegalArgumentException  ("getParameters is null");
+        }
+        if (getParameters.url == null
+            || getParameters.url.toString().length() == 0){
+            throw new IllegalArgumentException  ("url is empty or null");
+        }
+
         Request.Builder builder = new Request.Builder()
                 .url(getParameters.url);
 
         if (getParameters.cookies != null) {
             for (Map.Entry<String, String> entry : getParameters.cookies.entrySet()) {
-                builder = builder.header("cookie", entry.getKey() + "=" + entry.getValue());
+                builder = builder.header("Cookie", entry.getKey() + "=" + entry.getValue());
+                Log.d(TAG, "cookie value:->" + entry.getValue() + "<-");
             }
         }
 
         Request request = builder.get().build();
-        Response response = client.newCall(request).execute();
+        Response response = getClient(getParameters.url.scheme(), false).newCall(request).execute();
+
+
+        /*OkHttpClient client = new OkHttpClient()
+                .newBuilder()
+                //.followRedirects(true)
+                .build();
+
+        client.newCall(request).execute();*/
 
         if (response.code() != 200){
             throw new CoverageException("error getting: " + getParameters.url.toString());
         }
 
-        if (responseCookies != null){
-            getCookies(response.headers(), responseCookies);
-        }
+        GetReponse getReponse = new GetReponse();
+        getReponse.responseCode = response.code();
+        getReponse.body = response.body().string();
+        getReponse.cookies = getCookies(response.headers().toMultimap());
 
-        return response.body().string();
-
+        return getReponse;
     }
 
-
-    public String get(HttpUrl url) throws Exception {
-        return get(url, null, null);
-    }
 
     public String get(HttpUrl url, String cookie) throws Exception {
-        return get(url, cookie, null);
-    }
-
-    public String get(HttpUrl url, String cookie, HashMap<String, ArrayList<String>> responseCookies) throws Exception {
         Request.Builder builder = new Request.Builder()
                 .url(url);
 
@@ -318,33 +495,32 @@ public class ConnectionHandler implements IConnectionHandler{
             builder = builder.header("cookie", cookie);
         }
         Request request = builder.get().build();
-        Response response = client.newCall(request).execute();
+        Response response = getClient(url.scheme(), true).newCall(request).execute();
 
         if (response.code() != 200){
             throw new Exception("error getting session");
         }
 
-        if (responseCookies != null){
-            getCookies(response.headers(), responseCookies);
-        }
-
         return response.body().string();
     }
 
-    private HashMap<String, ArrayList<String>> getCookies(Headers headers, HashMap<String, ArrayList<String>> map){
-        for (String name : headers.names()) {
-            if (name.compareToIgnoreCase("set-cookie") == 0) {
-                String headerValue = headers.get(name);
-                String[] cookieParts = headerValue.split(Pattern.quote(";"));
-                if (cookieParts.length >= 1){
-                    String[] cookieNameAndValue = cookieParts[0].split(Pattern.quote("="));
-                    if (cookieNameAndValue.length == 2){
-                        if (map.containsKey(cookieNameAndValue[0])) {
-                            map.get(cookieNameAndValue[0]).add(cookieNameAndValue[1]);
-                        } else {
-                            ArrayList<String> values = new ArrayList<>();
-                            values.add(cookieNameAndValue[1]);
-                            map.put(cookieNameAndValue[0], values);
+    private HashMap<String, List<String>> getCookies(Map<String, List<String>> headers){
+        HashMap<String, List<String>> map = new HashMap<>();
+        for (Map.Entry<String, List<String>> entry: headers.entrySet()) {
+            if (entry.getKey() != null
+                && entry.getKey().compareToIgnoreCase("set-cookie") == 0) {
+                for (String headerValue : entry.getValue()) {
+                    String[] cookieParts = headerValue.split(Pattern.quote(";"));
+                    if (cookieParts.length >= 1){
+                        String[] cookieNameAndValue = cookieParts[0].split(Pattern.quote("="));
+                        if (cookieNameAndValue.length == 2){
+                            if (map.containsKey(cookieNameAndValue[0])) {
+                                map.get(cookieNameAndValue[0]).add(cookieNameAndValue[1]);
+                            } else {
+                                ArrayList<String> values = new ArrayList<>();
+                                values.add(cookieNameAndValue[1]);
+                                map.put(cookieNameAndValue[0], values);
+                            }
                         }
                     }
                 }

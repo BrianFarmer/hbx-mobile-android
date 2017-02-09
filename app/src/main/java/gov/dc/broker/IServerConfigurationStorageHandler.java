@@ -6,5 +6,6 @@ package gov.dc.broker;
 public abstract class IServerConfigurationStorageHandler {
     public abstract void store(ServerConfiguration serverConfiguration);
     public abstract void read(ServerConfiguration serverConfiguration);
+    public abstract void clear();
 }
 

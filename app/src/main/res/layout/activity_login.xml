@@ -3,8 +3,10 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:orientation="vertical"
     android:background="@color/mainblue"
 >
+
     <ImageView
         android:id="@+id/imageViewDcHealthLinkLogo"
         android:layout_width="match_parent"
@@ -14,7 +16,7 @@
         android:layout_marginRight="40dp"
         android:layout_marginBottom="30dp"
         android:layout_marginTop="30dp"
-        android:src="@drawable/app_header_two_inches"
+        android:src="@drawable/app_header"
         android:adjustViewBounds="true"
         />
 
@@ -94,13 +96,30 @@
         android:track="@drawable/trackselector"
         />
 
+    <Switch
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/enable_fingerprint_login"
+        android:id="@+id/switchEnableFingerprintLogin"
+        android:layout_below="@+id/switchRememberMe"
+        android:checked="false"
+        android:layout_marginLeft="40dp"
+        android:layout_marginRight="40dp"
+        android:textSize="20sp"
+        android:layout_marginTop="10dp"
+        android:layout_marginBottom="10dp"
+        android:textColor="@color/white"
+        android:thumb="@drawable/switchselector"
+        android:track="@drawable/trackselector"
+        />
+
     <Button
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="@string/log_in"
         android:textAllCaps="true"
         android:id="@+id/buttonLogIn"
-        android:layout_below="@+id/switchRememberMe"
+        android:layout_below="@+id/switchEnableFingerprintLogin"
         android:background="@drawable/login_button"
         android:layout_marginLeft="40dp"
         android:layout_marginRight="40dp"
@@ -116,9 +135,9 @@
         android:text="@string/existing_customers"
         android:maxLines="3"
         android:layout_below="@+id/buttonLogIn"
-        android:layout_marginTop="40dp"
-        android:layout_marginLeft="75dp"
-        android:layout_marginRight="75dp"
+        android:layout_marginTop="22sp"
+        android:layout_marginLeft="75sp"
+        android:layout_marginRight="75sp"
         android:textColor="@color/white"
         android:textAlignment="center"
         android:textSize="18sp"
@@ -131,12 +150,12 @@
         android:text="@string/not_existing"
         android:maxLines="3"
         android:layout_below="@+id/textViewExistingCustomer"
-        android:layout_marginTop="20dp"
-        android:layout_marginLeft="75dp"
-        android:layout_marginRight="75dp"
+        android:layout_marginTop="16sp"
+        android:layout_marginLeft="75sp"
+        android:layout_marginRight="75sp"
         android:textColor="@color/white"
         android:textAlignment="center"
-        android:textSize="18sp"
+        android:textSize="16sp"
         />
 
 

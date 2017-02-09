@@ -16,15 +16,17 @@ import android.widget.RelativeLayout;
 import android.widget.Spinner;
 import android.widget.TextView;
 
+import com.microsoft.azure.mobile.analytics.Analytics;
+
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 import org.joda.time.LocalDate;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
-import gov.dc.broker.models.brokeragency.BrokerClient;
-import gov.dc.broker.models.employer.Employer;
 import gov.dc.broker.models.roster.Dependent;
 import gov.dc.broker.models.roster.Enrollment;
 import gov.dc.broker.models.roster.Health;
@@ -36,8 +38,8 @@ public class EmployeeDetailsActivity extends BrokerActivity {
     private String employeeId;
     private String employerId;
     private RosterEntry employee;
-    private BrokerClient brokerClient;
-    private Employer employer;
+    //private BrokerClient brokerClient;
+    //private Employer employer;
     private LocalDate coverageYear;
 
     private boolean detailsVisible = true;
@@ -54,7 +56,7 @@ public class EmployeeDetailsActivity extends BrokerActivity {
         employeeId = intent.getStringExtra(Intents.EMPLOYEE_ID);
         employerId = intent.getStringExtra(Intents.BROKER_CLIENT_ID);
         getMessages().getEmployee(employeeId, employerId);
-        getMessages().getEmployer(employerId);
+//        getMessages().getEmployer(employerId);
 
         configToolbar();
 
@@ -122,18 +124,19 @@ public class EmployeeDetailsActivity extends BrokerActivity {
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void doThis(Events.Employee  employeeEvent) throws Exception {
         this.employee = employeeEvent.getEmployee();
-        populate();
-    }
 
-    @Subscribe(threadMode = ThreadMode.MAIN)
-    public void doThis(Events.BrokerClient brokerClient) throws Exception {
-        this.brokerClient = brokerClient.getBrokerClient();
-        populate();
+        Map<String,String> properties=new HashMap<String,String>();
+        Analytics.trackEvent("Employee Details", properties);
+
+        try {
+            populate();
+        } catch (Exception e){
+            Log.e(TAG, "exception populating activity", e);
+        }
     }
 
     private void populate() throws Exception {
-        if (employee == null
-            || brokerClient == null){
+        if (employee == null) {
             return;
         }
 
@@ -265,13 +268,25 @@ public class EmployeeDetailsActivity extends BrokerActivity {
             textViewMetalLevelField.setText(String.format(resources.getString(R.string.metal_level_field), health.status));
         }
         TextView textViewPremiums = (TextView) findViewById(R.id.textViewPremiums);
-        textViewPremiums.setText(String.format("$%.2f", health.totalPremium));
+        String totalPremiumString = "";
+        if (health.totalPremium != null) {
+            totalPremiumString = String.format("$%.2f", health.totalPremium);
+        }
+        textViewPremiums.setText(totalPremiumString);
 
         TextView textViewEmployerContribution = (TextView) findViewById(R.id.textViewEmployerContribution);
-        textViewEmployerContribution.setText(String.format("$%.2f", health.employerContribution));
+        String employerContributionString = "";
+        if (health.employerContribution != null) {
+            employerContributionString = String.format("$%.2f", health.employerContribution);
+        }
+        textViewEmployerContribution.setText(employerContributionString);
 
         TextView textViewEmployeeCost = (TextView) findViewById(R.id.textViewEmployeeCost);
-        textViewEmployeeCost.setText(String.format("$%.2f", health.employeeCost));
+        String employeeCostString = "";
+        if (health.employeeCost != null){
+            employeeCostString = String.format("$%.2f", health.employeeCost);
+        }
+        textViewEmployeeCost.setText(employeeCostString);
     }
 
     public int findId(){

@@ -1,21 +1,22 @@
 package gov.dc.broker;
 
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ListView;
+
+import com.microsoft.azure.mobile.analytics.Analytics;
 
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 import org.joda.time.LocalDate;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 
 import gov.dc.broker.models.roster.Roster;
-
-import static com.bumptech.glide.gifdecoder.GifHeaderParser.TAG;
 
 /**
  * Created by plast on 10/21/2016.
@@ -37,12 +38,28 @@ public class CostsFragment extends BrokerFragment {
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void doThis(Events.CoverageYear coverageYear) {
         this.coverageYear = coverageYear.getYear();
+
+        Map<String,String> properties=new HashMap<String,String>();
+        properties.put("CurrentTab", "Costs");
+        Analytics.trackEvent("Coverage Year Changed", properties);
+
         populateList();
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void doThis(Events.RosterResult rosterResult) {
         roster = rosterResult.getRoster();
+
+        Map<String,String> properties=new HashMap<String,String>();
+        if (roster.roster == null) {
+            properties.put("Roster Size", "NULL");
+        } else {
+            properties.put("Roster Size", Integer.toString(roster.roster.size()));
+
+        }
+        Analytics.trackEvent("Costs Tab", properties);
+
+
         EmployerDetailsActivity activity = (EmployerDetailsActivity) getActivity();
         this.coverageYear = activity.getCoverageYear();
         populateList();
@@ -69,9 +86,7 @@ public class CostsFragment extends BrokerFragment {
         if (rosterResult == null) {
             brokerClientId = getBrokerActivity().getIntent().getStringExtra(Intents.BROKER_CLIENT_ID);
             if (brokerClientId == null) {
-                // If we get here the employer id in the intent wasn't initialized and
-                // we are in a bad state.
-                Log.e(TAG, "onCreate: no client id found in intent");
+                getMessages().getRoster();
                 return view;
             }
             getMessages().getRoster(brokerClientId);

@@ -11,11 +11,14 @@ import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
 
+import com.microsoft.azure.mobile.analytics.Analytics;
+
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 import org.joda.time.LocalDate;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.TreeMap;
 
@@ -53,12 +56,28 @@ public class RosterFragment extends BrokerFragment implements EmployeeFilterDial
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void doThis(Events.CoverageYear coverageYear) throws Exception {
         this.coverageYear = coverageYear.getYear();
+
+        Map<String,String> properties=new HashMap<String,String>();
+        properties.put("CurrentTab", "Roster");
+        Analytics.trackEvent("Coverage Year Changed", properties);
+
         populateRosterList();
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void doThis(final Events.RosterResult rosterResult) throws Exception {
         roster = rosterResult.getRoster();
+
+        Map<String,String> properties=new HashMap<String,String>();
+        if (roster.roster == null) {
+            properties.put("Roster Size", "NULL");
+        } else {
+            properties.put("Roster Size", Integer.toString(roster.roster.size()));
+
+        }
+        Analytics.trackEvent("Roster Tab", properties);
+
+
         EmployerDetailsActivity activity = (EmployerDetailsActivity) getActivity();
         this.coverageYear = activity.getCoverageYear();
         populateRosterList();
@@ -136,12 +155,16 @@ public class RosterFragment extends BrokerFragment implements EmployeeFilterDial
         if (rosterResult == null) {
             brokerClientId = getBrokerActivity().getIntent().getStringExtra(Intents.BROKER_CLIENT_ID);
             if (brokerClientId == null) {
-                // If we get here the employer id in the intent wasn't initialized and
-                // we are in a bad state.
-                Log.e(TAG, "onCreate: no client id found in intent");
-                return view;
+                getMessages().getRoster();
+            } else {
+                getMessages().getRoster(brokerClientId);
             }
-            getMessages().getRoster(brokerClientId);
+        } else {
+            try {
+                populateRosterList();
+            } catch (Exception e) {
+                Log.e(TAG, "exception populating InfoFragment", e);
+            }
         }
         return view;
     }

@@ -2,18 +2,14 @@ package gov.dc.broker;
 
 import android.util.Log;
 
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
-
 import org.joda.time.DateTime;
 
-import gov.dc.broker.models.Security.SecurityAnswerResponse;
 import gov.dc.broker.models.brokeragency.BrokerAgency;
 import gov.dc.broker.models.brokeragency.BrokerClient;
 import gov.dc.broker.models.employer.Employer;
+import gov.dc.broker.models.gitaccounts.GitAccounts;
 import gov.dc.broker.models.roster.Roster;
 import gov.dc.broker.models.roster.RosterEntry;
-import okhttp3.FormBody;
 import okhttp3.HttpUrl;
 
 
@@ -22,58 +18,65 @@ public abstract class CoverageConnection {
     protected final UrlHandler urlHandler;
     protected final IConnectionHandler connectionHandler;
     protected final ServerConfiguration serverConfiguration;
-    private final JsonParser parser;
+    protected final JsonParser parser;
     private final IDataCache dataCache;
+    protected final IServerConfigurationStorageHandler storageHandler;
 
     public CoverageConnection(UrlHandler urlHandler, IConnectionHandler connectionHandler,
                               ServerConfiguration serverConfiguration,
-                              JsonParser parser, IDataCache dataCache){
+                              JsonParser parser, IDataCache dataCache,
+                              IServerConfigurationStorageHandler storageHandler){
 
         this.urlHandler = urlHandler;
         this.connectionHandler = connectionHandler;
         this.serverConfiguration = serverConfiguration;
         this.parser = parser;
         this.dataCache = dataCache;
+        this.storageHandler = storageHandler;
     }
 
-    public abstract void validateUserAndPassword(String accountName, String password, Boolean rememberMe) throws Exception;
+    public LoginResult loginAfterFingerprintAuthenticated() throws Exception{
+        storageHandler.read(serverConfiguration);
+        return validateUserAndPassword(serverConfiguration.accountName, serverConfiguration.password, true, true);
+    }
 
+    enum LoginResult {
+        Error,
+        Failure,
+        NeedSecurityQuestion,
+        Success
+    }
+
+    public abstract LoginResult validateUserAndPassword(String accountName, String password, Boolean rememberMe, boolean useFingerprintSensor) throws Exception;
+    public abstract LoginResult revalidateUserAndPassword() throws Exception;
 
     public void checkSecurityAnswer(String securityAnswer) throws Exception {
-        HttpUrl securityAnswerUrl = urlHandler.getSecurityAnswerUrl();
-        // returning null means security question answer can be ignored.
-        if (securityAnswerUrl == null){
-            return;
-        }
-        FormBody formBody = urlHandler.getSecurityAnswerFormBody(securityAnswer);
-        ConnectionHandler.PostResponse postResponse = connectionHandler.post(securityAnswerUrl, formBody);
-        GsonBuilder gsonBuilder = new GsonBuilder();
-        Gson gson = gsonBuilder.create();
-        SecurityAnswerResponse securityAnswerResponse = gson.fromJson(postResponse.body, SecurityAnswerResponse.class);
-        serverConfiguration.securityAnswer = securityAnswer;
+        storageHandler.store(serverConfiguration);
+        return;
     }
 
     private Employer getEmployer(UrlHandler urlHandler, ServerConfiguration serverConfiguration) throws Exception {
-        HttpUrl employerDetailsUrl1 = urlHandler.getEmployerDetailsUrl();
-        String response = connectionHandler.get(employerDetailsUrl1, null);
-        return parser.parseEmployerDetails(response);
+        UrlHandler.GetParameters getParameters = urlHandler.getEmployerDetailsParameters(null);
+        IConnectionHandler.GetReponse response = connectionHandler.get(getParameters);
+        return urlHandler.processEmployerDetails(response);
     }
 
-    public void determineUserType() throws Exception {
+    public ServerConfiguration.UserType determineUserType() throws Exception {
         try{
-            BrokerAgency brokerAgency = getBrokerAgency();
+            BrokerAgency brokerAgency = getBrokerAgency(DateTime.now());
             serverConfiguration.userType = gov.dc.broker.ServerConfiguration.UserType.Broker;
             dataCache.store(brokerAgency, DateTime.now());
-            return;
+            return serverConfiguration.userType;
         } catch (Exception e){
             // Eatinng exceptions here is intentional. Failure to get broker object
             // will cause an exception and we then need to try to get an employer.
-            Log.d(TAG, "intentionally eating exception caused by failture getting broker agency");
+                Log.d(TAG, "intentionally eating exception caused by failture getting broker agency");
         }
 
         Employer employer = getEmployer(urlHandler, serverConfiguration);
         dataCache.store(employer, DateTime.now());
         serverConfiguration.userType = gov.dc.broker.ServerConfiguration.UserType.Employer;
+        return serverConfiguration.userType;
     }
 
     public Events.GetLoginResult.UserType userTypeFromAccountInfo(){
@@ -91,17 +94,27 @@ public abstract class CoverageConnection {
         return Events.GetLoginResult.UserType.Unknown;
     }
 
-    public void logout() {
-        serverConfiguration.accountName = null;
+    public void logout(boolean clearAccount) {
+        if (clearAccount){
+            serverConfiguration.accountName = null;
+        }
+        BrokerManager.getDefault().setLoggedIn(false);
+        serverConfiguration.sessionId = null;
         serverConfiguration.password = null;
         serverConfiguration.securityAnswer = null;
         serverConfiguration.securityQuestion = null;
         serverConfiguration.rememberMe = false;
+        serverConfiguration.authenticityToken = null;
+        serverConfiguration.userType = ServerConfiguration.UserType.Unknown;
+
+        if (clearAccount){
+            storageHandler.clear();
+        }
     }
 
 
     public Employer getEmployer(String employerId, DateTime time) throws CoverageException, Exception {
-        Log.d(TAG, "CoverageConnection.getEmployer");
+        Log.d(TAG, "CoverageConnection.getEmployer by id");
         checkSessionId();
 
         Employer employer = dataCache.getEmployer(employerId, time);
@@ -111,9 +124,9 @@ public abstract class CoverageConnection {
 
         BrokerAgency brokerAgency = dataCache.getBrokerAgency(time);
         BrokerClient brokerClient = BrokerUtilities.getBrokerClient(brokerAgency, employerId);
-        HttpUrl employerDetailsUrl = urlHandler.getEmployerDetailsUrl(employerId);
-        String body = connectionHandler.get(employerDetailsUrl, urlHandler.buildSessionCookies());
-        employer = parser.parseEmployerDetails(body);
+        UrlHandler.GetParameters employerDetailsParameters = urlHandler.getEmployerDetailsParameters(employerId);
+        IConnectionHandler.GetReponse getReponse = connectionHandler.get(employerDetailsParameters);
+        employer = urlHandler.processEmployerDetails(getReponse);
         dataCache.store(employerId, employer, time);
         return employer;
     }
@@ -130,25 +143,57 @@ public abstract class CoverageConnection {
         //validateUserAndPassword(serverConfiguration.accountName, serverConfiguration.password, serverConfiguration.rememberMe);
     }
 
-    public Roster getRoster(String employerId) throws Exception {
+    public Roster getRoster(DateTime now) throws Exception {
         Log.d(TAG, "CoverageConnection.getRoster");
         checkSessionId();
 
-        BrokerAgency brokerAgency = getBrokerAgency();
-        String rosterUrl = BrokerUtilities.getRosterUrl(brokerAgency, employerId);
-        HttpUrl employerRosterUrl = urlHandler.getEmployerRosterUrl(rosterUrl);
-        String response = connectionHandler.get(employerRosterUrl, urlHandler.buildSessionCookies());
-        return parser.parseRoster(response);
+        Roster roster = dataCache.getRoster(now);
+        if (roster != null){
+            return roster;
+        }
+        UrlHandler.GetParameters getParameters = urlHandler.getEmployerRosterParameters();
+        IConnectionHandler.GetReponse response = connectionHandler.get(getParameters);
+        roster = urlHandler.processRoster(response);
+        dataCache.store(roster, now);
+        return roster;
     }
 
-    public BrokerAgency getBrokerAgency() throws Exception, CoverageException {
+    public Roster getRoster(String employerId, DateTime now) throws Exception {
+        Log.d(TAG, "CoverageConnection.getRoster");
+        checkSessionId();
+
+        BrokerAgency brokerAgency = getBrokerAgency(now);
+        String rosterUrl = BrokerUtilities.getRosterUrl(brokerAgency, employerId);
+        if (rosterUrl == null){
+            // this is most likely valid, just means the url in the broker agency was null.
+            return null;
+        }
+        Roster roster = dataCache.getRoster(rosterUrl, now);
+        if (roster != null){
+            return roster;
+        }
+        UrlHandler.GetParameters getParameters = urlHandler.getEmployerRosterParameters(rosterUrl);
+        IConnectionHandler.GetReponse response = connectionHandler.get(getParameters);
+        roster = urlHandler.processRoster(response);
+        dataCache.store(rosterUrl, roster, now);
+        return roster;
+    }
+
+    public BrokerAgency getBrokerAgency(DateTime now) throws
+            Exception, CoverageException {
         checkSessionId();
         BrokerAgency brokerAgency = dataCache.getBrokerAgency(DateTime.now());
         if (brokerAgency == null){
-            UrlHandler.GetParameters getParameters = urlHandler.getBrokerAgencyParameters();
-            String response = connectionHandler.get(getParameters, null);
-            brokerAgency = parser.parseEmployerList(response);
-            dataCache.store(brokerAgency, DateTime.now());
+            UrlHandler.GetParameters getParameters;
+            try{
+                getParameters = urlHandler.getBrokerAgencyParameters();
+            } catch (Exception e){
+                Log.e(TAG, "gettting parameters", e);
+                throw e;
+            }
+            IConnectionHandler.GetReponse getReponse = connectionHandler.get(getParameters);
+            brokerAgency = urlHandler.processBrokerAgency(getReponse);
+            dataCache.store(brokerAgency, now);
         }
 
         return brokerAgency;
@@ -160,9 +205,45 @@ public abstract class CoverageConnection {
         return parser.parseCarriers(response);
     }
 
-    public RosterEntry getEmployee(String employerId, String employeeId) throws Exception {
-        Roster roster = getRoster(employerId);
+    public RosterEntry getEmployee(String employeeId) throws Exception {
+        Roster roster = getRoster(DateTime.now());
         DateTime now = DateTime.now();
         return BrokerUtilities.getRosterEntry(roster, employeeId);
+    }
+
+    public RosterEntry getEmployee(String employerId, String employeeId) throws Exception {
+        Roster roster = getRoster(employerId, DateTime.now());
+        DateTime now = DateTime.now();
+        return BrokerUtilities.getRosterEntry(roster, employeeId);
+    }
+
+    public ServerConfiguration getLogin(){
+        storageHandler.read(serverConfiguration);
+        return serverConfiguration;
+    }
+
+    public Employer getDefaultEmployer(DateTime time) throws Exception {
+        Log.d(TAG, "CoverageConnection.getEmployer by id");
+        checkSessionId();
+
+        Employer employer = dataCache.getEmployer(time);
+        if (employer != null){
+            return employer;
+        }
+
+        BrokerAgency brokerAgency = dataCache.getBrokerAgency(time);
+        UrlHandler.GetParameters employerDetailsParameters = urlHandler.getEmployerDetailsParameters(null);
+        IConnectionHandler.GetReponse getReponse = connectionHandler.get(employerDetailsParameters);
+        employer = urlHandler.processEmployerDetails(getReponse);
+        dataCache.store(employer, time);
+        return employer;
+    }
+
+    public GitAccounts getGitAccounts(String urlRoot) throws Exception {
+        return null;
+    }
+
+    public void stayLoggedIn() throws Exception {
+        return;
     }
 }

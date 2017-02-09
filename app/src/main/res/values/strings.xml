@@ -1,6 +1,7 @@
 <resources>
-    <string name="app_name">Broker</string>
+    <string name="app_name">CoverageHQ</string>
     <string name="title_activity_login">Broker Login</string>
+    <string name="title_broker_details">Broker Details</string>
 
     <!-- Strings related to login -->
     <string name="prompt_email">Email</string>
@@ -62,6 +63,7 @@
     <string name="days_left">DAYS LEFT</string>
 
     <string name="title_activity_client_details">ClientDetailsActivity</string>
+    <string name="title_activity_employee_details">EmployeeDetailsActivity</string>
     <string name="dummy_button">Dummy Button</string>
     <string name="dummy_content">DUMMY\nCONTENT</string>
     <string name="carriers_menu_item">Carriers</string>
@@ -177,4 +179,18 @@
     <string name="employer_application_due_label">Employer Application Due</string>
     <string name="coverage_begins_label">Coverage Begins</string>
     <string name="shared_preference_user_type">userType</string>
+    <string name="no_security_question">This account doesn\'t have a security question so it can\'t be logged in.</string>
+    <string name="url_root">Url Root</string>
+    <string name="timeout_message">Your session will expire in %1d seconds. If you would like to remain logged in click \"Stay Logged In\" below.</string>
+    <string name="session_security_title">Session Security</string>
+    <string name="stay_logged_in">Stay Logged in</string>
+    <string name="logout">Logout</string>
+    <string name="login">Login</string>
+    <string name="session_timeout_messagge">Your session has timed out due to inactivity. Please log back in.</string>
+    <string name="app_title">CoverageHQ</string>
+    <string name="bad_login_message">We could not log you in as an employer or broker. If you believe you have received this message in error, please <a href='tel:1(855)532-5465'>1(855)532-5465</a>. If you are looking for healthcare as an employee or individual, please <a href='dchealthlink.com'>dchealthlink.com</a>.</string>
+    <string name="generic_error_message">An error happened, please try again.</string>
+    <string name="register_fingerprint_message">Register at least one fingerprint in Settings.</string>
+    <string name="lock_screen_security_message">Lock screen security is not enabled.</string>
+    <string name="fingerprint_messagge">Please place your finger on the scanner to verify your identity</string>
 </resources>

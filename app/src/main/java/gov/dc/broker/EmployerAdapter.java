@@ -83,6 +83,9 @@ public class EmployerAdapter extends BaseSwipeAdapter {
         for (BrokerClient brokerClient : employerList) {
             if (brokerClient.planYears != null
                 && brokerClient.planYears.size() > 0) {
+                if (brokerClient.employerName.indexOf("Grig") >= 0){
+                    Log.d(TAG, "found grig");
+                }
                 PlanYear lastestPlanYear = BrokerUtilities.getLastestPlanYear(brokerClient.planYears);
                 switch (BrokerUtilities.getBrokerClientStatus(lastestPlanYear, today)){
                     case InOpenEnrollmentAlerted:
@@ -96,12 +99,13 @@ public class EmployerAdapter extends BaseSwipeAdapter {
                         break;
                 }
                 otherItems.add(new OtherWrapper(brokerClient, i, lastestPlanYear));
+            } else {
+                otherItems.add(new OtherWrapper(brokerClient, i, null));
             }
             i ++;
         }
 
-        if (openEnrollmentState == false
-            && alertedItems.size() == 0
+        if (alertedItems.size() == 0
             && notAlertedItems.size() == 0){
             openEnrollmentState = false;
         }
@@ -165,6 +169,9 @@ public class EmployerAdapter extends BaseSwipeAdapter {
         Collections.sort(otherItems, new Comparator<OtherWrapper>() {
             @Override
             public int compare(OtherWrapper otherWrapper, OtherWrapper t1) {
+                if (otherWrapper.planYear == null){
+                    return -1;
+                }
                 return -1 * otherWrapper.planYear.planYearBegins.compareTo(t1.planYear.planYearBegins);
             }
         });
@@ -367,6 +374,10 @@ class OpenEnrollmentHeader extends ItemWrapperBase {
         openButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                if (employerAdapter.getAlertedItems().size() == 0
+                    && employerAdapter.getNotAlertedItems().size() == 0) {
+                    return;
+                }
                 employerAdapter.toggleOpenEnrollments();
             }
         });
@@ -469,6 +480,9 @@ class RenewalHeader extends ItemWrapperBase {
         openButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                if (employerAdapter.getRenewalItems().size() == 0){
+                    return;
+                }
                 employerAdapter.toggleRenewals();
             }
         });
@@ -516,6 +530,10 @@ class OtherItemsHeader extends ItemWrapperBase {
         openButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                if (employerAdapter.getOtherItems().size() == 0){
+                    return;
+                }
+
                 View parent = (View) v.getParent();
                 RelativeLayout relativeLayoutColumnHeaders = (RelativeLayout) (parent.findViewById(R.id.relativeLayoutColumnHeaders));
 
@@ -646,8 +664,13 @@ class OpenEnrollmentAlertedWrapper extends BrokerClientWrapper {
     public void fillValues(View convertView, final MainActivity mainActivity) throws Exception {
         TextView companyName = (TextView)convertView.findViewById(R.id.textViewCompanyName);
         companyName.setText(brokerClient.employerName);
-        TextView employeesNeeded = (TextView)convertView.findViewById(R.id.textViewEmployessNeeded);
-        employeesNeeded.setText(String.valueOf(BrokerUtilities.getEmployeesNeeded(planYear)));
+
+        TextView employeesNeeded = (TextView) convertView.findViewById(R.id.textViewEmployessNeeded);
+        int employeesNeeded1 = BrokerUtilities.getEmployeesNeeded(planYear);
+        if (employeesNeeded1 >= 0){
+            employeesNeeded.setText(String.valueOf(employeesNeeded1));
+        }
+
         TextView daysLeft = (TextView)convertView.findViewById(R.id.textViewDaysLeft);
         daysLeft.setText(String.valueOf(BrokerUtilities.daysLeft(planYear, LocalDate.now())));
         convertView.setOnClickListener(new View.OnClickListener() {
