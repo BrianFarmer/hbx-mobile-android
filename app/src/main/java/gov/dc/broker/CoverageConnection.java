@@ -35,8 +35,20 @@ public abstract class CoverageConnection {
         this.storageHandler = storageHandler;
     }
 
-    public abstract boolean validateUserAndPassword(String accountName, String password, Boolean rememberMe) throws Exception;
+    public LoginResult loginAfterFingerprintAuthenticated() throws Exception{
+        storageHandler.read(serverConfiguration);
+        return validateUserAndPassword(serverConfiguration.accountName, serverConfiguration.password, true, true);
+    }
 
+    enum LoginResult {
+        Error,
+        Failure,
+        NeedSecurityQuestion,
+        Success
+    }
+
+    public abstract LoginResult validateUserAndPassword(String accountName, String password, Boolean rememberMe, boolean useFingerprintSensor) throws Exception;
+    public abstract LoginResult revalidateUserAndPassword() throws Exception;
 
     public void checkSecurityAnswer(String securityAnswer) throws Exception {
         storageHandler.store(serverConfiguration);
@@ -44,7 +56,7 @@ public abstract class CoverageConnection {
     }
 
     private Employer getEmployer(UrlHandler urlHandler, ServerConfiguration serverConfiguration) throws Exception {
-        UrlHandler.GetParameters getParameters = urlHandler.getEmployerDetailsParameters();
+        UrlHandler.GetParameters getParameters = urlHandler.getEmployerDetailsParameters(null);
         IConnectionHandler.GetReponse response = connectionHandler.get(getParameters);
         return urlHandler.processEmployerDetails(response);
     }
@@ -58,7 +70,7 @@ public abstract class CoverageConnection {
         } catch (Exception e){
             // Eatinng exceptions here is intentional. Failure to get broker object
             // will cause an exception and we then need to try to get an employer.
-            Log.d(TAG, "intentionally eating exception caused by failture getting broker agency");
+                Log.d(TAG, "intentionally eating exception caused by failture getting broker agency");
         }
 
         Employer employer = getEmployer(urlHandler, serverConfiguration);
@@ -82,12 +94,22 @@ public abstract class CoverageConnection {
         return Events.GetLoginResult.UserType.Unknown;
     }
 
-    public void logout() {
-        serverConfiguration.accountName = null;
+    public void logout(boolean clearAccount) {
+        if (clearAccount){
+            serverConfiguration.accountName = null;
+        }
+        BrokerManager.getDefault().setLoggedIn(false);
+        serverConfiguration.sessionId = null;
         serverConfiguration.password = null;
         serverConfiguration.securityAnswer = null;
         serverConfiguration.securityQuestion = null;
         serverConfiguration.rememberMe = false;
+        serverConfiguration.authenticityToken = null;
+        serverConfiguration.userType = ServerConfiguration.UserType.Unknown;
+
+        if (clearAccount){
+            storageHandler.clear();
+        }
     }
 
 
@@ -210,7 +232,7 @@ public abstract class CoverageConnection {
         }
 
         BrokerAgency brokerAgency = dataCache.getBrokerAgency(time);
-        UrlHandler.GetParameters employerDetailsParameters = urlHandler.getEmployerDetailsParameters();
+        UrlHandler.GetParameters employerDetailsParameters = urlHandler.getEmployerDetailsParameters(null);
         IConnectionHandler.GetReponse getReponse = connectionHandler.get(employerDetailsParameters);
         employer = urlHandler.processEmployerDetails(getReponse);
         dataCache.store(employer, time);
@@ -219,5 +241,9 @@ public abstract class CoverageConnection {
 
     public GitAccounts getGitAccounts(String urlRoot) throws Exception {
         return null;
+    }
+
+    public void stayLoggedIn() throws Exception {
+        return;
     }
 }

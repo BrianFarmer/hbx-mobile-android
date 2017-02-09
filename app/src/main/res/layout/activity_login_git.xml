@@ -14,7 +14,7 @@
         android:layout_marginRight="40dp"
         android:layout_marginBottom="30dp"
         android:layout_marginTop="30dp"
-        android:src="@drawable/app_header_two_inches"
+        android:src="@drawable/app_header"
         android:adjustViewBounds="true"
         />
 

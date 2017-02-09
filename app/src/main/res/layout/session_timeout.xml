@@ -6,34 +6,30 @@
                 style="@style/DialogStyle">
 
     <TextView
-        android:id="@+id/securityQuestionTitleBar"
+        android:id="@+id/sessionTimeoutTitleBar"
         style="@style/contactInfoTitleBar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentTop="true"
         android:maxLines="2"
-        android:text="@string/security_question"
+        android:text="@string/session_security_title"
         />
     <TextView
-        android:id="@+id/textViewSecurityQuestion"
+        android:id="@+id/textViewSessionTimeout"
         style="@style/security_question"
-        android:layout_below="@+id/securityQuestionTitleBar"
-    />
-    <EditText
-        android:id="@+id/editTextSecurityAnswer"
-        android:layout_below="@+id/textViewSecurityQuestion"
-        style="@style/security_answer"
-        tools:imeOptions="actionDone"
+        android:layout_below="@+id/sessionTimeoutTitleBar"
+        android:text="@string/timeout_message"
+        android:maxLines="4"
         />
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="20dp"
         android:orientation="horizontal"
-        android:layout_below="@+id/editTextSecurityAnswer"
+        android:layout_below="@+id/textViewSessionTimeout"
         >
         <Button
-            android:id="@+id/buttonCancel"
+            android:id="@+id/buttonStayLoggedIn"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_weight="1"
@@ -43,19 +39,7 @@
             android:textColor="@color/white"
             android:textAllCaps="true"
             android:textSize="15sp"
-            android:text="@string/cancel" />
-        <Button
-            android:id="@+id/buttonOk"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:layout_centerHorizontal="true"
-            android:layout_marginTop="20dp"
-            android:background="@color/alertRed"
-            android:textColor="@color/white"
-            android:textAllCaps="true"
-            android:textSize="15sp"
-            android:text="@string/ok" />
+            android:text="@string/stay_logged_in" />
     </LinearLayout>
 
 </RelativeLayout>

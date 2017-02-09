@@ -11,4 +11,9 @@ public class EnrollServerConfigurationStorageHandler extends IServerConfiguratio
     public void read(ServerConfiguration serverConfiguration) {
 
     }
+
+    @Override
+    public void clear() {
+
+    }
 }

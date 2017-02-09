@@ -2,17 +2,17 @@ package gov.dc.broker;
 
 public class ServerConfiguration {
 
-
     public enum UserType {
+        Unknown,
         Broker,
         Employer,
-        Employee,
-        Unknown
+        Employee
     }
 
     public String accountName = null;
     public String password = null;
     public Boolean rememberMe = true;
+    public boolean useFingerprintSensor = true;
     public String securityQuestion = "this is the default security question.";
     public String securityAnswer = null;
     public String location;
@@ -29,15 +29,15 @@ public class ServerConfiguration {
     public HostInfo dataInfo;
     public HostInfo carrierInfo;
 
-    public String employerListPath;
     public String employerDetailPath;
     public String brokerDetailPath;
     public String employerRosterPathForBroker;
-    public String employerRosterPathRoot = "/api/v1/mobile_api/employer_details";
     public String loginPath;
     public String securityAnswerPath;
     public String carrierPath;
     public String authenticityToken;
+
+    public String stayLoggedInPath = "reset_user_clock";
 
     public String enrollServer;
 

@@ -76,27 +76,6 @@ public abstract class UrlHandler {
         return parser.parseEmployerDetails(response.body);
     }
 
-    GetParameters getEmployerDetailsParameters() {
-        GetParameters getParameters = new GetParameters();
-
-        if (serverConfiguration.sessionId != null) {
-            getParameters.cookies = new HashMap<>();
-            getParameters.cookies.put("_session_id", serverConfiguration.sessionId);
-        }
-
-        if (serverConfiguration.employerDetailPath.substring(0,4).compareToIgnoreCase("http") == 0){
-            getParameters.url = HttpUrl.parse(serverConfiguration.employerDetailPath);
-        } else {
-            getParameters.url = new HttpUrl.Builder()
-                    .scheme(serverConfiguration.dataInfo.scheme)
-                    .host(serverConfiguration.dataInfo.host)
-                    .addPathSegments(serverConfiguration.employerDetailPath)
-                    .port(serverConfiguration.dataInfo.port)
-                    .build();
-        }
-        return getParameters;
-    }
-
     GetParameters getEmployerDetailsParameters(String employerId) {
         GetParameters getParameters = new GetParameters();
 
@@ -105,23 +84,30 @@ public abstract class UrlHandler {
             getParameters.cookies.put("_session_id", serverConfiguration.sessionId);
         }
 
-
-        if (employerId.substring(0,4).compareToIgnoreCase("http") == 0){
-            getParameters.url = HttpUrl.parse(employerId);
-        } else {
-            String path;
-            if (employerId.substring(0,1).compareTo("/") == 0){
-                path = employerId.substring(1, employerId.length());
+        if (employerId == null) {
+            getParameters.url = HttpUrl.parse(serverConfiguration.employerDetailPath);
+        }
+        else {
+            if (employerId.substring(0, 4).compareToIgnoreCase("http") == 0) {
+                getParameters.url = HttpUrl.parse(employerId);
             } else {
-                path = employerId;
+                String path;
+                if (employerId.substring(0, 1).compareTo("/") == 0) {
+                    path = employerId.substring(1, employerId.length());
+                } else {
+                    path = employerId;
+                }
+                HttpUrl.Builder host = new HttpUrl.Builder()
+                        .scheme(serverConfiguration.dataInfo.scheme)
+                        .host(serverConfiguration.dataInfo.host);
+                if (path == null) {
+                    host = host.addPathSegments(serverConfiguration.employerDetailPath);
+                } else {
+                    host = host.addPathSegments(serverConfiguration.employerDetailPath);
+                    host = host.addPathSegments(path);
+                }
+                getParameters.url = host.port(serverConfiguration.dataInfo.port).build();
             }
-            getParameters.url = new HttpUrl.Builder()
-                    .scheme(serverConfiguration.dataInfo.scheme)
-                    .host(serverConfiguration.dataInfo.host)
-                    .addPathSegments(serverConfiguration.employerRosterPathForBroker)
-                    .addPathSegments(path)
-                    .port(serverConfiguration.dataInfo.port)
-                    .build();
         }
         return getParameters;
     }
@@ -140,15 +126,6 @@ public abstract class UrlHandler {
                 .build();
     }*/
 
-    protected HttpUrl getEmployerRosterUrl() {
-        return new HttpUrl.Builder()
-                .scheme(serverConfiguration.dataInfo.scheme)
-                .host(serverConfiguration.dataInfo.host)
-                .addPathSegments(serverConfiguration.employerRosterPathForBroker)
-                .port(serverConfiguration.dataInfo.port)
-                .build();
-    }
-
     GetParameters getEmployerRosterParameters(String rosterId) {
         GetParameters getParameters = new GetParameters();
 
@@ -161,12 +138,15 @@ public abstract class UrlHandler {
         if (rosterId.substring(0,4).compareToIgnoreCase("http") == 0){
             getParameters.url = HttpUrl.parse(rosterId);
         } else {
-            getParameters.url = new HttpUrl.Builder()
+            HttpUrl.Builder host = new HttpUrl.Builder()
                     .scheme(serverConfiguration.dataInfo.scheme)
-                    .host(serverConfiguration.dataInfo.host)
-                    .addPathSegments(serverConfiguration.employerRosterPathForBroker)
-                    .addPathSegments(rosterId)
-                    .port(serverConfiguration.dataInfo.port)
+                    .host(serverConfiguration.dataInfo.host);
+            if (rosterId == null) {
+                host = host.addPathSegments(serverConfiguration.employerRosterPathForBroker);
+            } else {
+                host = host.addPathSegments(rosterId);
+            }
+            getParameters.url = host.port(serverConfiguration.dataInfo.port)
                     .build();
         }
         return getParameters;
@@ -209,7 +189,7 @@ public abstract class UrlHandler {
     }
 
 
-    public BrokerAgency processBrokerAgency(IConnectionHandler.GetReponse getReponse){
+    public BrokerAgency processBrokerAgency(IConnectionHandler.GetReponse getReponse) throws Exception {
         return parser.parseEmployerList(getReponse.body);
     }
 
@@ -221,5 +201,5 @@ public abstract class UrlHandler {
     public abstract String getSessionCookie(HashMap<String, ArrayList<String>> cookieMap);
     public abstract HashMap<String,ArrayList<String>> getNeededLoginCookes();
     public abstract PostParameters getLoginPostParameters(String accountName, String password);
-    public abstract void processLoginReponse(String accountName, String password, Boolean rememberMe, IConnectionHandler.PostResponse loginPostResponse) throws CoverageException;
+    public abstract CoverageConnection.LoginResult processLoginReponse(String accountName, String password, Boolean rememberMe, IConnectionHandler.PostResponse loginPostResponse, boolean useFingerprintSensor) throws CoverageException;
 }

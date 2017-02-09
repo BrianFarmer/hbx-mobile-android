@@ -1,32 +1,52 @@
 package gov.dc.broker;
 
+import android.app.Activity;
+import android.app.ProgressDialog;
 import android.content.Context;
+import android.content.res.Resources;
 import android.os.Bundle;
-import android.support.v7.app.AppCompatDialogFragment;
-import android.view.KeyEvent;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.inputmethod.EditorInfo;
 import android.widget.Button;
-import android.widget.EditText;
 import android.widget.TextView;
+
+import org.greenrobot.eventbus.Subscribe;
+import org.greenrobot.eventbus.ThreadMode;
+import org.joda.time.DateTime;
+
+import java.util.Timer;
 
 /**
  * Created by plast on 9/23/2016.
  */
 
-public class SessionTimeoutDialog extends AppCompatDialogFragment {
+public class SessionTimeoutDialog extends BrokerAppCompatDialogFragment {
+
+    private ProgressDialog progressDialog;
+
+    enum DialogState {
+        CountingDown,
+        TimedOut
+    }
+
+    private static String TAG = "SessionTimeoutDialogo";
     View view;
     SessionTimeoutDialog dialog;
     private Context context;
+    private DialogState dialogState;
+    private DateTime timeout;
+    private Timer timer;
+    private Button stayLoggedInButton;
+    private TextView textViewSessionTimeout;
+
     static private String SECURITY_QUESTION = "SecurityQuestion";
 
-    public static SessionTimeoutDialog build(String question) {
+    public static SessionTimeoutDialog build() {
         SessionTimeoutDialog dialog = new SessionTimeoutDialog();
 
         Bundle bundle = new Bundle();
-        bundle.putCharSequence(SECURITY_QUESTION, question);
         dialog.setArguments(bundle);
         return dialog;
     }
@@ -36,41 +56,30 @@ public class SessionTimeoutDialog extends AppCompatDialogFragment {
     }
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        view = inflater.inflate(R.layout.security_question_dialog,container, false);
+        // initializes bases class, mainly for event bus.
+        init();
 
-        Bundle arguments = getArguments();
-        String securityQuestion = arguments.getCharSequence(SECURITY_QUESTION).toString();
-        TextView securityQuestionTextView = (TextView) view.findViewById(R.id.textViewSecurityQuestion);
-        securityQuestionTextView.setText(securityQuestion);
+        try {
+            view = inflater.inflate(R.layout.session_timeout, container, false);
+        } catch (Exception e){
+            Log.e(TAG, "Exception get layout");
+        }
 
-        EditText securityAnswer = (EditText)view.findViewById(R.id.editTextSecurityAnswer);
-        securityAnswer.setOnEditorActionListener(new TextView.OnEditorActionListener() {
-            @Override
-            public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
-                if (actionId == EditorInfo.IME_ACTION_DONE) {
-                    ((LoginActivity) dialog.getActivity()).securityDialogOkClicked(((EditText) view.findViewById(R.id.editTextSecurityAnswer)).getText().toString());
-                    dialog.dismiss();
-                    return true;
-                }
-                return false;
-            }
-        });
-
-        Button cancelButton = (Button) view.findViewById(R.id.buttonCancel);
-        cancelButton.setOnClickListener(new View.OnClickListener() {
+        textViewSessionTimeout = (TextView)view.findViewById(R.id.textViewSessionTimeout);
+        stayLoggedInButton = (Button) view.findViewById(R.id.buttonStayLoggedIn);
+        stayLoggedInButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                dialog.dismiss();
+                showProgress();
+                getMessages().stayLoggedIn();
             }
         });
-        Button okButton = (Button) view.findViewById(R.id.buttonOk);
-        okButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                ((LoginActivity)dialog.getActivity()).securityDialogOkClicked(((EditText)view.findViewById(R.id.editTextSecurityAnswer)).getText().toString());
-                dialog.dismiss();
-            }
-        });
+
+        updateStatus(BuildConfig2.getTimeoutCountdownSeconds());
+        getMessages().startSessioniTimeoutCountdown();
+
+
+        dialogState = DialogState.CountingDown;
         return view;
     }
 
@@ -78,7 +87,49 @@ public class SessionTimeoutDialog extends AppCompatDialogFragment {
     public void onAttach(Context context) {
         super.onAttach(context);
         this.context = context;
+
     }
 
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void doThis(Events.StayLoggedInResult stayLoggedInResult) {
+        if (!stayLoggedInResult.getSuccess()) {
+            getMessages().logoutRequest(false);
+            Intents.restartApp((Activity) context);
+        }
+        hideProgress();
+        dialog.dismiss();
+    }
 
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void doThis(Events.SessionTimedOut sessionTimedOut) {
+        getMessages().logoutRequest(false);
+        Intents.restartApp(getActivity());
+        dismiss();
+    }
+
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void doThis(Events.SessionTimeoutCountdownTick sessionTimeoutCountdownTick) {
+        updateStatus(sessionTimeoutCountdownTick.getSecondsLeft());
+    }
+
+    private void updateStatus(int secondsLeft){
+        Resources res = getResources();
+        String text = String.format(res.getString(R.string.timeout_message), secondsLeft);
+        textViewSessionTimeout.setText(text);
+    }
+
+    private void showProgress() {
+        if (progressDialog == null){
+            progressDialog = new ProgressDialog(this.getActivity());
+            progressDialog.setIndeterminate(true);
+            progressDialog.setMessage(getString(R.string.logging_in));
+        }
+        progressDialog.show();
+    }
+
+    private void hideProgress() {
+        if (progressDialog != null){
+            progressDialog.dismiss();
+        }
+    }
 }

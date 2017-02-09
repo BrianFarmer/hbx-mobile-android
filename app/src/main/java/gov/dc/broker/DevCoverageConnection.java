@@ -18,16 +18,24 @@ public class DevCoverageConnection extends CoverageConnection {
     }
 
     @Override
-    public boolean validateUserAndPassword(String accountName, String password, Boolean rememberMe) throws Exception {
+    public LoginResult validateUserAndPassword(String accountName, String password, Boolean rememberMe, boolean useFingerprintSensor) throws Exception {
         UrlHandler.GetParameters getParameters = devUrlHandler.getLoginUrlParameters();
         IConnectionHandler.GetReponse getReponse = connectionHandler.get(getParameters);
         devUrlHandler.processLoginPageReponse(getReponse);
 
-
         UrlHandler.PostParameters loginPostParameters = urlHandler.getLoginPostParameters(accountName.trim(), password);
-        //IConnectionHandler.PostResponse loginPostResponse = connectionHandler.postHttpURLConnection(loginPostParameters, accountName, password, rememberMe);
         IConnectionHandler.PostResponse loginPostResponse = connectionHandler.post(loginPostParameters);
-        urlHandler.processLoginReponse(accountName, password, rememberMe, loginPostResponse);
-        return false;
+        return urlHandler.processLoginReponse(accountName, password, rememberMe, loginPostResponse, useFingerprintSensor);
+    }
+
+    @Override
+    public LoginResult revalidateUserAndPassword() throws Exception {
+        UrlHandler.GetParameters getParameters = devUrlHandler.getLoginUrlParameters();
+        IConnectionHandler.GetReponse getReponse = connectionHandler.get(getParameters);
+        devUrlHandler.processLoginPageReponse(getReponse);
+
+        UrlHandler.PostParameters loginPostParameters = urlHandler.getLoginPostParameters(serverConfiguration.accountName.trim(), serverConfiguration.password);
+        IConnectionHandler.PostResponse loginPostResponse = connectionHandler.post(loginPostParameters);
+        return urlHandler.processLoginReponse(serverConfiguration.accountName, serverConfiguration.password, true, loginPostResponse, true);
     }
 }

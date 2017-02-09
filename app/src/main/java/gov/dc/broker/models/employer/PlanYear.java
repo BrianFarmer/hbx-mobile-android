@@ -42,4 +42,13 @@ public class PlanYear {
     @Expose
     public List<PlanOffering> planOfferings = new ArrayList<PlanOffering>();
 
+    @SerializedName("employees_enrolled")
+    @Expose
+    public Integer employeesEnrolled;
+    @SerializedName("employees_waived")
+    @Expose
+    public Integer employeesWaived;
+    @SerializedName("employees_terminated")
+    @Expose
+    public Integer employeesTerminated;
 }

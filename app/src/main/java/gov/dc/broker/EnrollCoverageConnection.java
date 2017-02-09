@@ -15,12 +15,19 @@ public class EnrollCoverageConnection extends CoverageConnection {
     }
 
     @Override
-    public boolean validateUserAndPassword(String accountName, String password, Boolean rememberMe) throws Exception {
+    public LoginResult validateUserAndPassword(String accountName, String password, Boolean rememberMe, boolean useFingerprintSensor) throws Exception {
         UrlHandler.PostParameters loginPostParameters = enrollUrlHandler.getLoginPostParameters(accountName, password);
         IConnectionHandler.PostResponse postResponse = connectionHandler.simplePostHttpURLConnection(loginPostParameters, accountName, password, rememberMe);
         //IConnectionHandler.PostResponse postResponse = connectionHandler.post(loginPostParameters);
-        enrollUrlHandler.processLoginReponse(accountName, password, rememberMe, postResponse);
-        return false;
+        return enrollUrlHandler.processLoginReponse(accountName, password, rememberMe, postResponse, useFingerprintSensor);
+    }
+
+
+    @Override
+    public LoginResult revalidateUserAndPassword() throws Exception {
+        UrlHandler.PostParameters loginPostParameters = enrollUrlHandler.getLoginPostParameters(serverConfiguration.accountName, serverConfiguration.password);
+        IConnectionHandler.PostResponse postResponse = connectionHandler.simplePostHttpURLConnection(loginPostParameters, serverConfiguration.accountName, serverConfiguration.password, serverConfiguration.rememberMe);
+        return enrollUrlHandler.processLoginReponse(serverConfiguration.accountName, serverConfiguration.password, true, postResponse, true);
     }
 
     public void checkSecurityAnswer(String securityAnswer) throws Exception {
@@ -28,5 +35,10 @@ public class EnrollCoverageConnection extends CoverageConnection {
         ConnectionHandler.PostResponse postResponse = connectionHandler.post(securityAnswerPutParameters);
         enrollUrlHandler.processSecurityAnswerResponse(postResponse);
         storageHandler.store(serverConfiguration);
+    }
+
+    public void stayLoggedIn() throws Exception {
+        UrlHandler.GetParameters stayLoggedInParameters = enrollUrlHandler.getStayLoggedInParameters();
+        enrollUrlHandler.processStayLoggedInResponse(connectionHandler.get(stayLoggedInParameters));
     }
 }

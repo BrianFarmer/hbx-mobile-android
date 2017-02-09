@@ -116,23 +116,51 @@ public class EnrollUrlHandler extends UrlHandler {
     }
 
     @Override
-    public void processLoginReponse(String accountName, String password, Boolean rememberMe, IConnectionHandler.PostResponse loginPostResponse) throws CoverageException {
+    public CoverageConnection.LoginResult processLoginReponse(String accountName, String password, Boolean rememberMe, IConnectionHandler.PostResponse loginPostResponse, boolean useFingerprintSensor) throws CoverageException {
+
+        if (loginPostResponse.responseCode == 401){
+            return CoverageConnection.LoginResult.Failure;
+        }
 
         if (loginPostResponse.responseCode <200
             || loginPostResponse.responseCode >= 300){
-            throw new CoverageException("Bad response code probably bad password");
+            return CoverageConnection.LoginResult.Error;
         }
         serverConfiguration.accountName = accountName;
         serverConfiguration.password = password;
         serverConfiguration.rememberMe = rememberMe;
+        serverConfiguration.useFingerprintSensor = useFingerprintSensor;
         LoginResponse loginResponse = parser.parseLogin(loginPostResponse.body);
         serverConfiguration.securityQuestion = loginResponse.security_question;
         serverConfiguration.securityAnswerPath = loginPostResponse.headers.get("location").get(0);
+        return CoverageConnection.LoginResult.NeedSecurityQuestion;
     }
 
     public GetParameters getLoginFormParameters() {
         GetParameters getParameters = new GetParameters();
         getParameters.url = getLoginUrl();
         return getParameters;
+    }
+
+    public GetParameters getStayLoggedInParameters() {
+        GetParameters getParameters = new GetParameters();
+        if (serverConfiguration.sessionId != null) {
+            getParameters.cookies = new HashMap<>();
+            getParameters.cookies.put("_session_id", serverConfiguration.sessionId.trim());
+        }
+        getParameters.url = new HttpUrl.Builder()
+                .scheme(serverConfiguration.dataInfo.scheme)
+                .host(serverConfiguration.dataInfo.host)
+                .addPathSegments(serverConfiguration.stayLoggedInPath)
+                .port(serverConfiguration.dataInfo.port)
+                .build();
+        return getParameters;
+    }
+
+    public void processStayLoggedInResponse(IConnectionHandler.GetReponse getReponse) throws Exception {
+        if (getReponse.responseCode < 200
+            || getReponse.responseCode > 299){
+            throw new Exception("Unable to reset sesssion time");
+        }
     }
 }

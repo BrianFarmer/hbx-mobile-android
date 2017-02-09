@@ -1,5 +1,6 @@
 package gov.dc.broker;
 
+import android.util.Log;
 import android.widget.ImageView;
 
 import org.joda.time.LocalDate;
@@ -32,21 +33,36 @@ public class Events {
     }
 
     static public class LogoutRequest extends CancelableRequest {
+        private final boolean clearAccount;
+
+        public LogoutRequest(boolean clearAccount) {
+            this.clearAccount = clearAccount;
+        }
+
+        public boolean getClearAccount() {
+            return clearAccount;
+        }
     }
 
 
     static public class GetLogin extends CancelableRequest{
+        private String TAG = "GetLogin";
+        public GetLogin(){
+            Log.d(TAG, "Get login ctor");
+        }
     }
 
     static public class LoginRequest extends CancelableRequest{
         private CharSequence accountName;
         private CharSequence password;
         private boolean rememberMe;
+        private final boolean useFingerprintSensor;
 
-        public LoginRequest(CharSequence accountName, CharSequence password, Boolean rememberMe){
+        public LoginRequest(CharSequence accountName, CharSequence password, Boolean rememberMe, boolean useFingerprintSensor){
             this.accountName = accountName;
             this.password = password;
             this.rememberMe = rememberMe;
+            this.useFingerprintSensor = useFingerprintSensor;
         }
 
         public CharSequence getAccountName() {
@@ -60,9 +76,13 @@ public class Events {
         public boolean getRememberMe() {
             return rememberMe;
         }
+
+        public boolean useFingerprintSensor() {
+            return useFingerprintSensor;
+        }
     }
 
-    static public class GetEmployerList extends CancelableRequest {
+    static public class GetBrokerAgency extends CancelableRequest {
     }
 
     static public class GetEmployer extends CancelableRequest {
@@ -131,11 +151,11 @@ public class Events {
         }
     }
 
-    static public class EmployerList extends ResponseToRequest{
+    static public class GetBrokerAgencyResult extends ResponseToRequest{
 
         private final BrokerAgency brokerAgency;
 
-        public EmployerList(int id, gov.dc.broker.models.brokeragency.BrokerAgency brokerAgency) {
+        public GetBrokerAgencyResult(int id, gov.dc.broker.models.brokeragency.BrokerAgency brokerAgency) {
             super(id);
             this.brokerAgency = brokerAgency;
         }
@@ -230,13 +250,15 @@ public class Events {
         private CharSequence password;
         private CharSequence securityAnswer;
         private boolean rememberMe;
+        private final boolean useFingerprintSensor;
         private UserType userType;
 
-        public GetLoginResult(CharSequence accountName, CharSequence password, CharSequence securityAnswer, Boolean rememberMe, UserType userType){
+        public GetLoginResult(CharSequence accountName, CharSequence password, CharSequence securityAnswer, Boolean rememberMe, boolean useFingerprintSensor, UserType userType){
             this.accountName = accountName;
             this.password = password;
             this.securityAnswer = securityAnswer;
             this.rememberMe = rememberMe;
+            this.useFingerprintSensor = useFingerprintSensor;
             this.userType = userType;
         }
 
@@ -263,6 +285,10 @@ public class Events {
 
         public UserType getUserType() {
             return userType;
+        }
+
+        public boolean useFingerprintSensor() {
+            return useFingerprintSensor;
         }
 
         public enum UserType {
@@ -387,6 +413,181 @@ public class Events {
 
         public gov.dc.broker.models.gitaccounts.GitAccounts getGitAccounts() {
             return gitAccounts;
+        }
+    }
+
+    static public class StartSessionTimeout {
+    }
+
+    static public class SessionAboutToTimeout {
+    }
+
+    static public class SessionTimedOut {
+    }
+
+    static public class SessionTimeoutCountdownTick {
+        private final int secondsLeft;
+
+        public SessionTimeoutCountdownTick(int secondsLeft){
+            this.secondsLeft = secondsLeft;
+        }
+
+        public int getSecondsLeft() {
+            return secondsLeft;
+        }
+    }
+
+    static public class StayLoggedInResult {
+        private final boolean success;
+
+        public StayLoggedInResult(boolean success){
+            this.success = success;
+        }
+
+        public boolean getSuccess() {
+            return success;
+        }
+    }
+
+    static public class StayLoggedIn{}
+
+    static public class GetFingerprintStatus {
+        private final boolean watching;
+
+        public GetFingerprintStatus(boolean watching){
+            this.watching = watching;
+        }
+
+        public boolean isWatching() {
+            return watching;
+        }
+    }
+
+    static public class FingerprintStatus{
+
+        public enum Messages{
+            None,
+            AuthenticationError,
+            AuthenticationHelp,
+            AuthenticationFailed,
+            AuthenticationSucceeded
+        }
+
+        private final boolean hardwareDetected;
+        private final boolean fingerprintsEnrolled;
+        private final boolean keyguardSecure;
+        private final Messages message;
+        private final boolean error;
+        private final String errorMessage;
+
+        public FingerprintStatus(boolean hardwareDetected, boolean fingerprintsEnrolled, boolean keyguardSecure){
+            error = false;
+            errorMessage = null;
+            this.hardwareDetected = hardwareDetected;
+            this.fingerprintsEnrolled = fingerprintsEnrolled;
+            this.keyguardSecure = keyguardSecure;
+            this.message = Messages.None;
+        }
+
+        //
+        // this is the error constructor.
+        //
+
+        public FingerprintStatus(String s) {
+            error = true;
+            errorMessage = s;
+            hardwareDetected = false;
+            fingerprintsEnrolled = false;
+            keyguardSecure = false;
+            this.message = Messages.None;
+        }
+
+        public FingerprintStatus(Messages message){
+            error = false;
+            errorMessage = null;
+            hardwareDetected = true;
+            fingerprintsEnrolled = true;
+            keyguardSecure = true;
+            this.message = message;
+        }
+
+        public boolean isHardwareDetected() {
+            return hardwareDetected;
+        }
+
+        public Messages getMessage() {
+            return message;
+        }
+
+        public boolean isFingerprintsEnrolled() {
+            return fingerprintsEnrolled;
+        }
+
+        public boolean isKeyguardSecure() {
+            return keyguardSecure;
+        }
+
+        public boolean error() {
+            return error;
+        }
+
+        public String getErrorMessage() {
+            return errorMessage;
+        }
+    }
+
+    static public class FingerprintAuthenticationUpdate {
+        private final FingerprintStatus.Messages message;
+        private String securityQuestion;
+
+        public FingerprintAuthenticationUpdate(FingerprintStatus.Messages message, String securityQuestion) {
+            this.message = message;
+        }
+
+        public FingerprintStatus.Messages getMessage() {
+            return message;
+        }
+
+        public String getSecurityQuestion() {
+            return securityQuestion;
+        }
+    }
+
+    static public class AuthenticateFingerprint {
+        private final boolean autoLogin;
+
+        public AuthenticateFingerprint(boolean autoLogin) {
+            this.autoLogin = autoLogin;
+        }
+    }
+
+    static public class FingerprintLogin {
+    }
+
+    static public class Relogin {
+    }
+
+    static public class ReloginResult {
+        private final ReloginResultEnum reloginResultEnum;
+        private final String securityQuestion;
+
+        public ReloginResultEnum getReloginResultEnum() {
+            return reloginResultEnum;
+        }
+
+        public enum ReloginResultEnum {
+            Success,
+            Error,
+            Failed
+        }
+
+        public ReloginResult(ReloginResultEnum reloginResultEnum, String securityQuestion){
+            this.reloginResultEnum = reloginResultEnum;
+            this.securityQuestion = securityQuestion;
+        }
+
+        public String getSecurityQuestion() {
+            return securityQuestion;
         }
     }
 }

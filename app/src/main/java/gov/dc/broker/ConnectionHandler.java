@@ -210,43 +210,46 @@ public class ConnectionHandler implements IConnectionHandler{
         connection.connect();
         int responseCode = connection.getResponseCode();
 
-        while (responseCode == 302){
-            HashMap<String, List<String>> cookies = getCookies(connection.getHeaderFields());
-            serverConfiguration.sessionId = cookies.get("_session_id").get(0);
-            String newSessionId = "_session_id=" + cookies.get("_session_id").get(0);
-            String redirectUrlString = connection.getHeaderField("location");
-            URL redirectUrl = new URL(redirectUrlString);
-            connection = (HttpURLConnection)redirectUrl.openConnection();
-            if (redirectUrl.getProtocol().compareToIgnoreCase("https") == 0){
-                HttpsURLConnection httpsURLConnection = (HttpsURLConnection)connection;
-                httpsURLConnection.setSSLSocketFactory(getSSLContext().getSocketFactory());
+        PostResponse postResponse = new PostResponse();
+
+        if (responseCode < 400) {
+
+            while (responseCode == 302) {
+                HashMap<String, List<String>> cookies = getCookies(connection.getHeaderFields());
+                serverConfiguration.sessionId = cookies.get("_session_id").get(0);
+                String newSessionId = "_session_id=" + cookies.get("_session_id").get(0);
+                String redirectUrlString = connection.getHeaderField("location");
+                URL redirectUrl = new URL(redirectUrlString);
+                connection = (HttpURLConnection) redirectUrl.openConnection();
+                if (redirectUrl.getProtocol().compareToIgnoreCase("https") == 0) {
+                    HttpsURLConnection httpsURLConnection = (HttpsURLConnection) connection;
+                    httpsURLConnection.setSSLSocketFactory(getSSLContext().getSocketFactory());
+                }
+                connection.setInstanceFollowRedirects(false);
+                connection.setRequestMethod("GET");
+
+                connection.setRequestProperty("Cookie", serverConfiguration.sessionId);
+                connection.connect();
+                responseCode = connection.getResponseCode();
             }
-            connection.setInstanceFollowRedirects(false);
-            connection.setRequestMethod("GET");
 
-            connection.setRequestProperty("Cookie", serverConfiguration.sessionId);
-            connection.connect();
-            responseCode = connection.getResponseCode();
+
+            InputStream inputStream = connection.getInputStream();
+            InputStreamReader streamReader = new InputStreamReader(inputStream);
+            BufferedReader bufferedReader = new BufferedReader(streamReader);
+            StringBuilder result = new StringBuilder();
+            String line;
+            while ((line = bufferedReader.readLine()) != null) {
+                result.append(line);
+            }
+
+            String string = result.toString();
+            Log.d(TAG, "body: " + string);
+            postResponse.body = string;
         }
-
-
-        InputStream inputStream = connection.getInputStream();
-        InputStreamReader streamReader = new InputStreamReader(inputStream);
-        BufferedReader bufferedReader = new BufferedReader(streamReader);
-        StringBuilder result = new StringBuilder();
-        String line;
-        while((line = bufferedReader.readLine()) != null) {
-            result.append(line);
-        }
-
-        String string = result.toString();
-        Log.d (TAG, "body: " + string);
 
         Log.d(TAG, "response code;" + responseCode);
-
-        PostResponse postResponse = new PostResponse();
         postResponse.headers = connection.getHeaderFields();
-        postResponse.body = string;
         ArrayList<String> list = new ArrayList<>();
         Map<String, List<String>> headerFields = connection.getHeaderFields();
         postResponse.cookies = getCookies(headerFields);

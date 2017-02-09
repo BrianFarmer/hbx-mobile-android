@@ -34,6 +34,7 @@ public class SecurityQuestionDialog extends AppCompatDialogFragment {
     public SecurityQuestionDialog(){
         this.dialog = this;
     }
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         view = inflater.inflate(R.layout.security_question_dialog,container, false);
@@ -79,6 +80,4 @@ public class SecurityQuestionDialog extends AppCompatDialogFragment {
         super.onAttach(context);
         this.context = context;
     }
-
-
 }

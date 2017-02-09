@@ -16,15 +16,19 @@ import com.github.mikephil.charting.data.PieDataSet;
 import com.github.mikephil.charting.data.PieEntry;
 import com.github.mikephil.charting.formatter.IValueFormatter;
 import com.github.mikephil.charting.utils.ViewPortHandler;
+import com.microsoft.azure.mobile.analytics.Analytics;
 
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 import org.joda.time.LocalDate;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 
 import gov.dc.broker.models.brokeragency.BrokerClient;
 import gov.dc.broker.models.employer.Employer;
+import gov.dc.broker.models.employer.PlanYear;
 import gov.dc.broker.models.roster.Roster;
 
 /**
@@ -99,6 +103,22 @@ public class InfoFragment extends BrokerFragment {
     public void doThis(Events.BrokerClient brokerClientEvent) {
         brokerClient = brokerClientEvent.getBrokerClient();
         employer = brokerClientEvent.getEmployer();
+
+        Map<String,String> properties=new HashMap<String,String>();
+        if (brokerClient != null) {
+            if (brokerClient.planYears.size() > 0) {
+                gov.dc.broker.models.brokeragency.PlanYear planYear = BrokerUtilities.getMostRecentPlanYear(brokerClient);
+                properties.put("Status", BrokerUtilities.getBrokerClientStatus(planYear, planYear.planYearBegins).name());
+            }
+        } else {
+            if (employer.planYears.size() > 0) {
+                PlanYear planYear = BrokerUtilities.getMostRecentPlanYear(employer);
+                properties.put("Status", BrokerUtilities.getBrokerClientStatus(planYear, planYear.planYearBegins).name());
+            }
+        }
+        Analytics.trackEvent("Info Tab", properties);
+
+
         EmployerDetailsActivity activity = (EmployerDetailsActivity) getActivity();
         this.coverageYear = activity.getCoverageYear();
         configureDrawers();
@@ -125,6 +145,11 @@ public class InfoFragment extends BrokerFragment {
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void doThis(Events.CoverageYear coverageYear) {
         this.coverageYear = coverageYear.getYear();
+
+        Map<String,String> properties=new HashMap<String,String>();
+        properties.put("CurrentTab", "Info");
+        Analytics.trackEvent("Coverage Year Changed", properties);
+
         try {
             populateField();
         } catch (Exception e) {

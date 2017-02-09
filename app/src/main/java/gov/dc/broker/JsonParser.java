@@ -18,12 +18,20 @@ import gov.dc.broker.models.roster.Roster;
  */
 
 public class JsonParser {
-    public gov.dc.broker.models.brokeragency.BrokerAgency   parseEmployerList(String string){
+    public gov.dc.broker.models.brokeragency.BrokerAgency   parseEmployerList(String string) throws Exception {
         GsonBuilder gsonBuilder = new GsonBuilder();
         gsonBuilder.registerTypeAdapter(LocalDate.class, new LocalDateDeserializer());
         gsonBuilder.registerTypeAdapter(DateTime.class, new DateTimeDeserializer());
         Gson gson = gsonBuilder.create();
-        return gson.fromJson(string.replace("\"\"", "null"), BrokerAgency.class);
+        BrokerAgency brokerAgency = gson.fromJson(string.replace("\"\"", "null"), BrokerAgency.class);
+        if (brokerAgency == null
+            || (brokerAgency.brokerAgency == null
+                && (brokerAgency.brokerClients == null
+                    || brokerAgency.brokerClients.size() == 0)
+                && brokerAgency.brokerName == null)){
+            throw new Exception("BrokerAgency not found.");
+        }
+        return brokerAgency;
     }
 
     public Employer parseEmployerDetails(String s){

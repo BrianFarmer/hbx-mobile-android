@@ -27,7 +27,7 @@ public class BrokerUtilities {
 
     public static long daysLeft(gov.dc.broker.models.brokeragency.PlanYear planYear, LocalDate today) throws Exception {
         if (BrokerUtilities.isInOpenEnrollment(planYear, today)){
-            return Utilities.dateDifferenceDays(today, planYear.planYearBegins);
+            return Utilities.dateDifferenceDays(today, planYear.openEnrollmentBegins);
         }
         return Utilities.dateDifferenceDays(today, planYear.renewalApplicationDue);
     }
@@ -312,12 +312,75 @@ public class BrokerUtilities {
         throw new CoverageException("Roster entry not found");
     }
 
+    public static gov.dc.broker.models.brokeragency.PlanYear getMostRecentPlanYear(BrokerClient brokerClient) {
+        gov.dc.broker.models.brokeragency.PlanYear mostRecentPlanYear = null;
+        for (gov.dc.broker.models.brokeragency.PlanYear planYear : brokerClient.planYears) {
+            if (mostRecentPlanYear == null){
+                mostRecentPlanYear = planYear;
+            } else {
+                if (planYear.planYearBegins.compareTo(mostRecentPlanYear.planYearBegins) > 0){
+                    mostRecentPlanYear = planYear;
+                }
+            }
+        }
+        return mostRecentPlanYear;
+    }
+
+    public static PlanYear getMostRecentPlanYear(Employer employer) {
+        PlanYear mostRecentPlanYear = null;
+        for (PlanYear planYear : employer.planYears) {
+            if (mostRecentPlanYear == null){
+                mostRecentPlanYear = planYear;
+            } else {
+                if (planYear.planYearBegins.compareTo(mostRecentPlanYear.planYearBegins) > 0){
+                    mostRecentPlanYear = planYear;
+                }
+            }
+        }
+        return mostRecentPlanYear;
+    }
+
     public enum BrokerClientStatus {
         InOpenEnrollmentAlerted,
         InOpenEnrollmentNotAlerted,
         InRenewal,
         Other
     };
+
+    public static BrokerClientStatus getBrokerClientStatus(gov.dc.broker.models.employer.PlanYear planYear, LocalDate date) {
+        if (planYear.planYearBegins == null){
+            return BrokerClientStatus.Other;
+        }
+
+        if (planYear.planYearBegins.compareTo(date) < 0){
+            return BrokerClientStatus.Other;
+        }
+
+
+        if (planYear.openEnrollmentBegins != null
+                && planYear.openEnrollmentEnds != null
+                && planYear.openEnrollmentBegins.compareTo(date) <=0
+                && planYear.openEnrollmentEnds.compareTo(date) >= 0) {
+            if (planYear.employeesEnrolled == null
+                    && (planYear.employeesWaived == null
+                    || planYear.employeesWaived < planYear.minimumParticipationRequired)){
+                return BrokerClientStatus.InOpenEnrollmentAlerted;
+            }
+            if (planYear.employeesWaived == null
+                    && planYear.employeesEnrolled < planYear.minimumParticipationRequired) {
+                return BrokerClientStatus.InOpenEnrollmentAlerted;
+            }
+            if (planYear.employeesEnrolled + planYear.employeesWaived < planYear.minimumParticipationRequired) {
+                return BrokerClientStatus.InOpenEnrollmentAlerted;
+            }
+            return BrokerClientStatus.InOpenEnrollmentNotAlerted;
+        }
+        if (planYear.renewalInProgress){
+            return BrokerClientStatus.InRenewal;
+        }
+        return BrokerClientStatus.Other;
+    }
+
     public static BrokerClientStatus getBrokerClientStatus(gov.dc.broker.models.brokeragency.PlanYear planYear, LocalDate date) {
         if (planYear.planYearBegins == null){
             return BrokerClientStatus.Other;

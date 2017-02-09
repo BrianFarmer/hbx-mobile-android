@@ -4,7 +4,6 @@ import android.os.Build;
 import android.support.annotation.RequiresApi;
 import android.util.Log;
 
-import java.util.StringJoiner;
 
 import gov.dc.broker.models.gitaccounts.GitAccounts;
 import okhttp3.HttpUrl;
@@ -25,8 +24,10 @@ public class GithubCoverageConnection extends CoverageConnection {
 
     @RequiresApi(api = Build.VERSION_CODES.N)
     @Override
-    public boolean validateUserAndPassword(String accountName, String password, Boolean rememberMe) throws Exception {
+    public LoginResult validateUserAndPassword(String accountName, String password, Boolean rememberMe, boolean useFingerprintSensor) throws Exception {
         HttpUrl parsed = HttpUrl.parse(accountName + "/" + password);
+        serverConfiguration.accountName = accountName;
+        serverConfiguration.password = password;
         serverConfiguration.dataInfo.scheme = parsed.scheme();
         serverConfiguration.dataInfo.host = parsed.host();
         if (rememberMe) {
@@ -47,10 +48,17 @@ public class GithubCoverageConnection extends CoverageConnection {
             serverConfiguration.employerDetailPath = path;
             serverConfiguration.employerRosterPathForBroker = path;
         } else {
-            serverConfiguration.employerDetailPath = parsed.encodedPath() + "/" + password + "/employer.json";
-            serverConfiguration.employerRosterPathForBroker = parsed.encodedPath() + "/" + password + "/roster.json";
+            serverConfiguration.employerDetailPath = parsed.toString() + "/employer_details.json";
+            serverConfiguration.brokerDetailPath = serverConfiguration.employerDetailPath;
+            serverConfiguration.employerRosterPathForBroker = parsed.toString() + "/roster.json";
         }
-        return true;
+        storageHandler.store(serverConfiguration);
+        return LoginResult.Success;
+    }
+
+    @Override
+    public LoginResult revalidateUserAndPassword() throws Exception {
+        return LoginResult.Success;
     }
 
     @Override

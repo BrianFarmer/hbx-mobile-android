@@ -11,11 +11,14 @@ import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
 
+import com.microsoft.azure.mobile.analytics.Analytics;
+
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 import org.joda.time.LocalDate;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.TreeMap;
 
@@ -53,12 +56,28 @@ public class RosterFragment extends BrokerFragment implements EmployeeFilterDial
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void doThis(Events.CoverageYear coverageYear) throws Exception {
         this.coverageYear = coverageYear.getYear();
+
+        Map<String,String> properties=new HashMap<String,String>();
+        properties.put("CurrentTab", "Roster");
+        Analytics.trackEvent("Coverage Year Changed", properties);
+
         populateRosterList();
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void doThis(final Events.RosterResult rosterResult) throws Exception {
         roster = rosterResult.getRoster();
+
+        Map<String,String> properties=new HashMap<String,String>();
+        if (roster.roster == null) {
+            properties.put("Roster Size", "NULL");
+        } else {
+            properties.put("Roster Size", Integer.toString(roster.roster.size()));
+
+        }
+        Analytics.trackEvent("Roster Tab", properties);
+
+
         EmployerDetailsActivity activity = (EmployerDetailsActivity) getActivity();
         this.coverageYear = activity.getCoverageYear();
         populateRosterList();

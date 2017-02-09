@@ -94,12 +94,17 @@ public class DevUrlHandler extends UrlHandler {
     }
 
     @Override
-    public void processLoginReponse(String accountName, String password, Boolean rememberMe, IConnectionHandler.PostResponse response) throws CoverageException {
+    public CoverageConnection.LoginResult processLoginReponse(String accountName, String password, Boolean rememberMe, IConnectionHandler.PostResponse response, boolean useFingerprintSensor) throws CoverageException {
+        if (response.responseCode == 401){
+            return CoverageConnection.LoginResult.Failure;
+        }
+
         if (response == null
             ||response.responseCode <200
             || response.responseCode >= 300) {
-            throw new CoverageException("Error logging in.");
+            return CoverageConnection.LoginResult.Error;
         }
+
         serverConfiguration.accountName = accountName;
         serverConfiguration.password = password;
         serverConfiguration.rememberMe = rememberMe;
@@ -108,6 +113,7 @@ public class DevUrlHandler extends UrlHandler {
         if (response.cookies.get("_session_id") != null) {
             //serverConfiguration.sessionId = response.cookies.get("_session_id").get(0);
         }
+        return CoverageConnection.LoginResult.Success;
     }
 
     public void processLoginPageReponse(IConnectionHandler.GetReponse getReponse) throws CoverageException {

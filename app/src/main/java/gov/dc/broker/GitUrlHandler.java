@@ -45,12 +45,13 @@ public class GitUrlHandler extends UrlHandler {
     }
 
     @Override
-    public void processLoginReponse(String accountName, String password, Boolean rememberMe, IConnectionHandler.PostResponse loginPostResponse){
+    public CoverageConnection.LoginResult processLoginReponse(String accountName, String password, Boolean rememberMe, IConnectionHandler.PostResponse loginPostResponse, boolean useFingerprintSensor){
         serverConfiguration.accountName = accountName;
         serverConfiguration.password = password;
         serverConfiguration.rememberMe = rememberMe;
         serverConfiguration.securityQuestion = "this is a test question.";
         serverConfiguration.securityAnswer = null;
+        return CoverageConnection.LoginResult.Success;
     }
 
     @Override
@@ -85,5 +86,64 @@ public class GitUrlHandler extends UrlHandler {
         }
 
         return parser.parseGitAccounts(getReponse.body);
+    }
+
+    @Override
+    GetParameters getEmployerDetailsParameters(String employerId) {
+        GetParameters getParameters = new GetParameters();
+
+        if (employerId == null) {
+            if (serverConfiguration.employerDetailPath.substring(0, 4).compareToIgnoreCase("http") == 0) {
+                getParameters.url = HttpUrl.parse(serverConfiguration.employerDetailPath);
+            } else {
+                getParameters.url = new HttpUrl.Builder()
+                        .scheme(serverConfiguration.dataInfo.scheme)
+                        .host(serverConfiguration.dataInfo.host)
+                        .addPathSegment(serverConfiguration.employerDetailPath)
+                        .port(serverConfiguration.dataInfo.port).build();
+            }
+        }
+        else {
+            getParameters.url = new HttpUrl.Builder()
+                    .scheme(serverConfiguration.dataInfo.scheme)
+                    .host(serverConfiguration.dataInfo.host)
+                    .addPathSegments(serverConfiguration.employerDetailPath)
+                    .addPathSegments(employerId)
+                    .port(serverConfiguration.dataInfo.port).build();
+        }
+        return getParameters;
+    }
+
+    @Override
+    GetParameters getEmployerRosterParameters(String rosterId) {
+        GetParameters getParameters = new GetParameters();
+
+            HttpUrl.Builder host = new HttpUrl.Builder()
+                    .scheme(serverConfiguration.dataInfo.scheme)
+                    .host(serverConfiguration.dataInfo.host);
+            host = host.addPathSegments(serverConfiguration.employerRosterPathForBroker);
+            if (rosterId != null) {
+                host = host.addPathSegments(rosterId);
+            }
+            getParameters.url = host.port(serverConfiguration.dataInfo.port)
+                    .build();
+        return getParameters;
+    }
+
+    @Override
+    GetParameters getEmployerRosterParameters() {
+        GetParameters getParameters = new GetParameters();
+
+        if (serverConfiguration.employerRosterPathForBroker.substring(0,4).compareToIgnoreCase("http") == 0){
+            getParameters.url = HttpUrl.parse(serverConfiguration.employerRosterPathForBroker);
+        } else {
+            getParameters.url = new HttpUrl.Builder()
+                    .scheme(serverConfiguration.dataInfo.scheme)
+                    .host(serverConfiguration.dataInfo.host)
+                    .addPathSegments(serverConfiguration.employerRosterPathForBroker)
+                    .port(serverConfiguration.dataInfo.port)
+                    .build();
+        }
+        return getParameters;
     }
 }

@@ -20,7 +20,8 @@ public class Intents {
         activity.startActivity(intent);
     }
 
-    static public void launchEmployerDetails(MainActivity mainActivity, String id) {
+
+    static public void launchEmployerDetails(Activity mainActivity, String id) {
         launchEmployerDetailsActivity(mainActivity, id);
     }
 
@@ -38,5 +39,16 @@ public class Intents {
     public static void launchBrokerActivity(LoginActivity loginActivity) {
         Intent intent = new Intent(loginActivity, MainActivity.class);
         loginActivity.startActivity(intent);
+    }
+
+    public static void restartApp(Activity activity){
+        Intent intent = new Intent(activity, RootActivity.class);
+        intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+        activity.startActivity(intent);
+    }
+
+    public static void launchBrokerDetailsActivity(RootActivity rootActivity) {
+        Intent intent = new Intent(rootActivity, MainActivity.class);
+        rootActivity.startActivity(intent);
     }
 }

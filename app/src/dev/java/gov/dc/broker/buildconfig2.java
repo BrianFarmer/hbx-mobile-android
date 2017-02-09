@@ -2,6 +2,8 @@ package gov.dc.broker;
 
 import org.joda.time.Duration;
 
+import java.util.ArrayList;
+
 class BuildConfig2 {
     private static int cacheTimeoutSeconds = 120;
     private static IDataCache dataCache = new DataCache();
@@ -19,7 +21,7 @@ class BuildConfig2 {
     }
 
     public static IServerConfigurationStorageHandler getServerConfigurationStorageHandler() {
-        return new ConfigurationStorageHandler();
+        return new ConfigurationStorageHandler(new IdentityEncryptionImpl());
     }
 
     public static ServerConfiguration getServerConfiguration() {
@@ -34,7 +36,6 @@ class BuildConfig2 {
         serverConfiguration.dataInfo.port = 3000;
         serverConfiguration.brokerDetailPath = "api/v1/mobile_api/employers_list";
         serverConfiguration.employerDetailPath = "api/v1/mobile_api/employer_details";
-        serverConfiguration.employerRosterPathRoot = "api/v1/mobile_api/employee_roster";
 
         serverConfiguration.loginPath = "/users/sign_in";
         return serverConfiguration;
@@ -91,4 +92,16 @@ class BuildConfig2 {
     }
 
     public static ArrayList<String> getUrls() { return null;  }
+
+    public static int getSessionTimeoutSeconds() {
+        return 30;
+    }
+
+    public static int getTimeoutCountdownSeconds() {
+        return 15;
+    }
+
+    public static ArrayList<String> getUrlLabels() {
+        return null;
+    }
 }
