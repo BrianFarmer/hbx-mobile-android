@@ -28,6 +28,9 @@ import gov.dc.broker.models.roster.Roster;
 import gov.dc.broker.models.roster.RosterEntry;
 
 
+/**
+ * This class manages all of the GreenRobot background work messages.
+ */
 public class BrokerWorker extends IntentService {
     private static String TAG = "BrokerWorker";
 
@@ -53,6 +56,9 @@ public class BrokerWorker extends IntentService {
 
     // This causes the background functionality to be initialized.
 
+    /**
+     * @param intent
+     */
     @Override
     protected void onHandleIntent(Intent intent) {
         try {
@@ -70,10 +76,11 @@ public class BrokerWorker extends IntentService {
     }
 
 
-    //
-    // Gets the test account information from git.
-    //
-
+    /**
+     * Gets the test account information from git.
+     *
+     * @param getGitAccounts Get git test data account information. Only used during git build.
+     */
     @Subscribe(threadMode = ThreadMode.BACKGROUND)
     public void doThis(Events.GetGitAccounts getGitAccounts) {
         try {
@@ -92,11 +99,11 @@ public class BrokerWorker extends IntentService {
         }
     }
 
-
-    //
-    //  login with fingerprint credentials
-    //
-
+    /**
+     * login with fingerprint credentials
+     *
+     * @param fingerprintLogin Sent to login with existinig data after fingerprint authorization has happened.
+     */
     @Subscribe(threadMode = ThreadMode.BACKGROUND)
     public void doThis(Events.FingerprintLogin fingerprintLogin){
         try {
@@ -122,10 +129,11 @@ public class BrokerWorker extends IntentService {
         }
     }
 
-
-    //
-    // Send user name & password to the server.
-
+    /**
+     * Send user name & password to the server.
+     *
+     * @param loginRequest
+     */
     @Subscribe(threadMode = ThreadMode.BACKGROUND)
     public void doThis(Events.LoginRequest loginRequest) {
 

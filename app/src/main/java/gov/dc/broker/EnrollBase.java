@@ -8,14 +8,15 @@ import org.joda.time.Duration;
 
 import java.util.ArrayList;
 
-class BuildConfig2 extends EnrollBase {
+import static gov.dc.broker.BuildConfig2.getServerConfiguration;
+
+class EnrollConfigBase {
     private static int cacheTimeoutSeconds = 120;
     private static IDataCache dataCache = new DataCache();
 
     static String getString(){
         return "Hoo Woo!!!";
     }
-    private static ServerConfiguration serverConfiguration = null;
     public static boolean isBrokerBuild() {
         return true;
     }
@@ -26,28 +27,6 @@ class BuildConfig2 extends EnrollBase {
 
     public static IServerConfigurationStorageHandler getServerConfigurationStorageHandler() {
         return new ConfigurationStorageHandler(new IdentityEncryptionImpl());
-    }
-
-    public static ServerConfiguration getServerConfiguration() {
-        if (serverConfiguration != null){
-            return serverConfiguration;
-        }
-        serverConfiguration = new ServerConfiguration();
-
-        serverConfiguration.dataInfo = new ServerConfiguration.HostInfo();
-        serverConfiguration.dataInfo.host = "enroll-mobile.dchbx.org";
-        serverConfiguration.dataInfo.scheme = "https";
-        serverConfiguration.dataInfo.port = 443;
-
-        serverConfiguration.loginInfo = new ServerConfiguration.HostInfo();
-        serverConfiguration.loginInfo.host = "hbx-mobile-preprod.dchbx.org";
-        serverConfiguration.loginInfo.scheme = "http";
-        serverConfiguration.loginInfo.port = 80;
-
-
-        //serverConfiguration.employerListPath = "api/v1/mobile_api/employers_list";
-        serverConfiguration.loginPath = "login";
-        return serverConfiguration;
     }
 
     public static boolean checkSession(ServerConfiguration serverConfiguration) {
@@ -93,7 +72,7 @@ class BuildConfig2 extends EnrollBase {
     }
 
     private ConnectionHandler getConnectionHandler() {
-        return new EnrollConnectionHandler(serverConfiguration);
+        return new EnrollConnectionHandler(getServerConfiguration());
     }
 
     public static void initMobileCenter() {

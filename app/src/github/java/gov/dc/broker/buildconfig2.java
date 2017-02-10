@@ -98,8 +98,10 @@ class BuildConfig2 {
 
     public static ArrayList<String> getUrls() {
         ArrayList urls = new ArrayList();
+
+        urls.add("Choose a repository");
         urls.add("https://raw.githubusercontent.com/dchealthlink/HBX-mobile-app-APIs/master/from_templates/generated");
-        urls.add("https://raw.githubusercontent.com/BrianFarmer/HBX-mobile-app-APIs/TemplatedTests/accounts");
+        urls.add("https://raw.githubusercontent.com/BrianFarmer/HBX-mobile-app-APIs/master/from_templates/generated");
         urls.add("https://raw.githubusercontent.com/BrianFarmer/HBX-mobile-app-APIs/TemplatedTests/accounts");
         urls.add("https://raw.githubusercontent.com/dchealthlink/HBX-mobile-app-APIs/TemplatedTests/accounts");
         return urls;
@@ -109,16 +111,17 @@ class BuildConfig2 {
         ArrayList urls = new ArrayList();
         urls.add("Choose a repository");
         urls.add("HBX Mobile app api");
+        urls.add("Brian's Master Fork");
         urls.add("Brian's Fork");
         urls.add("HBX Mobile app api test data repository");
         return urls;
     }
 
     public static int getTimeoutCountdownSeconds() {
-        return 10;
+        return 15;
     }
 
     public static int getSessionTimeoutSeconds() {
-        return 20;
+        return 120;
     }
 }

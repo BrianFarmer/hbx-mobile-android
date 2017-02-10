@@ -36,6 +36,10 @@ android {
             applicationId 'dc.gov.enroll'
             versionName "1.0-enroll"
         }
+        coverage {
+            applicationId 'org.dchbx.coveragehq'
+            versionName '1.0-coverage-hq'
+        }
     }
 }
 

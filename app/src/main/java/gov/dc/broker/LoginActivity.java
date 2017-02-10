@@ -179,9 +179,9 @@ public class LoginActivity extends BrokerActivity {
 
             RootActivity.loginDone();
             if (switchEnableFingerprintLogin == null){
-                getMessages().loginRequest(new Events.LoginRequest(urls.get((int) urlItemId - 1), accountName, isBroker, false));
+                getMessages().loginRequest(new Events.LoginRequest(urls.get((int) urlItemId), accountName, isBroker, false));
             } else {
-                getMessages().loginRequest(new Events.LoginRequest(urls.get((int) urlItemId - 1), accountName, isBroker, switchEnableFingerprintLogin.isChecked()));
+                getMessages().loginRequest(new Events.LoginRequest(urls.get((int) urlItemId), accountName, isBroker, switchEnableFingerprintLogin.isChecked()));
             }
             return;
         }
