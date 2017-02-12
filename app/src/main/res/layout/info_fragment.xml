@@ -45,10 +45,33 @@
                 style="@style/expandableImage"
             />
             <TextView
-                android:text="@string/employer_application_due_label"
+                android:text="@string/renewal_available_label"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_below="@id/textViewRenewalDeadlines"
+                android:layout_alignParentLeft="true"
+                android:layout_alignParentStart="true"
+                android:layout_toLeftOf="@+id/textViewRenewalAvailable"
+                android:id="@+id/textViewRenewalAvailableLabel"
+                android:tag="@string/renewal_group"
+                style="@style/client_details_label"
+                />
+            <TextView
+                android:text=""
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignBottom="@id/textViewRenewalAvailableLabel"
+                android:layout_alignParentRight="true"
+                android:layout_alignParentEnd="true"
+                android:id="@+id/textViewRenewalAvailable"
+                android:tag="@string/renewal_group"
+                style="@style/client_details_field"
+                />
+            <TextView
+                android:text="@string/employer_application_due_label"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/textViewRenewalAvailableLabel"
                 android:layout_alignParentLeft="true"
                 android:layout_alignParentStart="true"
                 android:layout_toLeftOf="@+id/textViewEmployerApplicationDue"

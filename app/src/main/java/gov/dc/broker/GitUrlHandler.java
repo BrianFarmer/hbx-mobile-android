@@ -104,12 +104,7 @@ public class GitUrlHandler extends UrlHandler {
             }
         }
         else {
-            getParameters.url = new HttpUrl.Builder()
-                    .scheme(serverConfiguration.dataInfo.scheme)
-                    .host(serverConfiguration.dataInfo.host)
-                    .addPathSegments(serverConfiguration.employerDetailPath)
-                    .addPathSegments(employerId)
-                    .port(serverConfiguration.dataInfo.port).build();
+            getParameters.url = HttpUrl.parse(employerId);
         }
         return getParameters;
     }

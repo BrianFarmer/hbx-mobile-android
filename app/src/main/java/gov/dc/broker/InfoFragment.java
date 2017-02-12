@@ -195,9 +195,24 @@ public class InfoFragment extends BrokerFragment {
             LocalDate now = LocalDate.now();
             gov.dc.broker.models.employer.PlanYear planYearForCoverageYear = BrokerUtilities.getPlanYearForCoverageYear(employer, coverageYear);
 
+            TextView textViewRenewalAvailableLabel = (TextView) view.findViewById(R.id.textViewRenewalAvailableLabel);
+            TextView textViewRenewalAvailable = (TextView) view.findViewById(R.id.textViewRenewalAvailable);
+            if (planYearForCoverageYear.renewalInProgress == false
+                && !BrokerUtilities.isInOpenEnrollment(planYearForCoverageYear, now)){
+                textViewRenewalAvailableLabel.setVisibility(View.VISIBLE);
+                textViewRenewalAvailable.setVisibility(View.VISIBLE);
+                textViewRenewalAvailable.setText(Utilities.DateAsString(planYearForCoverageYear.renewalApplicationAvailable));
+
+            } else {
+                textViewRenewalAvailableLabel.setVisibility(View.GONE);
+                textViewRenewalAvailable.setVisibility(View.GONE);
+            }
+
             TextView textViewEmployerApplicationDueLabel = (TextView) view.findViewById(R.id.textViewEmployerApplicationDueLabel);
             TextView textViewEmployerApplicationDue = (TextView) view.findViewById(R.id.textViewEmployerApplicationDue);
-            if (planYearForCoverageYear.renewalApplicationDue != null) {
+            if (planYearForCoverageYear.renewalInProgress
+                && planYearForCoverageYear.renewalApplicationDue != null
+                && !BrokerUtilities.isInOpenEnrollment(planYearForCoverageYear, now)) {
                 textViewEmployerApplicationDue.setVisibility(View.VISIBLE);
                 textViewEmployerApplicationDueLabel.setVisibility(View.VISIBLE);
                 textViewEmployerApplicationDue.setText(Utilities.DateAsString(planYearForCoverageYear.renewalApplicationDue));
@@ -240,9 +255,15 @@ public class InfoFragment extends BrokerFragment {
 
             TextView textViewCoverageBeginsLabel = (TextView) view.findViewById(R.id.textViewCoverageBeginsLabel);
             TextView textViewCoverageBegins = (TextView) view.findViewById(R.id.textViewCoverageBegins);
-            if (planYearForCoverageYear.planYearBegins != null){
+            if (planYearForCoverageYear.planYearBegins != null
+                    && !BrokerUtilities.isInOpenEnrollment(planYearForCoverageYear, now)){
                 textViewCoverageBeginsLabel.setVisibility(View.VISIBLE);
                 textViewCoverageBegins.setVisibility(View.VISIBLE);
+                if (planYearForCoverageYear.renewalInProgress){
+                    textViewCoverageBeginsLabel.setText(R.string.coverage_begins_label);
+                } else {
+                    textViewCoverageBeginsLabel.setText(R.string.next_coverage_year_begins);
+                }
                 textViewCoverageBegins.setText(Utilities.DateAsString(planYearForCoverageYear.planYearBegins));
             } else {
                 textViewCoverageBeginsLabel.setVisibility(View.GONE);

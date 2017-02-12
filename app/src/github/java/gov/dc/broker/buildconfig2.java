@@ -100,7 +100,7 @@ class BuildConfig2 {
         ArrayList urls = new ArrayList();
 
         urls.add("Choose a repository");
-        urls.add("https://raw.githubusercontent.com/dchealthlink/HBX-mobile-app-APIs/master/from_templates/generated");
+        urls.add("https://raw.githubusercontent.com/dchealthlink/HBX-mobile-app-APIs/master/generated");
         urls.add("https://raw.githubusercontent.com/BrianFarmer/HBX-mobile-app-APIs/master/from_templates/generated");
         urls.add("https://raw.githubusercontent.com/BrianFarmer/HBX-mobile-app-APIs/TemplatedTests/accounts");
         urls.add("https://raw.githubusercontent.com/dchealthlink/HBX-mobile-app-APIs/TemplatedTests/accounts");
@@ -118,10 +118,10 @@ class BuildConfig2 {
     }
 
     public static int getTimeoutCountdownSeconds() {
-        return 15;
+        return 30;
     }
 
     public static int getSessionTimeoutSeconds() {
-        return 120;
+        return 14*60;
     }
 }

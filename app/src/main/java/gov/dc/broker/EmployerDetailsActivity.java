@@ -63,6 +63,7 @@ public class EmployerDetailsActivity extends BrokerActivity {
 
     private String clientId;
     private FragmentTabHost tabHost;
+    private PlanYear planYear;
     private LocalDate coverageYear;
     private String rosterFilter = null;
     private Employer employer;
@@ -84,6 +85,7 @@ public class EmployerDetailsActivity extends BrokerActivity {
         brokerClient = brokerClientEvent.getBrokerClient();
         employer = brokerClientEvent.getEmployer();
 
+        // This is for analytics
         Map<String,String> properties=new HashMap<String,String>();
         if (brokerClient != null) {
             if (brokerClient.planYears.size() > 0) {
@@ -114,13 +116,14 @@ public class EmployerDetailsActivity extends BrokerActivity {
             textViewCoverageYear.setVisibility(View.INVISIBLE);
             int i = 0;
             int selectedIndex = 0;
-            for (gov.dc.broker.models.employer.PlanYear planYear : employer.planYears) {
-                if (planYear.planYearBegins != null
-                        && planYear.planYearBegins.compareTo(initialCoverageYear) > 0) {
-                    initialCoverageYear = planYear.planYearBegins;
+            for (gov.dc.broker.models.employer.PlanYear curPlanYear : employer.planYears) {
+                if (curPlanYear.planYearBegins != null
+                        && curPlanYear.planYearBegins.compareTo(initialCoverageYear) > 0) {
+                    planYear = curPlanYear;
+                    initialCoverageYear = curPlanYear.planYearBegins;
                     selectedIndex = i;
                 }
-                list.add(String.format("%s (%s)", Utilities.DateAsMonthDayYear(planYear.planYearBegins), planYear.state));
+                list.add(String.format("%s (%s)", Utilities.DateAsMonthDayYear(curPlanYear.planYearBegins), curPlanYear.state));
                 i++;
 
                 ArrayAdapter<String> dataAdapter = new ArrayAdapter<String>(this,
@@ -145,7 +148,7 @@ public class EmployerDetailsActivity extends BrokerActivity {
             spinnerCoverageYear.setVisibility(View.INVISIBLE);
             textViewCoverageYear.setVisibility(View.VISIBLE);
             if (employer.planYears.size() == 1) {
-                gov.dc.broker.models.employer.PlanYear planYear = employer.planYears.get(0);
+                planYear = employer.planYears.get(0);
                 coverageYear = planYear.planYearBegins;
                 textViewCoverageYear.setText(String.format("%s (%s)", Utilities.DateAsMonthDayYear(planYear.planYearBegins), planYear.state));
             }
@@ -153,9 +156,9 @@ public class EmployerDetailsActivity extends BrokerActivity {
 
 
         TextView textViewEnrollmentStatus = (TextView) findViewById(R.id.textViewEnrollmentStatus);
-        gov.dc.broker.models.employer.PlanYear planYear = employer.planYears.get(0);
         LocalDate today = new LocalDate();
-        if (BrokerUtilities.isInOpenEnrollment(planYear, today)) {
+        boolean inOpenEnrollment = BrokerUtilities.isInOpenEnrollment(planYear, today);
+        if (inOpenEnrollment) {
             if (BrokerUtilities.isAlerted(planYear)){
                 textViewEnrollmentStatus.setText(R.string.minimum_not_met);
                 textViewEnrollmentStatus.setTextColor(ContextCompat.getColor(this, R.color.alertColor));
@@ -168,7 +171,7 @@ public class EmployerDetailsActivity extends BrokerActivity {
                 textViewEnrollmentStatus.setText(R.string.renewal_in_progress);
                 textViewEnrollmentStatus.setTextColor(ContextCompat.getColor(this, R.color.in_renewal));
             } else {
-                textViewEnrollmentStatus.setText(R.string.all_other_clients);
+                textViewEnrollmentStatus.setText(R.string.active);
                 textViewEnrollmentStatus.setTextColor(ContextCompat.getColor(this, R.color.textgray));
             }
         }

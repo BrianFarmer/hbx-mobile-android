@@ -1,5 +1,7 @@
 package gov.dc.broker;
 
+import android.util.Log;
+
 import org.joda.time.Days;
 import org.joda.time.LocalDate;
 
@@ -21,13 +23,15 @@ import gov.dc.broker.models.roster.RosterEntry;
  */
 
 public class BrokerUtilities {
+    private static String TAG = "BrokerUtilities";
+
     public static long daysLeft(gov.dc.broker.models.employer.PlanYear planYear, LocalDate today) throws Exception {
         return Utilities.dateDifferenceDays(today, planYear.openEnrollmentEnds);
     }
 
     public static long daysLeft(gov.dc.broker.models.brokeragency.PlanYear planYear, LocalDate today) throws Exception {
         if (BrokerUtilities.isInOpenEnrollment(planYear, today)){
-            return Utilities.dateDifferenceDays(today, planYear.openEnrollmentBegins);
+            return Utilities.dateDifferenceDays(today, planYear.openEnrollmentEnds);
         }
         return Utilities.dateDifferenceDays(today, planYear.renewalApplicationDue);
     }
@@ -55,13 +59,13 @@ public class BrokerUtilities {
                 || planYear.openEnrollmentEnds == null){
             return false;
         }
-        if (planYear.openEnrollmentBegins.isAfter(date)){
+        if (planYear.openEnrollmentBegins.compareTo(date) > 0){
             return false;
         }
-        if (planYear.openEnrollmentEnds.isBefore(date)){
-            return false;
-        }
-        return true;
+        Log.d(TAG, "planYear.openEnrollmentEnds:" + planYear.openEnrollmentEnds);
+        Log.d(TAG, "now: " + date);
+        Log.d(TAG, "compare: " + planYear.openEnrollmentEnds.compareTo(date));
+        return planYear.openEnrollmentEnds.compareTo(date) >= 0;
 
     }
 
@@ -250,7 +254,7 @@ public class BrokerUtilities {
     }
 
     public static int daysLeftToRenewal(gov.dc.broker.models.brokeragency.PlanYear planYear, LocalDate now) {
-        return Days.daysBetween(now, planYear.openEnrollmentBegins).getDays();
+        return Days.daysBetween(planYear.openEnrollmentBegins, now).getDays();
     }
 
     public static boolean isPlanYearAlerted(gov.dc.broker.models.brokeragency.PlanYear planYear) {

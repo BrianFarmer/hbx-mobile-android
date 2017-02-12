@@ -78,7 +78,7 @@
     <string name="open_enrollment_begins_label_future">Open Enrollment Begins</string>
     <string name="open_enrollment_begins_label_past">Open Enrollment Began</string>
     <string name="open_enrollment_ends_label_future">Open Enrollment Closes</string>
-    <string name="open_enrollment_ends_label_past">Open Enrollment Closed</string>
+    <string name="open_enrollment_ends_label_past">Open Enrollment Ended</string>
     <string name="days_left_label">Days Left</string>
     <string name="call_dc_healthlink">Call DC HealthLink</string>
     <string name="estimated_cost_label">Monthly Estimated Costs-</string>
@@ -193,4 +193,6 @@
     <string name="register_fingerprint_message">Register at least one fingerprint in Settings.</string>
     <string name="lock_screen_security_message">Lock screen security is not enabled.</string>
     <string name="fingerprint_messagge">Please place your finger on the scanner to verify your identity</string>
+    <string name="active">Active</string>
+    <string name="next_coverage_year_begins">Next Coverage Year Begins</string>
 </resources>
