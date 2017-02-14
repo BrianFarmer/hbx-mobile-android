@@ -10,7 +10,7 @@ android {
         minSdkVersion 16
         targetSdkVersion 25
         versionCode 4
-        versionName "1.0.7"
+        versionName "1.0.8"
         testInstrumentationRunner 'android.support.test.runner.AndroidJUnitRunner'
     }
 
@@ -32,7 +32,7 @@ android {
         }
         enroll {
             applicationId 'dc.gov.enroll'
-            versionName "1.0-enroll"
+            versionName "1.0-coverage-preprod"
         }
         coverage {
             applicationId 'org.dchbx.coveragehq'

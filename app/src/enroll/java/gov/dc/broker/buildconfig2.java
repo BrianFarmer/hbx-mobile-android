@@ -10,7 +10,7 @@ class BuildConfig2 extends EnrollConfigBase {
         serverConfiguration = new ServerConfiguration();
 
         serverConfiguration.dataInfo = new ServerConfiguration.HostInfo();
-        serverConfiguration.dataInfo.host = "enroll-feature.dchbx.org";
+        serverConfiguration.dataInfo.host = "enroll-mobile.dchbx.org";
         serverConfiguration.dataInfo.scheme = "https";
         serverConfiguration.dataInfo.port = 443;
 

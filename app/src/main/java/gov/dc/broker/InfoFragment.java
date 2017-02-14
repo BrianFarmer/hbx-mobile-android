@@ -421,10 +421,16 @@ public class InfoFragment extends BrokerFragment {
 
         ArrayList<PieEntry> yValues = new ArrayList<>();
 
-        yValues.add(new PieEntry(2*employeeCounts.Enrolled, Integer.toString(employeeCounts.Enrolled)));
-        yValues.add(new PieEntry(2*employeeCounts.Waived, Integer.toString(employeeCounts.Waived)));
+        if (employeeCounts.Enrolled > 0) {
+            yValues.add(new PieEntry(2*employeeCounts.Enrolled, Integer.toString(employeeCounts.Enrolled)));
+        }
+        if (employeeCounts.Waived > 0) {
+            yValues.add(new PieEntry(2 * employeeCounts.Waived, Integer.toString(employeeCounts.Waived)));
+        }
         int notEnrolledCount = 2*(employeeCounts.Total - (employeeCounts.Enrolled + employeeCounts.Waived));
-        yValues.add(new PieEntry(notEnrolledCount, Integer.toString(notEnrolledCount)));
+        if (notEnrolledCount > 0) {
+            yValues.add(new PieEntry(notEnrolledCount, Integer.toString(notEnrolledCount)));
+        }
 
         PieDataSet dataSet = new PieDataSet(yValues, "");
         dataSet.setValueTextSize(16f);
@@ -436,9 +442,15 @@ public class InfoFragment extends BrokerFragment {
             }
         });
         ArrayList<Integer> colors = new ArrayList<>();
-        colors.add(ContextCompat.getColor(this.getActivity(), R.color.enrolled_color));
-        colors.add(ContextCompat.getColor(this.getActivity(), R.color.waived_color));
-        colors.add(ContextCompat.getColor(this.getActivity(), R.color.not_enrolled_color));
+        if (employeeCounts.Enrolled > 0) {
+            colors.add(ContextCompat.getColor(this.getActivity(), R.color.enrolled_color));
+        }
+        if (employeeCounts.Waived > 0) {
+            colors.add(ContextCompat.getColor(this.getActivity(), R.color.waived_color));
+        }
+        if (notEnrolledCount > 0) {
+            colors.add(ContextCompat.getColor(this.getActivity(), R.color.not_enrolled_color));
+        }
         dataSet.setColors(colors);
         PieData data = new PieData(dataSet);
         pieChart.setData(data);

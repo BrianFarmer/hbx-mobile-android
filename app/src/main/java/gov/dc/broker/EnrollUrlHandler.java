@@ -163,4 +163,37 @@ public class EnrollUrlHandler extends UrlHandler {
             throw new Exception("Unable to reset sesssion time");
         }
     }
+
+    @Override
+    public  GetParameters getEmployerDetailsParameters(String employerId) {
+        GetParameters getParameters = new GetParameters();
+
+        if (serverConfiguration.sessionId != null) {
+            getParameters.cookies = new HashMap<>();
+            getParameters.cookies.put("_session_id", serverConfiguration.sessionId);
+        }
+
+        if (employerId == null) {
+            getParameters.url = HttpUrl.parse(serverConfiguration.employerDetailPath);
+        }
+        else {
+            if (employerId.substring(0, 4).compareToIgnoreCase("http") == 0) {
+                getParameters.url = HttpUrl.parse(employerId);
+            } else {
+                String path;
+                if (employerId.substring(0, 1).compareTo("/") == 0) {
+                    path = employerId.substring(1, employerId.length());
+                } else {
+                    path = employerId;
+                }
+                getParameters.url = new HttpUrl.Builder()
+                        .scheme(serverConfiguration.dataInfo.scheme)
+                        .host(serverConfiguration.dataInfo.host)
+                        .addPathSegments(path)
+                        .port(serverConfiguration.dataInfo.port).build();
+            }
+        }
+        return getParameters;
+    }
+
 }

@@ -157,24 +157,36 @@ public class EmployerAdapter extends BaseSwipeAdapter {
         });
     }
     private void sortOtherItemsByCompanyAsc(ArrayList<OtherWrapper> otherItems) {
-        Collections.sort(otherItems, new Comparator<OtherWrapper>() {
-            @Override
-            public int compare(OtherWrapper otherWrapper, OtherWrapper t1) {
-                return otherWrapper.brokerClient.employerName.compareTo(t1.brokerClient.employerName);
-            }
-        });
+        try {
+
+            Collections.sort(otherItems, new Comparator<OtherWrapper>() {
+                @Override
+                public int compare(OtherWrapper otherWrapper, OtherWrapper t1) {
+                    return otherWrapper.brokerClient.employerName.compareTo(t1.brokerClient.employerName);
+                }
+            });
+        } catch (Throwable e) {
+            Log.e(TAG, "Exception sorting employers by their names: ", e);
+        }
     }
 
     private void sortOtherItemsByPlanYearDesc(ArrayList<OtherWrapper> otherItems) {
-        Collections.sort(otherItems, new Comparator<OtherWrapper>() {
-            @Override
-            public int compare(OtherWrapper otherWrapper, OtherWrapper t1) {
-                if (otherWrapper.planYear == null){
-                    return -1;
+        try {
+            Collections.sort(otherItems, new Comparator<OtherWrapper>() {
+                @Override
+                public int compare(OtherWrapper otherWrapper, OtherWrapper t1) {
+                    if (t1.planYear == null
+                        || t1.planYear.planYearBegins == null
+                        ||otherWrapper.planYear == null
+                        || otherWrapper.planYear.planYearBegins == null){
+                        return -1;
+                    }
+                    return -1 * otherWrapper.planYear.planYearBegins.compareTo(t1.planYear.planYearBegins);
                 }
-                return -1 * otherWrapper.planYear.planYearBegins.compareTo(t1.planYear.planYearBegins);
-            }
-        });
+            });
+        } catch (Throwable e) {
+            Log.e(TAG, "Exception sorting employers by planYearBegins: ", e);
+        }
     }
     private void sortOtherItemsByPlayYearAsc(ArrayList<OtherWrapper> otherItems) {
         Collections.sort(otherItems, new Comparator<OtherWrapper>() {
