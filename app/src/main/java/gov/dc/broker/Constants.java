@@ -5,4 +5,5 @@ package gov.dc.broker;
  */
 public class Constants {
     public static String HbxPhoneNumber = "(855) 532-5465";
+    public static String HbxEmail = "info@dchealthlink.com";
 }

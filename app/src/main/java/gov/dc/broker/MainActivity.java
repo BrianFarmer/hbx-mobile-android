@@ -104,6 +104,11 @@ public class MainActivity extends BrokerActivity {
                         phoneIntent.setData(Uri.parse("tel:" + Constants.HbxPhoneNumber));
                         startActivity(phoneIntent);
                         return true;
+                    case R.id.nav_email_healthlink:
+                        Intent emailIntent = new Intent(Intent.ACTION_SENDTO);
+                        emailIntent.setData(Uri.parse("mailto:" + Constants.HbxEmail));
+                        startActivity(emailIntent);
+                        return true;
                     case R.id.nav_logout:
                         getMessages().logoutRequest();
                         Intent i = new Intent(MainActivity.this, RootActivity.class);

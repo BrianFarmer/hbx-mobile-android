@@ -18,11 +18,21 @@
         android:id="@+id/textViewCoverageYear"
         style="@style/Subtitle2"
     />
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/textViewCompanyName"
+        android:layout_centerHorizontal="true"
+        android:id="@+id/textViewNoPlansLablel"
+        android:text="@string/no_plans_published"
+        style="@style/Subtitle2"
+        />
     <Spinner
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_below="@+id/textViewCompanyName"
         android:layout_centerHorizontal="true"
+        android:gravity="center"
         android:id="@+id/spinnerCoverageYear"
         android:spinnerMode="dropdown"
         style="@style/Subtitle2"

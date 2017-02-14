@@ -50,7 +50,12 @@ public class InfoFragment extends BrokerFragment {
     private boolean currentParticipationOpen;
     private boolean currentMonthlyCostsOpen;
     private LocalDate coverageYear;
+    private ArrayList<ControlState> controlStates;
 
+    class ControlState {
+        public TextView view;
+        public boolean visible = false;
+    }
 
     public InfoFragment(){
         currentRenewalsOpen = renewalsInitiallyOpen;
@@ -96,6 +101,7 @@ public class InfoFragment extends BrokerFragment {
     @Override
     public void onResume(){
         super.onResume();
+
         configureDrawers();
     }
 
@@ -158,30 +164,70 @@ public class InfoFragment extends BrokerFragment {
     }
 
     private void configureDrawers(){
-        ImageView renewalDeadlines = (ImageView) view.findViewById(R.id.imageViewRenewalDeadlines);
-        setVisibility(view, R.string.renewal_group, currentRenewalsOpen, R.id.imageViewRenewalDeadlines, R.drawable.uparrow, R.drawable.circle_plus);
-        renewalDeadlines.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                currentRenewalsOpen = invertGroup(view, R.string.renewal_group, R.id.imageViewRenewalDeadlines, R.drawable.uparrow, R.drawable.circle_plus);
+        final ImageView renewalDeadlines = (ImageView) view.findViewById(R.id.imageViewRenewalDeadlines);
+
+        if (employer == null
+            || employer.planYears == null
+            || employer.planYears.size() == 0){
+
+            setVisibility(view, R.string.renewal_group, false, R.id.imageViewRenewalDeadlines, R.drawable.uparrow, R.drawable.circle_plus);
+            ImageView participation = (ImageView) view.findViewById(R.id.imageViewParticipation);
+            setVisibility(view, R.string.participation_group, false, R.id.imageViewParticipation, R.drawable.uparrow, R.drawable.circle_plus);
+            final ImageView monthlyCosts = (ImageView) view.findViewById(R.id.imageViewMonthlyCosts);
+            setVisibility(view, R.string.monthly_costs_group, false, R.id.imageViewMonthlyCosts, R.drawable.uparrow, R.drawable.circle_plus);
+
+        } else {
+
+            setVisibility(view, R.string.renewal_group, currentRenewalsOpen, R.id.imageViewRenewalDeadlines, R.drawable.uparrow, R.drawable.circle_plus);
+            renewalDeadlines.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    if (currentRenewalsOpen) {
+                        setVisibility(false);
+                        currentRenewalsOpen = false;
+                    } else {
+                        setVisibility(true);
+                        currentRenewalsOpen = true;
+                    }
+//                currentRenewalsOpen = invertGroup(view, R.string.renewal_group, R.id.imageViewRenewalDeadlines, R.drawable.uparrow, R.drawable.circle_plus);
+                }
+            });
+            ImageView participation = (ImageView) view.findViewById(R.id.imageViewParticipation);
+            setVisibility(view, R.string.participation_group, currentParticipationOpen, R.id.imageViewParticipation, R.drawable.uparrow, R.drawable.circle_plus);
+            participation.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    currentParticipationOpen = invertGroup(view, R.string.participation_group, R.id.imageViewParticipation, R.drawable.uparrow, R.drawable.circle_plus);
+                }
+            });
+            final ImageView monthlyCosts = (ImageView) view.findViewById(R.id.imageViewMonthlyCosts);
+            setVisibility(view, R.string.monthly_costs_group, currentMonthlyCostsOpen, R.id.imageViewMonthlyCosts, R.drawable.uparrow, R.drawable.circle_plus);
+            monthlyCosts.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    currentMonthlyCostsOpen = invertGroup(view, R.string.monthly_costs_group, R.id.imageViewMonthlyCosts, R.drawable.uparrow, R.drawable.circle_plus);
+                }
+            });
+        }
+    }
+
+    private void setVisibility(boolean show){
+        ImageView imageView = (ImageView) view.findViewById(R.id.imageViewRenewalDeadlines);
+        if (show){
+            imageView.setImageResource(R.drawable.uparrow);
+            for (ControlState controlState : controlStates) {
+                if (controlState.visible){
+                    controlState.view.setVisibility(View.VISIBLE);
+                } else {
+                    controlState.view.setVisibility(View.GONE);
+                }
             }
-        });
-        ImageView participation = (ImageView) view.findViewById(R.id.imageViewParticipation);
-        setVisibility(view, R.string.participation_group, currentParticipationOpen, R.id.imageViewParticipation, R.drawable.uparrow, R.drawable.circle_plus);
-        participation.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                currentParticipationOpen = invertGroup(view, R.string.participation_group, R.id.imageViewParticipation, R.drawable.uparrow, R.drawable.circle_plus);
+        } else {
+            imageView.setImageResource(R.drawable.circle_plus);
+            for (ControlState controlState : controlStates) {
+                controlState.view.setVisibility(View.GONE);
             }
-        });
-        final ImageView monthlyCosts = (ImageView) view.findViewById(R.id.imageViewMonthlyCosts);
-        setVisibility(view, R.string.monthly_costs_group, currentMonthlyCostsOpen, R.id.imageViewMonthlyCosts, R.drawable.uparrow, R.drawable.circle_plus);
-        monthlyCosts.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                currentMonthlyCostsOpen = invertGroup(view, R.string.monthly_costs_group, R.id.imageViewMonthlyCosts, R.drawable.uparrow, R.drawable.circle_plus);
-            }
-        });
+        }
     }
 
     private void populateField() throws Exception {
@@ -189,95 +235,66 @@ public class InfoFragment extends BrokerFragment {
             return;
         }
 
+        controlStates = new ArrayList<>();
         if (employer.planYears != null
             && employer.planYears.size() > 0) {
 
             LocalDate now = LocalDate.now();
             gov.dc.broker.models.employer.PlanYear planYearForCoverageYear = BrokerUtilities.getPlanYearForCoverageYear(employer, coverageYear);
 
-            TextView textViewRenewalAvailableLabel = (TextView) view.findViewById(R.id.textViewRenewalAvailableLabel);
-            TextView textViewRenewalAvailable = (TextView) view.findViewById(R.id.textViewRenewalAvailable);
-            if (planYearForCoverageYear.renewalInProgress == false
+            if (planYearForCoverageYear.renewalInProgress == true
                 && !BrokerUtilities.isInOpenEnrollment(planYearForCoverageYear, now)){
-                textViewRenewalAvailableLabel.setVisibility(View.VISIBLE);
-                textViewRenewalAvailable.setVisibility(View.VISIBLE);
-                textViewRenewalAvailable.setText(Utilities.DateAsString(planYearForCoverageYear.renewalApplicationAvailable));
-
+                initVisibleControls(R.id.textViewRenewalAvailableLabel, R.id.textViewRenewalAvailable, planYearForCoverageYear.renewalApplicationAvailable);
             } else {
-                textViewRenewalAvailableLabel.setVisibility(View.GONE);
-                textViewRenewalAvailable.setVisibility(View.GONE);
+                initGoneControls(R.id.textViewRenewalAvailableLabel, R.id.textViewRenewalAvailable);
             }
 
-            TextView textViewEmployerApplicationDueLabel = (TextView) view.findViewById(R.id.textViewEmployerApplicationDueLabel);
-            TextView textViewEmployerApplicationDue = (TextView) view.findViewById(R.id.textViewEmployerApplicationDue);
             if (planYearForCoverageYear.renewalInProgress
                 && planYearForCoverageYear.renewalApplicationDue != null
                 && !BrokerUtilities.isInOpenEnrollment(planYearForCoverageYear, now)) {
-                textViewEmployerApplicationDue.setVisibility(View.VISIBLE);
-                textViewEmployerApplicationDueLabel.setVisibility(View.VISIBLE);
-                textViewEmployerApplicationDue.setText(Utilities.DateAsString(planYearForCoverageYear.renewalApplicationDue));
+                initVisibleControls(R.id.textViewEmployerApplicationDueLabel, R.id.textViewEmployerApplicationDue, planYearForCoverageYear.renewalApplicationDue);
             } else {
-                textViewEmployerApplicationDue.setVisibility(View.GONE);
-                textViewEmployerApplicationDueLabel.setVisibility(View.GONE);
+                initGoneControls(R.id.textViewEmployerApplicationDueLabel, R.id.textViewEmployerApplicationDue);
             }
 
-            TextView openEnrollmentBeginsLabel = (TextView) view.findViewById(R.id.textViewOpenEnrollmentBeginsLabel);
-            TextView openEnrollmentBegins = (TextView) view.findViewById(R.id.textViewOpenEnrollmentBegins);
             if (planYearForCoverageYear.openEnrollmentBegins != null) {
-                openEnrollmentBeginsLabel.setVisibility(View.VISIBLE);
-                openEnrollmentBegins.setVisibility(View.VISIBLE);
                 if (planYearForCoverageYear.openEnrollmentBegins.compareTo(now) < 0) {
-                    openEnrollmentBeginsLabel.setText(getResources().getText(R.string.open_enrollment_begins_label_past));
+                    initVisibleControls(R.id.textViewOpenEnrollmentBeginsLabel, R.id.textViewOpenEnrollmentBegins, R.string.open_enrollment_begins_label_past, planYearForCoverageYear.renewalApplicationDue);
                 } else {
-                    openEnrollmentBeginsLabel.setText(getResources().getText(R.string.open_enrollment_begins_label_future));
+                    initVisibleControls(R.id.textViewOpenEnrollmentBeginsLabel, R.id.textViewOpenEnrollmentBegins, R.string.open_enrollment_begins_label_past, planYearForCoverageYear.renewalApplicationDue);
                 }
-                openEnrollmentBegins.setText(Utilities.DateAsString(planYearForCoverageYear.openEnrollmentBegins));
             } else {
-                openEnrollmentBeginsLabel.setVisibility(View.GONE);
-                openEnrollmentBegins.setVisibility(View.GONE);
+                initGoneControls(R.id.textViewOpenEnrollmentBeginsLabel, R.id.textViewOpenEnrollmentBegins);
             }
 
-            TextView openEnrollmentEndsLabel = (TextView) view.findViewById(R.id.textViewOpenEnrollmentEndsLabel);
-            TextView openEnrollmentEnds = (TextView) view.findViewById(R.id.textViewOpenEnrollmentEnds);
             if (planYearForCoverageYear.openEnrollmentEnds != null) {
-                openEnrollmentEnds.setVisibility(View.VISIBLE);
-                openEnrollmentEndsLabel.setVisibility(View.VISIBLE);
                 if (planYearForCoverageYear.openEnrollmentEnds.compareTo(now) < 0) {
-                    openEnrollmentEndsLabel.setText(R.string.open_enrollment_ends_label_past);
+                    initVisibleControls(R.id.textViewOpenEnrollmentEndsLabel, R.id.textViewOpenEnrollmentEnds, R.string.open_enrollment_ends_label_past, planYearForCoverageYear.openEnrollmentEnds);
                 } else {
-                    openEnrollmentEndsLabel.setText(R.string.open_enrollment_ends_label_future);
+                    initVisibleControls(R.id.textViewOpenEnrollmentEndsLabel, R.id.textViewOpenEnrollmentEnds, R.string.open_enrollment_ends_label_future, planYearForCoverageYear.openEnrollmentEnds);
                 }
-                openEnrollmentEnds.setText(Utilities.DateAsString(planYearForCoverageYear.openEnrollmentEnds));
             } else {
-                openEnrollmentEnds.setVisibility(View.GONE);
-                openEnrollmentEndsLabel.setVisibility(View.GONE);
+                initGoneControls(R.id.textViewOpenEnrollmentEndsLabel, R.id.textViewOpenEnrollmentEnds);
             }
 
-            TextView textViewCoverageBeginsLabel = (TextView) view.findViewById(R.id.textViewCoverageBeginsLabel);
-            TextView textViewCoverageBegins = (TextView) view.findViewById(R.id.textViewCoverageBegins);
             if (planYearForCoverageYear.planYearBegins != null
                     && !BrokerUtilities.isInOpenEnrollment(planYearForCoverageYear, now)){
-                textViewCoverageBeginsLabel.setVisibility(View.VISIBLE);
-                textViewCoverageBegins.setVisibility(View.VISIBLE);
                 if (planYearForCoverageYear.renewalInProgress){
-                    textViewCoverageBeginsLabel.setText(R.string.coverage_begins_label);
+                    initVisibleControls(R.id.textViewCoverageBeginsLabel, R.id.textViewCoverageBegins, R.string.coverage_begins_label, planYearForCoverageYear.planYearBegins);
                 } else {
-                    textViewCoverageBeginsLabel.setText(R.string.next_coverage_year_begins);
+                    initVisibleControls(R.id.textViewCoverageBeginsLabel, R.id.textViewCoverageBegins, R.string.next_coverage_year_begins, planYearForCoverageYear.planYearBegins);
                 }
-                textViewCoverageBegins.setText(Utilities.DateAsString(planYearForCoverageYear.planYearBegins));
             } else {
-                textViewCoverageBeginsLabel.setVisibility(View.GONE);
-                textViewCoverageBegins.setVisibility(View.GONE);
+                initGoneControls(R.id.textViewCoverageBeginsLabel, R.id.textViewCoverageBegins);
             }
 
-            TextView daysLeft = (TextView) view.findViewById(R.id.textViewDaysLeft);
             if (BrokerUtilities.isInOpenEnrollment(planYearForCoverageYear, now)) {
-                daysLeft.setText(now.compareTo(coverageYear) < 0 ? Long.toString(BrokerUtilities.daysLeft(planYearForCoverageYear, now)) : "");
+                initVisibleControls(R.id.textViewDaysLeftLabel, R.id.textViewDaysLeft, now.compareTo(coverageYear) < 0 ? Long.toString(BrokerUtilities.daysLeft(planYearForCoverageYear, now)) : "");
             } else {
-                TextView daysLeftLabel = (TextView)view.findViewById(R.id.textViewDaysLeftLabel);
-                daysLeftLabel.setVisibility(View.GONE);
-                daysLeft.setVisibility(View.GONE);
+                initGoneControls(R.id.textViewDaysLeftLabel, R.id.textViewDaysLeft);
             }
+
+            setVisibility(true);
 
             if (roster == null
                 || roster.roster == null
@@ -336,7 +353,60 @@ public class InfoFragment extends BrokerFragment {
                 TextView textViewTotal = (TextView)view.findViewById(R.id.textViewTotal);
                 textViewTotal.setText(String.format("$%.2f", totals.total));
             }
+        } else {
+            initGoneControls(R.id.textViewRenewalAvailableLabel, R.id.textViewRenewalAvailable);
+            initGoneControls(R.id.textViewEmployerApplicationDueLabel, R.id.textViewEmployerApplicationDue);
+            initGoneControls(R.id.textViewOpenEnrollmentBeginsLabel, R.id.textViewOpenEnrollmentBegins);
+            initGoneControls(R.id.textViewOpenEnrollmentEndsLabel, R.id.textViewOpenEnrollmentEnds);
+            initGoneControls(R.id.textViewCoverageBeginsLabel, R.id.textViewCoverageBegins);
+            initGoneControls(R.id.textViewDaysLeftLabel, R.id.textViewDaysLeft);
+            setVisibility(true);
+
+            configureDrawers();
+
+            //R.string.participation_group
         }
+    }
+
+    private ControlState buildControlState(int viewId) {
+        ControlState controlState = new ControlState();
+        controlState.view = (TextView)view.findViewById(viewId);
+        controlState.visible = false;
+        controlStates.add(controlState);
+        return controlState;
+    }
+
+    private void initVisibleControls(int labelId, int fieldId, int lableStringId, LocalDate dateTime){
+        ControlState labelControlState = buildControlState(labelId);
+        labelControlState.view.setText(getText(lableStringId));
+        labelControlState.visible = true;
+
+        ControlState fieldControlState = buildControlState(fieldId);
+        fieldControlState.view.setText(Utilities.DateAsString(dateTime));
+        fieldControlState.visible = true;
+    }
+
+    private void initVisibleControls(int labelId, int fieldId, LocalDate dateTime){
+        ControlState labelControlState = buildControlState(labelId);
+        labelControlState.visible = true;
+
+        ControlState fieldControlState = buildControlState(fieldId);
+        fieldControlState.view.setText(Utilities.DateAsString(dateTime));
+        fieldControlState.visible = true;
+    }
+
+    private void initVisibleControls(int labelId, int fieldId, String text){
+        ControlState labelControlState = buildControlState(labelId);
+        labelControlState.visible = true;
+
+        ControlState fieldControlState = buildControlState(fieldId);
+        fieldControlState.view.setText(text);
+        fieldControlState.visible = true;
+    }
+
+    private void initGoneControls(int labelId, int fieldId){
+        buildControlState(labelId);
+        buildControlState(fieldId);
     }
 
     private void configurePieChartData(BrokerUtilities.EmployeeCounts employeeCounts) {

@@ -10,6 +10,10 @@
             android:icon="@drawable/call_color"
             android:title="@string/call_dc_healthlink" />
         <item
+            android:id="@+id/nav_email_healthlink"
+            android:icon="@drawable/emailicon"
+            android:title="@string/email_dc_healthlink" />
+        <item
             android:id="@+id/nav_logout"
             android:icon="@drawable/logout"
             android:title="@string/logout_menu_item" />

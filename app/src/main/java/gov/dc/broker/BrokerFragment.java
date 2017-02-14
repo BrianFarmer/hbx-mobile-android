@@ -72,6 +72,30 @@ public class BrokerFragment extends Fragment {
             view.setVisibility(state);
         }
     }
+
+    protected boolean invertDrawer(View rootView, int tagResourceId, int openButtonId, int openButtonImageId, int closedButtonImageId){
+        ArrayList<View> views = new ArrayList<>();
+        getViewsByTag(views, (ViewGroup)rootView, BrokerApplication.getBrokerApplication().getString(tagResourceId));
+        boolean open= false;
+        for (View view : views) {
+            if (view.getVisibility() == View.VISIBLE){
+                view.setVisibility(View.GONE);
+                open = false;
+            } else {
+                view.setVisibility(View.VISIBLE);
+                open = true;
+            }
+        }
+        ImageView imageView = (ImageView) rootView.findViewById(openButtonId);
+        if (open){
+            imageView.setImageResource(openButtonImageId);
+        } else {
+            imageView.setImageResource(closedButtonImageId);
+        }
+        return open;
+
+    }
+
     protected boolean invertGroup(View rootView, int tagResourceId, int openButtonId, int openButtonImageId, int closedButtonImageId) {
         ArrayList<View> views = new ArrayList<>();
         getViewsByTag(views, (ViewGroup)rootView, BrokerApplication.getBrokerApplication().getString(tagResourceId));

@@ -104,7 +104,17 @@ public class GitUrlHandler extends UrlHandler {
             }
         }
         else {
-            getParameters.url = HttpUrl.parse(employerId);
+
+            if (serverConfiguration.employerDetailPath.substring(0, 4).compareToIgnoreCase("http") == 0) {
+                getParameters.url = HttpUrl.parse(employerId);
+            } else {
+                getParameters.url = new HttpUrl.Builder()
+                        .scheme(serverConfiguration.dataInfo.scheme)
+                        .host(serverConfiguration.dataInfo.host)
+                        .addPathSegment(serverConfiguration.employerDetailPath)
+                        .addPathSegment(employerId)
+                        .port(serverConfiguration.dataInfo.port).build();
+            }
         }
         return getParameters;
     }

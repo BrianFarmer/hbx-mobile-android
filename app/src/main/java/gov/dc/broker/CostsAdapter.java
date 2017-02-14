@@ -90,8 +90,12 @@ public class CostsAdapter extends BaseAdapter {
                     textViewEmployerCost.setText(String.format("$%.2f", health.employerContribution));
                     textViewEmployeeCost.setText(String.format("$%.2f", health.employeeCost));
                 } else {
-                    textViewEmployerCost.setText(health.status);
-                    textViewEmployerCost.setTextColor(ContextCompat.getColor(context, Utilities.colorFromEmployeeStatus(health.status)));
+                    if (health.status.compareToIgnoreCase("waived") != 0) {
+                        textViewEmployerCost.setText(health.status);
+                        textViewEmployerCost.setTextColor(ContextCompat.getColor(context, Utilities.colorFromEmployeeStatus(health.status)));
+                    } else {
+                        textViewEmployerCost.setText(null);
+                    }
                     textViewEmployeeCost.setText(health.status);
                     textViewEmployeeCost.setTextColor(ContextCompat.getColor(context, Utilities.colorFromEmployeeStatus(health.status)));
                 }

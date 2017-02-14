@@ -84,6 +84,7 @@ public class EmployerDetailsActivity extends BrokerActivity {
     public void doThis(Events.BrokerClient  brokerClientEvent) {
         brokerClient = brokerClientEvent.getBrokerClient();
         employer = brokerClientEvent.getEmployer();
+        poopulate();
 
         // This is for analytics
         Map<String,String> properties=new HashMap<String,String>();
@@ -99,21 +100,25 @@ public class EmployerDetailsActivity extends BrokerActivity {
             }
         }
         Analytics.trackEvent("Employer Details", properties);
+    }
 
-
+    private void poopulate(){
         TextView textViewCompanyName = (TextView) findViewById(R.id.textViewCompanyName);
         textViewCompanyName.setText(employer.employerName);
 
         Spinner spinnerCoverageYear = (Spinner) findViewById(R.id.spinnerCoverageYear);
         TextView textViewCoverageYear = (TextView) findViewById(R.id.textViewCoverageYear);
+        TextView textViewNoPlansLablel = (TextView) findViewById(R.id.textViewNoPlansLablel);
 
         ArrayList<String> list = new ArrayList<>();
 
         // set coverage year to the lowsest playYearBegins in the planYears
         LocalDate initialCoverageYear = new LocalDate(2000, 1, 1);
-        if (employer.planYears.size() > 1) {
+        if (employer.planYears != null
+            && employer.planYears.size() > 1) {
             spinnerCoverageYear.setVisibility(View.VISIBLE);
             textViewCoverageYear.setVisibility(View.INVISIBLE);
+            textViewNoPlansLablel.setVisibility(View.INVISIBLE);
             int i = 0;
             int selectedIndex = 0;
             for (gov.dc.broker.models.employer.PlanYear curPlanYear : employer.planYears) {
@@ -145,34 +150,45 @@ public class EmployerDetailsActivity extends BrokerActivity {
             }
             coverageYear = initialCoverageYear;
         } else {
-            spinnerCoverageYear.setVisibility(View.INVISIBLE);
-            textViewCoverageYear.setVisibility(View.VISIBLE);
-            if (employer.planYears.size() == 1) {
+            if (employer.planYears != null
+                && employer.planYears.size() == 1) {
+                spinnerCoverageYear.setVisibility(View.INVISIBLE);
+                textViewCoverageYear.setVisibility(View.VISIBLE);
+                textViewNoPlansLablel.setVisibility(View.INVISIBLE);
                 planYear = employer.planYears.get(0);
                 coverageYear = planYear.planYearBegins;
                 textViewCoverageYear.setText(String.format("%s (%s)", Utilities.DateAsMonthDayYear(planYear.planYearBegins), planYear.state));
+            } else {
+                textViewNoPlansLablel.setVisibility(View.VISIBLE);
+                spinnerCoverageYear.setVisibility(View.INVISIBLE);
+                textViewCoverageYear.setVisibility(View.INVISIBLE);
+                planYear = null;
+                coverageYear = null;
             }
         }
 
 
         TextView textViewEnrollmentStatus = (TextView) findViewById(R.id.textViewEnrollmentStatus);
         LocalDate today = new LocalDate();
-        boolean inOpenEnrollment = BrokerUtilities.isInOpenEnrollment(planYear, today);
-        if (inOpenEnrollment) {
-            if (BrokerUtilities.isAlerted(planYear)){
-                textViewEnrollmentStatus.setText(R.string.minimum_not_met);
-                textViewEnrollmentStatus.setTextColor(ContextCompat.getColor(this, R.color.alertColor));
+
+        if (planYear !=  null) {
+            boolean inOpenEnrollment = BrokerUtilities.isInOpenEnrollment(planYear, today);
+            if (inOpenEnrollment) {
+                if (BrokerUtilities.isAlerted(planYear)) {
+                    textViewEnrollmentStatus.setText(R.string.minimum_not_met);
+                    textViewEnrollmentStatus.setTextColor(ContextCompat.getColor(this, R.color.alertColor));
+                } else {
+                    textViewEnrollmentStatus.setText(R.string.minimum_met);
+                    textViewEnrollmentStatus.setTextColor(ContextCompat.getColor(this, R.color.open_enrollment_minimum_met));
+                }
             } else {
-                textViewEnrollmentStatus.setText(R.string.minimum_met);
-                textViewEnrollmentStatus.setTextColor(ContextCompat.getColor(this, R.color.open_enrollment_minimum_met));
-            }
-        } else {
-            if (planYear.renewalInProgress){
-                textViewEnrollmentStatus.setText(R.string.renewal_in_progress);
-                textViewEnrollmentStatus.setTextColor(ContextCompat.getColor(this, R.color.in_renewal));
-            } else {
-                textViewEnrollmentStatus.setText(R.string.active);
-                textViewEnrollmentStatus.setTextColor(ContextCompat.getColor(this, R.color.textgray));
+                if (planYear.renewalInProgress) {
+                    textViewEnrollmentStatus.setText(R.string.renewal_in_progress);
+                    textViewEnrollmentStatus.setTextColor(ContextCompat.getColor(this, R.color.in_renewal));
+                } else {
+                    textViewEnrollmentStatus.setText(R.string.active);
+                    textViewEnrollmentStatus.setTextColor(ContextCompat.getColor(this, R.color.textgray));
+                }
             }
         }
         configButtons();
@@ -328,6 +344,11 @@ public class EmployerDetailsActivity extends BrokerActivity {
                             Intent phoneIntent = new Intent(Intent.ACTION_DIAL);
                             phoneIntent.setData(Uri.parse("tel:" + Constants.HbxPhoneNumber));
                             startActivity(phoneIntent);
+                            return true;
+                        case R.id.nav_email_healthlink:
+                            Intent emailIntent = new Intent(Intent.ACTION_SENDTO);
+                            emailIntent.setData(Uri.parse("mailto:" + Constants.HbxEmail));
+                            startActivity(emailIntent);
                             return true;
                         case R.id.nav_logout:
                             getMessages().logoutRequest();

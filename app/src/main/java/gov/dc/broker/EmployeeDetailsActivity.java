@@ -146,55 +146,71 @@ public class EmployeeDetailsActivity extends BrokerActivity {
         if (employee.enrollments != null
             && employee.enrollments.size() > 0) {
 
-            Enrollment enrollment = null;
-
-            for (Enrollment curEnrollment : employee.enrollments) {
-                if (curEnrollment .startOn.compareTo(initialCoverageYear) > 0) {
-                    initialCoverageYear = curEnrollment.startOn;
-                    enrollment = curEnrollment;
-                }
-            }
-            coverageYear = initialCoverageYear;
-
 
             TextView textViewEmployeeName = (TextView) findViewById(R.id.textViewEmployeeName);
             textViewEmployeeName.setText(BrokerUtilities.getFullName(employee));
-            Spinner spinnerCoverageYear = (Spinner) findViewById(R.id.spinnerCoverageYear);
-            spinnerCoverageYear.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-                @Override
-                public void onItemSelected(AdapterView<?> adapterView, View view, int pos, long l) {
-                    coverageYear = employee.enrollments.get(pos).startOn;
-                    try {
-                        Enrollment enrollment = BrokerUtilities.getEnrollmentForCoverageYear(employee, coverageYear);
-                        populateCoverageYearDependencies(enrollment, EmployeeDetailsActivity.this.getResources());
-                    } catch (Exception e) {
-                        e.printStackTrace();
+
+            Enrollment enrollment = null;
+            if (employee.enrollments != null
+                    && employee.enrollments.size() > 1) {
+
+                TextView textViewCoverageYear = (TextView) findViewById(R.id.textViewCoverageYear);
+                textViewCoverageYear.setVisibility(View.INVISIBLE);
+
+
+                for (Enrollment curEnrollment : employee.enrollments) {
+                    if (curEnrollment .startOn.compareTo(initialCoverageYear) > 0) {
+                        initialCoverageYear = curEnrollment.startOn;
+                        enrollment = curEnrollment;
                     }
                 }
+                coverageYear = initialCoverageYear;
 
-                @Override
-                public void onNothingSelected(AdapterView<?> adapterView) {
+                Spinner spinnerCoverageYear = (Spinner) findViewById(R.id.spinnerCoverageYear);
+                spinnerCoverageYear.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+                    @Override
+                    public void onItemSelected(AdapterView<?> adapterView, View view, int pos, long l) {
+                        coverageYear = employee.enrollments.get(pos).startOn;
+                        try {
+                            Enrollment enrollment = BrokerUtilities.getEnrollmentForCoverageYear(employee, coverageYear);
+                            populateCoverageYearDependencies(enrollment, EmployeeDetailsActivity.this.getResources());
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
+                    }
 
+                    @Override
+                    public void onNothingSelected(AdapterView<?> adapterView) {
+
+                    }
+                });
+
+                List<String> list = new ArrayList<>();
+                int i = 0;
+                int coverageYearIndex = 0;
+                for (Enrollment curEnrollment : employee.enrollments) {
+                    String thisYear = String.format("%s - %s", Utilities.DateAsMonthDayYear(curEnrollment.startOn), Utilities.DateAsMonthDayYear(Utilities.calculateOneYearOut(curEnrollment.startOn)));
+                    list.add(thisYear);
+                    if (curEnrollment.startOn.compareTo(coverageYear) == 0) {
+                        coverageYearIndex = i;
+                    }
+                    i++;
                 }
-            });
 
-            List<String> list = new ArrayList<>();
-            int i = 0;
-            int coverageYearIndex = 0;
-            for (Enrollment curEnrollment : employee.enrollments) {
-                String thisYear = String.format("%s - %s", Utilities.DateAsMonthDayYear(curEnrollment.startOn), Utilities.DateAsMonthDayYear(Utilities.calculateOneYearOut(curEnrollment.startOn)));
-                list.add(thisYear);
-                if (curEnrollment.startOn.compareTo(coverageYear) == 0){
-                    coverageYearIndex = i;
-                }
-                i ++;
+                ArrayAdapter<String> dataAdapter = new ArrayAdapter<String>(this,
+                        android.R.layout.simple_spinner_item, list);
+                spinnerCoverageYear.setAdapter(dataAdapter);
+                spinnerCoverageYear.setSelection(coverageYearIndex);
+            } else {
+                enrollment = employee.enrollments.get(0);
+                coverageYear = enrollment.startOn;
+                Spinner spinnerCoverageYear = (Spinner) findViewById(R.id.spinnerCoverageYear);
+                spinnerCoverageYear.setVisibility(View.INVISIBLE);
+                TextView textViewCoverageYear = (TextView) findViewById(R.id.textViewCoverageYear);
+                textViewCoverageYear.setVisibility(View.VISIBLE);
+                String thisYear = String.format("%s - %s", Utilities.DateAsMonthDayYear(enrollment.startOn), Utilities.DateAsMonthDayYear(Utilities.calculateOneYearOut(enrollment.startOn)));
+                textViewCoverageYear.setText(thisYear);
             }
-
-            ArrayAdapter<String> dataAdapter = new ArrayAdapter<String>(this,
-                    android.R.layout.simple_spinner_item, list);
-            spinnerCoverageYear.setAdapter(dataAdapter);
-            spinnerCoverageYear.setSelection(coverageYearIndex);
-
             TextView textViewEnrollmentStatus = (TextView) findViewById(R.id.textViewEnrollmentStatus);
             textViewEnrollmentStatus.setText(enrollment.health.status);
             textViewEnrollmentStatus.setTextColor(ContextCompat.getColor(this, Utilities.colorFromEmployeeStatus(enrollment.health.status)));
