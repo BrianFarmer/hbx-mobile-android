@@ -10,7 +10,7 @@ android {
         minSdkVersion 16
         targetSdkVersion 25
         versionCode 4
-        versionName "1.0.8"
+        versionName "1.0.10"
         testInstrumentationRunner 'android.support.test.runner.AndroidJUnitRunner'
     }
 
@@ -23,20 +23,16 @@ android {
 
     productFlavors {
         github {
-            applicationId "dc.gov.github"
-            versionName "1.0-broker-github"
+            applicationId "org.dchbx.coveragehq_git"
         }
         dev {
-            applicationId 'dc.gov.dev'
-            versionName "1.0-dev"
+            applicationId 'org.dchbx.coveragehq_dev'
         }
         enroll {
-            applicationId 'dc.gov.enroll'
-            versionName "1.0-coverage-preprod"
+            applicationId 'org.dchbx.coveragehq_preprod'
         }
         coverage {
             applicationId 'org.dchbx.coveragehq'
-            versionName '1.0-coverage-hq'
         }
     }
 }
