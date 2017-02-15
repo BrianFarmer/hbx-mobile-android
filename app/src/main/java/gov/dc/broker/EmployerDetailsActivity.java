@@ -369,7 +369,7 @@ public class EmployerDetailsActivity extends BrokerActivity {
             //Setting the actionbarToggle to drawer layout
             mDrawerLayout.setDrawerListener(actionBarDrawerToggle);
 
-            MenuItem carriersMenuItem=navigationView.getMenu().findItem(R.id.nav_call_healthlink);
+            MenuItem carriersMenuItem=navigationView.getMenu().findItem(R.id.nav_carriers);
             MenuItem callMenuItem=navigationView.getMenu().findItem(R.id.nav_call_healthlink);
             callMenuItem.setIcon(R.drawable.call_color);
             MenuItem logoutMenuItem=navigationView.getMenu().findItem(R.id.nav_logout);

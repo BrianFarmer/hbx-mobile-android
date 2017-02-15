@@ -79,11 +79,12 @@
         android:background="#ffffff"
         />
 
+
     <Switch
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="@string/remember_me"
-        android:id="@+id/switchRememberMe"
+        android:text="@string/enable_fingerprint_login"
+        android:id="@+id/switchEnableFingerprintLogin"
         android:layout_below="@+id/viewPasswordSeparator"
         android:checked="false"
         android:layout_marginLeft="40dp"
@@ -99,9 +100,9 @@
     <Switch
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="@string/enable_fingerprint_login"
-        android:id="@+id/switchEnableFingerprintLogin"
-        android:layout_below="@+id/switchRememberMe"
+        android:text="@string/remember_me"
+        android:id="@+id/switchRememberMe"
+        android:layout_below="@+id/switchEnableFingerprintLogin"
         android:checked="false"
         android:layout_marginLeft="40dp"
         android:layout_marginRight="40dp"
@@ -112,14 +113,13 @@
         android:thumb="@drawable/switchselector"
         android:track="@drawable/trackselector"
         />
-
     <Button
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="@string/log_in"
         android:textAllCaps="true"
         android:id="@+id/buttonLogIn"
-        android:layout_below="@+id/switchEnableFingerprintLogin"
+        android:layout_below="@+id/switchRememberMe"
         android:background="@drawable/login_button"
         android:layout_marginLeft="40dp"
         android:layout_marginRight="40dp"

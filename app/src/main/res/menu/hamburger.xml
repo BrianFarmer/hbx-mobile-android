@@ -11,7 +11,7 @@
             android:title="@string/call_dc_healthlink" />
         <item
             android:id="@+id/nav_email_healthlink"
-            android:icon="@drawable/emailicon"
+            android:icon="@drawable/email_menu"
             android:title="@string/email_dc_healthlink" />
         <item
             android:id="@+id/nav_logout"
