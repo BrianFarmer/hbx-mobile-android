@@ -159,7 +159,7 @@ public class EmployeeDetailsActivity extends BrokerActivity {
 
 
                 for (Enrollment curEnrollment : employee.enrollments) {
-                    if (curEnrollment .startOn.compareTo(initialCoverageYear) > 0) {
+                    if (curEnrollment.startOn.compareTo(initialCoverageYear) > 0) {
                         initialCoverageYear = curEnrollment.startOn;
                         enrollment = curEnrollment;
                     }
@@ -211,9 +211,6 @@ public class EmployeeDetailsActivity extends BrokerActivity {
                 String thisYear = String.format("%s - %s", Utilities.DateAsMonthDayYear(enrollment.startOn), Utilities.DateAsMonthDayYear(Utilities.calculateOneYearOut(enrollment.startOn)));
                 textViewCoverageYear.setText(thisYear);
             }
-            TextView textViewEnrollmentStatus = (TextView) findViewById(R.id.textViewEnrollmentStatus);
-            textViewEnrollmentStatus.setText(enrollment.health.status);
-            textViewEnrollmentStatus.setTextColor(ContextCompat.getColor(this, Utilities.colorFromEmployeeStatus(enrollment.health.status)));
 
             populateCoverageYearDependencies(enrollment, resources);
         }
@@ -257,6 +254,11 @@ public class EmployeeDetailsActivity extends BrokerActivity {
 
     private void populateCoverageYearDependencies(Enrollment enrollment, Resources resources) throws Exception {
         Health health = enrollment.health;
+
+        TextView textViewEnrollmentStatus = (TextView) findViewById(R.id.textViewEnrollmentStatus);
+        textViewEnrollmentStatus.setText(enrollment.health.status);
+        textViewEnrollmentStatus.setTextColor(ContextCompat.getColor(this, Utilities.colorFromEmployeeStatus(enrollment.health.status)));
+
 
         TextView textViewBenefitGroupField = (TextView) findViewById(R.id.textViewBenefitGroupField);
         if (health.benefitGroupName != null) {

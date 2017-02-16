@@ -454,5 +454,6 @@ public class InfoFragment extends BrokerFragment {
         dataSet.setColors(colors);
         PieData data = new PieData(dataSet);
         pieChart.setData(data);
+        pieChart.invalidate();
     }
 }

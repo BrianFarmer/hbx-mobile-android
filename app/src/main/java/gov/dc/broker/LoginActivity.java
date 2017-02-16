@@ -282,6 +282,7 @@ public class LoginActivity extends BrokerActivity {
                 if (switchEnableFingerprintLogin != null && switchEnableFingerprintLogin.isChecked()){
                     FingerprintDialog.build(false, this);
                 } else {
+                    RootActivity.loginDone();
                     BrokerManager.getDefault().setLoggedIn(true);
                     finish();
                 }
@@ -336,6 +337,7 @@ public class LoginActivity extends BrokerActivity {
             if (switchEnableFingerprintLogin != null && switchEnableFingerprintLogin.isChecked()){
                 FingerprintDialog.build(false, this);
             }
+            RootActivity.loginDone();
             finish();
             return;
         } else {

@@ -95,6 +95,6 @@ class EnrollConfigBase {
     // a dialog telling them that the session is about to timeout.
     //
     public static int getSessionTimeoutSeconds() {
-        return (14*60)+30;
+        return 14*60;
     }
 }

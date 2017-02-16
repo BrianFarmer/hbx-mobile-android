@@ -14,8 +14,8 @@
         android:layout_height="wrap_content"
         android:layout_marginLeft="40dp"
         android:layout_marginRight="40dp"
-        android:layout_marginBottom="30dp"
-        android:layout_marginTop="30dp"
+        android:layout_marginBottom="25dp"
+        android:layout_marginTop="25dp"
         android:src="@drawable/app_header"
         android:adjustViewBounds="true"
         />
@@ -30,8 +30,8 @@
         android:layout_marginRight="40dp"
         android:minLines="1"
         android:background="@android:color/transparent"
-        android:layout_marginTop="10dp"
-        android:layout_marginBottom="10dp"
+        android:layout_marginTop="10sp"
+        android:layout_marginBottom="10sp"
         android:textSize="20sp"
         android:textColor="@color/white"
         android:textColorHint="@color/white"
@@ -61,8 +61,8 @@
         android:layout_marginRight="40dp"
         android:textSize="20sp"
         android:background="@android:color/transparent"
-        android:layout_marginTop="10dp"
-        android:layout_marginBottom="1dp"
+        android:layout_marginTop="10sp"
+        android:layout_marginBottom="10sp"
         android:drawableTint="#ffffff"
         android:textColorHint="@color/white"
         android:textColor="@color/white"
@@ -140,7 +140,7 @@
         android:layout_marginRight="75sp"
         android:textColor="@color/white"
         android:textAlignment="center"
-        android:textSize="18sp"
+        android:textSize="16sp"
         />
 
     <TextView
