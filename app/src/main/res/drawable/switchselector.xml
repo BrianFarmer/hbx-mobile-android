@@ -11,12 +11,12 @@
                 android:endColor="#057bc4"
                 android:angle="270"/>
             <corners
-                android:radius="20dp"/>
+                android:radius="20sp"/>
             <size
-                android:width="40dp"
-                android:height="40dp" />
+                android:width="40sp"
+                android:height="40sp" />
             <stroke
-                android:width="6dp"
+                android:width="6sp"
                 android:color="#00000000"/>
         </shape>
     </item>
@@ -31,12 +31,12 @@
             android:endColor="#ffffff"
             android:angle="270"/>
         <corners
-            android:radius="20dp"/>
+            android:radius="20sp"/>
         <size
-            android:width="40dp"
-            android:height="40dp" />
+            android:width="40sp"
+            android:height="40sp" />
         <stroke
-            android:width="6dp"
+            android:width="6sp"
             android:color="#00000000"/>
         </shape>
     </item>

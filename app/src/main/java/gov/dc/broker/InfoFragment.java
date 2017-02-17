@@ -102,7 +102,16 @@ public class InfoFragment extends BrokerFragment {
     public void onResume(){
         super.onResume();
 
-        configureDrawers();
+        try {
+            if (employer == null){
+                return;
+            }
+            this.coverageYear = ((EmployerDetailsActivity) getActivity()).getCoverageYear();
+            configureDrawers();
+            populateField();
+        } catch (Exception e) {
+            Log.e(TAG, "exception procession onResume", e);
+        }
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)

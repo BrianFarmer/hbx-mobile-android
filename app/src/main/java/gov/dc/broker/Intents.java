@@ -3,6 +3,8 @@ package gov.dc.broker;
 import android.app.Activity;
 import android.content.Intent;
 
+import org.joda.time.LocalDate;
+
 /**
  * Created by plast on 10/27/2016.
  */
@@ -12,11 +14,14 @@ public class Intents {
 
     public static final String BROKER_CLIENT_ID = "BrokerClientId";
     public static final String EMPLOYEE_ID = "EmployeeId";
+    public static final String COVERAGE_YEAR = "CoverageEYear";
 
-    static public void launchEmployeeDetails(BrokerActivity activity, String employeeId, String brokerClientId) {
+    static public void launchEmployeeDetails(BrokerActivity activity, String employeeId, String brokerClientId, LocalDate coverageYear) {
         Intent intent = new Intent(activity, EmployeeDetailsActivity .class);
         intent.putExtra(EMPLOYEE_ID, employeeId);
         intent.putExtra(BROKER_CLIENT_ID, brokerClientId);
+        String dateStr = coverageYear.toString();
+        intent.putExtra(COVERAGE_YEAR, dateStr);
         activity.startActivity(intent);
     }
 

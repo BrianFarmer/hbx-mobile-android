@@ -150,14 +150,17 @@ public class BrokerWorker extends IntentService {
             Log.d(TAG, "LoginRequest: got sessionid");
             switch (result) {
                 case Success:
+                    Log.i(TAG, "*****Successful login for: " + accountName);
                     ServerConfiguration.UserType userType = config.getCoverageConnection().determineUserType();
                     BrokerWorker.eventBus.post(new Events.LoginRequestResult(Events.LoginRequestResult.Success, userType));
                     updateSessionTimer();
                     return;
                 case Failure:
+                    Log.i(TAG, "*****Failure to  login for (bad account or pswd): " + accountName);
                     BrokerWorker.eventBus.post(new Events.LoginRequestResult(Events.LoginRequestResult.Failure, null));
                     return;
                 case Error:
+                    Log.i(TAG, "*****Error trying to  login for: " + accountName);
                     BrokerWorker.eventBus.post(new Events.Error("Error logging in"));
                     return;
             }

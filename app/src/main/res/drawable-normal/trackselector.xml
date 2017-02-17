@@ -13,8 +13,8 @@
             <corners
                 android:radius="20sp"/>
             <size
-                android:width="80sp"
-                android:height="40sp" />
+                android:width="60sp"
+                android:height="30sp" />
             <stroke
                 android:width="3sp"
                 android:color="#ffffff"/>
@@ -33,8 +33,8 @@
             <corners
                 android:radius="20sp"/>
             <size
-                android:width="80sp"
-                android:height="40sp" />
+                android:width="60sp"
+                android:height="30sp" />
             <stroke
                 android:width="3sp"
                 android:color="#ffffff"/>

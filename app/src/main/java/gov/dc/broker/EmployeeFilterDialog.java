@@ -85,7 +85,7 @@ public class EmployeeFilterDialog extends AppCompatDialogFragment {
             public void onClick(View view) {
                 if (onDialogFinishedListener != null){
                     try {
-                        onDialogFinishedListener.filter("not_enrolled");
+                        onDialogFinishedListener.filter("not enrolled");
                     } catch (Exception e) {
                         Log.e(TAG, "exception filtering roster for not enrolled", e);
                     }

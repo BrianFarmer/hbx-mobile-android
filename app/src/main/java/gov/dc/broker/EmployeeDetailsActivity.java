@@ -55,6 +55,8 @@ public class EmployeeDetailsActivity extends BrokerActivity {
         Intent intent = getIntent();
         employeeId = intent.getStringExtra(Intents.EMPLOYEE_ID);
         employerId = intent.getStringExtra(Intents.BROKER_CLIENT_ID);
+        String coverageYearString = intent.getStringExtra(Intents.COVERAGE_YEAR);
+        coverageYear = LocalDate.parse(intent.getStringExtra(Intents.COVERAGE_YEAR));
         getMessages().getEmployee(employeeId, employerId);
 //        getMessages().getEmployer(employerId);
 
@@ -158,13 +160,17 @@ public class EmployeeDetailsActivity extends BrokerActivity {
                 textViewCoverageYear.setVisibility(View.INVISIBLE);
 
 
-                for (Enrollment curEnrollment : employee.enrollments) {
-                    if (curEnrollment.startOn.compareTo(initialCoverageYear) > 0) {
-                        initialCoverageYear = curEnrollment.startOn;
-                        enrollment = curEnrollment;
+                if (coverageYear == null) {
+                    for (Enrollment curEnrollment : employee.enrollments) {
+                        if (curEnrollment.startOn.compareTo(initialCoverageYear) > 0) {
+                            initialCoverageYear = curEnrollment.startOn;
+                            enrollment = curEnrollment;
+                        }
                     }
+                    coverageYear = initialCoverageYear;
+                } else {
+                    enrollment = BrokerUtilities.getPlanYearForCoverageYear(employee, coverageYear);
                 }
-                coverageYear = initialCoverageYear;
 
                 Spinner spinnerCoverageYear = (Spinner) findViewById(R.id.spinnerCoverageYear);
                 spinnerCoverageYear.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {

@@ -11,7 +11,7 @@ import java.util.ArrayList;
 import static gov.dc.broker.BuildConfig2.getServerConfiguration;
 
 class EnrollConfigBase {
-    private static int cacheTimeoutSeconds = 120;
+    private static int cacheTimeoutSeconds = 30;
     private static IDataCache dataCache = new DataCache();
 
     static String getString(){
@@ -95,6 +95,6 @@ class EnrollConfigBase {
     // a dialog telling them that the session is about to timeout.
     //
     public static int getSessionTimeoutSeconds() {
-        return 14*60;
+        return 120;
     }
 }

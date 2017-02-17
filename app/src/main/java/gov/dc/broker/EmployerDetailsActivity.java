@@ -54,7 +54,6 @@ public class EmployerDetailsActivity extends BrokerActivity {
     private final String PLANS_TAB = "plans_tab";
 
 
-
     private Toolbar toolbar;
     private NavigationView navigationView;
     private ActionBarDrawerToggle mDrawerToggle;
@@ -69,6 +68,7 @@ public class EmployerDetailsActivity extends BrokerActivity {
     private Employer employer;
     private BrokerClient brokerClient;
     private boolean haveBroker;
+    private ArrayList<BrokerFragment> fragments = new ArrayList<>(4);
 
     public EmployerDetailsActivity(){
         Log.d(TAG, "In EmployerDetailsActivity Ctor");
@@ -84,7 +84,7 @@ public class EmployerDetailsActivity extends BrokerActivity {
     public void doThis(Events.BrokerClient  brokerClientEvent) {
         brokerClient = brokerClientEvent.getBrokerClient();
         employer = brokerClientEvent.getEmployer();
-        poopulate();
+        populate();
 
         // This is for analytics
         Map<String,String> properties=new HashMap<String,String>();
@@ -102,12 +102,13 @@ public class EmployerDetailsActivity extends BrokerActivity {
         Analytics.trackEvent("Employer Details", properties);
     }
 
-    private void poopulate(){
+    private void populate(){
         TextView textViewCompanyName = (TextView) findViewById(R.id.textViewCompanyName);
         textViewCompanyName.setText(employer.employerName);
 
         Spinner spinnerCoverageYear = (Spinner) findViewById(R.id.spinnerCoverageYear);
         TextView textViewCoverageYear = (TextView) findViewById(R.id.textViewCoverageYear);
+        TextView textViewCoverageYearLabel = (TextView) findViewById(R.id.textViewCoverageYearLabel);
         TextView textViewNoPlansLablel = (TextView) findViewById(R.id.textViewNoPlansLablel);
 
         ArrayList<String> list = new ArrayList<>();
@@ -118,6 +119,7 @@ public class EmployerDetailsActivity extends BrokerActivity {
             && employer.planYears.size() > 1) {
             spinnerCoverageYear.setVisibility(View.VISIBLE);
             textViewCoverageYear.setVisibility(View.INVISIBLE);
+            textViewCoverageYearLabel.setVisibility(View.VISIBLE);
             textViewNoPlansLablel.setVisibility(View.INVISIBLE);
             int i = 0;
             int selectedIndex = 0;
@@ -137,7 +139,9 @@ public class EmployerDetailsActivity extends BrokerActivity {
                 spinnerCoverageYear.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
                     @Override
                     public void onItemSelected(AdapterView<?> adapterView, View view, int pos, long l) {
-                        coverageYear = employer.planYears.get(pos).planYearBegins;
+                        planYear = employer.planYears.get(pos);
+                        coverageYear = planYear.planYearBegins;
+                        populateStatus();
                         getMessages().coverageYearChanged(coverageYear);
                     }
 
@@ -154,6 +158,7 @@ public class EmployerDetailsActivity extends BrokerActivity {
                 && employer.planYears.size() == 1) {
                 spinnerCoverageYear.setVisibility(View.INVISIBLE);
                 textViewCoverageYear.setVisibility(View.VISIBLE);
+                textViewCoverageYearLabel.setVisibility(View.VISIBLE);
                 textViewNoPlansLablel.setVisibility(View.INVISIBLE);
                 planYear = employer.planYears.get(0);
                 coverageYear = planYear.planYearBegins;
@@ -161,6 +166,7 @@ public class EmployerDetailsActivity extends BrokerActivity {
             } else {
                 textViewNoPlansLablel.setVisibility(View.VISIBLE);
                 spinnerCoverageYear.setVisibility(View.INVISIBLE);
+                textViewCoverageYearLabel.setVisibility(View.INVISIBLE);
                 textViewCoverageYear.setVisibility(View.INVISIBLE);
                 planYear = null;
                 coverageYear = null;
@@ -168,6 +174,14 @@ public class EmployerDetailsActivity extends BrokerActivity {
         }
 
 
+        populateStatus();
+        configButtons();
+        if (haveBroker) {
+            configToolbar();
+        }
+    }
+
+    private void populateStatus() {
         TextView textViewEnrollmentStatus = (TextView) findViewById(R.id.textViewEnrollmentStatus);
         LocalDate today = new LocalDate();
 
@@ -190,10 +204,6 @@ public class EmployerDetailsActivity extends BrokerActivity {
                     textViewEnrollmentStatus.setTextColor(ContextCompat.getColor(this, R.color.textgray));
                 }
             }
-        }
-        configButtons();
-        if (haveBroker) {
-            configToolbar();
         }
     }
 

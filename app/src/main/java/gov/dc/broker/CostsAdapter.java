@@ -101,7 +101,7 @@ public class CostsAdapter extends BaseAdapter {
             view.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    Intents.launchEmployeeDetails((BrokerActivity)fragment.getActivity(), rosterEntry.id, brokerClientId);
+                    Intents.launchEmployeeDetails((BrokerActivity)fragment.getActivity(), rosterEntry.id, brokerClientId, coverageYear);
                 }
             });
             return view;

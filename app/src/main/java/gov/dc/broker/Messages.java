@@ -3,6 +3,8 @@ package gov.dc.broker;
 import org.joda.time.LocalDate;
 
 public interface Messages {
+    void release();
+
     void getEmployer();
     void getEmployer(String employerId);
     void getLogin();
@@ -11,7 +13,6 @@ public interface Messages {
     void getBrokerAgency();
     void logoutRequest();
     void logoutRequest(boolean clearAccount);
-    void release();
     void getRoster();
     void getRoster(String employerId);
     void getEmployee(String employeeId, String employerId);

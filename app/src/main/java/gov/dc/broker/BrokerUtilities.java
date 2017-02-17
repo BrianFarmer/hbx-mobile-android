@@ -203,7 +203,7 @@ public class BrokerUtilities {
                 return planYear;
             }
         }
-        throw new Exception("coverageYear not found in plan years");
+        return null;
     }
 
     public static int getEmployeesNeeded(gov.dc.broker.models.brokeragency.PlanYear planYearForCoverageYear) {
@@ -342,6 +342,15 @@ public class BrokerUtilities {
             }
         }
         return mostRecentPlanYear;
+    }
+
+    public static Enrollment getPlanYearForCoverageYear(RosterEntry employee, LocalDate coverageYear) {
+        for (Enrollment enrollment : employee.enrollments) {
+            if (enrollment.startOn.compareTo(coverageYear) == 0){
+                return enrollment;
+            }
+        }
+        return null;
     }
 
     public enum BrokerClientStatus {

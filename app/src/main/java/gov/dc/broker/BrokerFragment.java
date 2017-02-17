@@ -25,7 +25,6 @@ public class BrokerFragment extends Fragment {
         messages = BrokerApplication.getBrokerApplication().getMessages(this);
     }
 
-
     @Override
     public void onDestroy(){
         super.onDestroy();

@@ -28,7 +28,7 @@ public class RosterAdapter extends BaseAdapter {
     private final Context context;
     private final ArrayList<RosterEntry> employees;
     private final String brokerClientId;
-    private final LocalDate active;
+    private final LocalDate coverageDate;
 
     public RosterAdapter(BrokerFragment fragment, Context context, ArrayList<RosterEntry> employees,
                          String brokerClientId, LocalDate coverageDate){
@@ -36,7 +36,7 @@ public class RosterAdapter extends BaseAdapter {
         this.context = context;
         this.employees = employees;
         this.brokerClientId = brokerClientId;
-        this.active = coverageDate;
+        this.coverageDate = coverageDate;
     }
 
     @Override
@@ -77,7 +77,7 @@ public class RosterAdapter extends BaseAdapter {
             TextView employeeName = (TextView) view.findViewById(R.id.textViewEmployeeName);
             employeeName.setText(BrokerUtilities.getFullName(employee));
             try {
-                Enrollment enrollmentForCoverageYear = BrokerUtilities.getEnrollmentForCoverageYear(employee, active);
+                Enrollment enrollmentForCoverageYear = BrokerUtilities.getEnrollmentForCoverageYear(employee, coverageDate);
                 health = enrollmentForCoverageYear.health;
                 TextView statusThisYear = (TextView) view.findViewById(R.id.textViewStatusThisYear);
                 statusThisYear.setTextColor(ContextCompat.getColor(context, Utilities.colorFromEmployeeStatus(health.status)));
@@ -89,7 +89,7 @@ public class RosterAdapter extends BaseAdapter {
             view.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    Intents.launchEmployeeDetails((BrokerActivity)fragment.getActivity(), employee.id, brokerClientId);
+                    Intents.launchEmployeeDetails((BrokerActivity)fragment.getActivity(), employee.id, brokerClientId, coverageDate);
                 }
             });
             return view;
