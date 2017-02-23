@@ -48,7 +48,7 @@
         />
     <TextView
         android:id="@+id/textViewEnrollmentStatus"
-        style="@style/Subtitle2"
+        style="@style/enrollment_status_subtitle"
         android:text=""
         android:layout_below="@id/textViewCoverageYearLabel"
         />

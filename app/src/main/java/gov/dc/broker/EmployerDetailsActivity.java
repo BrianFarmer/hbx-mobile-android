@@ -130,7 +130,8 @@ public class EmployerDetailsActivity extends BrokerActivity {
                     initialCoverageYear = curPlanYear.planYearBegins;
                     selectedIndex = i;
                 }
-                list.add(String.format("%s (%s)", Utilities.DateAsMonthDayYear(curPlanYear.planYearBegins), curPlanYear.state));
+                LocalDate endDate = curPlanYear.planYearBegins.plusYears(1).minusDays(1);
+                list.add(String.format("%s - %s (%s)", Utilities.DateAsMonthDayYear(curPlanYear.planYearBegins), Utilities.DateAsMonthDayYear(endDate), curPlanYear.state));
                 i++;
 
                 ArrayAdapter<String> dataAdapter = new ArrayAdapter<String>(this,
@@ -182,29 +183,15 @@ public class EmployerDetailsActivity extends BrokerActivity {
     }
 
     private void populateStatus() {
-        TextView textViewEnrollmentStatus = (TextView) findViewById(R.id.textViewEnrollmentStatus);
-        LocalDate today = new LocalDate();
-
-        if (planYear !=  null) {
-            boolean inOpenEnrollment = BrokerUtilities.isInOpenEnrollment(planYear, today);
-            if (inOpenEnrollment) {
-                if (BrokerUtilities.isAlerted(planYear)) {
-                    textViewEnrollmentStatus.setText(R.string.minimum_not_met);
-                    textViewEnrollmentStatus.setTextColor(ContextCompat.getColor(this, R.color.alertColor));
-                } else {
-                    textViewEnrollmentStatus.setText(R.string.minimum_met);
-                    textViewEnrollmentStatus.setTextColor(ContextCompat.getColor(this, R.color.open_enrollment_minimum_met));
-                }
-            } else {
-                if (planYear.renewalInProgress) {
-                    textViewEnrollmentStatus.setText(R.string.renewal_in_progress);
-                    textViewEnrollmentStatus.setTextColor(ContextCompat.getColor(this, R.color.in_renewal));
-                } else {
-                    textViewEnrollmentStatus.setText(R.string.active);
-                    textViewEnrollmentStatus.setTextColor(ContextCompat.getColor(this, R.color.textgray));
-                }
-            }
+        if (planYear == null) {
+            return;
         }
+
+        LocalDate today = new LocalDate();
+        TextView textViewEnrollmentStatus = (TextView) findViewById(R.id.textViewEnrollmentStatus);
+        BrokerUtilities.PlanStatus planStatus = BrokerUtilities.getPlanStatus(planYear, today);
+        textViewEnrollmentStatus.setText(planStatus.statusStringId);
+        textViewEnrollmentStatus.setTextColor(ContextCompat.getColor(this, planStatus.statusColorId));
     }
 
     private void configToolbar() {
@@ -395,10 +382,16 @@ public class EmployerDetailsActivity extends BrokerActivity {
         tabHost.setup(this, getSupportFragmentManager(), android.R.id.tabcontent);
 
         Drawable drawable = ContextCompat.getDrawable(this, R.drawable.info_tab_normal);
-        tabHost.addTab(
-                tabHost.newTabSpec(INFO_TAB)
-                        .setIndicator(createTabIndicator(inflater, tabHost, R.string.info_tab_name, R.drawable.info_tab_states, true)),
-                        InfoFragment.class, null);
+        TabHost.TabSpec tabSpec = tabHost.newTabSpec(INFO_TAB)
+                .setIndicator(createTabIndicator(inflater, tabHost, R.string.info_tab_name, R.drawable.info_tab_states, true));
+
+        try {
+            tabHost.addTab(
+                    tabSpec,
+                    InfoFragment.class, null);
+        } catch (Throwable e){
+            Log.e(TAG, "exception", e);
+        }
         tabHost.addTab(
                 tabHost.newTabSpec(ROSTER_TAB)
                 .setIndicator(createTabIndicator(inflater, tabHost, R.string.roster_tab_name, R.drawable.roster_tab_states, false)),

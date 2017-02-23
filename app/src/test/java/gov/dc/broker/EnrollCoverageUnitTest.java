@@ -20,9 +20,9 @@ public class EnrollCoverageUnitTest {
         EnrollConnectionHandler enrollConnectionHandler = new EnrollConnectionHandler(serverConfiguration);
         IDataCache dataCache = new DataCache();
         IdentityEncryptionImpl identityEncryption = new IdentityEncryptionImpl();
-        ConfigurationStorageHandler configurationStorageHandler = new ConfigurationStorageHandler(identityEncryption);
+        ConfigurationStorageHandler configurationStorageHandler = new ConfigurationStorageHandler();
         EnrollCoverageConnection enrollCoverageConnection = new EnrollCoverageConnection(enrollUrlHandler, enrollConnectionHandler,
-                serverConfiguration,jsonParser, dataCache, configurationStorageHandler);
+                serverConfiguration,jsonParser, dataCache, configurationStorageHandler, configurationStorageHandler);
         CoverageConnection.LoginResult loadTest16 = enrollCoverageConnection.validateUserAndPassword("LoadTest16", "Beta123!", true, false);
         Assert.assertThat(loadTest16 == CoverageConnection.LoginResult.Success, is(true));
         enrollCoverageConnection.checkSecurityAnswer("Test");

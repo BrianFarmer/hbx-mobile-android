@@ -211,6 +211,42 @@ public class Events {
         }
     }
 
+    static public class FingerprintLoginResult {
+        static final int Failure = 0;
+        static final int Success = 1;
+        static final int Error = 2;
+
+        private final int loginResult;
+        private final String errorMsg;
+        private final ServerConfiguration.UserType userType;
+
+        public FingerprintLoginResult(int loginResult) {
+            this.loginResult = loginResult;
+            this.errorMsg = null;
+            this.userType = null;
+        }
+
+        public FingerprintLoginResult(int loginResult, ServerConfiguration.UserType userType) {
+            this.loginResult = loginResult;
+            this.errorMsg = null;
+            this.userType = userType;
+        }
+
+        public FingerprintLoginResult(int loginResult, String errorMsg) {
+            this.loginResult = loginResult;
+            this.errorMsg = errorMsg;
+            this.userType = null;
+        }
+
+        public int getLoginResult(){
+            return loginResult;
+        }
+
+        public String getErrorMsg() {
+            return errorMsg;
+        }
+    }
+
     static public class LoginRequestResult {
         static final int Failure = 0;
         static final int Success = 1;
@@ -452,41 +488,25 @@ public class Events {
     static public class StayLoggedIn{}
 
     static public class GetFingerprintStatus {
-        private final boolean watching;
 
-        public GetFingerprintStatus(boolean watching){
-            this.watching = watching;
-        }
-
-        public boolean isWatching() {
-            return watching;
+        public GetFingerprintStatus(){
         }
     }
 
     static public class FingerprintStatus{
 
-        public enum Messages{
-            None,
-            AuthenticationError,
-            AuthenticationHelp,
-            AuthenticationFailed,
-            AuthenticationSucceeded
-        }
-
         private final boolean hardwareDetected;
         private final boolean fingerprintsEnrolled;
-        private final boolean keyguardSecure;
-        private final Messages message;
         private final boolean error;
         private final String errorMessage;
+        private final boolean osSupportsFingerprint;
 
-        public FingerprintStatus(boolean hardwareDetected, boolean fingerprintsEnrolled, boolean keyguardSecure){
+        public FingerprintStatus(boolean osSupportsFingerprint, boolean hardwareDetected, boolean fingerprintsEnrolled){
             error = false;
             errorMessage = null;
+            this.osSupportsFingerprint = osSupportsFingerprint;
             this.hardwareDetected = hardwareDetected;
             this.fingerprintsEnrolled = fingerprintsEnrolled;
-            this.keyguardSecure = keyguardSecure;
-            this.message = Messages.None;
         }
 
         //
@@ -498,33 +518,16 @@ public class Events {
             errorMessage = s;
             hardwareDetected = false;
             fingerprintsEnrolled = false;
-            keyguardSecure = false;
-            this.message = Messages.None;
+            osSupportsFingerprint = false;
         }
 
-        public FingerprintStatus(Messages message){
-            error = false;
-            errorMessage = null;
-            hardwareDetected = true;
-            fingerprintsEnrolled = true;
-            keyguardSecure = true;
-            this.message = message;
-        }
 
         public boolean isHardwareDetected() {
             return hardwareDetected;
         }
 
-        public Messages getMessage() {
-            return message;
-        }
-
         public boolean isFingerprintsEnrolled() {
             return fingerprintsEnrolled;
-        }
-
-        public boolean isKeyguardSecure() {
-            return keyguardSecure;
         }
 
         public boolean error() {
@@ -534,30 +537,76 @@ public class Events {
         public String getErrorMessage() {
             return errorMessage;
         }
-    }
 
-    static public class FingerprintAuthenticationUpdate {
-        private final FingerprintStatus.Messages message;
-        private String securityQuestion;
-
-        public FingerprintAuthenticationUpdate(FingerprintStatus.Messages message, String securityQuestion) {
-            this.message = message;
-        }
-
-        public FingerprintStatus.Messages getMessage() {
-            return message;
-        }
-
-        public String getSecurityQuestion() {
-            return securityQuestion;
+        public boolean isOsSupportsFingerprint() {
+            return osSupportsFingerprint;
         }
     }
 
-    static public class AuthenticateFingerprint {
-        private final boolean autoLogin;
+    static public class FingerprintAuthenticationEncryptResult {
 
-        public AuthenticateFingerprint(boolean autoLogin) {
-            this.autoLogin = autoLogin;
+        private final String encryptedText;
+        private final String helpString;
+        private final String errorMessage;
+
+
+        public FingerprintAuthenticationEncryptResult(String encryptedText, CharSequence helpString, CharSequence errorMessage) {
+            this.encryptedText = encryptedText;
+            this.helpString = (String) helpString;
+            this.errorMessage = (String) errorMessage;
+        }
+
+        public String getEncryptedText() {
+            return encryptedText;
+        }
+
+        public String getErrorMessage() {
+            return errorMessage;
+        }
+
+        public CharSequence getHelpString() {
+            return helpString;
+        }
+    }
+
+    static public class FingerprintAuthenticationDecryptResult {
+
+        private final String accountName;
+        private final String password;
+        private final String helpString;
+        private final String errMessage;
+
+        public FingerprintAuthenticationDecryptResult(String accountName, String password, CharSequence helpString, CharSequence errMessage) {
+            this.accountName = accountName;
+            this.password = password;
+            this.helpString = (String) helpString;
+            this.errMessage = (String) errMessage;
+        }
+
+        public String getAccountName() {
+            return accountName;
+        }
+
+        public String getPassword() {
+            return password;
+        }
+
+        public String getHelpString() {
+            return helpString;
+        }
+
+        public String getErrorMessage() {
+            return errMessage;
+        }
+    }
+
+    static public class AuthenticateFingerprintDecrypt {
+        public AuthenticateFingerprintDecrypt() {
+        }
+    }
+
+    static public class AuthenticateFingerprintEncrypt {
+        public AuthenticateFingerprintEncrypt() {
         }
     }
 
@@ -565,6 +614,21 @@ public class Events {
     }
 
     static public class Relogin {
+        private final String accountName;
+        private final String password;
+
+        public Relogin(String accountName, String password) {
+            this.accountName = accountName;
+            this.password = password;
+        }
+
+        public String getPassword() {
+            return password;
+        }
+
+        public String getAccountName() {
+            return accountName;
+        }
     }
 
     static public class ReloginResult {

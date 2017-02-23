@@ -114,18 +114,23 @@ public class EventBusMessages implements Messages {
     }
 
     @Override
-    public void getFingerprintStatus(boolean watching) {
-        eventBus.post(new Events.GetFingerprintStatus(watching));
+    public void getFingerprintStatus() {
+        eventBus.post(new Events.GetFingerprintStatus());
     }
 
     @Override
-    public void authenticateFingerprint(boolean autoLogin) {
-        eventBus.post(new Events.AuthenticateFingerprint(autoLogin));
+    public void relogin(String account, String password) {
+        eventBus.post(new Events.Relogin(account, password));
     }
 
     @Override
-    public void relogin() {
-        eventBus.post(new Events.Relogin());
+    public void validateLogin(){
+        eventBus.post(new Events.AuthenticateFingerprintEncrypt());
+    }
+
+    @Override
+    public void decryptAccountAndPassword() {
+        eventBus.post(new Events.AuthenticateFingerprintDecrypt());
     }
 }
 

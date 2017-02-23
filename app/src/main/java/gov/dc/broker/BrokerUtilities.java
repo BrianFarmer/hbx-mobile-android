@@ -25,8 +25,27 @@ import gov.dc.broker.models.roster.RosterEntry;
 public class BrokerUtilities {
     private static String TAG = "BrokerUtilities";
 
-    public static long daysLeft(gov.dc.broker.models.employer.PlanYear planYear, LocalDate today) throws Exception {
+    static class PlanStatus {
+        public int statusStringId;
+        public int statusColorId;
+    }
+
+    /*public static long daysLeft(gov.dc.broker.models.employer.PlanYear planYear, LocalDate today) throws Exception {
+        if (planYear.openEnrollmentEnds.compareTo(today) < 0){
+            return Utilities.dateDifferenceDays(today, planYear.planYearBegins);
+        }
         return Utilities.dateDifferenceDays(today, planYear.openEnrollmentEnds);
+    }*/
+
+    public static long daysLeftToApplicationDue(gov.dc.broker.models.brokeragency.PlanYear planYear, LocalDate now) {
+        return Utilities.dateDifferenceDays(now, planYear.renewalApplicationDue);
+    }
+
+    public static long daysLeft(gov.dc.broker.models.employer.PlanYear planYear, LocalDate today) throws Exception {
+        if (BrokerUtilities.isInOpenEnrollment(planYear, today)){
+            return Utilities.dateDifferenceDays(today, planYear.openEnrollmentEnds);
+        }
+        return Utilities.dateDifferenceDays(today, planYear.renewalApplicationDue);
     }
 
     public static long daysLeft(gov.dc.broker.models.brokeragency.PlanYear planYear, LocalDate today) throws Exception {
@@ -353,6 +372,38 @@ public class BrokerUtilities {
         return null;
     }
 
+    public static PlanStatus getPlanStatus(PlanYear planYear, LocalDate today) {
+        PlanStatus planStatus = new PlanStatus();
+
+        if (planYear !=  null) {
+            boolean inOpenEnrollment = BrokerUtilities.isInOpenEnrollment(planYear, today);
+            if (inOpenEnrollment) {
+                if (BrokerUtilities.isAlerted(planYear)) {
+                    planStatus.statusStringId = R.string.minimum_not_met;
+                    planStatus.statusColorId = R.color.alertColor;
+                } else {
+                    planStatus.statusStringId = R.string.minimum_met;
+                    planStatus.statusColorId = R.color.open_enrollment_minimum_met;
+                }
+            } else {
+                if (planYear.renewalInProgress) {
+                    planStatus.statusStringId = R.string.renewal_in_progress;
+                    planStatus.statusColorId = R.color.in_renewal;
+                } else {
+                    if (planYear.planYearBegins.plusYears(1).compareTo(today) < 0){
+                        planStatus.statusStringId = R.string.coverage_expired;
+                        planStatus.statusColorId = R.color.textgray;
+                    } else {
+                        planStatus.statusStringId = R.string.active;
+                        planStatus.statusColorId = R.color.textgray;
+                    }
+                }
+            }
+        }
+
+        return planStatus;
+    }
+
     public enum BrokerClientStatus {
         InOpenEnrollmentAlerted,
         InOpenEnrollmentNotAlerted,
@@ -422,6 +473,14 @@ public class BrokerUtilities {
             }
             return BrokerClientStatus.InOpenEnrollmentNotAlerted;
         }
+
+        if (planYear.openEnrollmentEnds != null
+            && planYear.openEnrollmentEnds.compareTo(date) < 0
+            && planYear.planYearBegins != null
+            && date.compareTo(planYear.planYearBegins) < 0) {
+            return BrokerClientStatus.Other;
+        }
+
         if (planYear.renewalInProgress){
             return BrokerClientStatus.InRenewal;
         }

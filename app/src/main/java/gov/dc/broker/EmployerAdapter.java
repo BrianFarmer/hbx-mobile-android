@@ -815,11 +815,11 @@ class RenewalWrapper extends BrokerClientWrapper {
         PlanYear pendingRenewalPlanYear = BrokerUtilities.getPendingRenewalPlanYear(brokerClient);
         TextView companyName = (TextView)view.findViewById(R.id.textViewCompanyName);
         companyName.setText((brokerClient).employerName);
-        TextView planYear = (TextView)view.findViewById(R.id.textViewPlanYear);
-        CharSequence dateString = Utilities.DateAsMonthDayYear(pendingRenewalPlanYear.planYearBegins);
-        planYear.setText(dateString);
+        TextView planYearTextView = (TextView)view.findViewById(R.id.textViewPlanYear);
+        CharSequence dateString = Utilities.DateAsMonthDayYear(planYear.planYearBegins);
+        planYearTextView.setText(dateString);
         TextView daysLeft = (TextView)view.findViewById(R.id.textViewDaysLeft);
-        daysLeft.setText(String.valueOf(BrokerUtilities.daysLeftToRenewal(pendingRenewalPlanYear, LocalDate.now())));
+        daysLeft.setText(String.valueOf(BrokerUtilities.daysLeftToApplicationDue(planYear, LocalDate.now())));
         view.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

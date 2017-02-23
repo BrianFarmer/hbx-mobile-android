@@ -109,18 +109,18 @@ public class BrokerWorker extends IntentService {
         try {
             ServerConfiguration serverConfiguration = config.getServerConfiguration();
             CoverageConnection.LoginResult result = config.getCoverageConnection().loginAfterFingerprintAuthenticated();
-            Log.d(TAG, "LoginRequest: got sessionid");
+            Log.d(TAG, "FingerprintLogin: got sessionid");
             switch (result) {
                 case Success:
                     ServerConfiguration.UserType userType = config.getCoverageConnection().determineUserType();
-                    BrokerWorker.eventBus.post(new Events.LoginRequestResult(Events.LoginRequestResult.Success, userType));
+                    BrokerWorker.eventBus.post(new Events.FingerprintLoginResult(Events.LoginRequestResult.Success, userType));
                     updateSessionTimer();
                     return;
                 case Failure:
-                    BrokerWorker.eventBus.post(new Events.LoginRequestResult(Events.LoginRequestResult.Failure, null));
+                    BrokerWorker.eventBus.post(new Events.FingerprintLoginResult(Events.LoginRequestResult.Failure));
                     return;
                 case Error:
-                    BrokerWorker.eventBus.post(new Events.Error("Error logging in"));
+                    BrokerWorker.eventBus.post(new Events.FingerprintLoginResult(Events.FingerprintLoginResult.Error, "Error logging in"));
                     return;
             }
             BrokerWorker.eventBus.post(new Events.GetSecurityAnswer(serverConfiguration.securityQuestion));
@@ -238,6 +238,10 @@ public class BrokerWorker extends IntentService {
     public void doThis(Events.LogoutRequest logoutRequest) {
         Log.d(TAG, "Received LogoutRequest message");
         config.getCoverageConnection().logout(logoutRequest.getClearAccount());
+        if (sessionTimeoutTimer != null){
+            sessionTimeoutTimer.cancel();
+            sessionTimeoutTimer = null;
+        }
         BrokerWorker.eventBus.post(new Events.LoggedOutResult());
     }
 
@@ -393,7 +397,7 @@ public class BrokerWorker extends IntentService {
     }
 
 
-    //
+
     // This message tells the server to reset the timer without
     // doing any real work.
     //
@@ -418,22 +422,8 @@ public class BrokerWorker extends IntentService {
 
     @Subscribe(threadMode = ThreadMode.BACKGROUND)
     public void doThis(Events.GetFingerprintStatus getFingerprintStatus){
-        if (getFingerprintStatus.isWatching()){
-            FingerprintManager.InitializationResult initializationResult = fingerprintManager.init(getFingerprintStatus);
-            switch (initializationResult.requestStatus){
-                case NotInitialized:
-                    eventBus.post(new Events.FingerprintStatus(false, false, false));
-                    break;
-                case Success:
-                    eventBus.post(new Events.FingerprintStatus(true, initializationResult.enrolledFingerprints, initializationResult.keyguardSecure));
-                    break;
-                case Error:
-                    eventBus.post(new Events.FingerprintStatus("Error initializing fingerprint manager"));
-                    break;
-            }
-        } else {
-            fingerprintManager.release();
-        }
+        FingerprintManager.DetectFingerprintResult detect = fingerprintManager.detect();
+        eventBus.post(new Events.FingerprintStatus(detect.osSupportsFingerprint, detect.hardwarePresent, detect.fingerprintRegistered));
     }
 
     //
@@ -441,28 +431,82 @@ public class BrokerWorker extends IntentService {
     //
 
     @Subscribe(threadMode = ThreadMode.BACKGROUND)
-    public void doThis(Events.AuthenticateFingerprint authenticateFingerprint) {
-        fingerprintManager.authenticate(new FingerprintManager.IAuthenticationResult() {
-            @Override
-            public void error(CharSequence errString) {
-                eventBus.post(new Events.FingerprintAuthenticationUpdate(Events.FingerprintStatus.Messages.AuthenticationError, null));
-            }
+    public void doThis(Events.AuthenticateFingerprintEncrypt authenticateFingerprint) {
+        ServerConfiguration serverConfiguration = config.getServerConfiguration();
+        try {
 
-            @Override
-            public void help(CharSequence helpString) {
-                eventBus.post(new Events.FingerprintAuthenticationUpdate(Events.FingerprintStatus.Messages.AuthenticationError, null));
-            }
+            fingerprintManager.authenticate(serverConfiguration.accountName, serverConfiguration.password, new FingerprintManager.IAuthenticationEncryptResult() {
+                @Override
+                public void error(CharSequence errString) {
+                    eventBus.post(new Events.FingerprintAuthenticationEncryptResult(null, null, errString));
+                }
 
-            @Override
-            public void success() {
-                eventBus.post(new Events.FingerprintAuthenticationUpdate(Events.FingerprintStatus.Messages.AuthenticationSucceeded, null));
-            }
+                @Override
+                public void help(CharSequence helpString) {
+                    eventBus.post(new Events.FingerprintAuthenticationEncryptResult(null, helpString, null));
+                }
 
-            @Override
-            public void failed() {
-                eventBus.post(new Events.FingerprintAuthenticationUpdate(Events.FingerprintStatus.Messages.AuthenticationFailed, null));
-            }
-        });
+                @Override
+                public void success(String encryptedText) {
+                    try {
+                        ServerConfiguration serverConfiguration = BuildConfig2.getServerConfiguration();
+                        serverConfiguration.encryptedString = encryptedText;
+                        IServerConfigurationStorageHandler serverConfigurationStorageHandler = BuildConfig2.getServerConfigurationStorageHandler();
+                        serverConfigurationStorageHandler.store(serverConfiguration);
+                        config.getCoverageConnection().saveLoginInfo(true);
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                    eventBus.post(new Events.FingerprintAuthenticationEncryptResult(encryptedText, null, null));
+                }
+
+                @Override
+                public void failed() {
+                    eventBus.post(new Events.FingerprintAuthenticationEncryptResult(null, null, null));
+                }
+            });
+        } catch (Exception e) {
+            eventBus.post(new Events.FingerprintAuthenticationEncryptResult(null, null, "Exception encrypting"));
+        }
+    }
+
+    @Subscribe(threadMode = ThreadMode.BACKGROUND)
+    public void doThis(Events.AuthenticateFingerprintDecrypt authenticateFingerprint) {
+        try {
+            final ServerConfiguration serverConfiguration = BuildConfig2.getServerConfiguration();
+            IServerConfigurationStorageHandler serverConfigurationStorageHandler = BuildConfig2.getServerConfigurationStorageHandler();
+            serverConfigurationStorageHandler.read(serverConfiguration);
+
+            fingerprintManager.authenticate(serverConfiguration.encryptedString, new FingerprintManager.IAuthenticationDecryptResult() {
+                @Override
+                public void error(CharSequence errString) {
+                    eventBus.post(new Events.FingerprintAuthenticationEncryptResult(null, null, errString));
+                }
+
+                @Override
+                public void help(CharSequence helpString) {
+                    eventBus.post(new Events.FingerprintAuthenticationEncryptResult(null, helpString, null));
+                }
+
+                @Override
+                public void success(String accountName,  String password) {
+                    try {
+                        serverConfiguration.accountName = accountName;
+                        serverConfiguration.password = password;
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                    eventBus.post(new Events.FingerprintAuthenticationDecryptResult(accountName, password, null, null));
+                }
+
+                @Override
+                public void failed() {
+                    eventBus.post(new Events.FingerprintAuthenticationEncryptResult(null, null, null));
+                }
+            });
+        } catch (Exception e) {
+            eventBus.post(new Events.FingerprintAuthenticationEncryptResult(null, null, "Exception decrypting"));
+        }
     }
 
     //

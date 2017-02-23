@@ -104,11 +104,11 @@
     <string name="in_progress">In Progress</string>
     <string name="renewal_in_progress">Renewal Pending</string>
     <string name="renewal_deadlines">Renewal Deadlines</string>
-    <string name="email_address">Email Address</string>
+    <string name="account_name">Username</string>
     <string name="password">Password</string>
     <string name="log_in">Log In</string>
     <string name="remember_me">Remember me</string>
-    <string name="existing_customers">DC Health Link Mobile is for existing Health Link customers.</string>
+    <string name="existing_customers">CoverageHQ is for existing Health Link customers.</string>
     <string name="not_existing">If you are not an existing customer please sign up on your home computer.</string>
     <string name="sharedpreferencename">hbxbroker</string>
     <string name="shared_preference_account_name">accountname</string>
@@ -197,4 +197,6 @@
     <string name="active">Active</string>
     <string name="next_coverage_year_begins">Next Coverage Year Begins</string>
     <string name="no_plans_published">There are no plans published for this company</string>
+    <string name="shared_preference_encrypted_info">encrypted account info</string>
+    <string name="coverage_expired">Coverage Expired</string>
 </resources>

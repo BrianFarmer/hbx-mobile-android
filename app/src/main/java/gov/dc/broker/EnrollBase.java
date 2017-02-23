@@ -9,10 +9,17 @@ import org.joda.time.Duration;
 import java.util.ArrayList;
 
 import static gov.dc.broker.BuildConfig2.getServerConfiguration;
+import static gov.dc.broker.EnrollConfigBase.StorageHandlerType.Clear;
 
 class EnrollConfigBase {
+    public enum StorageHandlerType {
+        Encrypted,
+        Clear
+    }
+
     private static int cacheTimeoutSeconds = 30;
     private static IDataCache dataCache = new DataCache();
+    private static StorageHandlerType storageHandlerType = Clear;
 
     static String getString(){
         return "Hoo Woo!!!";
@@ -25,8 +32,15 @@ class EnrollConfigBase {
         return 0;
     }
 
+    public static void setServerConfigurationStorageHandlerType(StorageHandlerType newStorageHandlerType) {
+        storageHandlerType =newStorageHandlerType;
+    }
+
     public static IServerConfigurationStorageHandler getServerConfigurationStorageHandler() {
-        return new ConfigurationStorageHandler(new IdentityEncryptionImpl());
+        //if (storageHandlerType == Clear) {
+            return new ConfigurationStorageHandler();
+        //}
+        //return new EnrollServerConfigurationStorageHandler();
     }
 
     public static boolean checkSession(ServerConfiguration serverConfiguration) {
@@ -64,7 +78,7 @@ class EnrollConfigBase {
     }
 
     public CoverageConnection getCoverageConnection() {
-        return new EnrollCoverageConnection(getUrlHandler(), getConnectionHandler(), getServerConfiguration(), getParser(), getDataCache(), new ConfigurationStorageHandler(new IdentityEncryptionImpl()));
+        return new EnrollCoverageConnection(getUrlHandler(), getConnectionHandler(), getServerConfiguration(), getParser(), getDataCache(), new ConfigurationStorageHandler());
     }
 
     private JsonParser getParser() {
@@ -95,6 +109,6 @@ class EnrollConfigBase {
     // a dialog telling them that the session is about to timeout.
     //
     public static int getSessionTimeoutSeconds() {
-        return 120;
+        return 180;
     }
 }

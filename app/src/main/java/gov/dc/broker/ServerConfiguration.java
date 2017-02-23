@@ -2,6 +2,7 @@ package gov.dc.broker;
 
 public class ServerConfiguration {
 
+
     public enum UserType {
         Unknown,
         Broker,
@@ -15,6 +16,7 @@ public class ServerConfiguration {
     public boolean useFingerprintSensor = true;
     public String securityQuestion = "this is the default security question.";
     public String securityAnswer = null;
+    public String encryptedString;
     public String location;
     public UserType userType = UserType.Unknown;
     public String sessionId = null;

@@ -9,8 +9,8 @@ public class EnrollCoverageConnection extends CoverageConnection {
 
     public EnrollCoverageConnection(EnrollUrlHandler urlHandler, IConnectionHandler connectionHandler,
                                     ServerConfiguration serverConfiguration, JsonParser parser,
-                                    IDataCache dataCache, ConfigurationStorageHandler storageHandler) {
-        super(urlHandler, connectionHandler, serverConfiguration, parser, dataCache, storageHandler);
+                                    IDataCache dataCache, IServerConfigurationStorageHandler clearStorageHandler) {
+        super(urlHandler, connectionHandler, serverConfiguration, parser, dataCache, clearStorageHandler);
         this.enrollUrlHandler = urlHandler;
     }
 
@@ -34,7 +34,7 @@ public class EnrollCoverageConnection extends CoverageConnection {
         UrlHandler.PostParameters securityAnswerPutParameters = enrollUrlHandler.getSecurityAnswerPostParameters(securityAnswer);
         ConnectionHandler.PostResponse postResponse = connectionHandler.post(securityAnswerPutParameters);
         enrollUrlHandler.processSecurityAnswerResponse(postResponse);
-        storageHandler.store(serverConfiguration);
+        clearStorageHandler.store(serverConfiguration);
     }
 
     public void stayLoggedIn() throws Exception {
