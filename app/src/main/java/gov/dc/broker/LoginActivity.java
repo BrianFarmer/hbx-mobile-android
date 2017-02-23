@@ -211,15 +211,9 @@ public class LoginActivity extends BrokerActivity {
                 lastLoginUsedFingerprint = loginResult.useFingerprintSensor();
                 checkShowFingerprintDialog();
             } else {
-                if (loginResult.getAccountName() == null
-                    || loginResult.getAccountName().length() == 0){
-                    emailAddress.setText("LoadTest13");
-                    password.setText("Beta123!");
-                } else {
                 emailAddress.setText(loginResult.getAccountName());
                 password.setText(loginResult.getPassword());
                 rememberMe.setChecked(loginResult.getRememberMe());
-                }
             }
         } else {
             emailAddress.setText("");
