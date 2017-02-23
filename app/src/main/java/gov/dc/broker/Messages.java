@@ -23,7 +23,8 @@ public interface Messages {
     void sessionAboutToTimeout();
     void sessionTimedout();
     void stayLoggedIn();
-    void getFingerprintStatus(boolean watching);
-    void authenticateFingerprint(boolean autoLogin);
-    void relogin();
+    void getFingerprintStatus();
+    void relogin(String account, String password);
+    void validateLogin();
+    void decryptAccountAndPassword();
 }

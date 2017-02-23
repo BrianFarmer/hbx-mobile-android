@@ -15,6 +15,8 @@ import com.github.mikephil.charting.data.PieData;
 import com.github.mikephil.charting.data.PieDataSet;
 import com.github.mikephil.charting.data.PieEntry;
 import com.github.mikephil.charting.formatter.IValueFormatter;
+import com.github.mikephil.charting.highlight.Highlight;
+import com.github.mikephil.charting.listener.OnChartValueSelectedListener;
 import com.github.mikephil.charting.utils.ViewPortHandler;
 import com.microsoft.azure.mobile.analytics.Analytics;
 
@@ -251,7 +253,7 @@ public class InfoFragment extends BrokerFragment {
             LocalDate now = LocalDate.now();
             gov.dc.broker.models.employer.PlanYear planYearForCoverageYear = BrokerUtilities.getPlanYearForCoverageYear(employer, coverageYear);
 
-            if (planYearForCoverageYear.renewalInProgress == true
+            if (planYearForCoverageYear.renewalInProgress == false
                 && !BrokerUtilities.isInOpenEnrollment(planYearForCoverageYear, now)){
                 initVisibleControls(R.id.textViewRenewalAvailableLabel, R.id.textViewRenewalAvailable, planYearForCoverageYear.renewalApplicationAvailable);
             } else {
@@ -267,10 +269,12 @@ public class InfoFragment extends BrokerFragment {
             }
 
             if (planYearForCoverageYear.openEnrollmentBegins != null) {
+                int i = planYearForCoverageYear.openEnrollmentBegins.compareTo(now);
+                Log.d(TAG, "open enrollment begins ? now" + Integer.toString(i));
                 if (planYearForCoverageYear.openEnrollmentBegins.compareTo(now) < 0) {
-                    initVisibleControls(R.id.textViewOpenEnrollmentBeginsLabel, R.id.textViewOpenEnrollmentBegins, R.string.open_enrollment_begins_label_past, planYearForCoverageYear.renewalApplicationDue);
+                    initVisibleControls(R.id.textViewOpenEnrollmentBeginsLabel, R.id.textViewOpenEnrollmentBegins, R.string.open_enrollment_begins_label_past, planYearForCoverageYear.openEnrollmentBegins);
                 } else {
-                    initVisibleControls(R.id.textViewOpenEnrollmentBeginsLabel, R.id.textViewOpenEnrollmentBegins, R.string.open_enrollment_begins_label_past, planYearForCoverageYear.renewalApplicationDue);
+                    initVisibleControls(R.id.textViewOpenEnrollmentBeginsLabel, R.id.textViewOpenEnrollmentBegins, R.string.open_enrollment_begins_label_future, planYearForCoverageYear.openEnrollmentBegins);
                 }
             } else {
                 initGoneControls(R.id.textViewOpenEnrollmentBeginsLabel, R.id.textViewOpenEnrollmentBegins);
@@ -420,6 +424,18 @@ public class InfoFragment extends BrokerFragment {
 
     private void configurePieChartData(BrokerUtilities.EmployeeCounts employeeCounts) {
         PieChart pieChart = (PieChart) view.findViewById(R.id.pieChart);
+        pieChart.setTouchEnabled(true);
+        pieChart.setOnChartValueSelectedListener(new OnChartValueSelectedListener() {
+            @Override
+            public void onValueSelected(Entry e, Highlight h) {
+                ((EmployerDetailsActivity)getActivity()).showRoster(null);
+            }
+
+            @Override
+            public void onNothingSelected() {
+
+            }
+        });
         pieChart.setUsePercentValues(false);
         pieChart.setDrawEntryLabels(true);
         pieChart.setDrawHoleEnabled(false);

@@ -27,7 +27,7 @@ class BuildConfig2 {
     }
 
     public static IServerConfigurationStorageHandler getServerConfigurationStorageHandler() {
-        return new ConfigurationStorageHandler(new IdentityEncryptionImpl());
+        return new ConfigurationStorageHandler();
     }
 
     public static ServerConfiguration getServerConfiguration() {
@@ -80,7 +80,7 @@ class BuildConfig2 {
     }
 
     public CoverageConnection getCoverageConnection() {
-        return new GithubCoverageConnection(getUrlHandler(), getConnectionHandler(), getServerConfiguration(), getParser(), getDataCache(), getServerConfigurationStorageHandler());
+        return new GithubCoverageConnection(getUrlHandler(), getConnectionHandler(), getServerConfiguration(), getParser(), getDataCache(), getServerConfigurationStorageHandler(), new EnrollServerConfigurationStorageHandler ());
     }
 
     private JsonParser getParser() {

@@ -39,6 +39,13 @@ public class LoginActivity extends BrokerActivity {
     private static String TAG = "LoginActivity";
     private static final int FINGERPRINT_PERMISSION_REQUEST_CODE = 15;
 
+    private enum FingerprintHardwareState {
+        NotChecked,
+        NoHardware,
+        HaveHardware
+    }
+
+
     // UI references.
     private EditText emailAddress;
     private EditText password;
@@ -49,15 +56,15 @@ public class LoginActivity extends BrokerActivity {
     private Spinner accountsSpinner;
     Switch switchEnableFingerprintLogin;
     private ArrayList<String> urls;
-    //private FingerprintDialog fingerprintDialog;
 
     private ProgressDialog progressDialog;
 
     private boolean waitingForFingerprint = false;
-    private boolean fingerprintHardwarePresent = false;
+    private FingerprintHardwareState fingerprintHardwareState = FingerprintHardwareState.NotChecked;
     private boolean haveLoginInfo = false;
     private boolean lastLoginUsedFingerprint = false;
-    static private boolean pastFingerprint = false;
+    static private boolean pastFingerprint;
+    private boolean actionKnown = false;
 
 
     private CountingIdlingResource idlingResource = new CountingIdlingResource("Login");
@@ -75,6 +82,7 @@ public class LoginActivity extends BrokerActivity {
         super.onCreate(savedInstanceState);
 
         setContentView(BuildConfig2.getLoginLayout());
+        pastFingerprint = false;
 
         // Set up the login form.
         if (BuildConfig2.isGit()){
@@ -124,6 +132,7 @@ public class LoginActivity extends BrokerActivity {
             });
             haveLoginInfo = false;
             getMessages().getLogin();
+            getMessages().getFingerprintStatus();
         }
 
         Button logInButton = (Button) findViewById(R.id.buttonLogIn);
@@ -141,16 +150,10 @@ public class LoginActivity extends BrokerActivity {
     @Override
     public void onResume(){
         super.onResume();
-        fingerprintHardwarePresent = false;
-        getMessages().getFingerprintStatus(true);
-    }
-
-    @Override
-    public void onPause(){
-        if (fingerprintHardwarePresent) {
-            getMessages().getFingerprintStatus(false);
+        fingerprintHardwareState = FingerprintHardwareState.NotChecked;
+        if (haveLoginInfo) {
+            getMessages().getFingerprintStatus();
         }
-        super.onPause();
     }
 
     private void attemptLogin() {
@@ -208,20 +211,25 @@ public class LoginActivity extends BrokerActivity {
                 lastLoginUsedFingerprint = loginResult.useFingerprintSensor();
                 checkShowFingerprintDialog();
             } else {
+                if (loginResult.getAccountName() == null
+                    || loginResult.getAccountName().length() == 0){
+                    emailAddress.setText("LoadTest13");
+                    password.setText("Beta123!");
+                } else {
                 emailAddress.setText(loginResult.getAccountName());
                 password.setText(loginResult.getPassword());
                 rememberMe.setChecked(loginResult.getRememberMe());
+                }
             }
         } else {
             emailAddress.setText("");
             password.setText("");
             rememberMe.setChecked(true);
-
         }
     }
 
     private void checkShowFingerprintDialog(){
-        if (fingerprintHardwarePresent
+        if (fingerprintHardwareState == FingerprintHardwareState.HaveHardware
             && haveLoginInfo
             && lastLoginUsedFingerprint
             && !waitingForFingerprint
@@ -249,28 +257,12 @@ public class LoginActivity extends BrokerActivity {
         //getMessages().getLogin();
         if (!fingerprintStatus.isHardwareDetected()){
             switchEnableFingerprintLogin.setVisibility(View.GONE);
-            fingerprintHardwarePresent = false;
+            fingerprintHardwareState = FingerprintHardwareState.NoHardware;
             return;
         }
-
-        fingerprintHardwarePresent = true;
+        fingerprintHardwareState = FingerprintHardwareState.HaveHardware;
         checkShowFingerprintDialog();
     }
-
-    @Subscribe(threadMode = ThreadMode.MAIN)
-    public void doThis(Events.FingerprintAuthenticationUpdate authenticationUpdate) {
-        switch (authenticationUpdate.getMessage()){
-            case AuthenticationError:
-                break;
-            case AuthenticationHelp:
-                break;
-            case AuthenticationFailed:
-                break;
-            case AuthenticationSucceeded:
-                break;
-        }
-    }
-
 
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void doThis(Events.LoginRequestResult loginRequestResult) {
@@ -283,7 +275,34 @@ public class LoginActivity extends BrokerActivity {
                     FingerprintDialog.build(false, this);
                 } else {
                     RootActivity.loginDone();
-                    BrokerManager.getDefault().setLoggedIn(true);
+                    finish();
+                }
+                return;
+            case Events.LoginRequestResult.Error:
+                alertDialog(R.string.generic_error_message, R.string.ok);
+                break;
+            case Events.LoginRequestResult.Failure:
+                hideProgress();
+                SpannableString s = new SpannableString(getString(R.string.bad_login_message));
+                Linkify.addLinks(s, Linkify.ALL);
+                haveLoginInfo = false;
+                getMessages().logoutRequest();
+                alertDialog(s, R.string.ok);
+                break;
+        }
+    }
+
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void doThis(Events.FingerprintLoginResult fingerprintLoginResult) {
+        hideProgress();
+
+        switch (fingerprintLoginResult.getLoginResult()) {
+            case Events.LoginRequestResult.Success:
+                Switch switchEnableFingerprintLogin = (Switch)findViewById(R.id.switchEnableFingerprintLogin);
+                if (switchEnableFingerprintLogin != null && switchEnableFingerprintLogin.isChecked()){
+                    FingerprintDialog.build(false, this);
+                } else {
+                    RootActivity.loginDone();
                     finish();
                 }
                 return;
@@ -417,15 +436,16 @@ public class LoginActivity extends BrokerActivity {
 
     }
 
-    public void authenticated() {
-        if (haveLoginInfo) {
-            pastFingerprint = true;
-            showProgress();
-            getMessages().relogin();
-        } else {
-            RootActivity.loginDone();
-            finish();
-        }
+    public void authenticated(String accountName, String password) {
+        pastFingerprint = true;
+        showProgress();
+        getMessages().relogin(accountName, password);
+    }
+
+
+    public void authenticated(String encryptedText) {
+        RootActivity.loginDone();
+        finish();
     }
 
     private void showSecurityDialog(String securityQuestion){

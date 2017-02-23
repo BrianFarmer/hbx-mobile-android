@@ -24,7 +24,7 @@
         android:id="@+id/editTextAcountName"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:hint="@string/email_address"
+        android:hint="@string/account_name"
         android:layout_below="@id/imageViewDcHealthLinkLogo"
         android:layout_marginLeft="20sp"
         android:layout_marginRight="20sp"

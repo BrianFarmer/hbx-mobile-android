@@ -23,7 +23,6 @@ public class FingerprintDialog extends BrokerAppCompatDialogFragment {
     private final String TAG = "FingerprintDialog";
     private View view;
     private Context context;
-    private boolean fingerprintManagerAttached = false;
     private boolean relogin = false;
 
     public static void build(boolean relogin, LoginActivity loginActivity){
@@ -36,9 +35,9 @@ public class FingerprintDialog extends BrokerAppCompatDialogFragment {
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-
-        if (savedInstanceState != null) {
-            relogin = savedInstanceState.getBoolean("relogin");
+        Bundle bundle = getArguments();
+        if (bundle != null) {
+            relogin = bundle.getBoolean("relogin");
         }
 
 
@@ -46,6 +45,12 @@ public class FingerprintDialog extends BrokerAppCompatDialogFragment {
         getDialog().setCanceledOnTouchOutside(false);
         View textViewFingerprintStatus = view.findViewById(R.id.textViewFingerprintStatus);
         textViewFingerprintStatus.setVisibility(View.GONE);
+        if (relogin){
+            getMessages().decryptAccountAndPassword();
+        } else {
+            getMessages().validateLogin();
+        }
+
         Button buttonCancel = (Button) view.findViewById(R.id.buttonCancel);
         buttonCancel.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -64,28 +69,14 @@ public class FingerprintDialog extends BrokerAppCompatDialogFragment {
         init();
 
         this.context = context;
-        getMessages().getFingerprintStatus(true);
-        fingerprintManagerAttached = true;
-    }
-
-
-
-    @Override
-    public void onPause(){
-        super.onPause();
-
-        if (fingerprintManagerAttached) {
-            getMessages().getFingerprintStatus(false);
-        }
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void doThis(Events.FingerprintStatus fingerprintStatus){
-        getMessages().authenticateFingerprint(true);
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)
-    public void doThis(Events.FingerprintAuthenticationUpdate fingerprintAuthenticationUpdate){
+    public void doThis(Events.FingerprintAuthenticationDecryptResult fingerprintAuthenticationUpdate){
         TextView textViewFingerprintStatus = (TextView) view.findViewById(R.id.textViewFingerprintStatus);
 
         Vibrator vibratorService = (Vibrator) getActivity().getSystemService(VIBRATOR_SERVICE);
@@ -95,21 +86,44 @@ public class FingerprintDialog extends BrokerAppCompatDialogFragment {
             Log.d(TAG, "vibration failed, not very important");
         }
 
-        switch (fingerprintAuthenticationUpdate.getMessage()){
-            case AuthenticationError:
-                textViewFingerprintStatus.setText("Authentication error, please try again.");
-                break;
-            case AuthenticationSucceeded:
-                textViewFingerprintStatus.setText("Fingerprint authenticated.");
-                ((LoginActivity)getActivity()).authenticated();
-                dismiss();
-                break;
-            case AuthenticationHelp:
-                textViewFingerprintStatus.setText("Authentication help???");
-                break;
-            case AuthenticationFailed:
-                textViewFingerprintStatus.setText("Authentication failed, please try again.");
-                break;
+        if (fingerprintAuthenticationUpdate.getErrorMessage()!= null) {
+            textViewFingerprintStatus.setText("Authentication error, please try again.");
+            return;
         }
+
+        if (fingerprintAuthenticationUpdate.getHelpString() != null) {
+            textViewFingerprintStatus.setText("Authentication help???");
+            return;
+        }
+
+        textViewFingerprintStatus.setText("Fingerprint authenticated.");
+        ((LoginActivity)getActivity()).authenticated(fingerprintAuthenticationUpdate.getAccountName(), fingerprintAuthenticationUpdate.getPassword());
+        dismiss();
+    }
+
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void doThis(Events.FingerprintAuthenticationEncryptResult fingerprintAuthenticationUpdate){
+        TextView textViewFingerprintStatus = (TextView) view.findViewById(R.id.textViewFingerprintStatus);
+
+        Vibrator vibratorService = (Vibrator) getActivity().getSystemService(VIBRATOR_SERVICE);
+        try {
+            vibratorService.vibrate(300);
+        } catch (Exception e){
+            Log.d(TAG, "vibration failed, not very important");
+        }
+
+        if (fingerprintAuthenticationUpdate.getErrorMessage()!= null) {
+            textViewFingerprintStatus.setText("Authentication error, please try again.");
+            return;
+        }
+
+        if (fingerprintAuthenticationUpdate.getHelpString() != null) {
+            textViewFingerprintStatus.setText("Authentication help???");
+            return;
+        }
+
+        textViewFingerprintStatus.setText("Fingerprint authenticated.");
+        ((LoginActivity)getActivity()).authenticated(fingerprintAuthenticationUpdate.getEncryptedText());
+        dismiss();
     }
 }

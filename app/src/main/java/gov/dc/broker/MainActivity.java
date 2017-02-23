@@ -165,7 +165,6 @@ public class MainActivity extends BrokerActivity {
 
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void doThis(Events.LoggedOutResult loggedOutResult){
-        BrokerManager.getDefault().setLoggedIn(false);
         finish();
     }
 
@@ -174,7 +173,6 @@ public class MainActivity extends BrokerActivity {
         alertDialog("Error! What should I be showing?", new DialogClosed() {
             @Override
             public void closed() {
-                BrokerManager.getDefault().setLoggedIn(false);
                 finish();
             }
         });

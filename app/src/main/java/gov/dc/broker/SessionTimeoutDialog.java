@@ -5,7 +5,6 @@ import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.res.Resources;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -59,11 +58,8 @@ public class SessionTimeoutDialog extends BrokerAppCompatDialogFragment {
         // initializes bases class, mainly for event bus.
         init();
 
-        try {
-            view = inflater.inflate(R.layout.session_timeout, container, false);
-        } catch (Exception e){
-            Log.e(TAG, "Exception get layout");
-        }
+        view = inflater.inflate(R.layout.session_timeout, container, false);
+        getDialog().setCanceledOnTouchOutside(false);
 
         textViewSessionTimeout = (TextView)view.findViewById(R.id.textViewSessionTimeout);
         stayLoggedInButton = (Button) view.findViewById(R.id.buttonStayLoggedIn);

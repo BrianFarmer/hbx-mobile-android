@@ -17,8 +17,8 @@ public class GithubCoverageConnection extends CoverageConnection {
 
     public GithubCoverageConnection(GitUrlHandler urlHandler, ConnectionHandler connectionHandler,
                                     ServerConfiguration serverConfiguration, JsonParser parser,
-                                    IDataCache dataCache, IServerConfigurationStorageHandler configurationStorageHandler) {
-        super(urlHandler, connectionHandler, serverConfiguration, parser, dataCache, configurationStorageHandler);
+                                    IDataCache dataCache, IServerConfigurationStorageHandler clearStorageHandler) {
+        super(urlHandler, connectionHandler, serverConfiguration, parser, dataCache, clearStorageHandler);
         gitUrlHandler = urlHandler;
     }
 
@@ -52,7 +52,7 @@ public class GithubCoverageConnection extends CoverageConnection {
             serverConfiguration.brokerDetailPath = serverConfiguration.employerDetailPath;
             serverConfiguration.employerRosterPathForBroker = parsed.toString() + "/roster.json";
         }
-        storageHandler.store(serverConfiguration);
+        clearStorageHandler.store(serverConfiguration);
         return LoginResult.Success;
     }
 

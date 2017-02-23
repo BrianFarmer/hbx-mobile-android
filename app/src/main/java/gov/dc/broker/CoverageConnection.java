@@ -4,6 +4,19 @@ import android.util.Log;
 
 import org.joda.time.DateTime;
 
+import java.io.IOException;
+import java.security.InvalidAlgorithmParameterException;
+import java.security.InvalidKeyException;
+import java.security.KeyStoreException;
+import java.security.NoSuchAlgorithmException;
+import java.security.NoSuchProviderException;
+import java.security.UnrecoverableKeyException;
+import java.security.cert.CertificateException;
+
+import javax.crypto.BadPaddingException;
+import javax.crypto.IllegalBlockSizeException;
+import javax.crypto.NoSuchPaddingException;
+
 import gov.dc.broker.models.brokeragency.BrokerAgency;
 import gov.dc.broker.models.brokeragency.BrokerClient;
 import gov.dc.broker.models.employer.Employer;
@@ -20,24 +33,28 @@ public abstract class CoverageConnection {
     protected final ServerConfiguration serverConfiguration;
     protected final JsonParser parser;
     private final IDataCache dataCache;
-    protected final IServerConfigurationStorageHandler storageHandler;
+    protected final IServerConfigurationStorageHandler clearStorageHandler;
 
     public CoverageConnection(UrlHandler urlHandler, IConnectionHandler connectionHandler,
                               ServerConfiguration serverConfiguration,
                               JsonParser parser, IDataCache dataCache,
-                              IServerConfigurationStorageHandler storageHandler){
+                              IServerConfigurationStorageHandler clearStorageHandler){
 
         this.urlHandler = urlHandler;
         this.connectionHandler = connectionHandler;
         this.serverConfiguration = serverConfiguration;
         this.parser = parser;
         this.dataCache = dataCache;
-        this.storageHandler = storageHandler;
+        this.clearStorageHandler = clearStorageHandler;
     }
 
     public LoginResult loginAfterFingerprintAuthenticated() throws Exception{
-        storageHandler.read(serverConfiguration);
+        clearStorageHandler.read(serverConfiguration);
         return validateUserAndPassword(serverConfiguration.accountName, serverConfiguration.password, true, true);
+    }
+
+    public void saveLoginInfo(boolean useEncrypted) throws BadPaddingException, NoSuchAlgorithmException, NoSuchPaddingException, IllegalBlockSizeException, NoSuchProviderException, InvalidKeyException, UnrecoverableKeyException, CertificateException, KeyStoreException, IOException {
+        clearStorageHandler.store(serverConfiguration);
     }
 
     enum LoginResult {
@@ -51,8 +68,7 @@ public abstract class CoverageConnection {
     public abstract LoginResult revalidateUserAndPassword() throws Exception;
 
     public void checkSecurityAnswer(String securityAnswer) throws Exception {
-        storageHandler.store(serverConfiguration);
-        return;
+        clearStorageHandler.store(serverConfiguration);
     }
 
     private Employer getEmployer(UrlHandler urlHandler, ServerConfiguration serverConfiguration) throws Exception {
@@ -95,10 +111,6 @@ public abstract class CoverageConnection {
     }
 
     public void logout(boolean clearAccount) {
-        if (clearAccount){
-            serverConfiguration.accountName = null;
-        }
-        BrokerManager.getDefault().setLoggedIn(false);
         serverConfiguration.sessionId = null;
         serverConfiguration.password = null;
         serverConfiguration.securityAnswer = null;
@@ -108,7 +120,8 @@ public abstract class CoverageConnection {
         serverConfiguration.userType = ServerConfiguration.UserType.Unknown;
 
         if (clearAccount){
-            storageHandler.clear();
+            serverConfiguration.accountName = null;
+            clearStorageHandler.clear();
         }
     }
 
@@ -217,8 +230,8 @@ public abstract class CoverageConnection {
         return BrokerUtilities.getRosterEntry(roster, employeeId);
     }
 
-    public ServerConfiguration getLogin(){
-        storageHandler.read(serverConfiguration);
+    public ServerConfiguration getLogin() throws IOException, CertificateException, NoSuchAlgorithmException, UnrecoverableKeyException, InvalidKeyException, InvalidAlgorithmParameterException, NoSuchPaddingException, BadPaddingException, KeyStoreException, IllegalBlockSizeException {
+        clearStorageHandler.read(serverConfiguration);
         return serverConfiguration;
     }
 
