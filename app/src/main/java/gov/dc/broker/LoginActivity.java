@@ -117,7 +117,7 @@ public class LoginActivity extends BrokerActivity {
             rememberMe = (Switch) findViewById(R.id.switchRememberMe);
             password.setTypeface(Typeface.DEFAULT_BOLD);
             //password.setTypeface(password.getTypeface(), Typeface.DEFAULT);
-            password.setTextSize(TypedValue.COMPLEX_UNIT_SP, 20);
+            password.setTextSize(TypedValue.COMPLEX_UNIT_SP, 18);
             password.setTransformationMethod(new PasswordTransformationMethod());
             password.setOnEditorActionListener(new TextView.OnEditorActionListener() {
                 @Override
@@ -212,7 +212,7 @@ public class LoginActivity extends BrokerActivity {
                 checkShowFingerprintDialog();
             } else {
                 emailAddress.setText(loginResult.getAccountName());
-                password.setText(loginResult.getPassword());
+                password.setText("");
                 rememberMe.setChecked(loginResult.getRememberMe());
             }
         } else {

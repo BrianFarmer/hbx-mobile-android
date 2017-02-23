@@ -116,13 +116,15 @@ public class EmployerAdapter extends BaseSwipeAdapter {
     private void updateWrappedItems(){
         wrapped_items.clear();
             wrapped_items.add(openEnrollmentHeader);
-        if (openEnrollmentState
-            && (alertedItems.size() > 0
-                || notAlertedItems.size() > 0)) {
-            wrapped_items.add(openEnrollmentAlertHeader);
-            wrapped_items.addAll(alertedItems);
-            wrapped_items.add(openEnrollmentNotAlertedHeader);
-            wrapped_items.addAll(notAlertedItems);
+        if (openEnrollmentState){
+            if (alertedItems.size() > 0){
+                wrapped_items.add(openEnrollmentAlertHeader);
+                wrapped_items.addAll(alertedItems);
+            }
+            if (notAlertedItems.size() > 0) {
+                wrapped_items.add(openEnrollmentNotAlertedHeader);
+                wrapped_items.addAll(notAlertedItems);
+            }
         }
         wrapped_items.add(renewalHeader);
         if (renewalState && renewalItems.size() > 0) {

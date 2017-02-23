@@ -37,8 +37,7 @@
         android:theme="@style/AppTheme"
         >
         <activity
-            android:name=".RootActivity"
-            android:screenOrientation="portrait">
+            android:name=".RootActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN"/>
                 <category android:name="android.intent.category.LAUNCHER"/>
@@ -47,12 +46,11 @@
         <activity
             android:name=".MainActivity"
             android:label=""
-            android:screenOrientation="portrait" >
+        >
         </activity>
         <activity
             android:name=".LoginActivity"
             android:label="@string/title_activity_login"
-            android:screenOrientation="portrait"
             />
         <!--
             service
@@ -63,12 +61,10 @@
         <activity
             android:name=".EmployerDetailsActivity"
             android:label=""
-            android:screenOrientation="portrait"
             />
         <activity
             android:name=".EmployeeDetailsActivity"
             android:configChanges="orientation|keyboardHidden|screenSize"
-            android:screenOrientation="portrait"
             />
     </application>
 

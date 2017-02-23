@@ -1,6 +1,7 @@
 package gov.dc.broker;
 
 import android.content.Intent;
+import android.content.pm.ActivityInfo;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Bundle;
@@ -282,6 +283,7 @@ public class EmployerDetailsActivity extends BrokerActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         int viewId;
+
 
         Intent intent = getIntent();
         clientId = intent.getStringExtra(BROKER_CLIENT_ID);

@@ -41,12 +41,12 @@ public class Dental {
     public EmployerContributionByRelationship employerContributionByRelationship;
     @SerializedName("estimated_employer_max_monthly_cost")
     @Expose
-    public int estimatedEmployerMaxMonthlyCost;
+    public float estimatedEmployerMaxMonthlyCost;
     @SerializedName("estimated_plan_participant_min_monthly_cost")
     @Expose
-    public int estimatedPlanParticipantMinMonthlyCost;
+    public float estimatedPlanParticipantMinMonthlyCost;
     @SerializedName("estimated_plan_participant_max_monthly_cost")
     @Expose
-    public int estimatedPlanParticipantMaxMonthlyCost;
+    public float estimatedPlanParticipantMaxMonthlyCost;
 
 }

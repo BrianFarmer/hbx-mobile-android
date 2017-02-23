@@ -74,7 +74,14 @@ public abstract class CoverageConnection {
     private Employer getEmployer(UrlHandler urlHandler, ServerConfiguration serverConfiguration) throws Exception {
         UrlHandler.GetParameters getParameters = urlHandler.getEmployerDetailsParameters(null);
         IConnectionHandler.GetReponse response = connectionHandler.get(getParameters);
-        return urlHandler.processEmployerDetails(response);
+        Employer employer;
+        try{
+            employer = urlHandler.processEmployerDetails(response);
+        } catch (Exception e){
+            Log.e(TAG, "exception parsing json", e);
+            throw  e;
+        }
+        return employer;
     }
 
     public ServerConfiguration.UserType determineUserType() throws Exception {

@@ -1,7 +1,10 @@
 package gov.dc.broker;
 
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.DialogInterface.OnClickListener;
+import android.content.pm.ActivityInfo;
+import android.content.res.Configuration;
 import android.os.Bundle;
 import android.support.v4.app.DialogFragment;
 import android.support.v7.app.AlertDialog;
@@ -25,6 +28,14 @@ public class BrokerActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        if (!isXLargeScreen(getApplicationContext())) { //set phones to portrait;
+            setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
+        }
+        else {
+            //I set background images here depending on portrait or landscape orientation
+        }
+
 
         if (messages == null) {
             messages = BrokerApplication.getBrokerApplication().getMessages(this);
@@ -121,5 +132,21 @@ public class BrokerActivity extends AppCompatActivity {
             });
         AlertDialog alertDialog = builder.create();
         alertDialog.show();
+    }
+
+    public static boolean isXLargeScreen(Context context) {
+        return (context.getResources().getConfiguration().screenLayout
+                & Configuration.SCREENLAYOUT_SIZE_MASK)
+                >= Configuration.SCREENLAYOUT_SIZE_XLARGE;
+    }
+
+    @Override
+    public void onConfigurationChanged (Configuration newConfig)
+    {
+        super.onConfigurationChanged(newConfig);
+
+        if (!isXLargeScreen(getApplicationContext()) ) {
+            return; //keep in portrait mode if a phone
+        }
     }
 }
