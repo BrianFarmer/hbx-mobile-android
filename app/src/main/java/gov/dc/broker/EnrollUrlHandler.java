@@ -59,7 +59,7 @@ public class EnrollUrlHandler extends UrlHandler {
             throw new CoverageException("Security answer not accepted");
         }
         SecurityAnswerResponse securityAnswerResponse = parser.parseSecurityAnswerResponse(putResponse.body);
-        serverConfiguration.enrollServer = securityAnswerResponse.enroll_server;
+        serverConfiguration.dataInfo = parseHostInfo(securityAnswerResponse.enroll_server);
         serverConfiguration.sessionId = securityAnswerResponse.session_id;
         serverConfiguration.employerDetailPath = securityAnswerResponse.employer_details_endpoint;
         serverConfiguration.brokerDetailPath = securityAnswerResponse.broker_endpoint;
@@ -77,7 +77,7 @@ public class EnrollUrlHandler extends UrlHandler {
 
     @Override
     public void processSecurityResponse(SecurityAnswerResponse securityAnswerResponse) {
-        serverConfiguration.enrollServer = securityAnswerResponse.enroll_server;
+        serverConfiguration.dataInfo = parseHostInfo(securityAnswerResponse.enroll_server);
         serverConfiguration.sessionId = securityAnswerResponse.session_id;
     }
 

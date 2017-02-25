@@ -36,6 +36,7 @@ public class RosterFragment extends BrokerFragment implements EmployeeFilterDial
     public static String NotEnrolledStatus = "Not Enrolled";
     public static String EnrolledStatus = "Enrolled";
     public static String WaivedStatus = "waived";
+    public static String TerminatedStatus = "Terminated";
     private View view;
     private Roster rosterResult;
     private String brokerClientId;

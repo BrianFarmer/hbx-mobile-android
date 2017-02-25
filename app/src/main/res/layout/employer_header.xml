@@ -66,7 +66,7 @@
 
         <ImageButton
             android:id="@+id/imageButtonChat"
-            android:src="@drawable/messageicon"
+            android:src="@drawable/messageicon_states"
             style="@style/IconButton" />
 
         <ImageButton

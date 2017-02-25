@@ -415,6 +415,17 @@
         <item name="android:textColor">@color/not_enrolled_color</item>
     </style>
     <style
+        name="terminated_field"
+        parent="participants_fields">
+        <item name="android:textColor">@color/terminated_color</item>
+    </style>
+    <style
+        name="terminated_label"
+        parent="participants_fields">
+        <item name="android:layout_marginTop">0sp</item>
+        <item name="android:textColor">@color/terminated_color</item>
+    </style>
+    <style
         name="total_participants_field"
         parent="participants_fields"
         >

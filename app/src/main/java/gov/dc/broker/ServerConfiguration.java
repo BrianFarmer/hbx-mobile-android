@@ -41,7 +41,7 @@ public class ServerConfiguration {
 
     public String stayLoggedInPath = "reset_user_clock";
 
-    public String enrollServer;
+    //public String enrollServer;
 
     public static String defaultEmployersList = "/api/v1/mobile_api/employers_list";
     public static String defaultEmployerDetails = "/api/v1/mobile_api/employer_details";

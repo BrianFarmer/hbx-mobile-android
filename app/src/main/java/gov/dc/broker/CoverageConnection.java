@@ -18,7 +18,6 @@ import javax.crypto.IllegalBlockSizeException;
 import javax.crypto.NoSuchPaddingException;
 
 import gov.dc.broker.models.brokeragency.BrokerAgency;
-import gov.dc.broker.models.brokeragency.BrokerClient;
 import gov.dc.broker.models.employer.Employer;
 import gov.dc.broker.models.gitaccounts.GitAccounts;
 import gov.dc.broker.models.roster.Roster;
@@ -142,8 +141,6 @@ public abstract class CoverageConnection {
             return employer;
         }
 
-        BrokerAgency brokerAgency = dataCache.getBrokerAgency(time);
-        BrokerClient brokerClient = BrokerUtilities.getBrokerClient(brokerAgency, employerId);
         UrlHandler.GetParameters employerDetailsParameters = urlHandler.getEmployerDetailsParameters(employerId);
         IConnectionHandler.GetReponse getReponse = connectionHandler.get(employerDetailsParameters);
         employer = urlHandler.processEmployerDetails(getReponse);

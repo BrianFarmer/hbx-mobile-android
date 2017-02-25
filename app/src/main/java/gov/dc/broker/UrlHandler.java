@@ -192,6 +192,15 @@ public abstract class UrlHandler {
     public BrokerAgency processBrokerAgency(IConnectionHandler.GetReponse getReponse) throws Exception {
         return parser.parseEmployerList(getReponse.body);
     }
+    protected ServerConfiguration.HostInfo parseHostInfo(String enroll_server) {
+        ServerConfiguration.HostInfo hostInfo = new ServerConfiguration.HostInfo();
+        HttpUrl parse = HttpUrl.parse(enroll_server);
+        hostInfo.scheme = parse.scheme();
+        hostInfo.host = parse.host();
+        hostInfo.port = parse.port();
+        return hostInfo;
+    }
+
 
 
     abstract FormBody getSecurityAnswerFormBody(String securityAnswer);

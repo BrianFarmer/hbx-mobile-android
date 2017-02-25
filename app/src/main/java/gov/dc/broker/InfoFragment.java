@@ -33,6 +33,11 @@ import gov.dc.broker.models.employer.Employer;
 import gov.dc.broker.models.employer.PlanYear;
 import gov.dc.broker.models.roster.Roster;
 
+import static gov.dc.broker.RosterFragment.EnrolledStatus;
+import static gov.dc.broker.RosterFragment.NotEnrolledStatus;
+import static gov.dc.broker.RosterFragment.TerminatedStatus;
+import static gov.dc.broker.RosterFragment.WaivedStatus;
+
 /**
  * Created by plast on 10/21/2016.
  */
@@ -53,6 +58,7 @@ public class InfoFragment extends BrokerFragment {
     private boolean currentMonthlyCostsOpen;
     private LocalDate coverageYear;
     private ArrayList<ControlState> controlStates;
+    private ArrayList<String> filterStrings;
 
     class ControlState {
         public TextView view;
@@ -328,8 +334,10 @@ public class InfoFragment extends BrokerFragment {
                 textViewWaived.setText(Integer.toString(employeeCounts.Waived));
                 TextView textViewNotEnrolled = (TextView) view.findViewById(R.id.textViewNotEnrolled);
                 textViewNotEnrolled.setText(Integer.toString(employeeCounts.NotEnrolled));
+                TextView textViewTerminated = (TextView) view.findViewById(R.id.textViewTerminated);
+                textViewTerminated.setText(Integer.toString(employeeCounts.Terminated));
                 TextView textViewTotalEmployees = (TextView) view.findViewById(R.id.textViewTotalEmployees);
-                textViewTotalEmployees.setText(Integer.toString(employeeCounts.Enrolled + employeeCounts.NotEnrolled + employeeCounts.Waived));
+                textViewTotalEmployees.setText(Integer.toString(employeeCounts.Enrolled + employeeCounts.NotEnrolled + employeeCounts.Waived + employeeCounts.Terminated));
 
 
                 TextView textViewEnrolledLabel = (TextView) view.findViewById(R.id.textViewEnrolledLabel);
@@ -337,7 +345,7 @@ public class InfoFragment extends BrokerFragment {
                     @Override
                     public void onClick(View view) {
                         EmployerDetailsActivity activity = (EmployerDetailsActivity) getActivity();
-                        activity.showRoster(RosterFragment.EnrolledStatus);
+                        activity.showRoster(EnrolledStatus);
                     }
                 });
                 TextView textViewNotEnrolledLabel = (TextView) view.findViewById(R.id.textViewNotEnrolledLabel);
@@ -356,6 +364,16 @@ public class InfoFragment extends BrokerFragment {
                         activity.showRoster(RosterFragment.WaivedStatus);
                     }
                 });
+                TextView textViewTerminatedLabel = (TextView) view.findViewById(R.id.textViewTerminatedLabel);
+                textViewTerminatedLabel.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        EmployerDetailsActivity activity = (EmployerDetailsActivity) getActivity();
+                        activity.showRoster(RosterFragment.TerminatedStatus);
+                    }
+                });
+
+
                 configurePieChartData(employeeCounts);
 
                 BrokerUtilities.Totals totals = BrokerUtilities.calcTotals(roster, coverageYear);
@@ -428,7 +446,10 @@ public class InfoFragment extends BrokerFragment {
         pieChart.setOnChartValueSelectedListener(new OnChartValueSelectedListener() {
             @Override
             public void onValueSelected(Entry e, Highlight h) {
-                ((EmployerDetailsActivity)getActivity()).showRoster(null);
+                if (e == null){
+                    return;
+                }
+                ((EmployerDetailsActivity)getActivity()).showRoster((String)e.getData());
             }
 
             @Override
@@ -445,16 +466,24 @@ public class InfoFragment extends BrokerFragment {
         pieChart.setDrawSliceText(false);
 
         ArrayList<PieEntry> yValues = new ArrayList<>();
+        filterStrings = new ArrayList<>();
 
         if (employeeCounts.Enrolled > 0) {
-            yValues.add(new PieEntry(2*employeeCounts.Enrolled, Integer.toString(employeeCounts.Enrolled)));
+            yValues.add(new PieEntry(2*employeeCounts.Enrolled, Integer.toString(employeeCounts.Enrolled), EnrolledStatus));
+            filterStrings.add(EnrolledStatus);
         }
         if (employeeCounts.Waived > 0) {
-            yValues.add(new PieEntry(2 * employeeCounts.Waived, Integer.toString(employeeCounts.Waived)));
+            yValues.add(new PieEntry(2 * employeeCounts.Waived, Integer.toString(employeeCounts.Waived), WaivedStatus));
+            filterStrings.add(WaivedStatus);
+        }
+        if (employeeCounts.Terminated > 0){
+            yValues.add(new PieEntry(2 * employeeCounts.Terminated, Integer.toString(employeeCounts.Terminated), TerminatedStatus));
+            filterStrings.add(TerminatedStatus);
         }
         int notEnrolledCount = 2*(employeeCounts.Total - (employeeCounts.Enrolled + employeeCounts.Waived));
         if (notEnrolledCount > 0) {
-            yValues.add(new PieEntry(notEnrolledCount, Integer.toString(notEnrolledCount)));
+            yValues.add(new PieEntry(notEnrolledCount, Integer.toString(notEnrolledCount), NotEnrolledStatus));
+            filterStrings.add(NotEnrolledStatus);
         }
 
         PieDataSet dataSet = new PieDataSet(yValues, "");
@@ -475,6 +504,9 @@ public class InfoFragment extends BrokerFragment {
         }
         if (notEnrolledCount > 0) {
             colors.add(ContextCompat.getColor(this.getActivity(), R.color.not_enrolled_color));
+        }
+        if (employeeCounts.Terminated > 0) {
+            colors.add(ContextCompat.getColor(this.getActivity(), R.color.terminated_color));
         }
         dataSet.setColors(colors);
         PieData data = new PieData(dataSet);

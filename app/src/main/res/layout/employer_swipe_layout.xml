@@ -28,7 +28,7 @@
     <ImageButton
         android:id="@+id/imageButtonEmail"
         style="@style/LargeIconImageButtonStyle"
-        android:src="@drawable/emailicon"
+        android:src="@drawable/emailicon_states"
     />
 
     <ImageButton

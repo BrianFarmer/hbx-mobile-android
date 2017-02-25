@@ -7,11 +7,12 @@
     android:background="@color/white">
 
     <ScrollView
-            xmlns:android="http://schemas.android.com/apk/res/android"
-            android:layout_width="match_parent"
+        android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_alignParentTop="true"
-            android:layout_alignParentBottom="true">
+        android:layout_alignParentTop="true"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        >
         <android.support.percent.PercentRelativeLayout
             android:orientation="vertical"
             android:layout_width="match_parent"
@@ -294,11 +295,32 @@
                 android:layout_alignParentLeft="true"
                 android:layout_alignParentStart="true"
                 android:layout_below="@id/textViewNotEnrolledLabel"
+                android:id="@+id/textViewTerminated"
+                android:tag="@string/participation_group"
+                style="@style/terminated_field"
+                />
+
+            <TextView
+                android:text="@string/terminated"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentLeft="true"
+                android:layout_below="@id/textViewTerminated"
+                android:id="@+id/textViewTerminatedLabel"
+                android:tag="@string/participation_group"
+                style="@style/terminated_label"
+                />
+            <TextView
+                android:text=""
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentLeft="true"
+                android:layout_alignParentStart="true"
+                android:layout_below="@id/textViewTerminatedLabel"
                 android:id="@+id/textViewTotalEmployees"
                 android:tag="@string/participation_group"
                 style="@style/total_participants_field"
                 />
-
             <TextView
                 android:text="@string/total_employees_label"
                 android:layout_width="wrap_content"

@@ -46,7 +46,7 @@
 
         <ImageButton
             android:id="@+id/imageButtonChat"
-            android:src="@drawable/emailicon"
+            android:src="@drawable/emailicon_states"
             style="@style/IconButton" />
 
         <ImageButton

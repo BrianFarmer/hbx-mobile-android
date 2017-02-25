@@ -31,7 +31,7 @@
     <color name="alertColor">@color/alertRed</color>
     <color name="enrolled_color">#69a30d</color>
     <color name="waived_color">#eaaa00</color>
-    <color name="terminated_color">@color/textgray</color>
+    <color name="terminated_color">@color/purple</color>
     <color name="not_enrolled_color">#e72b2d</color>
     <color name="total_employees_color">@color/black</color>
     <color name="roster_header_background">@color/lightgray</color>
