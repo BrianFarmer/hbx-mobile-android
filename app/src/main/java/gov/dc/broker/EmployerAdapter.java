@@ -7,6 +7,8 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.Filter;
+import android.widget.Filterable;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
@@ -17,6 +19,7 @@ import com.daimajia.swipe.adapters.BaseSwipeAdapter;
 import org.joda.time.LocalDate;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
@@ -24,13 +27,15 @@ import java.util.List;
 import gov.dc.broker.models.brokeragency.BrokerClient;
 import gov.dc.broker.models.brokeragency.PlanYear;
 
-public class EmployerAdapter extends BaseSwipeAdapter {
+public class EmployerAdapter extends BaseSwipeAdapter implements Filterable {
     private static final String TAG = "EmployerAdapter";
+    private final Filter myFilter;
 
     private MainActivity mainActivity;
     private Context context;
     private LayoutInflater inflater;
     private ArrayList<ItemWrapperBase> wrapped_items = new ArrayList<ItemWrapperBase>();
+    private ArrayList<ItemWrapperBase> all_wrapped_items = new ArrayList<ItemWrapperBase>();
 
     private final List<BrokerClient> employerList;
     private final LocalDate coverageYear;
@@ -43,11 +48,17 @@ public class EmployerAdapter extends BaseSwipeAdapter {
     private OpenEnrollmentNotAlertedHeader openEnrollmentNotAlertedHeader;
     private RenewalHeader renewalHeader;
     private OtherItemsHeader otherItemsHeader;
+    private String currentFilter = null;
 
     private static boolean openEnrollmentState = true;
     private static boolean renewalState = false;
     private static boolean othersState = false;
     public View notAlerted;
+
+    @Override
+    public Filter getFilter() {
+        return myFilter;
+    }
 
     public enum AllClientSort {
         CompanyDesc,
@@ -71,6 +82,7 @@ public class EmployerAdapter extends BaseSwipeAdapter {
         openEnrollmentNotAlertedHeader = new OpenEnrollmentNotAlertedHeader(this);
         renewalHeader = new RenewalHeader(this);
         otherItemsHeader = new OtherItemsHeader(this);
+        currentFilter = null;
 
         LocalDate today = LocalDate.now();
         int i = 0;
@@ -111,26 +123,72 @@ public class EmployerAdapter extends BaseSwipeAdapter {
         }
 
         updateWrappedItems();
+
+        myFilter = new Filter() {
+            @Override
+            protected FilterResults performFiltering(CharSequence charSequence) {
+                FilterResults filterResults = new FilterResults();
+                ArrayList<ItemWrapperBase> itemWrapperBases = buildWrappedItems(charSequence);
+                filterResults.values = itemWrapperBases;
+                filterResults.count = itemWrapperBases.size();
+                return filterResults;
+            }
+
+            @Override
+            protected void publishResults(CharSequence charSequence, FilterResults filterResults) {
+                wrapped_items = (ArrayList<ItemWrapperBase>)filterResults.values;
+                if (filterResults.count > 0) {
+                    notifyDataSetChanged();
+                } else {
+                    notifyDataSetInvalidated();
+                }
+            }
+        };
     }
 
     private void updateWrappedItems(){
-        wrapped_items.clear();
-            wrapped_items.add(openEnrollmentHeader);
+        wrapped_items = buildWrappedItems(currentFilter);
+    }
+
+    private ArrayList<ItemWrapperBase> buildWrappedItems(CharSequence filter){
+        ArrayList<ItemWrapperBase> items = new ArrayList<>();
+        items.clear();
+            items.add(openEnrollmentHeader);
         if (openEnrollmentState){
             if (alertedItems.size() > 0){
-                wrapped_items.add(openEnrollmentAlertHeader);
-                wrapped_items.addAll(alertedItems);
+                if (filter == null ) {
+                    items.add(openEnrollmentAlertHeader);
+                    items.addAll(alertedItems);
+                } else {
+                    Collection<? extends ItemWrapperBase> filteredItems = filteredItems(alertedItems, filter);
+                    if (filteredItems.size() > 0) {
+                        items.add(openEnrollmentAlertHeader);
+                        items.addAll(filteredItems);
+                    }
+                }
             }
             if (notAlertedItems.size() > 0) {
-                wrapped_items.add(openEnrollmentNotAlertedHeader);
-                wrapped_items.addAll(notAlertedItems);
+                if (filter == null) {
+                    items.add(openEnrollmentNotAlertedHeader);
+                    items.addAll(notAlertedItems);
+                } else {
+                    Collection<? extends ItemWrapperBase> filteredItems = filteredItems(notAlertedItems, filter);
+                    if (filteredItems.size() > 0){
+                        items.add(openEnrollmentNotAlertedHeader);
+                        items.addAll(notAlertedItems);
+                    }
+                }
             }
         }
-        wrapped_items.add(renewalHeader);
+        items.add(renewalHeader);
         if (renewalState && renewalItems.size() > 0) {
-            wrapped_items.addAll(renewalItems);
+            if (filter == null) {
+                items.addAll(renewalItems);
+            } else {
+                items.addAll(filteredItems(renewalItems, filter));
+            }
         }
-        wrapped_items.add(otherItemsHeader);
+        items.add(otherItemsHeader);
         if (othersState && otherItems.size() > 0) {
             switch (allClientSort){
                 case CompanyAsc:
@@ -146,8 +204,24 @@ public class EmployerAdapter extends BaseSwipeAdapter {
                     sortOtherItemsByPlanYearDesc(otherItems);
                     break;
             }
-            wrapped_items.addAll(otherItems);
+            if (filter == null){
+                items.addAll(otherItems);
+            } else {
+                items.addAll(filteredItems(otherItems, filter));
+            }
         }
+
+        return items;
+    }
+
+    private Collection<? extends ItemWrapperBase> filteredItems(List<? extends ItemWrapperBase> items, CharSequence filter) {
+        ArrayList<ItemWrapperBase> filteredItems = new ArrayList<>();
+        for (ItemWrapperBase item : items) {
+            if (item.matching(filter)){
+                filteredItems.add(item);
+            }
+        }
+        return filteredItems;
     }
 
     private void sortOtherItemsByCompanyDesc(ArrayList<OtherWrapper> otherItems) {
@@ -359,6 +433,8 @@ abstract class ItemWrapperBase {
     /*fill values to your item layout returned from `generateView`.
       The position param here is passed from the BaseAdapter's 'getView()*/
     public abstract void fillValues(View convertView, final MainActivity mainActivity) throws Exception;
+
+    public abstract boolean matching(CharSequence charSequence);
 }
 
 class OpenEnrollmentHeader extends ItemWrapperBase {
@@ -395,6 +471,11 @@ class OpenEnrollmentHeader extends ItemWrapperBase {
                 employerAdapter.toggleOpenEnrollments();
             }
         });
+    }
+
+    @Override
+    public boolean matching(CharSequence charSequence) {
+        return true;
     }
 
     @Override
@@ -436,6 +517,16 @@ class OpenEnrollmentAlertHeader extends ItemWrapperBase {
     public void fillValues(View convertView, MainActivity mainActivity) {
 
     }
+
+    @Override
+    public boolean matching(CharSequence charSequence) {
+        for (OpenEnrollmentAlertedWrapper alerted : employerAdapter.getAlertedItems()) {
+            if (alerted.matching(charSequence)){
+                return true;
+            }
+        }
+        return false;
+    }
 }
 
 class OpenEnrollmentNotAlertedHeader extends ItemWrapperBase {
@@ -455,6 +546,16 @@ class OpenEnrollmentNotAlertedHeader extends ItemWrapperBase {
     @Override
     public void fillValues(View convertView, MainActivity mainActivity) {
         employerAdapter.notAlerted = convertView;
+    }
+
+    @Override
+    public boolean matching(CharSequence charSequence) {
+        for (OpenEnrollmentNotAlertedWrapper alerted : employerAdapter.getNotAlertedItems()) {
+            if (alerted.matching(charSequence)){
+                return true;
+            }
+        }
+        return false;
     }
 
     @Override
@@ -504,6 +605,11 @@ class RenewalHeader extends ItemWrapperBase {
             View columnHeaders = convertView.findViewById(R.id.relativeLayoutColumnHeaders);
             columnHeaders.setVisibility(View.GONE);
         }
+    }
+
+    @Override
+    public boolean matching(CharSequence charSequence) {
+        return true;
     }
 
     @Override
@@ -594,6 +700,11 @@ class OtherItemsHeader extends ItemWrapperBase {
     }
 
     @Override
+    public boolean matching(CharSequence charSequence) {
+        return true;
+    }
+
+    @Override
     public int getSwipeLayoutResourceId() {
         return 0;
     }
@@ -656,6 +767,11 @@ abstract class BrokerClientWrapper extends ItemWrapperBase {
                 contactDialog.show(mainActivity.getSupportFragmentManager(), "ContactDialog");
             }
         });
+    }
+
+    @Override
+    public boolean matching(CharSequence filterString) {
+        return brokerClient.employerName.toLowerCase().contains(filterString.toString().toLowerCase());
     }
 }
 

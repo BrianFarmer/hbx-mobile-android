@@ -199,4 +199,6 @@
     <string name="no_plans_published">There are no plans published for this company</string>
     <string name="shared_preference_encrypted_info">encrypted account info</string>
     <string name="coverage_expired">Coverage Expired</string>
+    <string name="search_title">Search</string>
+    <string name="search_hint">Employer Names</string>
 </resources>

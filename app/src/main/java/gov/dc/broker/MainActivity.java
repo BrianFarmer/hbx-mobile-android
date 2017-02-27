@@ -1,19 +1,27 @@
 package gov.dc.broker;
 
+import android.app.SearchManager;
+import android.app.SearchableInfo;
+import android.content.ComponentName;
+import android.content.Context;
 import android.content.Intent;
 import android.content.res.Resources;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.design.widget.NavigationView;
+import android.support.v4.view.MenuItemCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.webkit.WebView;
 import android.widget.ListView;
 import android.widget.RelativeLayout;
+import android.widget.SearchView;
 
 import com.microsoft.azure.mobile.analytics.Analytics;
 
@@ -40,7 +48,10 @@ public class MainActivity extends BrokerActivity {
     private int scrollPosition = -1;
     private BrokerAgency brokerAgency;
     private LocalDate coverageYear;
+    private MenuItem searchMenuItem;
+    private SearchView searchView;
 
+    EmployerAdapter employerAdapter = null;
 
     public MainActivity(){
     }
@@ -139,6 +150,37 @@ public class MainActivity extends BrokerActivity {
     }
 
     @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        final MainActivity _this = this;
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.menu_main_activity, menu);
+
+        SearchManager searchManager = (SearchManager)getSystemService(Context.SEARCH_SERVICE);
+        searchMenuItem = menu.findItem(R.id.search);
+        View view = MenuItemCompat.getActionView(searchMenuItem);
+        searchView = (SearchView)view;
+
+        ComponentName componentName = getComponentName();
+        SearchableInfo searchableInfo = searchManager.getSearchableInfo(componentName);
+        searchView.setSearchableInfo(searchableInfo);
+        searchView.setSubmitButtonEnabled(true);
+        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+            @Override
+            public boolean onQueryTextSubmit(String query) {
+                return false;
+            }
+
+            @Override
+            public boolean onQueryTextChange(String newText) {
+                employerAdapter.getFilter().filter(newText);
+                return true;
+            }
+        });
+
+        return true;
+    }
+
+    @Override
     protected void onPause() {
         super.onPause();
         scrollPosition = listViewEmployers.getFirstVisiblePosition();
@@ -207,7 +249,7 @@ public class MainActivity extends BrokerActivity {
         } else {
             coverageYear = brokerAgency.brokerClients.get(0).planYearBegins;
         }
-        final EmployerAdapter employerAdapter = new EmployerAdapter(this, this.getBaseContext(), brokerAgency.brokerClients, coverageYear);
+        employerAdapter = new EmployerAdapter(this, this.getBaseContext(), brokerAgency.brokerClients, coverageYear);
         listViewEmployers.setAdapter(employerAdapter);
         listViewEmployers.setSelectionFromTop(scrollPosition, 0);
         //swipeActionAdapter = new SwipeActionAdapter(employerAdapter);
