@@ -10,7 +10,7 @@
 	<RelativeLayout
 		android:layout_width="match_parent"
 		android:layout_height="match_parent"
-        tools:context="gov.dc.broker.MainActivity"
+        tools:context="gov.dc.coveragehq.MainActivity"
 		android:id="@+id/relative_layout">
 
         <android.support.v7.widget.Toolbar

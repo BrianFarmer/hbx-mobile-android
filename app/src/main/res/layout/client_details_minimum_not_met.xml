@@ -67,7 +67,7 @@
         android:layout_height="match_parent"
         android:layout_below="@id/action_buttons_row"
         android:layout_alignParentBottom="true"
-        tools:context="gov.dc.broker.ClientDetailsActivity">
+        tools:context="gov.dc.coveragehq.ClientDetailsActivity">
         android:background="#ffffff"
         >
         <RelativeLayout

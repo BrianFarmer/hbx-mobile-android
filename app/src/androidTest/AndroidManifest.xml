@@ -2,7 +2,7 @@
 <manifest
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    package="gov.dc.broker">
+    package="gov.dc.coveragehq">
 
     <uses-sdk
         android:minSdkVersion="16"
