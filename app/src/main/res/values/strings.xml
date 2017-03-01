@@ -201,4 +201,5 @@
     <string name="coverage_expired">Coverage Expired</string>
     <string name="search_title">Search</string>
     <string name="search_hint">Employer Names</string>
+    <string name="renewal_processing">Renewal Processing</string>
 </resources>

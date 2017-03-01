@@ -25,14 +25,13 @@ import android.widget.SearchView;
 
 import com.microsoft.azure.mobile.analytics.Analytics;
 
+import org.dchbx.coveragehq.models.brokeragency.BrokerAgency;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 import org.joda.time.LocalDate;
 
 import java.util.HashMap;
 import java.util.Map;
-
-import org.dchbx.coveragehq.models.brokeragency.BrokerAgency;
 
 
 public class MainActivity extends BrokerActivity {
@@ -212,7 +211,7 @@ public class MainActivity extends BrokerActivity {
 
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void doThis(Events.Error error) {
-        alertDialog("Error! What should I be showing?", new DialogClosed() {
+        alertDialog("Error! What should I be showing? " + error.getMessage(), new DialogClosed() {
             @Override
             public void closed() {
                 finish();

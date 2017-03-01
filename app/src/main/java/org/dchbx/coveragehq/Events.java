@@ -342,13 +342,19 @@ public class Events {
 
     static public class Error {
         private final String errorMsg;
+        private final String message;
 
-        public Error(String s) {
+        public Error(String s, String message) {
             errorMsg = s;
+            this.message = message;
         }
 
         public String getErrorMsg() {
             return errorMsg;
+        }
+
+        public String getMessage() {
+            return message;
         }
     }
 

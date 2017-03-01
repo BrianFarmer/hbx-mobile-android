@@ -4,11 +4,12 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
+    xmlns:app="http://schemas.android.com/tools"
     android:id="@+id/swipe"
     android:background="@color/mainbackgroundcolor"
     swipe:leftEdgeSwipeOffset="0dp"
     swipe:rightEdgeSwipeOffset="0dp"
->
+    >
 
     <RelativeLayout
         android:layout_width="wrap_content"
@@ -85,11 +86,25 @@
             style="@style/TextFieldStyle"
             android:textAllCaps="true"
             android:gravity="center"
-            android:layout_marginRight="20dp"
+            android:layout_marginRight="20sp"
             android:layout_alignTop="@+id/textViewCompanyName"
             android:layout_alignBottom="@+id/textViewCompanyName"
             android:layout_toStartOf="@id/textViewDaysLeft"
             android:layout_toLeftOf="@id/textViewDaysLeft" />
+        <ImageView
+            android:id="@+id/imageViewCheck"
+            android:layout_width="wrap_content"
+            android:layout_height="0dp"
+            android:layout_marginRight="16sp"
+            android:scaleType="fitCenter"
+            android:layout_alignTop="@+id/textViewCompanyName"
+            android:layout_alignBottom="@+id/textViewCompanyName"
+            android:layout_alignStart="@+id/textViewDaysLeft"
+            android:layout_toLeftOf="@+id/imageButton"
+            android:layout_toStartOf="@+id/imageButton"
+            android:src="@drawable/check_skinny_2"
+            android:layout_alignLeft="@+id/textViewDaysLeft"
+            />
 
         <ImageButton
             android:layout_width="25dp"

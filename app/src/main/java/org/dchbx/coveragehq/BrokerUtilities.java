@@ -2,12 +2,6 @@ package org.dchbx.coveragehq;
 
 import android.util.Log;
 
-import org.joda.time.Days;
-import org.joda.time.LocalDate;
-
-import java.util.ArrayList;
-import java.util.List;
-
 import org.dchbx.coveragehq.models.brokeragency.BrokerAgency;
 import org.dchbx.coveragehq.models.brokeragency.BrokerClient;
 import org.dchbx.coveragehq.models.brokeragency.ContactInfo;
@@ -17,6 +11,11 @@ import org.dchbx.coveragehq.models.roster.Dependent;
 import org.dchbx.coveragehq.models.roster.Enrollment;
 import org.dchbx.coveragehq.models.roster.Roster;
 import org.dchbx.coveragehq.models.roster.RosterEntry;
+import org.joda.time.Days;
+import org.joda.time.LocalDate;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Created by plast on 11/16/2016.
@@ -387,8 +386,17 @@ public class BrokerUtilities {
                 }
             } else {
                 if (planYear.renewalInProgress) {
-                    planStatus.statusStringId = R.string.renewal_in_progress;
-                    planStatus.statusColorId = R.color.in_renewal;
+                    if (planYear.openEnrollmentEnds != null
+                        && planYear.planYearBegins != null
+                        && planYear.openEnrollmentEnds.compareTo(today) < 0
+                        && planYear.planYearBegins.compareTo(today) > 0){
+                        planStatus.statusStringId = R.string.renewal_processing;
+                        planStatus.statusColorId = R.color.in_renewal;
+
+                    } else {
+                        planStatus.statusStringId = R.string.renewal_in_progress;
+                        planStatus.statusColorId = R.color.in_renewal;
+                    }
                 } else {
                     if (planYear.planYearBegins.plusYears(1).compareTo(today) < 0){
                         planStatus.statusStringId = R.string.coverage_expired;
@@ -405,8 +413,8 @@ public class BrokerUtilities {
     }
 
     public enum BrokerClientStatus {
-        InOpenEnrollmentAlerted,
-        InOpenEnrollmentNotAlerted,
+        InOpenEnrollmentMinimumNotMet,
+        InOpenEnrollmentMinimumMet,
         InRenewal,
         Other
     };
@@ -428,16 +436,16 @@ public class BrokerUtilities {
             if (planYear.employeesEnrolled == null
                     && (planYear.employeesWaived == null
                     || planYear.employeesWaived < planYear.minimumParticipationRequired)){
-                return BrokerClientStatus.InOpenEnrollmentAlerted;
+                return BrokerClientStatus.InOpenEnrollmentMinimumNotMet;
             }
             if (planYear.employeesWaived == null
                     && planYear.employeesEnrolled < planYear.minimumParticipationRequired) {
-                return BrokerClientStatus.InOpenEnrollmentAlerted;
+                return BrokerClientStatus.InOpenEnrollmentMinimumNotMet;
             }
             if (planYear.employeesEnrolled + planYear.employeesWaived < planYear.minimumParticipationRequired) {
-                return BrokerClientStatus.InOpenEnrollmentAlerted;
+                return BrokerClientStatus.InOpenEnrollmentMinimumNotMet;
             }
-            return BrokerClientStatus.InOpenEnrollmentNotAlerted;
+            return BrokerClientStatus.InOpenEnrollmentMinimumMet;
         }
         if (planYear.renewalInProgress){
             return BrokerClientStatus.InRenewal;
@@ -462,23 +470,23 @@ public class BrokerUtilities {
             if (planYear.employeesEnrolled == null
                 && (planYear.employeesWaived == null
                     || planYear.employeesWaived < planYear.minimumParticipationRequired)){
-                return BrokerClientStatus.InOpenEnrollmentAlerted;
+                return BrokerClientStatus.InOpenEnrollmentMinimumNotMet;
             }
             if (planYear.employeesWaived == null
                 && planYear.employeesEnrolled < planYear.minimumParticipationRequired) {
-                return BrokerClientStatus.InOpenEnrollmentAlerted;
+                return BrokerClientStatus.InOpenEnrollmentMinimumNotMet;
             }
             if (planYear.employeesEnrolled + planYear.employeesWaived < planYear.minimumParticipationRequired) {
-                return BrokerClientStatus.InOpenEnrollmentAlerted;
+                return BrokerClientStatus.InOpenEnrollmentMinimumNotMet;
             }
-            return BrokerClientStatus.InOpenEnrollmentNotAlerted;
+            return BrokerClientStatus.InOpenEnrollmentMinimumMet;
         }
 
         if (planYear.openEnrollmentEnds != null
             && planYear.openEnrollmentEnds.compareTo(date) < 0
             && planYear.planYearBegins != null
             && date.compareTo(planYear.planYearBegins) < 0) {
-            return BrokerClientStatus.Other;
+            return BrokerClientStatus.InRenewal;
         }
 
         if (planYear.renewalInProgress){

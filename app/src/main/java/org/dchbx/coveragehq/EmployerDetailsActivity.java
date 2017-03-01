@@ -27,6 +27,10 @@ import android.widget.Toast;
 
 import com.microsoft.azure.mobile.analytics.Analytics;
 
+import org.dchbx.coveragehq.models.brokeragency.BrokerClient;
+import org.dchbx.coveragehq.models.brokeragency.ContactInfo;
+import org.dchbx.coveragehq.models.employer.Employer;
+import org.dchbx.coveragehq.models.employer.PlanYear;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 import org.joda.time.LocalDate;
@@ -34,11 +38,6 @@ import org.joda.time.LocalDate;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
-
-import org.dchbx.coveragehq.models.brokeragency.BrokerClient;
-import org.dchbx.coveragehq.models.brokeragency.ContactInfo;
-import org.dchbx.coveragehq.models.employer.Employer;
-import org.dchbx.coveragehq.models.employer.PlanYear;
 
 /**
  * Created by plast on 10/21/2016.
@@ -84,6 +83,7 @@ public class EmployerDetailsActivity extends BrokerActivity {
     public void doThis(Events.BrokerClient  brokerClientEvent) {
         brokerClient = brokerClientEvent.getBrokerClient();
         employer = brokerClientEvent.getEmployer();
+        LocalDate now = LocalDate.now();
         populate();
 
         // This is for analytics
@@ -96,7 +96,16 @@ public class EmployerDetailsActivity extends BrokerActivity {
         } else {
             if (employer.planYears.size() > 0) {
                 PlanYear planYear = BrokerUtilities.getMostRecentPlanYear(employer);
-                properties.put("Status", BrokerUtilities.getBrokerClientStatus(planYear, planYear.planYearBegins).name());
+                BrokerUtilities.BrokerClientStatus status = BrokerUtilities.getBrokerClientStatus(planYear, planYear.planYearBegins);
+                if (status == BrokerUtilities.BrokerClientStatus.InRenewal
+                    && planYear.openEnrollmentEnds != null
+                    && planYear.planYearBegins != null
+                    && planYear.openEnrollmentEnds.compareTo(now) < 0
+                    && planYear.planYearBegins.compareTo(now) > 0){
+                    properties.put("Status", "Renewal Processing");
+                } else {
+                    properties.put("Status", status.name());
+                }
             }
         }
         Analytics.trackEvent("Employer Details", properties);

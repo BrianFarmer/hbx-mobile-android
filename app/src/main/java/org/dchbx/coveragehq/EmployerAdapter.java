@@ -16,6 +16,8 @@ import android.widget.TextView;
 
 import com.daimajia.swipe.adapters.BaseSwipeAdapter;
 
+import org.dchbx.coveragehq.models.brokeragency.BrokerClient;
+import org.dchbx.coveragehq.models.brokeragency.PlanYear;
 import org.joda.time.LocalDate;
 
 import java.util.ArrayList;
@@ -23,9 +25,6 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
-
-import org.dchbx.coveragehq.models.brokeragency.BrokerClient;
-import org.dchbx.coveragehq.models.brokeragency.PlanYear;
 
 public class EmployerAdapter extends BaseSwipeAdapter implements Filterable {
     private static final String TAG = "EmployerAdapter";
@@ -58,6 +57,10 @@ public class EmployerAdapter extends BaseSwipeAdapter implements Filterable {
     @Override
     public Filter getFilter() {
         return myFilter;
+    }
+
+    public AllClientSort getAllClientsSortOrder() {
+        return allClientSort;
     }
 
     public enum AllClientSort {
@@ -98,19 +101,19 @@ public class EmployerAdapter extends BaseSwipeAdapter implements Filterable {
                 if (brokerClient.employerName.indexOf("Grig") >= 0){
                     Log.d(TAG, "found grig");
                 }
-                PlanYear lastestPlanYear = BrokerUtilities.getLastestPlanYear(brokerClient.planYears);
-                switch (BrokerUtilities.getBrokerClientStatus(lastestPlanYear, today)){
-                    case InOpenEnrollmentAlerted:
-                        alertedItems.add(new OpenEnrollmentAlertedWrapper(brokerClient, lastestPlanYear, i));
+                PlanYear planYear = BrokerUtilities.getMostRecentPlanYear(brokerClient);
+                switch (BrokerUtilities.getBrokerClientStatus(planYear, today)){
+                    case InOpenEnrollmentMinimumNotMet:
+                        alertedItems.add(new OpenEnrollmentAlertedWrapper(brokerClient, planYear, i));
                         break;
-                    case InOpenEnrollmentNotAlerted:
-                        notAlertedItems.add(new OpenEnrollmentNotAlertedWrapper(brokerClient, lastestPlanYear, i));
+                    case InOpenEnrollmentMinimumMet:
+                        notAlertedItems.add(new OpenEnrollmentNotAlertedWrapper(brokerClient, planYear, i));
                         break;
                     case InRenewal:
-                        renewalItems.add(new RenewalWrapper(brokerClient, lastestPlanYear, i));
+                        renewalItems.add(new RenewalWrapper(brokerClient, planYear, i));
                         break;
                 }
-                otherItems.add(new OtherWrapper(brokerClient, i, lastestPlanYear));
+                otherItems.add(new OtherWrapper(brokerClient, i, planYear));
             } else {
                 otherItems.add(new OtherWrapper(brokerClient, i, null));
             }
@@ -251,12 +254,15 @@ public class EmployerAdapter extends BaseSwipeAdapter implements Filterable {
             Collections.sort(otherItems, new Comparator<OtherWrapper>() {
                 @Override
                 public int compare(OtherWrapper otherWrapper, OtherWrapper t1) {
-                    if (t1.planYear == null
-                        || t1.planYear.planYearBegins == null
-                        ||otherWrapper.planYear == null
-                        || otherWrapper.planYear.planYearBegins == null){
+                    if (otherWrapper.planYear == null
+                            || otherWrapper.planYear.planYearBegins == null){
                         return -1;
                     }
+                    if (t1.planYear == null
+                            || t1.planYear.planYearBegins == null){
+                        return 1;
+                    }
+
                     return -1 * otherWrapper.planYear.planYearBegins.compareTo(t1.planYear.planYearBegins);
                 }
             });
@@ -268,6 +274,14 @@ public class EmployerAdapter extends BaseSwipeAdapter implements Filterable {
         Collections.sort(otherItems, new Comparator<OtherWrapper>() {
             @Override
             public int compare(OtherWrapper otherWrapper, OtherWrapper t1) {
+                if (otherWrapper.planYear == null
+                    || otherWrapper.planYear.planYearBegins == null){
+                    return 1;
+                }
+                if (t1.planYear == null
+                        || t1.planYear.planYearBegins == null){
+                    return -1;
+                }
                 return otherWrapper.planYear.planYearBegins.compareTo(t1.planYear.planYearBegins);
             }
         });
@@ -674,6 +688,7 @@ class OtherItemsHeader extends ItemWrapperBase {
             @Override
             public void onClick(View view) {
                 employerAdapter.sortByCompanyName();
+                configSortArrows((View)view.getParent());
             }
         });
         ImageView imageViewCompanyNameSortIndicator = (ImageView)convertView.findViewById(R.id.imageViewCompanyNameSortIndicator);
@@ -681,6 +696,7 @@ class OtherItemsHeader extends ItemWrapperBase {
             @Override
             public void onClick(View view) {
                 employerAdapter.sortByCompanyName();
+                configSortArrows((View) view.getParent());
             }
         });
         TextView textViewPlanYearLabel = (TextView) convertView.findViewById(R.id.textViewPlanYearLabel);
@@ -688,6 +704,7 @@ class OtherItemsHeader extends ItemWrapperBase {
             @Override
             public void onClick(View view) {
                 employerAdapter.sortByPlanYear();
+                configSortArrows((View) view.getParent());
             }
         });
         ImageView imageViewPlanYearSortIndicator = (ImageView)convertView.findViewById(R.id.imageViewPlanYearSortIndicator);
@@ -695,8 +712,37 @@ class OtherItemsHeader extends ItemWrapperBase {
             @Override
             public void onClick(View view) {
                 employerAdapter.sortByPlanYear();
+                configSortArrows((View) view.getParent());
             }
         });
+        configSortArrows((View) imageViewPlanYearSortIndicator.getParent());
+    }
+
+    private void configSortArrows(View parent) {
+        ImageView imageViewCompanyNameSortIndicator = (ImageView) parent.findViewById(R.id.imageViewCompanyNameSortIndicator);
+        ImageView imageViewPlanYearSortIndicator = (ImageView) parent.findViewById(R.id.imageViewPlanYearSortIndicator);
+        switch (employerAdapter.getAllClientsSortOrder()) {
+            case CompanyDesc:
+                imageViewCompanyNameSortIndicator.setVisibility(View.VISIBLE);
+                imageViewCompanyNameSortIndicator.setImageResource(R.drawable.open_carrot);
+                imageViewPlanYearSortIndicator.setVisibility(View.INVISIBLE);
+                break;
+            case CompanyAsc:
+                imageViewCompanyNameSortIndicator.setVisibility(View.VISIBLE);
+                imageViewCompanyNameSortIndicator.setImageResource(R.drawable.close_carrot);
+                imageViewPlanYearSortIndicator.setVisibility(View.INVISIBLE);
+                break;
+            case PlanYearDesc:
+                imageViewCompanyNameSortIndicator.setVisibility(View.INVISIBLE);
+                imageViewPlanYearSortIndicator.setVisibility(View.VISIBLE);
+                imageViewPlanYearSortIndicator.setImageResource(R.drawable.open_carrot);
+                break;
+            case PlanYearAsc:
+                imageViewCompanyNameSortIndicator.setVisibility(View.INVISIBLE);
+                imageViewPlanYearSortIndicator.setVisibility(View.VISIBLE);
+                imageViewPlanYearSortIndicator.setImageResource(R.drawable.close_carrot);
+                break;
+        }
     }
 
     @Override
@@ -930,14 +976,24 @@ class RenewalWrapper extends BrokerClientWrapper {
     public void fillValues(View view, MainActivity mainActivity) throws Exception {
         final MainActivity mainActivityFinal = mainActivity;
 
-        PlanYear pendingRenewalPlanYear = BrokerUtilities.getPendingRenewalPlanYear(brokerClient);
-        TextView companyName = (TextView)view.findViewById(R.id.textViewCompanyName);
+        LocalDate today = LocalDate.now();
+        TextView companyName = (TextView) view.findViewById(R.id.textViewCompanyName);
         companyName.setText((brokerClient).employerName);
-        TextView planYearTextView = (TextView)view.findViewById(R.id.textViewPlanYear);
+        TextView planYearTextView = (TextView) view.findViewById(R.id.textViewPlanYear);
         CharSequence dateString = Utilities.DateAsMonthDayYear(planYear.planYearBegins);
         planYearTextView.setText(dateString);
-        TextView daysLeft = (TextView)view.findViewById(R.id.textViewDaysLeft);
-        daysLeft.setText(String.valueOf(BrokerUtilities.daysLeftToApplicationDue(planYear, LocalDate.now())));
+        TextView daysLeft = (TextView) view.findViewById(R.id.textViewDaysLeft);
+        ImageView imageViewCheck = (ImageView) view.findViewById(R.id.imageViewCheck);
+        if (planYear.openEnrollmentEnds != null
+                && planYear.planYearBegins != null
+                && planYear.openEnrollmentEnds.compareTo(today) < 0) {
+            daysLeft.setVisibility(View.INVISIBLE);
+            imageViewCheck.setVisibility(View.VISIBLE);
+        } else {
+            imageViewCheck.setVisibility(View.INVISIBLE);
+            daysLeft.setVisibility(View.VISIBLE);
+            daysLeft.setText(String.valueOf(BrokerUtilities.daysLeftToApplicationDue(planYear, LocalDate.now())));
+        }
         view.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

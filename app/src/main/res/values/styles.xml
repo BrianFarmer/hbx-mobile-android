@@ -42,11 +42,11 @@
     </style>
 
     <style name="TextFieldStyle">
-        <item name="android:paddingLeft">10dp</item>
-        <item name="android:paddingTop">12dp</item>
-        <item name="android:paddingRight">0dp</item>
-        <item name="android:paddingBottom">12dp</item>
-        <item name="android:textSize">15dp</item>
+        <item name="android:paddingLeft">10sp</item>
+        <item name="android:paddingTop">12sp</item>
+        <item name="android:paddingRight">0sp</item>
+        <item name="android:paddingBottom">12sp</item>
+        <item name="android:textSize">15sp</item>
     </style>
 
     <style name="EmployerListSectionHeaderText" parent="TextFieldStyle">
@@ -215,7 +215,7 @@
         <item name="android:textStyle">bold</item>
     </style>
     <style name="enrollment_status_subtitle" parent="Subtitle2">
-        <item name="android:capitalize">characters</item>
+        <item name="android:textAllCaps">true</item>
     </style>
     <style name="coverage_year_subtitle" parent="Subtitle2">
         <item name="android:paddingBottom">20sp</item>

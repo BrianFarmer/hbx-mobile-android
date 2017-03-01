@@ -10,6 +10,12 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonParseException;
 import com.google.gson.JsonPrimitive;
 
+import org.dchbx.coveragehq.models.brokeragency.BrokerAgency;
+import org.dchbx.coveragehq.models.brokeragency.BrokerClient;
+import org.dchbx.coveragehq.models.employer.Employer;
+import org.dchbx.coveragehq.models.gitaccounts.GitAccounts;
+import org.dchbx.coveragehq.models.roster.Roster;
+import org.dchbx.coveragehq.models.roster.RosterEntry;
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
@@ -19,13 +25,6 @@ import org.joda.time.LocalDate;
 import java.lang.reflect.Type;
 import java.util.Timer;
 import java.util.TimerTask;
-
-import org.dchbx.coveragehq.models.brokeragency.BrokerAgency;
-import org.dchbx.coveragehq.models.brokeragency.BrokerClient;
-import org.dchbx.coveragehq.models.employer.Employer;
-import org.dchbx.coveragehq.models.gitaccounts.GitAccounts;
-import org.dchbx.coveragehq.models.roster.Roster;
-import org.dchbx.coveragehq.models.roster.RosterEntry;
 
 
 /**
@@ -95,7 +94,7 @@ public class BrokerWorker extends IntentService {
         } catch (Exception e) {
             Log.e(TAG, "Exception processing getGitAaccounts", e);
             e.printStackTrace();
-            BrokerWorker.eventBus.post(new Events.Error("Error getting git account information"));
+            BrokerWorker.eventBus.post(new Events.Error("Error getting git account information", "GetGitAccounts"));
         }
     }
 
@@ -125,7 +124,7 @@ public class BrokerWorker extends IntentService {
             }
             BrokerWorker.eventBus.post(new Events.GetSecurityAnswer(serverConfiguration.securityQuestion));
         } catch (Exception e){
-            BrokerWorker.eventBus.post(new Events.Error("Error logging in"));
+            BrokerWorker.eventBus.post(new Events.Error("Error logging in", "FingerprintLogin"));
         }
     }
 
@@ -161,14 +160,14 @@ public class BrokerWorker extends IntentService {
                     return;
                 case Error:
                     Log.i(TAG, "*****Error trying to  login for: " + accountName);
-                    BrokerWorker.eventBus.post(new Events.Error("Error logging in"));
+                    BrokerWorker.eventBus.post(new Events.Error("Error logging in", "Events.LoginRequest"));
                     return;
             }
             BrokerWorker.eventBus.post(new Events.GetSecurityAnswer(serverConfiguration.securityQuestion));
         } catch (Exception e) {
             Log.e(TAG, "Exception processing LoginReqeust", e);
             e.printStackTrace();
-            BrokerWorker.eventBus.post(new Events.Error("Error logging in"));
+            BrokerWorker.eventBus.post(new Events.Error("Error logging in", "Events.LoginRequest"));
         }
         return;
     }
@@ -199,7 +198,7 @@ public class BrokerWorker extends IntentService {
         } catch (Exception e) {
             Log.e(TAG, "Exception processing SecurityAnswer");
             e.printStackTrace();
-            BrokerWorker.eventBus.post(new Events.Error("Error logging in"));
+            BrokerWorker.eventBus.post(new Events.Error("Error logging in", "Events.SecurityAnswer"));
         }
     }
 
@@ -225,7 +224,7 @@ public class BrokerWorker extends IntentService {
                     config.getCoverageConnection().userTypeFromAccountInfo()));
         } catch (Exception e) {
             Log.e(TAG, "Exception processing GetLogin");
-            BrokerWorker.eventBus.post(new Events.Error("Error logging in"));
+            BrokerWorker.eventBus.post(new Events.Error("Error logging in", "Events.GetLogin"));
         }
     }
 
@@ -269,7 +268,7 @@ public class BrokerWorker extends IntentService {
             updateSessionTimer();
         } catch (Exception e) {
             Log.e(TAG, "Exception processing GetEmployer");
-            BrokerWorker.eventBus.post(new Events.Error("Error getting employer details"));
+            BrokerWorker.eventBus.post(new Events.Error("Error getting employer details", "Events.GetEmployer"));
         }
     }
 
@@ -311,7 +310,7 @@ public class BrokerWorker extends IntentService {
             updateSessionTimer();
         } catch (Throwable e) {
             Log.e(TAG, "Exception processing GetBrokerAgency");
-            BrokerWorker.eventBus.post(new Events.Error("Error getting employer list"));
+            BrokerWorker.eventBus.post(new Events.Error("Error getting employer list", "Events.GetBrokerAgency"));
         }
     }
 
@@ -327,7 +326,7 @@ public class BrokerWorker extends IntentService {
             BrokerWorker.eventBus.post(new Events.Carriers(getCarriers.getId(), carriers));
         } catch (Exception e) {
             Log.e(TAG, "Exception processing GetCarriers");
-            BrokerWorker.eventBus.post(new Events.Error("Error getting carriers"));
+            BrokerWorker.eventBus.post(new Events.Error("Error getting carriers", "Events.GetCarriers"));
         }
     }
 
@@ -351,7 +350,7 @@ public class BrokerWorker extends IntentService {
             updateSessionTimer();
         } catch (Exception e) {
             Log.e(TAG, "Exception processing GetEmployee");
-            BrokerWorker.eventBus.post(new Events.Error("Error getting employee"));
+            BrokerWorker.eventBus.post(new Events.Error("Error getting employee", "Events.GetEmployee"));
         }
     }
 
