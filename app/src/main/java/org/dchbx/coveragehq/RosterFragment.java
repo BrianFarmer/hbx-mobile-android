@@ -13,6 +13,9 @@ import android.widget.TextView;
 
 import com.microsoft.azure.mobile.analytics.Analytics;
 
+import org.dchbx.coveragehq.models.roster.Enrollment;
+import org.dchbx.coveragehq.models.roster.Roster;
+import org.dchbx.coveragehq.models.roster.RosterEntry;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 import org.joda.time.LocalDate;
@@ -21,10 +24,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.TreeMap;
-
-import org.dchbx.coveragehq.models.roster.Enrollment;
-import org.dchbx.coveragehq.models.roster.Roster;
-import org.dchbx.coveragehq.models.roster.RosterEntry;
 
 import static com.bumptech.glide.gifdecoder.GifHeaderParser.TAG;
 

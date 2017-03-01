@@ -1,15 +1,15 @@
 <LinearLayout
     xmlns:tools="http://schemas.android.com/tools"
     xmlns:android="http://schemas.android.com/apk/res/android"
-    android:maxWidth="75mm"
     android:layout_width="match_parent"
+    android:gravity="center_horizontal"
     android:layout_height="match_parent"
-    android:background="@color/mainblue"
->
+    android:background="@color/mainblue">
     <RelativeLayout
         xmlns:tools="http://schemas.android.com/tools"
         xmlns:android="http://schemas.android.com/apk/res/android"
-        android:layout_width="match_parent"
+        android:maxWidth="75mm"
+        android:layout_width="75mm"
         android:layout_height="match_parent"
         android:background="@color/mainblue"
     >
