@@ -26,7 +26,7 @@ class BuildConfig2 extends EnrollConfigBase {
     }
 
     public static int getTimeoutCountdownSeconds() {
-        return 30;
+        return 15;
     }
 
     //
@@ -34,6 +34,6 @@ class BuildConfig2 extends EnrollConfigBase {
     // a dialog telling them that the session is about to timeout.
     //
     public static int getSessionTimeoutSeconds() {
-        return 180;
+        return 30;
     }
 }

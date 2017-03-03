@@ -1,12 +1,13 @@
 package org.dchbx.coveragehq;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-
 import org.dchbx.coveragehq.models.Security.SecurityAnswerResponse;
 import org.dchbx.coveragehq.models.brokeragency.BrokerAgency;
 import org.dchbx.coveragehq.models.employer.Employer;
 import org.dchbx.coveragehq.models.roster.Roster;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+
 import okhttp3.FormBody;
 import okhttp3.HttpUrl;
 
@@ -179,13 +180,10 @@ public abstract class UrlHandler {
         return parser.parseRoster(response.body);
     }
 
-    HttpUrl getCarriersUrl() {
-        return new HttpUrl.Builder()
-                .scheme(serverConfiguration.carrierInfo.scheme)
-                .host(serverConfiguration.carrierInfo.host)
-                .addPathSegments(serverConfiguration.carrierPath)
-                .port(serverConfiguration.carrierInfo.port)
-                .build();
+    GetParameters getCarriersUrl() {
+        GetParameters getParameters = new GetParameters();
+        getParameters.url = HttpUrl.parse("https://dchealthlink.com/shared/json/carriers.json");
+        return getParameters;
     }
 
 

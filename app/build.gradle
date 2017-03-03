@@ -9,9 +9,12 @@ android {
         applicationId "org.dchbx.coveragehq"
         minSdkVersion 16
         targetSdkVersion 25
-        versionCode 17
-        versionName "1.0.17"
+        versionCode 18
+        versionName "1.0.18"
         testInstrumentationRunner 'android.support.test.runner.AndroidJUnitRunner'
+
+        // Stops the Gradle plugin’s automatic rasterization of vectors
+        generatedDensities = []
     }
 
     buildTypes {
@@ -34,6 +37,11 @@ android {
         coverage {
             applicationId 'org.dchbx.coveragehq'
         }
+    }
+
+    // Flag to tell aapt to keep the attribute ids around
+    aaptOptions {
+        additionalParameters "--no-version-vectors"
     }
 }
 

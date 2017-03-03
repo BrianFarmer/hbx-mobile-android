@@ -444,6 +444,49 @@ public class ConnectionHandler implements IConnectionHandler{
     }
 
     @Override
+    public GetReponse getHackedSSL(UrlHandler.GetParameters getParameters) throws IOException, CoverageException {
+        if (getParameters == null){
+            throw new IllegalArgumentException  ("getParameters is null");
+        }
+        if (getParameters.url == null
+                || getParameters.url.toString().length() == 0){
+            throw new IllegalArgumentException  ("url is empty or null");
+        }
+
+        Request.Builder builder = new Request.Builder()
+                .url(getParameters.url);
+
+        if (getParameters.cookies != null) {
+            for (Map.Entry<String, String> entry : getParameters.cookies.entrySet()) {
+                builder = builder.header("Cookie", entry.getKey() + "=" + entry.getValue());
+                Log.d(TAG, "cookie value:->" + entry.getValue() + "<-");
+            }
+        }
+
+        Request request = builder.get().build();
+        //Response response = getClient(getParameters.url.scheme(), false).newCall(request).execute();
+
+
+        OkHttpClient client = new OkHttpClient()
+                .newBuilder()
+                //.followRedirects(true)
+                .build();
+
+        Response response = client.newCall(request).execute();
+
+        if (response.code() != 200){
+            throw new CoverageException("error getting: " + getParameters.url.toString());
+        }
+
+        GetReponse getReponse = new GetReponse();
+        getReponse.responseCode = response.code();
+        getReponse.body = response.body().string();
+        getReponse.cookies = getCookies(response.headers().toMultimap());
+
+        return getReponse;
+    }
+
+    @Override
     public GetReponse get(UrlHandler.GetParameters getParameters) throws IOException, CoverageException {
         if (getParameters == null){
             throw new IllegalArgumentException  ("getParameters is null");

@@ -7,6 +7,7 @@ import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
 import android.widget.ListView;
+import android.widget.Toast;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
@@ -23,6 +24,12 @@ public class CarriersActivity extends AppCompatActivity {
         eventBus = EventBus.getDefault();
         eventBus.register(this);
         eventBus.post(new Events.GetCarriers());
+    }
+
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void doThis(Events.Error error) {
+        Toast toast = Toast.makeText(this, "An error happened retrieving the carrier information, please try again later.", Toast.LENGTH_LONG);
+        toast.show();
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)

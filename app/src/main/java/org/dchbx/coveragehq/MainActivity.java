@@ -6,7 +6,6 @@ import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.res.Resources;
-import android.net.Uri;
 import android.os.Bundle;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.MenuItemCompat;
@@ -104,34 +103,8 @@ public class MainActivity extends BrokerActivity {
         navigationView.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
             @Override
             public boolean onNavigationItemSelected(MenuItem item) {
-                //Closing drawer on item click
                 mDrawerLayout.closeDrawers();
-
-
-                switch (item.getItemId()){
-                    case R.id.nav_call_healthlink:
-                        Intent phoneIntent = new Intent(Intent.ACTION_DIAL);
-                        phoneIntent.setData(Uri.parse("tel:" + Constants.HbxPhoneNumber));
-                        startActivity(phoneIntent);
-                        return true;
-                    case R.id.nav_email_healthlink:
-                        Intent emailIntent = new Intent(Intent.ACTION_SENDTO);
-                        emailIntent.setData(Uri.parse("mailto:" + Constants.HbxEmail));
-                        startActivity(emailIntent);
-                        return true;
-                    case R.id.nav_logout:
-                        getMessages().logoutRequest();
-                        Intent i = new Intent(MainActivity.this, RootActivity.class);
-                        i.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-                        startActivity(i);
-                        return true;
-                    case R.id.nav_carriers:
-                        Intent carrierIntent = new Intent(mainActivity, CarriersActivity.class);
-                        Log.d(TAG, "onClick: launching carriers activitiy");
-                        mainActivity.startActivity(carrierIntent);
-                        return true;
-                }
-                return false;
+                return HamburgerHelper.handleHamburgerListener(item, mainActivity, getMessages());
             }
         });
 
