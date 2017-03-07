@@ -25,4 +25,15 @@ class BuildConfig2 extends EnrollConfigBase {
         return serverConfiguration;
     }
 
+    public static int getTimeoutCountdownSeconds() {
+        return 30;
+    }
+
+    //
+    // This is the number of seconds the have to pass before the user gets
+    // a dialog telling them that the session is about to timeout.
+    //
+    public static int getSessionTimeoutSeconds() {
+        return 14;
+    }
 }
