@@ -24,6 +24,14 @@ import java.util.List;
 public class BrokerUtilities {
     private static String TAG = "BrokerUtilities";
 
+    public enum RenewalDeadlinesState {
+        DrawerHidden,
+        AllHidden,
+        RenewalInProgress,
+        InOpenEnrollment,
+        OpenEnrollmentPassed
+    }
+
     static class PlanStatus {
         public int statusStringId;
         public int statusColorId;
@@ -476,7 +484,7 @@ public class BrokerUtilities {
                 && planYear.employeesEnrolled < planYear.minimumParticipationRequired) {
                 return BrokerClientStatus.InOpenEnrollmentMinimumNotMet;
             }
-            if (planYear.employeesEnrolled + planYear.employeesWaived < planYear.minimumParticipationRequired) {
+            if (planYear.employeesEnrolled + planYear.employeesWaived < getPlanYearMinimumParticipationRequired(planYear)) {
                 return BrokerClientStatus.InOpenEnrollmentMinimumNotMet;
             }
             return BrokerClientStatus.InOpenEnrollmentMinimumMet;
@@ -493,6 +501,13 @@ public class BrokerUtilities {
             return BrokerClientStatus.InRenewal;
         }
         return BrokerClientStatus.Other;
+    }
+
+    private static int getPlanYearMinimumParticipationRequired(org.dchbx.coveragehq.models.brokeragency.PlanYear planYear) {
+        if (planYear.planYearBegins.getMonthOfYear() == 1){
+            return 0;
+        }
+        return planYear.minimumParticipationRequired;
     }
 
     static class EmployeeCounts {

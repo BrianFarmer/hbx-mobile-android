@@ -22,8 +22,6 @@ import javax.crypto.BadPaddingException;
 import javax.crypto.IllegalBlockSizeException;
 import javax.crypto.NoSuchPaddingException;
 
-import okhttp3.HttpUrl;
-
 
 public abstract class CoverageConnection {
     private static final String TAG = "CoverageConnection";
@@ -217,9 +215,9 @@ public abstract class CoverageConnection {
     }
 
     public Carriers getCarriers() throws Exception {
-        HttpUrl carriersUrl = urlHandler.getCarriersUrl();
-        String response = connectionHandler.get(carriersUrl, null);
-        return parser.parseCarriers(response);
+        UrlHandler.GetParameters carriersUrl = urlHandler.getCarriersUrl();
+        IConnectionHandler.GetReponse response = connectionHandler.getHackedSSL(carriersUrl);
+        return urlHandler.processCarrier(response);
     }
 
     public RosterEntry getEmployee(String employeeId) throws Exception {

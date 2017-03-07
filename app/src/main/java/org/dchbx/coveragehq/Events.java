@@ -25,7 +25,11 @@ public class Events {
     }
 
     static public class CancelableRequest {
-        private int id;
+        static private int id =- 1;
+
+        public CancelableRequest(){
+            id ++;
+        }
 
         public int getId (){
             return id;

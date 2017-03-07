@@ -9,10 +9,11 @@ android {
         applicationId "org.dchbx.coveragehq"
         minSdkVersion 16
         targetSdkVersion 25
-        versionCode 17
-        versionName "1.0.17"
+        versionCode 18
+        versionName "1.0.18"
         testInstrumentationRunner 'android.support.test.runner.AndroidJUnitRunner'
     }
+
 
     buildTypes {
         release {
@@ -37,6 +38,7 @@ android {
     }
 }
 
+
 dependencies {
     compile fileTree(include: ['*.jar'], dir: 'libs')
     testCompile 'junit:junit:4.12'
@@ -54,14 +56,10 @@ dependencies {
     compile project(':androidswipelayout')
     compile project(path: ':swipeactionadapter')
     compile 'net.danlew:android.joda:2.9.4.3'
-    compile 'com.github.PhilJay:MPAndroidChart:v3.0.0'
     compile 'com.github.franmontiel:PersistentCookieJar:v1.0.0'
-
-    def mobileCenterSdkVersion = '0.3.3'
+    def mobileCenterSdkVersion = '0.5.0'
     compile "com.microsoft.azure.mobile:mobile-center-analytics:${mobileCenterSdkVersion}"
     compile "com.microsoft.azure.mobile:mobile-center-crashes:${mobileCenterSdkVersion}"
-
-    
     androidTestCompile 'com.android.support.test:testing-support-lib:0.1'
     androidTestCompile 'com.android.support:support-annotations:25.0.0'
     androidTestCompile 'com.android.support.test:runner:0.5'
@@ -73,4 +71,5 @@ dependencies {
     androidTestCompile 'com.android.support.test.uiautomator:uiautomator-v18:2.1.2'
     compile 'com.android.support.test.espresso:espresso-idling-resource:2.2.2'
     compile 'javax.annotation:javax.annotation-api:1.2'
+    compile project(':MPChartLib')
 }

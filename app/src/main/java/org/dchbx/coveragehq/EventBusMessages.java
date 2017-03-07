@@ -18,8 +18,10 @@ public class EventBusMessages implements Messages {
     }
 
     @Override
-    public void getEmployer(String employerId) {
-        eventBus.post(new Events.GetEmployer(employerId));
+    public int getEmployer(String employerId) {
+        Events.GetEmployer getEmployer = new Events.GetEmployer(employerId);
+        eventBus.post(getEmployer);
+        return getEmployer.getId();
     }
 
     @Override

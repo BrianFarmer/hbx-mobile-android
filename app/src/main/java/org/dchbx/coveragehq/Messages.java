@@ -6,7 +6,7 @@ public interface Messages {
     void release();
 
     void getEmployer();
-    void getEmployer(String employerId);
+    int getEmployer(String employerId);
     void getLogin();
     void securityAnswer(String securityAnswer);
     void loginRequest(Events.LoginRequest loginRequest);

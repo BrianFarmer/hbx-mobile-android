@@ -13,17 +13,16 @@ import android.widget.TextView;
 
 import com.microsoft.azure.mobile.analytics.Analytics;
 
+import org.dchbx.coveragehq.models.employer.ElectedDentalPlan;
+import org.dchbx.coveragehq.models.employer.Employer;
+import org.dchbx.coveragehq.models.employer.PlanOffering;
+import org.dchbx.coveragehq.models.employer.PlanYear;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 import org.joda.time.LocalDate;
 
 import java.util.HashMap;
 import java.util.Map;
-
-import org.dchbx.coveragehq.models.employer.ElectedDentalPlan;
-import org.dchbx.coveragehq.models.employer.Employer;
-import org.dchbx.coveragehq.models.employer.PlanOffering;
-import org.dchbx.coveragehq.models.employer.PlanYear;
 
 /**
  * Created by plast on 10/21/2016.
@@ -124,7 +123,7 @@ public class PlansFragment extends BrokerFragment {
                     }
                 });
                 TextView textViewPlanOffered = (TextView) planRoot.findViewById(R.id.textViewPlanOffered);
-                if (planOffering.health.planOptionKind.compareToIgnoreCase("single_carrier") == 0) {
+                if (planOffering.health.planOptionKind.compareToIgnoreCase("single_plan") == 0) {
                     textViewPlanOffered.setText(planOffering.health.referencePlanName);
 
                 } else {
@@ -141,10 +140,12 @@ public class PlansFragment extends BrokerFragment {
                 TextView textViewChildContributionLevel = (TextView) planRoot.findViewById(R.id.textViewChildContributionLevel);
                 textViewChildContributionLevel.setText(Double.toString(planOffering.health.employerContributionByRelationship.childUnder26));
                 TextView textViewReferencePlan = (TextView) planRoot.findViewById(R.id.textViewReferencePlan);
-                if (planOffering.health.planOptionKind.compareToIgnoreCase("single_carrier") == 0) {
+                if (planOffering.health.planOptionKind.compareToIgnoreCase("single_plan") == 0) {
                     planRoot.findViewById(R.id.textViewReferencePlanLabel).setVisibility(View.GONE);
                     textViewReferencePlan.setVisibility(View.GONE);
                 } else {
+                    planRoot.findViewById(R.id.textViewReferencePlanLabel).setVisibility(View.VISIBLE);
+                    textViewReferencePlan.setVisibility(View.VISIBLE);
                     textViewReferencePlan.setText(planOffering.health.referencePlanName);
                 }
 

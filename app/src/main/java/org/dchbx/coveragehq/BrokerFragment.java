@@ -62,10 +62,7 @@ public class BrokerFragment extends Fragment {
         //        .findViewById(android.R.id.content)).getChildAt(0);
 
         ArrayList<View> views = new ArrayList<>();
-        int state = View.GONE;
-        if (visible){
-            state = View.VISIBLE;
-        }
+        int state = visible? View.VISIBLE: View.GONE;
         getViewsByTag(views, (ViewGroup)contentView, BrokerApplication.getBrokerApplication().getString(tagResourceId));
         for (View view : views) {
             view.setVisibility(state);
