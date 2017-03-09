@@ -24,12 +24,11 @@ import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import org.dchbx.coveragehq.models.gitaccounts.GitAccounts;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 
 import java.util.ArrayList;
-
-import org.dchbx.coveragehq.models.gitaccounts.GitAccounts;
 
 /**
  * A login screen that offers login via email/password.
@@ -38,6 +37,7 @@ public class LoginActivity extends BrokerActivity {
 
     private static String TAG = "LoginActivity";
     private static final int FINGERPRINT_PERMISSION_REQUEST_CODE = 15;
+    private int getLoginErrorCount = 0;
 
     private enum FingerprintHardwareState {
         NotChecked,
@@ -89,7 +89,7 @@ public class LoginActivity extends BrokerActivity {
             urls = BuildConfig2.getUrls();
             urlLabels = BuildConfig2.getUrlLabels();
             urlsSpinner = (Spinner)findViewById(R.id.spinnerUrlRoot);
-            ArrayAdapter<String> dataAdapter = new ArrayAdapter<String>(this,
+            ArrayAdapter<String> dataAdapter = new ArrayAdapter<>(this,
                     android.R.layout.simple_spinner_item, urlLabels);
             dataAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
             urlsSpinner.setAdapter(dataAdapter);
@@ -206,14 +206,28 @@ public class LoginActivity extends BrokerActivity {
     public void doThis(Events.GetLoginResult loginResult){
         if (loginResult != null)
         {
-            haveLoginInfo = true;
-            if (loginResult.useFingerprintSensor()){
-                lastLoginUsedFingerprint = loginResult.useFingerprintSensor();
-                checkShowFingerprintDialog();
+            if (loginResult.getErrorMessagge() != null){
+                getLoginErrorCount ++;
+                if (getLoginErrorCount == 1){
+                    // first error just restart
+                    getMessages().getLogin();
+                    return;
+                }
+                if (getLoginErrorCount == 2){
+                    RootActivity.restartApp(this);
+                    getLoginErrorCount = 0;
+                    return;
+                }
             } else {
-                emailAddress.setText(loginResult.getAccountName());
-                password.setText("");
-                rememberMe.setChecked(loginResult.getRememberMe());
+                haveLoginInfo = true;
+                if (loginResult.useFingerprintSensor()) {
+                    lastLoginUsedFingerprint = loginResult.useFingerprintSensor();
+                    checkShowFingerprintDialog();
+                } else {
+                    emailAddress.setText(loginResult.getAccountName());
+                    password.setText("");
+                    rememberMe.setChecked(loginResult.getRememberMe());
+                }
             }
         } else {
             emailAddress.setText("");

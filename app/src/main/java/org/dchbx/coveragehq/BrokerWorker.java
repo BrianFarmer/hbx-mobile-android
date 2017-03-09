@@ -224,7 +224,7 @@ public class BrokerWorker extends IntentService {
                     config.getCoverageConnection().userTypeFromAccountInfo()));
         } catch (Exception e) {
             Log.e(TAG, "Exception processing GetLogin");
-            BrokerWorker.eventBus.post(new Events.Error("Error logging in", "Events.GetLogin"));
+            BrokerWorker.eventBus.post(new Events.GetLoginResult("Exception in Events.GetLogin", e));
         }
     }
 

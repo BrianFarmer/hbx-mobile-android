@@ -286,12 +286,21 @@ public class Events {
     }
 
     static public class GetLoginResult {
+        private final CharSequence errorMessagge;
+        private Exception exception;
         private CharSequence accountName;
         private CharSequence password;
         private CharSequence securityAnswer;
         private boolean rememberMe;
         private final boolean useFingerprintSensor;
         private UserType userType;
+
+        public GetLoginResult(CharSequence errorMessagge, Exception e){
+            this.errorMessagge = errorMessagge;
+            this.exception = e;
+            useFingerprintSensor = false;
+        }
+
 
         public GetLoginResult(CharSequence accountName, CharSequence password, CharSequence securityAnswer, Boolean rememberMe, boolean useFingerprintSensor, UserType userType){
             this.accountName = accountName;
@@ -300,6 +309,7 @@ public class Events {
             this.rememberMe = rememberMe;
             this.useFingerprintSensor = useFingerprintSensor;
             this.userType = userType;
+            errorMessagge = null;
         }
 
         public CharSequence getAccountName() {
@@ -329,6 +339,14 @@ public class Events {
 
         public boolean useFingerprintSensor() {
             return useFingerprintSensor;
+        }
+
+        public CharSequence getErrorMessagge() {
+            return errorMessagge;
+        }
+
+        public Exception getException() {
+            return exception;
         }
 
         public enum UserType {
