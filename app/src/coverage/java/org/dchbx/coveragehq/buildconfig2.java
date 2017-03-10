@@ -36,4 +36,8 @@ class BuildConfig2 extends EnrollConfigBase {
     public static int getSessionTimeoutSeconds() {
         return 14;
     }
+
+    public static String getVersion() {
+        return null;
+    }
 }

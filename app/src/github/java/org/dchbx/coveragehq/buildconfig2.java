@@ -124,4 +124,8 @@ class BuildConfig2 {
     public static int getSessionTimeoutSeconds() {
         return 14*60;
     }
+
+    public static String getVersion() {
+        return "github";
+    }
 }
