@@ -41,4 +41,5 @@
     <color name="total_costs">@color/purple</color>
     <color name="contribution_text">#044972</color>
     <color name="coverage_year">#E0FFFF</color>
+    <color name="linkcolor">@color/mainblue</color>
 </resources>

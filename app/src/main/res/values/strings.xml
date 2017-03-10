@@ -1,6 +1,6 @@
 <resources>
     <string name="app_name">SmallBiz</string>
-    <string name="title_activity_login">Login</string>
+    <string name="title_activity_login">SmallBiz Login</string>
     <string name="title_broker_details">Broker Details</string>
 
     <!-- Strings related to login -->
@@ -203,4 +203,7 @@
     <string name="search_hint">Employer Names</string>
     <string name="renewal_processing">Renewal Processing</string>
     <string name="aca_glossary">ACA Glossary</string>
+    <string name="glossary_filter_tag">Filter</string>
+    <string name="filter_by">Filter by:</string>
+    <string name="search">Search</string>
 </resources>

@@ -52,12 +52,12 @@ public class JsonParser {
         return gson.fromJson(s.replace("\"\"", "null"), Roster.class);
     }
 
-    public Carriers parseCarriers(IConnectionHandler.GetReponse s) {
+    public Carriers parseCarriers(String s) {
         GsonBuilder gsonBuilder = new GsonBuilder();
         gsonBuilder.registerTypeAdapter(DateTime.class, new DateTimeDeserializer());
         gsonBuilder.registerTypeAdapter(LocalDate.class, new LocalDateDeserializer());
         Gson gson = gsonBuilder.create();
-        return gson.fromJson(s.body.replace("\"\"", "null"), Carriers.class);
+        return gson.fromJson(s.replace("\"\"", "null"), Carriers.class);
     }
 
     public Roster parseEmployeDetails(String employee) {

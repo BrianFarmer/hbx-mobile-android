@@ -3,7 +3,7 @@ package org.dchbx.coveragehq.models.glossary;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
-public class GossaryTerm {
+public class GlossaryTerm {
 
     @SerializedName("term")
     @Expose

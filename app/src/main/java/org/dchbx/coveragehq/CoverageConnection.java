@@ -5,6 +5,7 @@ import android.util.Log;
 import org.dchbx.coveragehq.models.brokeragency.BrokerAgency;
 import org.dchbx.coveragehq.models.employer.Employer;
 import org.dchbx.coveragehq.models.gitaccounts.GitAccounts;
+import org.dchbx.coveragehq.models.glossary.GlossaryTerm;
 import org.dchbx.coveragehq.models.roster.Roster;
 import org.dchbx.coveragehq.models.roster.RosterEntry;
 import org.joda.time.DateTime;
@@ -17,6 +18,7 @@ import java.security.NoSuchAlgorithmException;
 import java.security.NoSuchProviderException;
 import java.security.UnrecoverableKeyException;
 import java.security.cert.CertificateException;
+import java.util.List;
 
 import javax.crypto.BadPaddingException;
 import javax.crypto.IllegalBlockSizeException;
@@ -216,8 +218,8 @@ public abstract class CoverageConnection {
 
     public Carriers getCarriers() throws Exception {
         UrlHandler.GetParameters carriersUrl = urlHandler.getCarriersUrl();
-        IConnectionHandler.GetReponse getReponse = connectionHandler.getHackedSSL(carriersUrl);
-        return parser.parseCarriers(getReponse);
+        IConnectionHandler.GetReponse response = connectionHandler.getHackedSSL(carriersUrl);
+        return urlHandler.processCarrier(response);
     }
 
     public RosterEntry getEmployee(String employeeId) throws Exception {
@@ -260,5 +262,11 @@ public abstract class CoverageConnection {
 
     public void stayLoggedIn() throws Exception {
         return;
+    }
+
+    public List<GlossaryTerm> getGlossary() throws IOException, CoverageException {
+        UrlHandler.GetParameters glossaryParameters = urlHandler.getGlossaryParameters();
+        IConnectionHandler.GetReponse response = connectionHandler.getHackedSSL(glossaryParameters);
+        return urlHandler.processGlossary(response);
     }
 }

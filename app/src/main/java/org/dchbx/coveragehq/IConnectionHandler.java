@@ -46,8 +46,6 @@ public interface IConnectionHandler {
     PostResponse post(HttpUrl url, FormBody formBody, String cookie) throws Exception;
 
     PostResponse post(UrlHandler.PostParameters postParameters) throws IOException, CoverageException;
-    //PostResponse postHttpURLConnection(UrlHandler.PostParameters loginPostParameters, String accountName, String password, Boolean rememberMe) throws Exception;
-
     GetReponse get(UrlHandler.GetParameters getParameters) throws IOException, CoverageException;
     GetReponse getHackedSSL(UrlHandler.GetParameters getParameters) throws IOException, CoverageException;
     String get(HttpUrl url, String cookie) throws Exception;

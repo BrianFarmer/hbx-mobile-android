@@ -3,10 +3,12 @@ package org.dchbx.coveragehq;
 import org.dchbx.coveragehq.models.Security.SecurityAnswerResponse;
 import org.dchbx.coveragehq.models.brokeragency.BrokerAgency;
 import org.dchbx.coveragehq.models.employer.Employer;
+import org.dchbx.coveragehq.models.glossary.GlossaryTerm;
 import org.dchbx.coveragehq.models.roster.Roster;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 
 import okhttp3.FormBody;
 import okhttp3.HttpUrl;
@@ -16,9 +18,6 @@ import okhttp3.HttpUrl;
  */
 
 public abstract class UrlHandler {
-
-
-
 
     public class PutParameters {
         FormBody body;
@@ -186,6 +185,9 @@ public abstract class UrlHandler {
         return getParameters;
     }
 
+    public Carriers processCarrier(IConnectionHandler.GetReponse response){
+        return parser.parseCarriers(response.body);
+    }
 
     public BrokerAgency processBrokerAgency(IConnectionHandler.GetReponse getReponse) throws Exception {
         return parser.parseEmployerList(getReponse.body);
@@ -199,6 +201,13 @@ public abstract class UrlHandler {
         return hostInfo;
     }
 
+    public GetParameters getGlossaryParameters() {
+        return null;
+    }
+
+    public List<GlossaryTerm> processGlossary(IConnectionHandler.GetReponse response) {
+        return null;
+    }
 
 
     abstract FormBody getSecurityAnswerFormBody(String securityAnswer);

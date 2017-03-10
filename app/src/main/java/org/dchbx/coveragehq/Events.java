@@ -3,11 +3,14 @@ package org.dchbx.coveragehq;
 import android.util.Log;
 import android.widget.ImageView;
 
+import org.dchbx.coveragehq.models.glossary.GlossaryTerm;
 import org.joda.time.LocalDate;
 
 import org.dchbx.coveragehq.models.brokeragency.BrokerAgency;
 import org.dchbx.coveragehq.models.employer.Employer;
 import org.dchbx.coveragehq.models.roster.Roster;
+
+import java.util.List;
 
 public class Events {
     static int lastCancelableRequestId = 0;
@@ -25,7 +28,11 @@ public class Events {
     }
 
     static public class CancelableRequest {
-        private int id;
+        static private int id =- 1;
+
+        public CancelableRequest(){
+            id ++;
+        }
 
         public int getId (){
             return id;
@@ -282,12 +289,21 @@ public class Events {
     }
 
     static public class GetLoginResult {
+        private final CharSequence errorMessagge;
+        private Exception exception;
         private CharSequence accountName;
         private CharSequence password;
         private CharSequence securityAnswer;
         private boolean rememberMe;
         private final boolean useFingerprintSensor;
         private UserType userType;
+
+        public GetLoginResult(CharSequence errorMessagge, Exception e){
+            this.errorMessagge = errorMessagge;
+            this.exception = e;
+            useFingerprintSensor = false;
+        }
+
 
         public GetLoginResult(CharSequence accountName, CharSequence password, CharSequence securityAnswer, Boolean rememberMe, boolean useFingerprintSensor, UserType userType){
             this.accountName = accountName;
@@ -296,6 +312,7 @@ public class Events {
             this.rememberMe = rememberMe;
             this.useFingerprintSensor = useFingerprintSensor;
             this.userType = userType;
+            errorMessagge = null;
         }
 
         public CharSequence getAccountName() {
@@ -325,6 +342,14 @@ public class Events {
 
         public boolean useFingerprintSensor() {
             return useFingerprintSensor;
+        }
+
+        public CharSequence getErrorMessagge() {
+            return errorMessagge;
+        }
+
+        public Exception getException() {
+            return exception;
         }
 
         public enum UserType {
@@ -658,6 +683,22 @@ public class Events {
 
         public String getSecurityQuestion() {
             return securityQuestion;
+        }
+    }
+
+    static public class GetGlossary extends CancelableRequest {
+    }
+
+    static public class Glossary extends ResponseToRequest {
+        private List<GlossaryTerm> glossary;
+
+        public Glossary(int id, List<GlossaryTerm> glossary) {
+            super(id);
+            this.glossary = glossary;
+        }
+
+        public List<GlossaryTerm> getGlossary() {
+            return glossary;
         }
     }
 }
