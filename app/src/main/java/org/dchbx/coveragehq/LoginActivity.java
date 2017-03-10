@@ -2,6 +2,8 @@ package org.dchbx.coveragehq;
 
 import android.app.ProgressDialog;
 import android.content.DialogInterface;
+import android.content.pm.PackageInfo;
+import android.content.pm.PackageManager;
 import android.graphics.Typeface;
 import android.os.Bundle;
 import android.support.test.espresso.idling.CountingIdlingResource;
@@ -83,6 +85,20 @@ public class LoginActivity extends BrokerActivity {
 
         setContentView(BuildConfig2.getLoginLayout());
         pastFingerprint = false;
+
+
+        TextView textViewVersion = (TextView) findViewById(R.id.textViewVersion);
+        String version = BuildConfig2.getVersion();
+        textViewVersion.setVisibility(View.GONE);
+        if (version != null) {
+            try {
+                PackageInfo packageInfo = getPackageManager().getPackageInfo(getPackageName(), 0);
+                textViewVersion.setVisibility(View.VISIBLE);
+                textViewVersion.setText(getString(R.string.app_name) + "-" + version + "-" + packageInfo.versionName);
+            } catch (PackageManager.NameNotFoundException e) {
+            }
+
+        }
 
         // Set up the login form.
         if (BuildConfig2.isGit()){

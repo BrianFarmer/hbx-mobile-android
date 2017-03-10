@@ -36,4 +36,8 @@ class BuildConfig2 extends EnrollConfigBase {
     public static int getSessionTimeoutSeconds() {
         return 30;
     }
+
+    public static String getVersion() {
+        return "preprod";
+    }
 }
