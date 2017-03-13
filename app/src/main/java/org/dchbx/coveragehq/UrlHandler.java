@@ -7,6 +7,7 @@ import org.dchbx.coveragehq.models.glossary.GlossaryTerm;
 import org.dchbx.coveragehq.models.roster.Roster;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 
@@ -202,11 +203,14 @@ public abstract class UrlHandler {
     }
 
     public GetParameters getGlossaryParameters() {
-        return null;
+        GetParameters getParameters = new GetParameters();
+        getParameters.url = HttpUrl.parse("https://dchealthlink.com/glossary/json");
+        return getParameters;
     }
 
     public List<GlossaryTerm> processGlossary(IConnectionHandler.GetReponse response) {
-        return null;
+        GlossaryTerm[] glossaryTerms1 = parser.parseGlossary(response.body);
+        return Arrays.asList(glossaryTerms1);
     }
 
 
