@@ -3,13 +3,10 @@ package org.dchbx.coveragehq;
 import org.dchbx.coveragehq.models.Security.SecurityAnswerResponse;
 import org.dchbx.coveragehq.models.brokeragency.BrokerAgency;
 import org.dchbx.coveragehq.models.employer.Employer;
-import org.dchbx.coveragehq.models.glossary.GlossaryTerm;
 import org.dchbx.coveragehq.models.roster.Roster;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
-import java.util.List;
 
 import okhttp3.FormBody;
 import okhttp3.HttpUrl;
@@ -207,12 +204,6 @@ public abstract class UrlHandler {
         getParameters.url = HttpUrl.parse("https://dchealthlink.com/glossary/json");
         return getParameters;
     }
-
-    public List<GlossaryTerm> processGlossary(IConnectionHandler.GetReponse response) {
-        GlossaryTerm[] glossaryTerms1 = parser.parseGlossary(response.body);
-        return Arrays.asList(glossaryTerms1);
-    }
-
 
     abstract FormBody getSecurityAnswerFormBody(String securityAnswer);
     abstract void processSecurityResponse(SecurityAnswerResponse securityAnswerResponse);

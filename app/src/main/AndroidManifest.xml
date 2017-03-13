@@ -67,15 +67,6 @@
             android:name="org.dchbx.coveragehq.EmployeeDetailsActivity"
             android:configChanges="orientation|keyboardHidden|screenSize"
             />
-        <activity
-            android:name="org.dchbx.coveragehq.AcaGlossaryActivity"
-            android:configChanges="orientation|keyboardHidden|screenSize">
-            <intent-filter>
-                <action android:name="android.intent.action.VIEW"/>
-                <category android:name="android.intent.category.DEFAULT"/>
-                <data android:host="dchbx.org" android:scheme="smallbiz" />
-            </intent-filter>
-        </activity>
     </application>
 
 </manifest>

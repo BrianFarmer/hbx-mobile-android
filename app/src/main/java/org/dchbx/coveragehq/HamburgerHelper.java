@@ -36,9 +36,9 @@ public class HamburgerHelper {
                 return true;
             case R.id.nav_aca_glossary:
                 messages.logoutRequest();
-                Intent acaGlossaryActivity = new Intent(activity, AcaGlossaryActivity.class);
-                Log.d(TAG, "onClick: launching ACA glossary activity");
-                activity.startActivity(acaGlossaryActivity);
+                Intent glossaryIntent = new Intent(Intent.ACTION_VIEW, Uri.parse("https://dchealthlink.com/glossary"));
+                Log.d(TAG, "onClick: launching ACA glossary activity in browser");
+                activity.startActivity(glossaryIntent);
                 return true;
             case R.id.nav_carriers:
                 Intent carrierIntent = new Intent(activity, CarriersActivity.class);

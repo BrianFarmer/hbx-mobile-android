@@ -14,7 +14,6 @@ import org.dchbx.coveragehq.models.brokeragency.BrokerAgency;
 import org.dchbx.coveragehq.models.brokeragency.BrokerClient;
 import org.dchbx.coveragehq.models.employer.Employer;
 import org.dchbx.coveragehq.models.gitaccounts.GitAccounts;
-import org.dchbx.coveragehq.models.glossary.GlossaryTerm;
 import org.dchbx.coveragehq.models.roster.Roster;
 import org.dchbx.coveragehq.models.roster.RosterEntry;
 import org.greenrobot.eventbus.EventBus;
@@ -24,7 +23,6 @@ import org.joda.time.DateTime;
 import org.joda.time.LocalDate;
 
 import java.lang.reflect.Type;
-import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -326,22 +324,6 @@ public class BrokerWorker extends IntentService {
             Log.d(TAG, "Received GetCarriers message");
             Carriers carriers = config.getCoverageConnection().getCarriers();
             BrokerWorker.eventBus.post(new Events.Carriers(getCarriers.getId(), carriers));
-        } catch (Exception e) {
-            Log.e(TAG, "Exception processing GetCarriers");
-            BrokerWorker.eventBus.post(new Events.Error("Error getting carriers", "Events.GetCarriers"));
-        }
-    }
-
-    //
-    // Get the glossary.
-    //
-
-    @Subscribe(threadMode = ThreadMode.BACKGROUND)
-    public void doThis(Events.GetGlossary getGlossary) {
-        try {
-            Log.d(TAG, "Received GetCarriers message");
-            List<GlossaryTerm> glossary = config.getCoverageConnection().getGlossary();
-            BrokerWorker.eventBus.post(new Events.Glossary(getGlossary.getId(), glossary));
         } catch (Exception e) {
             Log.e(TAG, "Exception processing GetCarriers");
             BrokerWorker.eventBus.post(new Events.Error("Error getting carriers", "Events.GetCarriers"));

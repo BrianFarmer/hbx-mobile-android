@@ -3,14 +3,10 @@ package org.dchbx.coveragehq;
 import android.util.Log;
 import android.widget.ImageView;
 
-import org.dchbx.coveragehq.models.glossary.GlossaryTerm;
-import org.joda.time.LocalDate;
-
 import org.dchbx.coveragehq.models.brokeragency.BrokerAgency;
 import org.dchbx.coveragehq.models.employer.Employer;
 import org.dchbx.coveragehq.models.roster.Roster;
-
-import java.util.List;
+import org.joda.time.LocalDate;
 
 public class Events {
     static int lastCancelableRequestId = 0;
@@ -687,18 +683,5 @@ public class Events {
     }
 
     static public class GetGlossary extends CancelableRequest {
-    }
-
-    static public class Glossary extends ResponseToRequest {
-        private List<GlossaryTerm> glossary;
-
-        public Glossary(int id, List<GlossaryTerm> glossary) {
-            super(id);
-            this.glossary = glossary;
-        }
-
-        public List<GlossaryTerm> getGlossary() {
-            return glossary;
-        }
     }
 }

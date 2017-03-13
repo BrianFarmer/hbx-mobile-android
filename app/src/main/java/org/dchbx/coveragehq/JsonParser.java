@@ -8,7 +8,6 @@ import org.dchbx.coveragehq.models.Security.SecurityAnswerResponse;
 import org.dchbx.coveragehq.models.brokeragency.BrokerAgency;
 import org.dchbx.coveragehq.models.employer.Employer;
 import org.dchbx.coveragehq.models.gitaccounts.GitAccounts;
-import org.dchbx.coveragehq.models.glossary.GlossaryTerm;
 import org.dchbx.coveragehq.models.roster.Roster;
 import org.joda.time.DateTime;
 import org.joda.time.LocalDate;
@@ -90,13 +89,5 @@ public class JsonParser {
         gsonBuilder.registerTypeAdapter(LocalDate.class, new LocalDateDeserializer());
         Gson gson = gsonBuilder.create();
         return gson.fromJson(body.replace("\"\"", "null"), GitAccounts.class);
-    }
-
-    public GlossaryTerm[] parseGlossary(String body) {
-        GsonBuilder gsonBuilder = new GsonBuilder();
-        gsonBuilder.registerTypeAdapter(DateTime.class, new DateTimeDeserializer());
-        gsonBuilder.registerTypeAdapter(LocalDate.class, new LocalDateDeserializer());
-        Gson gson = gsonBuilder.create();
-        return gson.fromJson(body.replace("\"\"", "null"), GlossaryTerm[].class);
     }
 }
