@@ -91,6 +91,10 @@ public class RootActivity extends BrokerActivity {
                     Intents.launchEmployerDetailsActivity(this);
                     finish();
                     break;
+                case Employee:
+                    Intents.launchEmployeeDetailsActivity(this);
+                    finish();
+                    break;
                 default:
                     if (!loginRunning) {
                         showLogin();

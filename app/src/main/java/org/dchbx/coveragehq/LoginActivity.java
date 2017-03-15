@@ -187,20 +187,15 @@ public class LoginActivity extends BrokerActivity {
             int accountId = (int)accountsItemId - 1;
             String accountName;
             boolean isBroker;
-            if (accountId >= gitAccounts.brokers.size()) {
-                accountId = accountId - gitAccounts.brokers.size();
-                accountName = gitAccounts.employers.get(accountId);
-                isBroker = false;
-            } else {
-                accountName = gitAccounts.brokers.get(accountId);
-                isBroker = true;
-            }
+            GitAccounts.NamedAccountInfo accountInfo = GitAccountUtilities.getAccountInfo(gitAccounts, accountId);
+            accountName = accountInfo.name;
+            int accountType = GitAccountUtilities.getAccountType(accountInfo.accountInfo);
 
             RootActivity.loginDone();
             if (switchEnableFingerprintLogin == null){
-                getMessages().loginRequest(new Events.LoginRequest(urls.get((int) urlItemId), accountName, isBroker, false));
+                getMessages().loginRequest(new Events.LoginRequest(urls.get((int) urlItemId), accountName, false, false));
             } else {
-                getMessages().loginRequest(new Events.LoginRequest(urls.get((int) urlItemId), accountName, isBroker, switchEnableFingerprintLogin.isChecked()));
+                getMessages().loginRequest(new Events.LoginRequest(urls.get((int) urlItemId), accountName, switchEnableFingerprintLogin.isChecked(), false));
             }
             return;
         }
@@ -269,8 +264,7 @@ public class LoginActivity extends BrokerActivity {
 
         ArrayList<String> accounts = new ArrayList<>();
         accounts.add("Choose Account");
-        accounts.addAll(this.gitAccounts.brokers);
-        accounts.addAll(this.gitAccounts.employers);
+        accounts.addAll(GitAccountUtilities.getAccountNames(this.gitAccounts));
         ArrayAdapter<String> arrayAdapter = new ArrayAdapter<String>(this,
                 android.R.layout.simple_spinner_item, accounts);
         accountsSpinner.setAdapter(arrayAdapter);

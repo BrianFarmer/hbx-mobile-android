@@ -120,7 +120,7 @@ public class BrokerActivity extends AppCompatActivity {
     interface DialogClosed {
         void closed();
     }
-    public void alertDialog(String string, final DialogClosed closedHelper){
+    public AlertDialog alertDialog(String string, final DialogClosed closedHelper){
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setMessage(string)
             .setCancelable(false)
@@ -132,6 +132,7 @@ public class BrokerActivity extends AppCompatActivity {
             });
         AlertDialog alertDialog = builder.create();
         alertDialog.show();
+        return alertDialog;
     }
 
     public static boolean isXLargeScreen(Context context) {

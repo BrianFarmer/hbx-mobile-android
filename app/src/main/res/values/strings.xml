@@ -206,4 +206,8 @@
     <string name="glossary_filter_tag">Filter</string>
     <string name="filter_by">Filter by:</string>
     <string name="search">Search</string>
+    <string name="send_email_to_employee">Send email to employee.</string>
+    <string name="send_sms_text_message_to_employee">Send SMS text message to employee.</string>
+    <string name="call_employee">Call employee.</string>
+    <string name="open_employee_details">Open employee details.</string>
 </resources>

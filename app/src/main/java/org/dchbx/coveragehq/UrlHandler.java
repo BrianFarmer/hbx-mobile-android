@@ -4,6 +4,7 @@ import org.dchbx.coveragehq.models.Security.SecurityAnswerResponse;
 import org.dchbx.coveragehq.models.brokeragency.BrokerAgency;
 import org.dchbx.coveragehq.models.employer.Employer;
 import org.dchbx.coveragehq.models.roster.Roster;
+import org.dchbx.coveragehq.models.roster.RosterEntry;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -203,6 +204,14 @@ public abstract class UrlHandler {
         GetParameters getParameters = new GetParameters();
         getParameters.url = HttpUrl.parse("https://dchealthlink.com/glossary/json");
         return getParameters;
+    }
+
+    public GetParameters getEmployeeDetailsParameters() {
+        return null;
+    }
+
+    public RosterEntry processEmployeeDetails(IConnectionHandler.GetReponse getReponse) {
+        return null;
     }
 
     abstract FormBody getSecurityAnswerFormBody(String securityAnswer);

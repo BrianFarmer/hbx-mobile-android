@@ -221,6 +221,12 @@ public abstract class CoverageConnection {
     }
 
     public RosterEntry getEmployee(String employeeId) throws Exception {
+        if (employeeId == null){
+            UrlHandler.GetParameters getParameters = urlHandler.getEmployeeDetailsParameters();
+            IConnectionHandler.GetReponse getReponse = connectionHandler.get(getParameters);
+            return urlHandler.processEmployeeDetails(getReponse);
+
+        }
         Roster roster = getRoster(DateTime.now());
         DateTime now = DateTime.now();
         return BrokerUtilities.getRosterEntry(roster, employeeId);

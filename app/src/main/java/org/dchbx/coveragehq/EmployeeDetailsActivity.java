@@ -18,6 +18,10 @@ import android.widget.TextView;
 
 import com.microsoft.azure.mobile.analytics.Analytics;
 
+import org.dchbx.coveragehq.models.roster.Dependent;
+import org.dchbx.coveragehq.models.roster.Enrollment;
+import org.dchbx.coveragehq.models.roster.Health;
+import org.dchbx.coveragehq.models.roster.RosterEntry;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 import org.joda.time.LocalDate;
@@ -26,11 +30,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
-import org.dchbx.coveragehq.models.roster.Dependent;
-import org.dchbx.coveragehq.models.roster.Enrollment;
-import org.dchbx.coveragehq.models.roster.Health;
-import org.dchbx.coveragehq.models.roster.RosterEntry;
 
 public class EmployeeDetailsActivity extends BrokerActivity {
     private static String TAG = "EmployeeDetailsActivity";
@@ -56,7 +55,11 @@ public class EmployeeDetailsActivity extends BrokerActivity {
         employeeId = intent.getStringExtra(Intents.EMPLOYEE_ID);
         employerId = intent.getStringExtra(Intents.BROKER_CLIENT_ID);
         String coverageYearString = intent.getStringExtra(Intents.COVERAGE_YEAR);
-        coverageYear = LocalDate.parse(intent.getStringExtra(Intents.COVERAGE_YEAR));
+        if (coverageYearString == null){
+            coverageYear = null;
+        } else {
+            coverageYear = LocalDate.parse(intent.getStringExtra(Intents.COVERAGE_YEAR));
+        }
         getMessages().getEmployee(employeeId, employerId);
 //        getMessages().getEmployer(employerId);
 
@@ -129,6 +132,10 @@ public class EmployeeDetailsActivity extends BrokerActivity {
 
         Map<String,String> properties=new HashMap<String,String>();
         Analytics.trackEvent("Employee Details", properties);
+
+        if (coverageYear == null){
+            coverageYear = BrokerUtilities.getMostRecentPlanYear(employee);
+        }
 
         try {
             populate();
@@ -256,6 +263,8 @@ public class EmployeeDetailsActivity extends BrokerActivity {
         }
 
         setVisibility(R.string.dependents_group_tag, false, R.id.imageViewDependentsDrawer, R.drawable.blue_uparrow, R.drawable.blue_circle_plus);
+
+
     }
 
     private void populateCoverageYearDependencies(Enrollment enrollment, Resources resources) throws Exception {

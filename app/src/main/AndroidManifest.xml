@@ -66,6 +66,7 @@
         <activity
             android:name="org.dchbx.coveragehq.EmployeeDetailsActivity"
             android:configChanges="orientation|keyboardHidden|screenSize"
+            android:label=""
             />
     </application>
 

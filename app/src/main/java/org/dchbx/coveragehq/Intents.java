@@ -25,7 +25,6 @@ public class Intents {
         activity.startActivity(intent);
     }
 
-
     static public void launchEmployerDetails(Activity mainActivity, String id) {
         launchEmployerDetailsActivity(mainActivity, id);
     }
@@ -54,6 +53,11 @@ public class Intents {
 
     public static void launchBrokerDetailsActivity(RootActivity rootActivity) {
         Intent intent = new Intent(rootActivity, MainActivity.class);
+        rootActivity.startActivity(intent);
+    }
+
+    public static void launchEmployeeDetailsActivity(RootActivity rootActivity) {
+        Intent intent = new Intent(rootActivity, EmployeeDetailsActivity.class);
         rootActivity.startActivity(intent);
     }
 }

@@ -4,8 +4,9 @@ import android.os.Build;
 import android.support.annotation.RequiresApi;
 import android.util.Log;
 
-
 import org.dchbx.coveragehq.models.gitaccounts.GitAccounts;
+import org.dchbx.coveragehq.models.roster.RosterEntry;
+
 import okhttp3.HttpUrl;
 
 /**
@@ -30,12 +31,26 @@ public class GithubCoverageConnection extends CoverageConnection {
         serverConfiguration.password = password;
         serverConfiguration.dataInfo.scheme = parsed.scheme();
         serverConfiguration.dataInfo.host = parsed.host();
+
+        int accountType = GitAccountUtilities.getAccountType(serverConfiguration.gitAccounts.accountInfoMap.get(password));
+
+        switch (accountType) {
+            case 0:
+                serverConfiguration.userType = ServerConfiguration.UserType.Broker;
+                break;
+            case 1:
+                serverConfiguration.userType = ServerConfiguration.UserType.Employer;
+                break;
+            case 2:
+                serverConfiguration.userType = ServerConfiguration.UserType.Employee;
+                break;
+        }
         if (rememberMe) {
             StringBuilder builder = new StringBuilder();
 
             boolean first = true;
             for (String s : parsed.pathSegments()) {
-                if (!first){
+                if (!first) {
                     builder.append("/");
                 } else {
                     first = false;
@@ -44,7 +59,7 @@ public class GithubCoverageConnection extends CoverageConnection {
             }
             String path = builder.toString();
 
-            serverConfiguration.brokerDetailPath = path  + "/broker_details.json";
+            serverConfiguration.brokerDetailPath = path + "/broker_details.json";
             serverConfiguration.employerDetailPath = path;
             serverConfiguration.employerRosterPathForBroker = path;
         } else {
@@ -72,4 +87,18 @@ public class GithubCoverageConnection extends CoverageConnection {
         IConnectionHandler.GetReponse getReponse = connectionHandler.get(getParameters);
         return gitUrlHandler.processGetGitAccounts(getReponse, urlRoot);
     }
+
+    @Override
+    public ServerConfiguration.UserType determineUserType() throws Exception {
+        return serverConfiguration.userType;
+    }
+
+    public UrlHandler.GetParameters getEmployeeDetailParameters() {
+        return null;
+    }
+
+    public RosterEntry processEmployeeDetails(IConnectionHandler.GetReponse getReponse) {
+        return null;
+    }
+
 }

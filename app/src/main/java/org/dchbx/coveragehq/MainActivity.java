@@ -11,6 +11,7 @@ import android.support.design.widget.NavigationView;
 import android.support.v4.view.MenuItemCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Menu;
@@ -184,9 +185,10 @@ public class MainActivity extends BrokerActivity {
 
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void doThis(Events.Error error) {
-        alertDialog("Error! What should I be showing? " + error.getMessage(), new DialogClosed() {
+        AlertDialog alertDialog = alertDialog("A network error happened. Please login again. ", new DialogClosed() {
             @Override
             public void closed() {
+                Intents.restartApp(MainActivity.this);
                 finish();
             }
         });

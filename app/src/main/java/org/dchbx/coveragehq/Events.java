@@ -61,7 +61,7 @@ public class Events {
         private boolean rememberMe;
         private final boolean useFingerprintSensor;
 
-        public LoginRequest(CharSequence accountName, CharSequence password, Boolean rememberMe, boolean useFingerprintSensor){
+        public LoginRequest(CharSequence accountName, CharSequence password, boolean rememberMe, boolean useFingerprintSensor){
             this.accountName = accountName;
             this.password = password;
             this.rememberMe = rememberMe;

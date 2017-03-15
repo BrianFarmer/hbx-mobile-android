@@ -588,4 +588,20 @@ public class BrokerUtilities {
 
         return fullName;
     }
+
+    public static LocalDate getMostRecentPlanYear(RosterEntry employee) {
+        LocalDate mostRecent = null;
+
+        for (Enrollment enrollment : employee.enrollments) {
+            if (mostRecent != null){
+                if (enrollment.startOn != null) {
+                    if (mostRecent.compareTo(enrollment.startOn) < 0){
+                        mostRecent = enrollment.startOn;
+                    }
+                }
+            }
+        }
+
+        return mostRecent;
+    }
 }

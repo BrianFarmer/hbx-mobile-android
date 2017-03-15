@@ -1,10 +1,12 @@
 package org.dchbx.coveragehq;
 
+import org.dchbx.coveragehq.models.Security.SecurityAnswerResponse;
+import org.dchbx.coveragehq.models.gitaccounts.GitAccounts;
+import org.dchbx.coveragehq.models.roster.RosterEntry;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 
-import org.dchbx.coveragehq.models.Security.SecurityAnswerResponse;
-import org.dchbx.coveragehq.models.gitaccounts.GitAccounts;
 import okhttp3.FormBody;
 import okhttp3.HttpUrl;
 
@@ -85,7 +87,8 @@ public class GitUrlHandler extends UrlHandler {
             throw new Exception("Error getting accounts");
         }
 
-        return parser.parseGitAccounts(getReponse.body);
+        serverConfiguration.gitAccounts = parser.parseGitAccounts(getReponse.body);
+        return serverConfiguration.gitAccounts;
     }
 
     @Override
@@ -150,5 +153,24 @@ public class GitUrlHandler extends UrlHandler {
                     .build();
         }
         return getParameters;
+    }
+
+    public GetParameters getBrokerAgencyParameters() {
+        GetParameters getParameters = new GetParameters();
+        org.dchbx.coveragehq.models.gitaccounts.AccountInfo accountInfo = serverConfiguration.gitAccounts.accountInfoMap.get(serverConfiguration.password);
+        getParameters.url = HttpUrl.parse(serverConfiguration.accountName + "/" + serverConfiguration.password + "/" + accountInfo.brokerEndpoint);
+        return getParameters;
+    }
+
+    @Override
+    public GetParameters getEmployeeDetailsParameters() {
+        GetParameters getParameters = new GetParameters();
+        org.dchbx.coveragehq.models.gitaccounts.AccountInfo accountInfo = serverConfiguration.gitAccounts.accountInfoMap.get(serverConfiguration.password);
+        getParameters.url = HttpUrl.parse(serverConfiguration.accountName + "/" + serverConfiguration.password + "/" + accountInfo.individualEndpointPath);
+        return getParameters;
+    }
+
+    public RosterEntry processEmployeeDetails(IConnectionHandler.GetReponse getReponse) {
+        return parser.parseEmployeeDetails(getReponse.body);
     }
 }

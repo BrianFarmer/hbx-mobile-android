@@ -88,7 +88,7 @@ public class BrokerWorker extends IntentService {
             UrlHandler urlHandler = config.getUrlHandler();
             String urlRoot = getGitAccounts.getUrlRoot();
             GitAccounts gitAccounts = config.getCoverageConnection().getGitAccounts(urlRoot);
-            Log.d(TAG, "got git accounts");
+                Log.d(TAG, "got git accounts");
             BrokerWorker.eventBus.post(new Events.GitAccounts(gitAccounts));
 
         } catch (Exception e) {

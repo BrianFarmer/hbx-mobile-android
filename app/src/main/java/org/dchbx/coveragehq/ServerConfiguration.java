@@ -1,5 +1,7 @@
 package org.dchbx.coveragehq;
 
+import org.dchbx.coveragehq.models.gitaccounts.GitAccounts;
+
 public class ServerConfiguration {
 
 
@@ -20,6 +22,7 @@ public class ServerConfiguration {
     public String location;
     public UserType userType = UserType.Unknown;
     public String sessionId = null;
+    public GitAccounts gitAccounts;
 
     public static class HostInfo {
         public String scheme;
