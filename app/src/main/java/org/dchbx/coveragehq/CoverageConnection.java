@@ -93,10 +93,14 @@ public abstract class CoverageConnection {
                 Log.d(TAG, "intentionally eating exception caused by failture getting broker agency");
         }
 
-        Employer employer = getEmployer(urlHandler, serverConfiguration);
-        dataCache.store(employer, DateTime.now());
-        serverConfiguration.userType = org.dchbx.coveragehq.ServerConfiguration.UserType.Employer;
-        return serverConfiguration.userType;
+        try {
+            Employer employer = getEmployer(urlHandler, serverConfiguration);
+            dataCache.store(employer, DateTime.now());
+            serverConfiguration.userType = org.dchbx.coveragehq.ServerConfiguration.UserType.Employer;
+            return serverConfiguration.userType;
+        } catch (CoverageException e){
+            return ServerConfiguration.UserType.Unknown;
+        }
     }
 
     public Events.GetLoginResult.UserType userTypeFromAccountInfo(){

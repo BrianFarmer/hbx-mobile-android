@@ -4,6 +4,7 @@ import android.app.SearchManager;
 import android.app.SearchableInfo;
 import android.content.ComponentName;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.res.Resources;
 import android.net.Uri;
@@ -12,7 +13,9 @@ import android.support.design.widget.NavigationView;
 import android.support.v4.view.MenuItemCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.Toolbar;
+import android.telephony.TelephonyManager;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -110,9 +113,23 @@ public class MainActivity extends BrokerActivity {
 
                 switch (item.getItemId()){
                     case R.id.nav_call_healthlink:
-                        Intent phoneIntent = new Intent(Intent.ACTION_DIAL);
-                        phoneIntent.setData(Uri.parse("tel:" + Constants.HbxPhoneNumber));
-                        startActivity(phoneIntent);
+                        if (((TelephonyManager)BrokerApplication.getBrokerApplication().getSystemService(Context.TELEPHONY_SERVICE)).getPhoneType()
+                                == TelephonyManager.PHONE_TYPE_NONE) {
+                            AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
+                            builder.setMessage("DC Health Link: " + Constants.HbxPhoneNumber)
+                                    .setCancelable(false)
+                                    .setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                                        public void onClick(DialogInterface dialog, int id) {
+                                            dialog.dismiss();
+                                        }
+                                    });
+                            AlertDialog alert = builder.create();
+                            alert.show();
+                        } else {
+                            Intent phoneIntent = new Intent(Intent.ACTION_DIAL);
+                            phoneIntent.setData(Uri.parse("tel:" + Constants.HbxPhoneNumber));
+                            startActivity(phoneIntent);
+                        }
                         return true;
                     case R.id.nav_email_healthlink:
                         Intent emailIntent = new Intent(Intent.ACTION_SENDTO);

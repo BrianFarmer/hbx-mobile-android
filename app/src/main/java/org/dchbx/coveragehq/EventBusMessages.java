@@ -134,5 +134,10 @@ public class EventBusMessages implements Messages {
     public void decryptAccountAndPassword() {
         eventBus.post(new Events.AuthenticateFingerprintDecrypt());
     }
+
+    @Override
+    public void EmployerActivityReady() {
+        eventBus.post(new Events.EmployerActivityReady());
+    }
 }
 

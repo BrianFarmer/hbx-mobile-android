@@ -4,11 +4,8 @@ import android.app.AlarmManager;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
-import android.net.ConnectivityManager;
-import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.util.Log;
-import android.widget.Toast;
 
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
@@ -31,27 +28,7 @@ public class RootActivity extends BrokerActivity {
     @Override
     protected void onResume() {
         super.onResume();
-
-        if (!detectNetwork()){
-            restartApp(this);
-            return;
-        }
-
         getMessages().getLogin();
-    }
-
-    private boolean detectNetwork() {
-        ConnectivityManager cm =
-                (ConnectivityManager)this.getSystemService(Context.CONNECTIVITY_SERVICE);
-
-        NetworkInfo activeNetwork = cm.getActiveNetworkInfo();
-        boolean isConnected = activeNetwork != null &&
-                activeNetwork.isConnectedOrConnecting();
-        if (!isConnected){
-            Toast toast = Toast.makeText(this, "No network detected, application will restart.", Toast.LENGTH_LONG);
-            toast.show();
-        }
-        return isConnected;
     }
 
     @Override
@@ -64,6 +41,13 @@ public class RootActivity extends BrokerActivity {
         startActivity(intent);
         loginRunning = true;
     }
+
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void doThis(Events.Error error) {
+        showLogin();
+    }
+
+
 
     static public void loginDone(){
         loginRunning = false;

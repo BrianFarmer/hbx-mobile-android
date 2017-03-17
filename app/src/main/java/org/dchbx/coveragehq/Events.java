@@ -682,4 +682,7 @@ public class Events {
             return securityQuestion;
         }
     }
+
+    static public class EmployerActivityReady {
+    }
 }

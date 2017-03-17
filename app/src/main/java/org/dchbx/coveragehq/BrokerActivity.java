@@ -8,7 +8,6 @@ import android.content.res.Configuration;
 import android.os.Bundle;
 import android.support.v4.app.DialogFragment;
 import android.support.v7.app.AlertDialog;
-import android.support.v7.app.AppCompatActivity;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 
@@ -21,10 +20,9 @@ import java.util.ArrayList;
  * Created by plast on 10/27/2016.
  */
 
-public class BrokerActivity extends AppCompatActivity {
+public class BrokerActivity extends BaseActivity {
     private static final String TAG = "BrokerActivity";
 
-    private Messages messages = null;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -34,37 +32,6 @@ public class BrokerActivity extends AppCompatActivity {
         }
         else {
             //I set background images here depending on portrait or landscape orientation
-        }
-
-
-        if (messages == null) {
-            messages = BrokerApplication.getBrokerApplication().getMessages(this);
-        }
-    }
-
-    @Override
-    protected void onResume() {
-        super.onResume();
-        if (messages == null) {
-            messages = BrokerApplication.getBrokerApplication().getMessages(this);
-        }
-    }
-
-    @Override
-    protected void onDestroy(){
-        super.onDestroy();
-        if (messages != null) {
-            messages.release();
-            messages = null;
-        }
-    }
-
-    @Override
-    protected void onPause(){
-        super.onPause();
-        if (messages != null) {
-            messages.release();
-            messages = null;
         }
     }
 

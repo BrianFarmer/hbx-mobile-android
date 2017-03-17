@@ -56,7 +56,7 @@ public class BrokerApplication extends Application {
         }
     }
 
-    public Messages getMessages(BrokerActivity activity) {
+    public Messages getMessages(BaseActivity activity) {
         return new EventBusMessages(activity);
     }
 

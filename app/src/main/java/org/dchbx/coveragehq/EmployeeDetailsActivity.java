@@ -18,6 +18,10 @@ import android.widget.TextView;
 
 import com.microsoft.azure.mobile.analytics.Analytics;
 
+import org.dchbx.coveragehq.models.roster.Dependent;
+import org.dchbx.coveragehq.models.roster.Enrollment;
+import org.dchbx.coveragehq.models.roster.Health;
+import org.dchbx.coveragehq.models.roster.RosterEntry;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 import org.joda.time.LocalDate;
@@ -26,11 +30,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
-import org.dchbx.coveragehq.models.roster.Dependent;
-import org.dchbx.coveragehq.models.roster.Enrollment;
-import org.dchbx.coveragehq.models.roster.Health;
-import org.dchbx.coveragehq.models.roster.RosterEntry;
 
 public class EmployeeDetailsActivity extends BrokerActivity {
     private static String TAG = "EmployeeDetailsActivity";

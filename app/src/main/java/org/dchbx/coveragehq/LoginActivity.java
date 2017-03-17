@@ -238,6 +238,10 @@ public class LoginActivity extends BrokerActivity {
                 haveLoginInfo = true;
                 if (loginResult.useFingerprintSensor()) {
                     lastLoginUsedFingerprint = loginResult.useFingerprintSensor();
+                    if (!SystemUtilities.detectNetwork()){
+                        NetworkErrorDialog.build(this, R.string.app_title, R.string.network_access_error, null);
+                        return;
+                    }
                     checkShowFingerprintDialog();
                 } else {
                     emailAddress.setText(loginResult.getAccountName());
@@ -249,6 +253,10 @@ public class LoginActivity extends BrokerActivity {
             emailAddress.setText("");
             password.setText("");
             rememberMe.setChecked(true);
+        }
+        if (!SystemUtilities.detectNetwork()){
+            NetworkErrorDialog.build(this, R.string.app_title, R.string.network_access_error, null);
+            return;
         }
     }
 
@@ -347,7 +355,7 @@ public class LoginActivity extends BrokerActivity {
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void doThis(Events.Error error) {
         hideProgress();
-        alertDialog(R.string.generic_error_message, R.string.ok);
+        NetworkErrorDialog.build(this, R.string.app_title, R.string.network_access_error, null);
     }
 
     private void hideProgress() {
