@@ -4,8 +4,10 @@ import android.app.SearchManager;
 import android.app.SearchableInfo;
 import android.content.ComponentName;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.res.Resources;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.MenuItemCompat;
@@ -13,6 +15,7 @@ import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.Toolbar;
+import android.telephony.TelephonyManager;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -104,8 +107,48 @@ public class MainActivity extends BrokerActivity {
         navigationView.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
             @Override
             public boolean onNavigationItemSelected(MenuItem item) {
+                //Closing drawer on item click
                 mDrawerLayout.closeDrawers();
-                return HamburgerHelper.handleHamburgerListener(item, mainActivity, getMessages());
+
+
+                switch (item.getItemId()){
+                    case R.id.nav_call_healthlink:
+                        if (((TelephonyManager)BrokerApplication.getBrokerApplication().getSystemService(Context.TELEPHONY_SERVICE)).getPhoneType()
+                                == TelephonyManager.PHONE_TYPE_NONE) {
+                            AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
+                            builder.setMessage("DC Health Link: " + Constants.HbxPhoneNumber)
+                                    .setCancelable(false)
+                                    .setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                                        public void onClick(DialogInterface dialog, int id) {
+                                            dialog.dismiss();
+                                        }
+                                    });
+                            AlertDialog alert = builder.create();
+                            alert.show();
+                        } else {
+                            Intent phoneIntent = new Intent(Intent.ACTION_DIAL);
+                            phoneIntent.setData(Uri.parse("tel:" + Constants.HbxPhoneNumber));
+                            startActivity(phoneIntent);
+                        }
+                        return true;
+                    case R.id.nav_email_healthlink:
+                        Intent emailIntent = new Intent(Intent.ACTION_SENDTO);
+                        emailIntent.setData(Uri.parse("mailto:" + Constants.HbxEmail));
+                        startActivity(emailIntent);
+                        return true;
+                    case R.id.nav_logout:
+                        getMessages().logoutRequest();
+                        Intent i = new Intent(MainActivity.this, RootActivity.class);
+                        i.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                        startActivity(i);
+                        return true;
+                    case R.id.nav_carriers:
+                        Intent carrierIntent = new Intent(mainActivity, CarriersActivity.class);
+                        Log.d(TAG, "onClick: launching carriers activitiy");
+                        mainActivity.startActivity(carrierIntent);
+                        return true;
+                }
+                return false;
             }
         });
 
@@ -185,10 +228,9 @@ public class MainActivity extends BrokerActivity {
 
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void doThis(Events.Error error) {
-        AlertDialog alertDialog = alertDialog("A network error happened. Please login again. ", new DialogClosed() {
+        alertDialog("Error! What should I be showing? " + error.getMessage(), new DialogClosed() {
             @Override
             public void closed() {
-                Intents.restartApp(MainActivity.this);
                 finish();
             }
         });

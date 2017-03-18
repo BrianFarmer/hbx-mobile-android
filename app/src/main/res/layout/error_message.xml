@@ -1,0 +1,55 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                xmlns:tools="http://schemas.android.com/tools"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                style="@style/DialogStyle">
+
+    <TextView
+        android:id="@+id/textTitleBar"
+        style="@style/contactInfoTitleBar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:text="@string/app_title"
+        />
+    <TextView
+        android:id="@+id/textViewErrorMessage"
+        style="@style/security_question"
+        android:layout_marginTop="10sp"
+        android:maxLines="4"
+        android:layout_marginBottom="10sp"
+        android:layout_below="@+id/textTitleBar"
+        />
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layout_below="@+id/textViewErrorMessage"
+        >
+        <Button
+            android:id="@+id/buttonRetry"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="10sp"
+            android:background="@color/alertRed"
+            android:textColor="@color/white"
+            android:textAllCaps="true"
+            android:textSize="15sp"
+            android:text="@string/retry" />
+        <Button
+            android:id="@+id/buttonSettings"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="10sp"
+            android:background="@color/alertRed"
+            android:textColor="@color/white"
+            android:textAllCaps="true"
+            android:textSize="15sp"
+            android:text="@string/settings" />
+    </LinearLayout>
+
+</RelativeLayout>

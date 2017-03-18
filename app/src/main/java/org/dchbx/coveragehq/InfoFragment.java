@@ -84,8 +84,6 @@ public class InfoFragment extends BrokerFragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        init();
-
         try {
 
             view = LayoutInflater.from(getActivity()).inflate(R.layout.info_fragment, null);
@@ -93,12 +91,18 @@ public class InfoFragment extends BrokerFragment {
             Log.e(TAG, "Exception infloating view", e);
             throw e;
         }
-
-
+        init();
         return view;
     }
 
+
+
     private boolean fetchData() {
+        EmployerDetailsActivity activity = (EmployerDetailsActivity) getActivity();
+        if (activity.isInErrorState()){
+            return false;
+        }
+
         if (employer == null) {
             brokerClientId = getBrokerActivity().getIntent().getStringExtra(Intents.BROKER_CLIENT_ID);
             if (brokerClientId == null) {
@@ -126,7 +130,16 @@ public class InfoFragment extends BrokerFragment {
     @Override
     public void onResume(){
         super.onResume();
+    }
+
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void doThis(Events.EmployerActivityReady employerReady) {
         fetchData();
+    }
+
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void doThis(Events.Error error){
+        Log.d(TAG, "handling error in InfoFragment");
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)

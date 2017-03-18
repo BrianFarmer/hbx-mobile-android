@@ -23,7 +23,6 @@ import android.widget.Spinner;
 import android.widget.TabHost;
 import android.widget.TabWidget;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.microsoft.azure.mobile.analytics.Analytics;
 
@@ -68,6 +67,7 @@ public class EmployerDetailsActivity extends BrokerActivity {
     private BrokerClient brokerClient;
     private boolean haveBroker;
     private ArrayList<BrokerFragment> fragments = new ArrayList<>(4);
+    private boolean inErrorState = false;
 
     public EmployerDetailsActivity(){
         Log.d(TAG, "In EmployerDetailsActivity Ctor");
@@ -75,8 +75,19 @@ public class EmployerDetailsActivity extends BrokerActivity {
 
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void doThis(Events.Error error){
-        Toast toast = Toast.makeText(this, "EmployerDetails: Error retrieving employer data.", Toast.LENGTH_LONG);
-        toast.show();
+        if (inErrorState){
+            return;
+        }
+        inErrorState = true;
+        final EmployerDetailsActivity _this = this;
+        NetworkErrorDialog.build(this, R.string.app_title, R.string.network_access_error, new NetworkErrorDialog.Handler(){
+            @Override
+            public void finished() {
+                inErrorState = false;
+                _this.initialize();
+                getMessages().EmployerActivityReady();
+            }
+        });
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)
@@ -189,6 +200,7 @@ public class EmployerDetailsActivity extends BrokerActivity {
         if (haveBroker) {
             configToolbar();
         }
+        getMessages().EmployerActivityReady();
     }
 
     private void populateStatus() {
@@ -290,10 +302,14 @@ public class EmployerDetailsActivity extends BrokerActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        initialize();
+    }
+
+    protected void initialize(){
         int viewId;
-
-
         Intent intent = getIntent();
+
         clientId = intent.getStringExtra(BROKER_CLIENT_ID);
         if (clientId == null) {
             Log.e(TAG, "onCreate: logged in as client since no client id found in intent");
@@ -475,5 +491,9 @@ public class EmployerDetailsActivity extends BrokerActivity {
 
     public String getRosterFilter() {
         return rosterFilter;
+    }
+
+    public boolean isInErrorState() {
+        return inErrorState;
     }
 }

@@ -3,10 +3,11 @@ package org.dchbx.coveragehq;
 import android.util.Log;
 import android.widget.ImageView;
 
+import org.joda.time.LocalDate;
+
 import org.dchbx.coveragehq.models.brokeragency.BrokerAgency;
 import org.dchbx.coveragehq.models.employer.Employer;
 import org.dchbx.coveragehq.models.roster.Roster;
-import org.joda.time.LocalDate;
 
 public class Events {
     static int lastCancelableRequestId = 0;
@@ -61,7 +62,7 @@ public class Events {
         private boolean rememberMe;
         private final boolean useFingerprintSensor;
 
-        public LoginRequest(CharSequence accountName, CharSequence password, boolean rememberMe, boolean useFingerprintSensor){
+        public LoginRequest(CharSequence accountName, CharSequence password, Boolean rememberMe, boolean useFingerprintSensor){
             this.accountName = accountName;
             this.password = password;
             this.rememberMe = rememberMe;
@@ -682,6 +683,6 @@ public class Events {
         }
     }
 
-    static public class GetGlossary extends CancelableRequest {
+    static public class EmployerActivityReady {
     }
 }

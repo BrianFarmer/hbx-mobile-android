@@ -27,4 +27,5 @@ public interface Messages {
     void relogin(String account, String password);
     void validateLogin();
     void decryptAccountAndPassword();
+    void EmployerActivityReady();
 }

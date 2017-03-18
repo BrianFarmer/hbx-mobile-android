@@ -84,6 +84,13 @@ public class BrokerWorker extends IntentService {
     public void doThis(Events.GetGitAccounts getGitAccounts) {
         try {
             Log.d(TAG, "Getting git accounts");
+
+            if (!SystemUtilities.detectNetwork()){
+                Log.e(TAG, "no network, returning from BrokerWorker");
+                BrokerWorker.eventBus.post(new Events.Error("No Networking", null));
+                return;
+            }
+
             ServerConfiguration serverConfiguration = config.getServerConfiguration();
             UrlHandler urlHandler = config.getUrlHandler();
             String urlRoot = getGitAccounts.getUrlRoot();
@@ -106,6 +113,14 @@ public class BrokerWorker extends IntentService {
     @Subscribe(threadMode = ThreadMode.BACKGROUND)
     public void doThis(Events.FingerprintLogin fingerprintLogin){
         try {
+            Log.d(TAG, "In processing Events.FingerprintLogin");
+
+            if (!SystemUtilities.detectNetwork()){
+                Log.e(TAG, "no network, returning from BrokerWorker");
+                BrokerWorker.eventBus.post(new Events.Error("No Networking", null));
+                return;
+            }
+
             ServerConfiguration serverConfiguration = config.getServerConfiguration();
             CoverageConnection.LoginResult result = config.getCoverageConnection().loginAfterFingerprintAuthenticated();
             Log.d(TAG, "FingerprintLogin: got sessionid");
@@ -139,6 +154,12 @@ public class BrokerWorker extends IntentService {
         try {
             ServerConfiguration serverConfiguration = config.getServerConfiguration();
             Log.d(TAG, "Received LoginRequest message");
+
+            if (!SystemUtilities.detectNetwork()){
+                Log.e(TAG, "no network, returning from BrokerWorker");
+                BrokerWorker.eventBus.post(new Events.Error("No Networking", null));
+                return;
+            }
 
             String accountName = loginRequest.getAccountName().toString();
             String password = loginRequest.getPassword().toString();
@@ -184,6 +205,13 @@ public class BrokerWorker extends IntentService {
             ServerConfiguration serverConfiguration = config.getServerConfiguration();
 
             Log.d(TAG, "Received SecurityAnswer message");
+
+            if (!SystemUtilities.detectNetwork()){
+                Log.e(TAG, "no network, returning from BrokerWorker");
+                BrokerWorker.eventBus.post(new Events.Error("No Networking", null));
+                return;
+            }
+
             String securityAnswerString = securityAnswer.getSecurityAnswer();
             Log.d(TAG, "LoginRequest: Getting sessionid");
             config.getCoverageConnection().checkSecurityAnswer(securityAnswerString);
@@ -195,7 +223,7 @@ public class BrokerWorker extends IntentService {
                 BrokerWorker.eventBus.post(new Events.LoginRequestResult(Events.LoginRequestResult.Success, userType));
             }
             updateSessionTimer();
-        } catch (Exception e) {
+        }  catch (Exception e) {
             Log.e(TAG, "Exception processing SecurityAnswer");
             e.printStackTrace();
             BrokerWorker.eventBus.post(new Events.Error("Error logging in", "Events.SecurityAnswer"));
@@ -236,6 +264,7 @@ public class BrokerWorker extends IntentService {
     @Subscribe(threadMode = ThreadMode.BACKGROUND)
     public void doThis(Events.LogoutRequest logoutRequest) {
         Log.d(TAG, "Received LogoutRequest message");
+
         config.getCoverageConnection().logout(logoutRequest.getClearAccount());
         if (sessionTimeoutTimer != null){
             sessionTimeoutTimer.cancel();
@@ -252,6 +281,12 @@ public class BrokerWorker extends IntentService {
     public void doThis(Events.GetEmployer getEmployer) {
         try {
             Log.d(TAG, "Received GetEmployer");
+
+            if (!SystemUtilities.detectNetwork()){
+                Log.e(TAG, "no network, returning from BrokerWorker");
+                BrokerWorker.eventBus.post(new Events.Error("No Networking", null));
+                return;
+            }
 
             DateTime now = DateTime.now();
             CoverageConnection coverageConnection = config.getCoverageConnection();
@@ -280,6 +315,13 @@ public class BrokerWorker extends IntentService {
     public void doThis(Events.GetRoster getRoster) {
         try {
             Log.d(TAG, "Received GetRoster");
+
+            if (!SystemUtilities.detectNetwork()){
+                Log.e(TAG, "no network, returning from BrokerWorker");
+                BrokerWorker.eventBus.post(new Events.Error("No Networking", null));
+                return;
+            }
+
             DateTime now = DateTime.now();
             String employerId = getRoster.getEmployerId();
             Roster roster;
@@ -305,6 +347,13 @@ public class BrokerWorker extends IntentService {
     public void doThis(Events.GetBrokerAgency getBrokerAgency) {
         try {
             Log.d(TAG, "Received GetBrokerAgency message.");
+
+            if (!SystemUtilities.detectNetwork()){
+                Log.e(TAG, "no network, returning from BrokerWorker");
+                BrokerWorker.eventBus.post(new Events.Error("No Networking", null));
+                return;
+            }
+
             BrokerAgency brokerAgency = config.getCoverageConnection().getBrokerAgency(DateTime.now());
             BrokerWorker.eventBus.post(new Events.GetBrokerAgencyResult(getBrokerAgency.getId(), brokerAgency));
             updateSessionTimer();
@@ -322,6 +371,13 @@ public class BrokerWorker extends IntentService {
     public void doThis(Events.GetCarriers getCarriers) {
         try {
             Log.d(TAG, "Received GetCarriers message");
+
+            if (!SystemUtilities.detectNetwork()){
+                Log.e(TAG, "no network, returning from BrokerWorker");
+                BrokerWorker.eventBus.post(new Events.Error("No Networking", null));
+                return;
+            }
+
             Carriers carriers = config.getCoverageConnection().getCarriers();
             BrokerWorker.eventBus.post(new Events.Carriers(getCarriers.getId(), carriers));
         } catch (Exception e) {
@@ -338,6 +394,12 @@ public class BrokerWorker extends IntentService {
     public void doThis(Events.GetEmployee getEmployee) {
         try {
             Log.d(TAG, "Received GetEmployee message");
+
+            if (!SystemUtilities.detectNetwork()){
+                Log.e(TAG, "no network, returning from BrokerWorker");
+                BrokerWorker.eventBus.post(new Events.Error("No Networking", null));
+                return;
+            }
 
             RosterEntry rosterEntry;
             String employerId = getEmployee.getEmployerId();
@@ -378,6 +440,8 @@ public class BrokerWorker extends IntentService {
 
     @Subscribe(threadMode = ThreadMode.BACKGROUND)
     public void doThis(Events.StartSessionTimeout startSessionTimeout) {
+        Log.d(TAG, "processing Events.StartSessionTimeout");
+
         countdownTimerTicksLeft = BuildConfig2.getTimeoutCountdownSeconds();
         countdownTimer = new Timer();
         countdownTimer.schedule(new TimerTask() {
@@ -404,7 +468,14 @@ public class BrokerWorker extends IntentService {
     @Subscribe(threadMode = ThreadMode.BACKGROUND)
     public void doThis(Events.StayLoggedIn stayLoggedIn) {
         boolean success = false;
+
         try {
+            if (!SystemUtilities.detectNetwork()){
+                Log.e(TAG, "no network, returning from BrokerWorker");
+                BrokerWorker.eventBus.post(new Events.Error("No Networking", null));
+                return;
+            }
+
             config.getCoverageConnection().stayLoggedIn();
             success = true;
         } catch (Exception e) {
@@ -421,6 +492,7 @@ public class BrokerWorker extends IntentService {
 
     @Subscribe(threadMode = ThreadMode.BACKGROUND)
     public void doThis(Events.GetFingerprintStatus getFingerprintStatus){
+        Log.d(TAG, "processing Events.GetFingerprintStatus");
         FingerprintManager.DetectFingerprintResult detect = fingerprintManager.detect();
         eventBus.post(new Events.FingerprintStatus(detect.osSupportsFingerprint, detect.hardwarePresent, detect.fingerprintRegistered));
     }
@@ -433,6 +505,13 @@ public class BrokerWorker extends IntentService {
     public void doThis(Events.AuthenticateFingerprintEncrypt authenticateFingerprint) {
         ServerConfiguration serverConfiguration = config.getServerConfiguration();
         try {
+            Log.d(TAG, "processing AuthenticateFingerprintEncrypt");
+
+            if (!SystemUtilities.detectNetwork()){
+                Log.e(TAG, "no network, returning from BrokerWorker");
+                BrokerWorker.eventBus.post(new Events.Error("No Networking", null));
+                return;
+            }
 
             fingerprintManager.authenticate(serverConfiguration.accountName, serverConfiguration.password, new FingerprintManager.IAuthenticationEncryptResult() {
                 @Override
@@ -473,6 +552,13 @@ public class BrokerWorker extends IntentService {
     public void doThis(Events.AuthenticateFingerprintDecrypt authenticateFingerprint) {
         try {
             final ServerConfiguration serverConfiguration = BuildConfig2.getServerConfiguration();
+
+            if (!SystemUtilities.detectNetwork()){
+                Log.e(TAG, "no network, returning from BrokerWorker");
+                BrokerWorker.eventBus.post(new Events.Error("No Networking", null));
+                return;
+            }
+
             IServerConfigurationStorageHandler serverConfigurationStorageHandler = BuildConfig2.getServerConfigurationStorageHandler();
             serverConfigurationStorageHandler.read(serverConfiguration);
 
@@ -515,6 +601,14 @@ public class BrokerWorker extends IntentService {
     @Subscribe(threadMode = ThreadMode.BACKGROUND)
     public void doThis(Events.Relogin relogin) {
         try {
+            Log.d(TAG, "processing relogin");
+
+            if (!SystemUtilities.detectNetwork()){
+                Log.e(TAG, "no network, returning from BrokerWorker");
+                BrokerWorker.eventBus.post(new Events.Error("No Networking", null));
+                return;
+            }
+
             ServerConfiguration serverConfiguration = config.getServerConfiguration();
             CoverageConnection.LoginResult loginResult = config.getCoverageConnection().revalidateUserAndPassword();
             Log.d(TAG, "login result: " + loginResult.toString());
