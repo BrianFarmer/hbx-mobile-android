@@ -2,7 +2,9 @@ package org.dchbx.coveragehq;
 
 import android.content.Intent;
 import android.content.res.Resources;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
+import android.support.v4.app.FragmentTabHost;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
@@ -14,6 +16,7 @@ import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.Spinner;
+import android.widget.TabHost;
 import android.widget.TextView;
 
 import com.microsoft.azure.mobile.analytics.Analytics;
@@ -32,18 +35,21 @@ import java.util.List;
 import java.util.Map;
 
 public class EmployeeDetailsActivity extends BrokerActivity {
+    private static final String HOME_TAB = "HomeTab";
     private static String TAG = "EmployeeDetailsActivity";
 
     private String employeeId;
     private String employerId;
     private RosterEntry employee;
-    //private BrokerClient brokerClient;
-    //private Employer employer;
+
     private LocalDate coverageYear;
 
     private boolean detailsVisible = true;
     private boolean healthPlanVisible = false;
     private boolean dependentsVisible = false;
+
+    private LocalDate currentDate = null;
+    private Enrollment currentEnrollment;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -61,52 +67,8 @@ public class EmployeeDetailsActivity extends BrokerActivity {
             coverageYear = LocalDate.parse(intent.getStringExtra(Intents.COVERAGE_YEAR));
         }
         getMessages().getEmployee(employeeId, employerId);
-//        getMessages().getEmployer(employerId);
 
         configToolbar();
-
-        ImageView imageViewDetailsDrawer = (ImageView)findViewById(R.id.imageViewDetailsDrawer);
-        imageViewDetailsDrawer.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                setVisibility(R.string.details_group, !detailsVisible, R.id.imageViewDetailsDrawer, R.drawable.blue_uparrow, R.drawable.blue_circle_plus);
-                detailsVisible = !detailsVisible;
-            }
-        });
-        ImageView imageViewHealthPlanDrawer = (ImageView)findViewById(R.id.imageViewHealthPlanDrawer);
-        imageViewHealthPlanDrawer.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                healthPlanVisible = !healthPlanVisible;
-                if (healthPlanVisible){
-                    ArrayList<Integer> ids = new ArrayList<Integer>();
-                    ids.add(R.id.textViewNotEnrolled);
-                    try {
-                        if (BrokerUtilities.getEnrollmentForCoverageYear(employee, coverageYear).health != null) {
-                            setVisibility(R.string.health_plan_group_tag, true, R.id.imageViewHealthPlanDrawer, R.drawable.blue_uparrow, R.drawable.blue_circle_plus, null, ids);
-                        } else {
-                            setVisibility(R.string.health_plan_group_tag, true, R.id.imageViewHealthPlanDrawer, R.drawable.blue_uparrow, R.drawable.blue_circle_plus, ids, null);
-                        }
-                    } catch (Exception e) {
-                        Log.e(TAG, "Error setting health plan visibility", e);
-                    }
-                } else {
-                    setVisibility(R.string.health_plan_group_tag, false, R.id.imageViewHealthPlanDrawer, R.drawable.blue_uparrow, R.drawable.blue_circle_plus);
-                }
-            }
-        });
-        ImageView imageViewDependentsDrawer = (ImageView)findViewById(R.id.imageViewDependentsDrawer);
-        imageViewDependentsDrawer.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                setVisibility(R.string.dependents_group_tag, !dependentsVisible, R.id.imageViewDependentsDrawer, R.drawable.blue_uparrow, R.drawable.blue_circle_plus);
-                dependentsVisible = !dependentsVisible;
-            }
-        });
-
-        setVisibility(R.string.details_group, detailsVisible, R.id.imageViewDetailsDrawer, R.drawable.blue_uparrow, R.drawable.blue_circle_plus);
-        setVisibility(R.string.health_plan_group_tag, healthPlanVisible, R.id.imageViewHealthPlanDrawer, R.drawable.blue_uparrow, R.drawable.blue_circle_plus);
-        setVisibility(R.string.dependents_group_tag, dependentsVisible, R.id.imageViewDependentsDrawer, R.drawable.blue_uparrow, R.drawable.blue_circle_plus);
     }
 
     private void configToolbar() {
@@ -154,14 +116,13 @@ public class EmployeeDetailsActivity extends BrokerActivity {
 
         if (employee.enrollments != null
             && employee.enrollments.size() > 0) {
-
+            currentEnrollment = BrokerUtilities.getEnrollment(employee, currentDate);
 
             TextView textViewEmployeeName = (TextView) findViewById(R.id.textViewEmployeeName);
             textViewEmployeeName.setText(BrokerUtilities.getFullName(employee));
 
             Enrollment enrollment = null;
-            if (employee.enrollments != null
-                    && employee.enrollments.size() > 1) {
+            if (employee.enrollments.size() > 1) {
 
                 TextView textViewCoverageYear = (TextView) findViewById(R.id.textViewCoverageYear);
                 textViewCoverageYear.setVisibility(View.INVISIBLE);
@@ -275,51 +236,52 @@ public class EmployeeDetailsActivity extends BrokerActivity {
         textViewEnrollmentStatus.setTextColor(ContextCompat.getColor(this, Utilities.colorFromEmployeeStatus(enrollment.health.status)));
 
 
-        TextView textViewBenefitGroupField = (TextView) findViewById(R.id.textViewBenefitGroupField);
-        if (health.benefitGroupName != null) {
-            textViewBenefitGroupField.setText(String.format(resources.getString(R.string.benefit_group_field), health.benefitGroupName));
-        } else {
-            textViewBenefitGroupField.setText(String.format(resources.getString(R.string.benefit_group_field), health.status));
-        }
+    }
 
-        TextView textViewPlanNameField = (TextView) findViewById(R.id.textViewPlanNameField);
-        if (health.planName != null) {
-            textViewPlanNameField.setText(String.format(resources.getString(R.string.plan_name_field), health.planName));
-        } else {
-            textViewPlanNameField.setText(String.format(resources.getString(R.string.plan_name_field), health.status));
-        }
-        TextView textViewPlanStartField = (TextView) findViewById(R.id.textViewPlanStartField);
-        if (health.terminatedOn != null){
-            textViewPlanStartField.setText(String.format(resources.getString(R.string.plan_start_field), health.terminatedOn));
-        } else {
-            textViewPlanStartField.setText(String.format(resources.getString(R.string.plan_start_field), Utilities.DateAsString(coverageYear)));
-        }
-        TextView textViewMetalLevelField = (TextView) findViewById(R.id.textViewMetalLevelField);
-        if (health.metalLevel != null){
-            textViewMetalLevelField.setText(String.format(resources.getString(R.string.metal_level_field), health.metalLevel));
-        } else {
-            textViewMetalLevelField.setText(String.format(resources.getString(R.string.metal_level_field), health.status));
-        }
-        TextView textViewPremiums = (TextView) findViewById(R.id.textViewPremiums);
-        String totalPremiumString = "";
-        if (health.totalPremium != null) {
-            totalPremiumString = String.format("$%.2f", health.totalPremium);
-        }
-        textViewPremiums.setText(totalPremiumString);
+    private void populateTags(){
+        FragmentTabHost tabHost = (FragmentTabHost) findViewById(R.id.tabhost);
+        tabHost.setup(this, getSupportFragmentManager(), android.R.id.tabcontent);
 
-        TextView textViewEmployerContribution = (TextView) findViewById(R.id.textViewEmployerContribution);
-        String employerContributionString = "";
-        if (health.employerContribution != null) {
-            employerContributionString = String.format("$%.2f", health.employerContribution);
-        }
-        textViewEmployerContribution.setText(employerContributionString);
+        Drawable drawable = ContextCompat.getDrawable(this, R.drawable.info_tab_normal);
+        TabHost.TabSpec tabSpec = tabHost.newTabSpec(INFO_TAB)
+                .setIndicator(createTabIndicator(inflater, tabHost, R.string.info_tab_name, R.drawable.info_tab_states, true));
 
-        TextView textViewEmployeeCost = (TextView) findViewById(R.id.textViewEmployeeCost);
-        String employeeCostString = "";
-        if (health.employeeCost != null){
-            employeeCostString = String.format("$%.2f", health.employeeCost);
+        try {
+            tabHost.addTab(
+                    tabSpec,
+                    InfoFragment.class, null);
+        } catch (Throwable e){
+            Log.e(TAG, "exception", e);
         }
-        textViewEmployeeCost.setText(employeeCostString);
+        tabHost.addTab(
+                tabHost.newTabSpec(HOME_TAB)
+                        .setIndicator(createTabIndicator(inflater, tabHost, R.string.roster_tab_name, R.drawable.roster_tab_states, false)),
+                RosterFragment.class, null);
+
+        tabHost.setOnTabChangedListener(new TabHost.OnTabChangeListener() {
+            @Override
+            public void onTabChanged(String tabId) {
+                selectedTabChanged(tabId);
+            }
+        });
+
+    }
+
+    public View createTabIndicator(LayoutInflater inflater, FragmentTabHost tabHost, int textResource, int iconResource, boolean selected) {
+        View tabIndicator = inflater.inflate(R.layout.tab_indicator, tabHost.getTabWidget(), false);
+        TextView tabTitle = (TextView) tabIndicator.findViewById(R.id.tabtitle);
+        tabTitle.setText(textResource);
+        ImageView tabImage = (ImageView) tabIndicator.findViewById(R.id.tabicon);
+        tabImage.setImageResource(iconResource);
+
+        if (selected){
+            tabIndicator.setBackgroundColor(ContextCompat.getColor(this, R.color.selected_tab_color));
+            tabTitle.setTextColor(ContextCompat.getColor(this, R.color.unselected_tab_color));
+        }else {
+            tabIndicator.setBackgroundColor(ContextCompat.getColor(this, R.color.unselected_tab_color));
+            tabTitle.setTextColor(ContextCompat.getColor(this, R.color.selected_tab_color));
+        }
+        return tabIndicator;
     }
 
     public int findId(){

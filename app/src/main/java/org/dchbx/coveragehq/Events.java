@@ -3,6 +3,7 @@ package org.dchbx.coveragehq;
 import android.util.Log;
 import android.widget.ImageView;
 
+import org.dchbx.coveragehq.models.roster.RosterEntry;
 import org.joda.time.LocalDate;
 
 import org.dchbx.coveragehq.models.brokeragency.BrokerAgency;
@@ -684,5 +685,10 @@ public class Events {
     }
 
     static public class EmployerActivityReady {
+    }
+
+    static public class EmployeeFragmentUpdate {
+        public RosterEntry employee;
+        public LocalDate currentEnrollmentStartDate;
     }
 }

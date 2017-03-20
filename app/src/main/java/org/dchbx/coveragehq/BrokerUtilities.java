@@ -1,6 +1,9 @@
 package org.dchbx.coveragehq;
 
 import android.util.Log;
+import android.view.View;
+import android.widget.Spinner;
+import android.widget.TextView;
 
 import org.dchbx.coveragehq.models.brokeragency.BrokerAgency;
 import org.dchbx.coveragehq.models.brokeragency.BrokerClient;
@@ -603,5 +606,14 @@ public class BrokerUtilities {
         }
 
         return mostRecent;
+    }
+
+    public static Enrollment getEnrollment(RosterEntry employee, LocalDate date) {
+        for (Enrollment enrollment : employee.enrollments) {
+            if (enrollment.startOn.compareTo(date) == 0) {
+                return enrollment;
+            }
+        }
+        return null;
     }
 }

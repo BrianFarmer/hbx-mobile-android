@@ -206,4 +206,9 @@
     <string name="exit">Exit</string>
     <string name="network_access_error">The is application requires network access. Please correct this  or try again later.</string>
     <string name="retry">Retry</string>
+    <string name="call_employee">Call Employee</string>
+    <string name="send_sms_text_message_to_employee">Send SMS to Employee</string>
+    <string name="send_email_to_employee">Send Email to Employee</string>
+    <string name="open_employee_details">Employee Details</string>
+    <string name="aca_glossary">ACA Glossary</string>
 </resources>

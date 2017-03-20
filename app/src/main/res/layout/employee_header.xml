@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              android:orientation="vertical"
+              android:layout_width="match_parent"
+              android:layout_height="wrap_content">
+
+    <TextView
+        android:text=""
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:id="@+id/textViewEmployeeName"
+        style="@style/Title2"
+        />
+
+    <LinearLayout
+        android:id="@+id/action_buttons_row"
+        android:orientation="horizontal"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/textViewEmployeeName"
+        android:visibility="gone"
+        android:layout_centerHorizontal="true" >
+        <ImageButton
+            android:id="@+id/imageButtonPhone"
+            android:src="@drawable/phoneicon"
+            style="@style/IconButton"
+            android:contentDescription="@string/call_employee"
+            />
+
+        <ImageButton
+            android:id="@+id/imageButtonChat"
+            android:src="@drawable/emailicon_states"
+            style="@style/IconButton"
+            android:contentDescription="@string/send_sms_text_message_to_employee"
+            />
+
+        <ImageButton
+            android:id="@+id/imageButtonEmail"
+            android:src="@drawable/messageicon"
+            style="@style/IconButton"
+            android:contentDescription="@string/send_email_to_employee"
+            />
+    </LinearLayout>
+    <TextView
+        android:id="@+id/textViewCoverageYear"
+        android:text="@string/coverage_year_label"
+        android:layout_below="@+id/action_buttons_row"
+        style="@style/Subtitle2"
+        />
+    <Spinner
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/action_buttons_row"
+        android:layout_centerHorizontal="true"
+        android:id="@+id/spinnerCoverageYear"
+        style="@style/Subtitle2"
+        />
+    <TextView
+        android:id="@+id/textViewCoverageYearLabel"
+        android:text="@string/coverage_year_label"
+        android:layout_below="@+id/spinnerCoverageYear"
+        style="@style/Subtitle2"
+        />
+    <TextView
+        android:text=""
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/textViewCoverageYearLabel"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:id="@+id/textViewEnrollmentStatus"
+        style="@style/Subtitle2"
+        />
+
+</RelativeLayout>

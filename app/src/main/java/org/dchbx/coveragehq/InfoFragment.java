@@ -43,7 +43,7 @@ import static org.dchbx.coveragehq.RosterFragment.WaivedStatus;
  */
 
 public class InfoFragment extends BrokerFragment {
-    private static String TAG = "BrokerFragment";
+    private static String TAG = "InfoFragment";
 
     private String brokerClientId;
     private Roster roster = null;
