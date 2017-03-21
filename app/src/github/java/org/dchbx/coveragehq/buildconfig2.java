@@ -100,6 +100,7 @@ class BuildConfig2 {
         ArrayList urls = new ArrayList();
 
         urls.add("Choose a repository");
+        urls.add("https://raw.githubusercontent.com/dchealthlink/HBX-mobile-app-APIs/PlayStoreScreenshots/accounts");
         urls.add("https://raw.githubusercontent.com/dchealthlink/HBX-mobile-app-APIs/master/generated");
         urls.add("https://raw.githubusercontent.com/BrianFarmer/HBX-mobile-app-APIs/master/from_templates/generated");
         urls.add("https://raw.githubusercontent.com/BrianFarmer/HBX-mobile-app-APIs/TemplatedTests/accounts");
@@ -110,6 +111,7 @@ class BuildConfig2 {
     public static ArrayList<String> getUrlLabels() {
         ArrayList urls = new ArrayList();
         urls.add("Choose a repository");
+        urls.add("screen shots");
         urls.add("HBX Mobile app api");
         urls.add("Brian's Master Fork");
         urls.add("Brian's Fork");
