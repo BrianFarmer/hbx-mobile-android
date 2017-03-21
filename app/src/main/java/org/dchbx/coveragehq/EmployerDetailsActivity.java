@@ -411,16 +411,10 @@ public class EmployerDetailsActivity extends BrokerActivity {
         TabHost.TabSpec tabSpec = tabHost.newTabSpec(INFO_TAB)
                 .setIndicator(createTabIndicator(inflater, tabHost, R.string.info_tab_name, R.drawable.info_tab_states, true));
 
-        try {
-            tabHost.addTab(
-                    tabSpec,
-                    InfoFragment.class, null);
-        } catch (Throwable e){
-            Log.e(TAG, "exception", e);
-        }
+        tabHost.addTab(tabSpec, InfoFragment.class, null);
         tabHost.addTab(
                 tabHost.newTabSpec(ROSTER_TAB)
-                .setIndicator(createTabIndicator(inflater, tabHost, R.string.roster_tab_name, R.drawable.roster_tab_states, false)),
+                    .setIndicator(createTabIndicator(inflater, tabHost, R.string.roster_tab_name, R.drawable.roster_tab_states, false)),
                 RosterFragment.class, null);
         tabHost.addTab(
                 tabHost.newTabSpec(COSTS_TAB)
