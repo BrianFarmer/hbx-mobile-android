@@ -206,4 +206,5 @@
     <string name="exit">Exit</string>
     <string name="network_access_error">The is application requires network access. Please correct this  or try again later.</string>
     <string name="retry">Retry</string>
+    <string name="hbx_mail_url">mailto:info@dchealthlink.com?subject=DC Health Link SmallBiz for Employers and Brokers</string>
 </resources>

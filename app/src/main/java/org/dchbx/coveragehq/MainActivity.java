@@ -133,7 +133,7 @@ public class MainActivity extends BrokerActivity {
                         return true;
                     case R.id.nav_email_healthlink:
                         Intent emailIntent = new Intent(Intent.ACTION_SENDTO);
-                        emailIntent.setData(Uri.parse("mailto:" + Constants.HbxEmail));
+                        emailIntent.setData(Uri.parse(BrokerApplication.getBrokerApplication().getString(R.string.hbx_mail_url)));
                         startActivity(emailIntent);
                         return true;
                     case R.id.nav_logout:
