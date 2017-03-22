@@ -2,8 +2,12 @@ package org.dchbx.coveragehq;
 
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.util.Log;
+
+import java.util.Map;
 
 public class ConfigurationStorageHandler extends IServerConfigurationStorageHandler {
+    private static String TAG = "ConfigurationStorage";
 
     @Override
     public void store(ServerConfiguration serverConfiguration) {
@@ -41,6 +45,6 @@ public class ConfigurationStorageHandler extends IServerConfigurationStorageHand
         SharedPreferences sharedPref = brokerApplication.getSharedPreferences(brokerApplication.getString(R.string.sharedpreferencename), Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = sharedPref.edit();
         editor.clear();
-        editor.commit();
+        editor.apply();
     }
 }

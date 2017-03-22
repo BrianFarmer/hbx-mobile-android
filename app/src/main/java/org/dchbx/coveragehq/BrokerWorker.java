@@ -164,6 +164,10 @@ public class BrokerWorker extends IntentService {
             String accountName = loginRequest.getAccountName().toString();
             String password = loginRequest.getPassword().toString();
             boolean rememberMe = loginRequest.getRememberMe();
+            if (!rememberMe){
+                config.getCoverageConnection().clearStorageHandler.clear();
+            }
+
             boolean useFingerprintSensor = loginRequest.useFingerprintSensor();
             Log.d(TAG, "LoginRequest: Getting sessionid");
             CoverageConnection.LoginResult result = config.getCoverageConnection().validateUserAndPassword(accountName, password, rememberMe, useFingerprintSensor);

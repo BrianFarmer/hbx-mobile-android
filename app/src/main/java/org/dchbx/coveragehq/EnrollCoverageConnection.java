@@ -34,7 +34,9 @@ public class EnrollCoverageConnection extends CoverageConnection {
         UrlHandler.PostParameters securityAnswerPutParameters = enrollUrlHandler.getSecurityAnswerPostParameters(securityAnswer);
         ConnectionHandler.PostResponse postResponse = connectionHandler.post(securityAnswerPutParameters);
         enrollUrlHandler.processSecurityAnswerResponse(postResponse);
-        clearStorageHandler.store(serverConfiguration);
+        if (serverConfiguration.rememberMe) {
+            clearStorageHandler.store(serverConfiguration);
+        }
     }
 
     public void stayLoggedIn() throws Exception {
