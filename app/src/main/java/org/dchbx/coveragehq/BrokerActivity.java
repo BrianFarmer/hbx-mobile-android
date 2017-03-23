@@ -35,6 +35,20 @@ public class BrokerActivity extends BaseActivity {
         }
     }
 
+    @Override
+    protected void onResume(){
+        super.onResume();
+        getMessages().testTimeOut();
+    }
+
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void doThis(Events.TestTimeoutResult testTimeoutResult) {
+        if (testTimeoutResult.timedOut){
+            Intents.restartApp(this);
+            finish();
+        }
+    }
+
     protected void setVisibility(int tagResourceId, boolean visible, int imageViewId, int openImageId, int closedImageId) {
         final ViewGroup viewGroup = (ViewGroup) ((ViewGroup) this
                 .findViewById(android.R.id.content)).getChildAt(0);

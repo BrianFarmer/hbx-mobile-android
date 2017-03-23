@@ -211,8 +211,17 @@ public class MainActivity extends BrokerActivity {
     @Override
     protected void onResume() {
         super.onResume();
+        getMessages().testTimeOut();
+    }
 
-        getMessages().getBrokerAgency();
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void doThis(Events.TestTimeoutResult testTimeoutResult) {
+        if (testTimeoutResult.timedOut){
+            Intents.restartApp(this);
+            finish();
+        } else {
+            getMessages().getBrokerAgency();
+        }
     }
 
     private void showEmployer() {

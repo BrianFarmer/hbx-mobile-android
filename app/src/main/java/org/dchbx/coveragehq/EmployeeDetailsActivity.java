@@ -105,6 +105,20 @@ public class EmployeeDetailsActivity extends BrokerActivity {
         setVisibility(R.string.dependents_group_tag, dependentsVisible, R.id.imageViewDependentsDrawer, R.drawable.blue_uparrow, R.drawable.blue_circle_plus);
     }
 
+    @Override
+    protected void onResume(){
+        super.onResume();
+        getMessages().testTimeOut();
+    }
+
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void doThis(Events.TestTimeoutResult testTimeoutResult) {
+        if (testTimeoutResult.timedOut){
+            Intents.restartApp(this);
+            finish();
+        }
+    }
+
     private void configToolbar() {
         // Initializing Toolbar and setting it as the actionbar
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);

@@ -139,5 +139,10 @@ public class EventBusMessages implements Messages {
     public void EmployerActivityReady() {
         eventBus.post(new Events.EmployerActivityReady());
     }
+
+    @Override
+    public void testTimeOut() {
+        eventBus.post(new Events.TestTimeout());
+    }
 }
 

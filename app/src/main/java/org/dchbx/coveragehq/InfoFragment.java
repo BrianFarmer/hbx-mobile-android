@@ -345,7 +345,7 @@ public class InfoFragment extends BrokerFragment {
                     initGoneControls(R.id.textViewDaysLeftLabel, R.id.textViewDaysLeft);
                     initGoneControls(R.id.textViewEmployerApplicationDueLabel, R.id.textViewEmployerApplicationDue);
                     initGoneControls(R.id.textViewCoverageBeginsLabel, R.id.textViewCoverageBegins);
-                    initVisibleControls(R.id.textViewRenewalAvailableLabel, R.id.textViewRenewalAvailable, planYearForCoverageYear.openEnrollmentBegins.plusMonths(9));
+                    initVisibleControls(R.id.textViewRenewalAvailableLabel, R.id.textViewRenewalAvailable, planYearForCoverageYear.planYearBegins.plusMonths(9));
                 }
                 else {
                     if (planYearForCoverageYear.openEnrollmentBegins != null) {

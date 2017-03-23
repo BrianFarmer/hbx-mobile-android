@@ -28,4 +28,5 @@ public interface Messages {
     void validateLogin();
     void decryptAccountAndPassword();
     void EmployerActivityReady();
+    void testTimeOut();
 }
