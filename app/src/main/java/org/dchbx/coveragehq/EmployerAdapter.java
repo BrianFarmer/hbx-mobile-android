@@ -1066,11 +1066,16 @@ class OtherWrapper extends BrokerClientWrapper {
         PlanYear curPlanYear = null;
         int daysLeft = -1;
 
+        String planYearText;
         if (planYear != null
                 && planYear.planYearBegins != null) {
-            TextView textViewPlanYear = (TextView) view.findViewById(R.id.textViewPlanYear);
-            textViewPlanYear.setText(Utilities.DateAsMonthDay(planYear.planYearBegins));
+            planYearText = Utilities.DateAsMonthDay(planYear.planYearBegins);
+        } else {
+            planYearText = "";
         }
+        TextView textViewPlanYear = (TextView) view.findViewById(R.id.textViewPlanYear);
+        textViewPlanYear.setText(planYearText);
+
         view.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

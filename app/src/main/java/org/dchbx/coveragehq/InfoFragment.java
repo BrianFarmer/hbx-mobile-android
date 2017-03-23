@@ -63,6 +63,7 @@ public class InfoFragment extends BrokerFragment {
     private boolean participationDrawerShown = true;
     private int getEmployerRequestId = 0;
     private PieData data;
+    private Boolean employerReady = false;
 
     class ControlState {
         public View view;
@@ -130,10 +131,14 @@ public class InfoFragment extends BrokerFragment {
     @Override
     public void onResume(){
         super.onResume();
+        if (employerReady){
+            fetchData();
+        }
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void doThis(Events.EmployerActivityReady employerReady) {
+        this.employerReady = true;
         fetchData();
     }
 
@@ -309,15 +314,14 @@ public class InfoFragment extends BrokerFragment {
         } else {
             imageView.setImageResource(R.drawable.circle_plus);
             for (ControlState controlState : controlStates) {
-                controlState.view.setVisibility(View.GONE);
+            controlState.view.setVisibility(View.GONE);
             }
         }
     }
 
     private void populateField() throws Exception {
         if (employer == null
-            || roster == null
-            || coverageYear == null){
+            || roster == null){
             return;
         }
 
