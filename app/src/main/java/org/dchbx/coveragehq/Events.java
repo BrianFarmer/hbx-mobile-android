@@ -295,6 +295,7 @@ public class Events {
         private boolean rememberMe;
         private final boolean useFingerprintSensor;
         private UserType userType;
+        private boolean timedout;
 
         public GetLoginResult(CharSequence errorMessagge, Exception e){
             this.errorMessagge = errorMessagge;
@@ -303,13 +304,14 @@ public class Events {
         }
 
 
-        public GetLoginResult(CharSequence accountName, CharSequence password, CharSequence securityAnswer, Boolean rememberMe, boolean useFingerprintSensor, UserType userType){
+        public GetLoginResult(CharSequence accountName, CharSequence password, CharSequence securityAnswer, Boolean rememberMe, boolean useFingerprintSensor, UserType userType, boolean timedout){
             this.accountName = accountName;
             this.password = password;
             this.securityAnswer = securityAnswer;
             this.rememberMe = rememberMe;
             this.useFingerprintSensor = useFingerprintSensor;
             this.userType = userType;
+            this.timedout = timedout;
             errorMessagge = null;
         }
 
@@ -348,6 +350,10 @@ public class Events {
 
         public Exception getException() {
             return exception;
+        }
+
+        public boolean isTimedout() {
+            return timedout;
         }
 
         public enum UserType {
@@ -690,5 +696,11 @@ public class Events {
     static public class EmployeeFragmentUpdate {
         public RosterEntry employee;
         public LocalDate currentEnrollmentStartDate;
+    public static class TestTimeoutResult {
+        public boolean timedOut;
+
+        public TestTimeoutResult(boolean timedOut){
+            this.timedOut = timedOut;
+        }
     }
 }

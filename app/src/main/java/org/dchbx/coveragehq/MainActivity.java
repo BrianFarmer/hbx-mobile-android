@@ -133,7 +133,7 @@ public class MainActivity extends BrokerActivity {
                         return true;
                     case R.id.nav_email_healthlink:
                         Intent emailIntent = new Intent(Intent.ACTION_SENDTO);
-                        emailIntent.setData(Uri.parse("mailto:" + Constants.HbxEmail));
+                        emailIntent.setData(Uri.parse(BrokerApplication.getBrokerApplication().getString(R.string.hbx_mail_url)));
                         startActivity(emailIntent);
                         return true;
                     case R.id.nav_logout:
@@ -211,8 +211,17 @@ public class MainActivity extends BrokerActivity {
     @Override
     protected void onResume() {
         super.onResume();
+        getMessages().testTimeOut();
+    }
 
-        getMessages().getBrokerAgency();
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void doThis(Events.TestTimeoutResult testTimeoutResult) {
+        if (testTimeoutResult.timedOut){
+            Intents.restartApp(this);
+            finish();
+        } else {
+            getMessages().getBrokerAgency();
+        }
     }
 
     private void showEmployer() {

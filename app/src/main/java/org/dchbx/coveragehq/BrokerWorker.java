@@ -43,6 +43,7 @@ public class BrokerWorker extends IntentService {
 
     BuildConfig2 config = BuildConfig2.getConfig();
     private Timer countdownTimer;
+    private DateTime timeout = null;
     private Timer sessionTimeoutTimer;
     private int countdownTimerTicksLeft;
     private FingerprintManager fingerprintManager;
@@ -164,6 +165,10 @@ public class BrokerWorker extends IntentService {
             String accountName = loginRequest.getAccountName().toString();
             String password = loginRequest.getPassword().toString();
             boolean rememberMe = loginRequest.getRememberMe();
+            if (!rememberMe){
+                config.getCoverageConnection().clearStorageHandler.clear();
+            }
+
             boolean useFingerprintSensor = loginRequest.useFingerprintSensor();
             Log.d(TAG, "LoginRequest: Getting sessionid");
             CoverageConnection.LoginResult result = config.getCoverageConnection().validateUserAndPassword(accountName, password, rememberMe, useFingerprintSensor);
@@ -246,10 +251,17 @@ public class BrokerWorker extends IntentService {
         try {
             Log.d(TAG, "Received GetLogin message");
 
+            boolean timedout = false;
+            if (timeout != null){
+                if (timeout.compareTo(DateTime.now()) < 0 ){
+                    timedout = true;
+                }
+            }
+
             ServerConfiguration serverConfiguration = config.getCoverageConnection().getLogin();
             BrokerWorker.eventBus.post(new Events.GetLoginResult(serverConfiguration.accountName, serverConfiguration.password,
                     serverConfiguration.securityAnswer, serverConfiguration.rememberMe, serverConfiguration.useFingerprintSensor,
-                    config.getCoverageConnection().userTypeFromAccountInfo()));
+                    config.getCoverageConnection().userTypeFromAccountInfo(), timedout));
         } catch (Exception e) {
             Log.e(TAG, "Exception processing GetLogin");
             BrokerWorker.eventBus.post(new Events.GetLoginResult("Exception in Events.GetLogin", e));
@@ -427,7 +439,9 @@ public class BrokerWorker extends IntentService {
         if (sessionTimeoutTimer != null) {
             sessionTimeoutTimer.cancel();
         }
-        sessionTimeoutTimer = new Timer();
+        int timeoutMilliSeconds = BuildConfig2.getSessionTimeoutSeconds() * 1000;
+        timeout = DateTime.now().plusMillis(timeoutMilliSeconds);
+        sessionTimeoutTimer = new Timer();;
         sessionTimeoutTimer.schedule(new TimerTask() {
             @Override
             public void run() {
@@ -435,7 +449,7 @@ public class BrokerWorker extends IntentService {
                 sessionTimeoutTimer.cancel();
                 sessionTimeoutTimer = null;
             }
-        }, BuildConfig2.getSessionTimeoutSeconds() * 1000);
+        }, timeoutMilliSeconds);
     }
 
     @Subscribe(threadMode = ThreadMode.BACKGROUND)
@@ -451,7 +465,7 @@ public class BrokerWorker extends IntentService {
                 if (countdownTimerTicksLeft > 0) {
                     BrokerWorker.eventBus.post(new Events.SessionTimeoutCountdownTick(countdownTimerTicksLeft));
                 } else {
-                     BrokerWorker.eventBus.post(new Events.SessionTimedOut());
+                    BrokerWorker.eventBus.post(new Events.SessionTimedOut());
                     countdownTimer.cancel();
                 }
             }
@@ -626,6 +640,12 @@ public class BrokerWorker extends IntentService {
         } catch (Exception e){
             eventBus.post(new Events.ReloginResult(Events.ReloginResult.ReloginResultEnum.Error, null));
         }
+    }
+
+    @Subscribe(threadMode = ThreadMode.BACKGROUND)
+    public void doThis(Events.TestTimeout testTimeout) {
+        eventBus.post(new Events.TestTimeoutResult(timeout != null
+                                                   && timeout.compareTo(DateTime.now()) < 0));
     }
 }
 

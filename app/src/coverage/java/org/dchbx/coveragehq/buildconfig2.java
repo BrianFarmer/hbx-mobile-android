@@ -34,7 +34,7 @@ class BuildConfig2 extends EnrollConfigBase {
     // a dialog telling them that the session is about to timeout.
     //
     public static int getSessionTimeoutSeconds() {
-        return 14;
+        return 14*60;
     }
 
     public static String getVersion() {

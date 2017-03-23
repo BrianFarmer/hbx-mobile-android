@@ -71,6 +71,20 @@ public class EmployeeDetailsActivity extends BrokerActivity {
         configToolbar();
     }
 
+    @Override
+    protected void onResume(){
+        super.onResume();
+        getMessages().testTimeOut();
+    }
+
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void doThis(Events.TestTimeoutResult testTimeoutResult) {
+        if (testTimeoutResult.timedOut){
+            Intents.restartApp(this);
+            finish();
+        }
+    }
+
     private void configToolbar() {
         // Initializing Toolbar and setting it as the actionbar
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);

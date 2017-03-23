@@ -243,7 +243,9 @@ public abstract class CoverageConnection {
     }
 
     public ServerConfiguration getLogin() throws IOException, CertificateException, NoSuchAlgorithmException, UnrecoverableKeyException, InvalidKeyException, InvalidAlgorithmParameterException, NoSuchPaddingException, BadPaddingException, KeyStoreException, IllegalBlockSizeException {
-        clearStorageHandler.read(serverConfiguration);
+        if (serverConfiguration.accountName == null){
+            clearStorageHandler.read(serverConfiguration);
+        }
         return serverConfiguration;
     }
 

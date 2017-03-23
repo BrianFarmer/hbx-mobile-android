@@ -55,7 +55,8 @@ public class RootActivity extends BrokerActivity {
 
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void doThis(Events.GetLoginResult getLoginResult){
-        if (getLoginResult.getErrorMessagge() != null){
+        if (getLoginResult.getErrorMessagge() != null
+            && !getLoginResult.isTimedout()){
             if (!loginRunning) {
                 showLogin();
             } else {
