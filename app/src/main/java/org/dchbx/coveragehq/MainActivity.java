@@ -188,7 +188,7 @@ public class MainActivity extends BrokerActivity {
 
             @Override
             public boolean onQueryTextChange(String newText) {
-                employerAdapter.getFilter().filter(newText);
+                employerAdapter.setFilterText(newText);
                 return true;
             }
         });
