@@ -7,6 +7,8 @@ import com.franmontiel.persistentcookiejar.PersistentCookieJar;
 import com.franmontiel.persistentcookiejar.cache.SetCookieCache;
 import com.franmontiel.persistentcookiejar.persistence.SharedPrefsCookiePersistor;
 
+import java.util.concurrent.TimeUnit;
+
 import okhttp3.OkHttpClient;
 
 /**
@@ -20,10 +22,11 @@ public class EnrollConnectionHandler extends ConnectionHandler {
     ClearableCookieJar cookieJar =
             new PersistentCookieJar(new SetCookieCache(), cookiePersistor);
 
-    protected OkHttpClient clientHttps = new OkHttpClient()
+    static protected OkHttpClient clientHttps = new OkHttpClient()
             .newBuilder()
             //.cookieJar(cookieJar)
             .sslSocketFactory(getSSLContext().getSocketFactory())
+            .readTimeout(30000, TimeUnit.MILLISECONDS)
             .followRedirects(true)
             .build();
 

@@ -54,6 +54,7 @@ public class MainActivity extends BrokerActivity {
     private SearchView searchView;
 
     EmployerAdapter employerAdapter = null;
+    private boolean inErrorState = false;
 
     public MainActivity(){
     }
@@ -237,10 +238,16 @@ public class MainActivity extends BrokerActivity {
 
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void doThis(Events.Error error) {
-        alertDialog("Error! What should I be showing? " + error.getMessage(), new DialogClosed() {
+        if (inErrorState){
+            return;
+        }
+        inErrorState = true;
+        final MainActivity _this = this;
+        NetworkErrorDialog.build(this, R.string.app_title, R.string.network_access_error, new NetworkErrorDialog.Handler(){
             @Override
-            public void closed() {
-                finish();
+            public void finished() {
+                inErrorState = false;
+//                getMessages().EmployerActivityReady();
             }
         });
     }

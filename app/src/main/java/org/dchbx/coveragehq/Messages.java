@@ -29,4 +29,5 @@ public interface Messages {
     void decryptAccountAndPassword();
     void EmployerActivityReady();
     void testTimeOut();
+    void getCarriers();
 }

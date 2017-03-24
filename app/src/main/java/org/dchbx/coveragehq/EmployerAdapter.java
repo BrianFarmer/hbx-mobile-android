@@ -151,6 +151,12 @@ public class EmployerAdapter extends BaseSwipeAdapter implements Filterable {
     }
 
     public void setFilterText(String filterText) {
+        if (filterText.length() > 0) {
+            openEnrollmentState = true;
+            renewalState = true;
+            othersState = true;
+        }
+
         currentFilterText = filterText;
         getFilter().filter(filterText);
     }

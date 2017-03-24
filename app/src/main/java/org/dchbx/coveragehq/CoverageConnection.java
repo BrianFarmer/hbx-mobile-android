@@ -82,12 +82,17 @@ public abstract class CoverageConnection {
     }
 
     public ServerConfiguration.UserType determineUserType() throws Exception {
+        long startMilliSeconds = System.currentTimeMillis();
         try{
             BrokerAgency brokerAgency = getBrokerAgency(DateTime.now());
             serverConfiguration.userType = org.dchbx.coveragehq.ServerConfiguration.UserType.Broker;
             dataCache.store(brokerAgency, DateTime.now());
+            long endMilliSeconds = System.currentTimeMillis();
+            Log.d(TAG, "Milliseconds to response: " + ((Long)(endMilliSeconds - startMilliSeconds)).toString());
             return serverConfiguration.userType;
         } catch (Exception e){
+            long endMilliSeconds = System.currentTimeMillis();
+            Log.d(TAG, "Milliseconds to failure: " + ((Long)(endMilliSeconds - startMilliSeconds)).toString());
             // Eatinng exceptions here is intentional. Failure to get broker object
             // will cause an exception and we then need to try to get an employer.
                 Log.d(TAG, "intentionally eating exception caused by failture getting broker agency");

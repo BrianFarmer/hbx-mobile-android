@@ -142,7 +142,13 @@ public abstract class UrlHandler {
             if (rosterId == null) {
                 host = host.addPathSegments(serverConfiguration.employerRosterPathForBroker);
             } else {
-                host = host.addPathSegments(rosterId);
+                String segments;
+                if (rosterId.substring(0,1).compareTo("/") == 0){
+                    segments = rosterId.substring(1);
+                } else {
+                    segments = rosterId;
+                }
+                host = host.addPathSegments(segments);
             }
             getParameters.url = host.port(serverConfiguration.dataInfo.port)
                     .build();
