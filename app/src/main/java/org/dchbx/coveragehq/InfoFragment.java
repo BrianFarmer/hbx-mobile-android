@@ -333,17 +333,16 @@ public class InfoFragment extends BrokerFragment {
 
             org.dchbx.coveragehq.models.employer.PlanYear planYearForCoverageYear = BrokerUtilities.getPlanYearForCoverageYear(employer, coverageYear);
             PlanYear mostRecentPlanYear = BrokerUtilities.getMostRecentPlanYear(employer);
-            LocalDate planYearBegins = mostRecentPlanYear.planYearBegins;
 
 
-            if (planYearForCoverageYear.planYearBegins.compareTo(mostRecentPlanYear.planYearBegins) != 0) {
-                currentParticipationOpen = true;
-                renewalsDrawerShown = false;
-            } else {
-                renewalsDrawerShown = true;
+            renewalsDrawerShown = true;
 
-                if (planYearForCoverageYear.planYearBegins != null
-                    && today.compareTo(planYearForCoverageYear.planYearBegins) >= 0) {
+            if (planYearForCoverageYear.planYearBegins != null
+                && today.compareTo(planYearForCoverageYear.planYearBegins) >= 0) {
+                if (today.compareTo(planYearForCoverageYear.planYearBegins.plusYears(1)) >= 0){
+                    currentParticipationOpen = true;
+                    renewalsDrawerShown = false;
+                } else {
                     initGoneControls(R.id.textViewOpenEnrollmentBeginsLabel, R.id.textViewOpenEnrollmentBegins);
                     initGoneControls(R.id.textViewOpenEnrollmentEndsLabel, R.id.textViewOpenEnrollmentEnds);
                     initGoneControls(R.id.textViewDaysLeftLabel, R.id.textViewDaysLeft);
@@ -351,67 +350,67 @@ public class InfoFragment extends BrokerFragment {
                     initGoneControls(R.id.textViewCoverageBeginsLabel, R.id.textViewCoverageBegins);
                     initVisibleControls(R.id.textViewRenewalAvailableLabel, R.id.textViewRenewalAvailable, planYearForCoverageYear.planYearBegins.plusMonths(9));
                 }
-                else {
-                    if (planYearForCoverageYear.openEnrollmentBegins != null) {
-                        if (today.compareTo(planYearForCoverageYear.openEnrollmentBegins) >= 0) {
-                            initVisibleControls(R.id.textViewOpenEnrollmentBeginsLabel, R.id.textViewOpenEnrollmentBegins, R.string.open_enrollment_begins_label_past, planYearForCoverageYear.openEnrollmentBegins);
+            }
+            else {
+                if (planYearForCoverageYear.openEnrollmentBegins != null) {
+                    if (today.compareTo(planYearForCoverageYear.openEnrollmentBegins) >= 0) {
+                        initVisibleControls(R.id.textViewOpenEnrollmentBeginsLabel, R.id.textViewOpenEnrollmentBegins, R.string.open_enrollment_begins_label_past, planYearForCoverageYear.openEnrollmentBegins);
+                    } else {
+                        if (today.compareTo(planYearForCoverageYear.planYearBegins) < 0
+                                && (planYearForCoverageYear.openEnrollmentEnds == null
+                                || today.compareTo(planYearForCoverageYear.openEnrollmentEnds) <= 0)) {
+                            initVisibleControls(R.id.textViewOpenEnrollmentBeginsLabel, R.id.textViewOpenEnrollmentBegins, R.string.open_enrollment_begins_label_future, planYearForCoverageYear.openEnrollmentBegins);
                         } else {
-                            if (today.compareTo(planYearForCoverageYear.planYearBegins) < 0
-                                    && (planYearForCoverageYear.openEnrollmentEnds == null
-                                    || today.compareTo(planYearForCoverageYear.openEnrollmentEnds) <= 0)) {
-                                initVisibleControls(R.id.textViewOpenEnrollmentBeginsLabel, R.id.textViewOpenEnrollmentBegins, R.string.open_enrollment_begins_label_future, planYearForCoverageYear.openEnrollmentBegins);
-                            } else {
-                                initGoneControls(R.id.textViewOpenEnrollmentBeginsLabel, R.id.textViewOpenEnrollmentBegins);
-                            }
+                            initGoneControls(R.id.textViewOpenEnrollmentBeginsLabel, R.id.textViewOpenEnrollmentBegins);
                         }
-                    } else {
-                        initGoneControls(R.id.textViewOpenEnrollmentBeginsLabel, R.id.textViewOpenEnrollmentBegins);
                     }
-
-                    if (planYearForCoverageYear.openEnrollmentEnds != null
-                            && today.compareTo(planYearForCoverageYear.planYearBegins) <= 0) {
-                        if (today.compareTo(planYearForCoverageYear.openEnrollmentEnds) <= 0) {
-                            initVisibleControls(R.id.textViewOpenEnrollmentEndsLabel, R.id.textViewOpenEnrollmentEnds, R.string.open_enrollment_ends_label_future, planYearForCoverageYear.openEnrollmentEnds);
-                            initVisibleControls(R.id.textViewDaysLeftLabel, R.id.textViewDaysLeft, today.compareTo(coverageYear) < 0 ? Long.toString(BrokerUtilities.daysLeft(planYearForCoverageYear, today)) : "");
-                        } else {
-                            initVisibleControls(R.id.textViewOpenEnrollmentEndsLabel, R.id.textViewOpenEnrollmentEnds, R.string.open_enrollment_ends_label_past, planYearForCoverageYear.openEnrollmentEnds);
-                            initGoneControls(R.id.textViewDaysLeftLabel, R.id.textViewDaysLeft);
-                        }
-                    } else {
-                        initGoneControls(R.id.textViewOpenEnrollmentEndsLabel, R.id.textViewOpenEnrollmentEnds);
-                        initGoneControls(R.id.textViewDaysLeftLabel, R.id.textViewDaysLeft);
-                    }
-
-                    if (planYearForCoverageYear.renewalInProgress == false
-                            && !BrokerUtilities.isInOpenEnrollment(planYearForCoverageYear, today)) {
-                        initVisibleControls(R.id.textViewRenewalAvailableLabel, R.id.textViewRenewalAvailable, planYearForCoverageYear.renewalApplicationAvailable);
-                    } else {
-                        initGoneControls(R.id.textViewRenewalAvailableLabel, R.id.textViewRenewalAvailable);
-                    }
-
-                    if (planYearForCoverageYear.renewalInProgress
-                            && planYearForCoverageYear.renewalApplicationDue != null
-                            && !BrokerUtilities.isInOpenEnrollment(planYearForCoverageYear, today)) {
-                        initVisibleControls(R.id.textViewEmployerApplicationDueLabel, R.id.textViewEmployerApplicationDue, planYearForCoverageYear.renewalApplicationDue);
-                    } else {
-                        initGoneControls(R.id.textViewEmployerApplicationDueLabel, R.id.textViewEmployerApplicationDue);
-                    }
-
-
-                    if (planYearForCoverageYear.planYearBegins != null
-                            && !BrokerUtilities.isInOpenEnrollment(planYearForCoverageYear, today)) {
-                        if (planYearForCoverageYear.renewalInProgress) {
-                            initVisibleControls(R.id.textViewCoverageBeginsLabel, R.id.textViewCoverageBegins, R.string.coverage_begins_label, planYearForCoverageYear.planYearBegins);
-                        } else {
-                            initVisibleControls(R.id.textViewCoverageBeginsLabel, R.id.textViewCoverageBegins, R.string.next_coverage_year_begins, planYearForCoverageYear.planYearBegins);
-                        }
-                    } else {
-                        initGoneControls(R.id.textViewCoverageBeginsLabel, R.id.textViewCoverageBegins);
-                    }
+                } else {
+                    initGoneControls(R.id.textViewOpenEnrollmentBeginsLabel, R.id.textViewOpenEnrollmentBegins);
                 }
 
-                setVisibility(true);
+                if (planYearForCoverageYear.openEnrollmentEnds != null
+                        && today.compareTo(planYearForCoverageYear.planYearBegins) <= 0) {
+                    if (today.compareTo(planYearForCoverageYear.openEnrollmentEnds) <= 0) {
+                        initVisibleControls(R.id.textViewOpenEnrollmentEndsLabel, R.id.textViewOpenEnrollmentEnds, R.string.open_enrollment_ends_label_future, planYearForCoverageYear.openEnrollmentEnds);
+                        initVisibleControls(R.id.textViewDaysLeftLabel, R.id.textViewDaysLeft, today.compareTo(coverageYear) < 0 ? Long.toString(BrokerUtilities.daysLeft(planYearForCoverageYear, today)) : "");
+                    } else {
+                        initVisibleControls(R.id.textViewOpenEnrollmentEndsLabel, R.id.textViewOpenEnrollmentEnds, R.string.open_enrollment_ends_label_past, planYearForCoverageYear.openEnrollmentEnds);
+                        initGoneControls(R.id.textViewDaysLeftLabel, R.id.textViewDaysLeft);
+                    }
+                } else {
+                    initGoneControls(R.id.textViewOpenEnrollmentEndsLabel, R.id.textViewOpenEnrollmentEnds);
+                    initGoneControls(R.id.textViewDaysLeftLabel, R.id.textViewDaysLeft);
+                }
+
+                if (planYearForCoverageYear.renewalInProgress == false
+                        && !BrokerUtilities.isInOpenEnrollment(planYearForCoverageYear, today)) {
+                    initVisibleControls(R.id.textViewRenewalAvailableLabel, R.id.textViewRenewalAvailable, planYearForCoverageYear.renewalApplicationAvailable);
+                } else {
+                    initGoneControls(R.id.textViewRenewalAvailableLabel, R.id.textViewRenewalAvailable);
+                }
+
+                if (planYearForCoverageYear.renewalInProgress
+                        && planYearForCoverageYear.renewalApplicationDue != null
+                        && !BrokerUtilities.isInOpenEnrollment(planYearForCoverageYear, today)) {
+                    initVisibleControls(R.id.textViewEmployerApplicationDueLabel, R.id.textViewEmployerApplicationDue, planYearForCoverageYear.renewalApplicationDue);
+                } else {
+                    initGoneControls(R.id.textViewEmployerApplicationDueLabel, R.id.textViewEmployerApplicationDue);
+                }
+
+
+                if (planYearForCoverageYear.planYearBegins != null
+                        && !BrokerUtilities.isInOpenEnrollment(planYearForCoverageYear, today)) {
+                    if (planYearForCoverageYear.renewalInProgress) {
+                        initVisibleControls(R.id.textViewCoverageBeginsLabel, R.id.textViewCoverageBegins, R.string.coverage_begins_label, planYearForCoverageYear.planYearBegins);
+                    } else {
+                        initVisibleControls(R.id.textViewCoverageBeginsLabel, R.id.textViewCoverageBegins, R.string.next_coverage_year_begins, planYearForCoverageYear.planYearBegins);
+                    }
+                } else {
+                    initGoneControls(R.id.textViewCoverageBeginsLabel, R.id.textViewCoverageBegins);
+                }
             }
+
+            setVisibility(true);
 
             if (roster == null
                 || roster.roster == null

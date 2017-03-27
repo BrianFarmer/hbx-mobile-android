@@ -1000,7 +1000,7 @@ class RenewalWrapper extends BrokerClientWrapper {
         TextView companyName = (TextView) view.findViewById(R.id.textViewCompanyName);
         companyName.setText((brokerClient).employerName);
         TextView planYearTextView = (TextView) view.findViewById(R.id.textViewPlanYear);
-        CharSequence dateString = Utilities.DateAsMonthDayYear(planYear.planYearBegins);
+        CharSequence dateString = Utilities.DateAsMonthYear(planYear.planYearBegins);
         planYearTextView.setText(dateString);
         TextView daysLeft = (TextView) view.findViewById(R.id.textViewDaysLeft);
         ImageView imageViewCheck = (ImageView) view.findViewById(R.id.imageViewCheck);
@@ -1096,7 +1096,7 @@ class OtherWrapper extends BrokerClientWrapper {
         String planYearText;
         if (planYear != null
                 && planYear.planYearBegins != null) {
-            planYearText = Utilities.DateAsMonthDay(planYear.planYearBegins);
+            planYearText = Utilities.DateAsMonthYear(planYear.planYearBegins);
         } else {
             planYearText = "";
         }
