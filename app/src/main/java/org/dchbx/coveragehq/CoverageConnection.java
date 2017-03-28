@@ -90,12 +90,10 @@ public abstract class CoverageConnection {
             long endMilliSeconds = System.currentTimeMillis();
             Log.d(TAG, "Milliseconds to response: " + ((Long)(endMilliSeconds - startMilliSeconds)).toString());
             return serverConfiguration.userType;
-        } catch (Exception e){
-            long endMilliSeconds = System.currentTimeMillis();
-            Log.d(TAG, "Milliseconds to failure: " + ((Long)(endMilliSeconds - startMilliSeconds)).toString());
+        } catch (BrokerNotFoundException e) {
             // Eatinng exceptions here is intentional. Failure to get broker object
             // will cause an exception and we then need to try to get an employer.
-                Log.d(TAG, "intentionally eating exception caused by failture getting broker agency");
+            Log.d(TAG, "intentionally eating exception caused by failture getting broker agency");
         }
 
         try {

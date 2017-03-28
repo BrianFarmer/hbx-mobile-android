@@ -194,6 +194,10 @@ public abstract class UrlHandler {
     }
 
     public BrokerAgency processBrokerAgency(IConnectionHandler.GetReponse getReponse) throws Exception {
+        if (getReponse.responseCode == 401
+            || getReponse.responseCode == 404){
+            throw new BrokerNotFoundException();
+        }
         return parser.parseEmployerList(getReponse.body);
     }
     protected ServerConfiguration.HostInfo parseHostInfo(String enroll_server) {

@@ -520,10 +520,6 @@ public class ConnectionHandler implements IConnectionHandler{
 
         client.newCall(request).execute();*/
 
-        if (response.code() != 200){
-            throw new CoverageException("error getting: " + getParameters.url);
-        }
-
         GetReponse getReponse = new GetReponse();
         getReponse.responseCode = response.code();
         getReponse.body = response.body().string();
