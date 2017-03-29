@@ -136,7 +136,7 @@ public class InfoFragment extends BrokerFragment {
         }
     }
 
-    @Subscribe(threadMode = ThreadMode.MAIN)
+    @Subscribe(sticky = true, threadMode = ThreadMode.MAIN)
     public void doThis(Events.EmployerActivityReady employerReady) {
         this.employerReady = true;
         fetchData();

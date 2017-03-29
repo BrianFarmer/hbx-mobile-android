@@ -137,7 +137,7 @@ public class EventBusMessages implements Messages {
 
     @Override
     public void EmployerActivityReady() {
-        eventBus.post(new Events.EmployerActivityReady());
+        eventBus.postSticky(new Events.EmployerActivityReady());
     }
 
     @Override
