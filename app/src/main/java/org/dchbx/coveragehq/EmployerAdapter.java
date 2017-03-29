@@ -53,6 +53,7 @@ public class EmployerAdapter extends BaseSwipeAdapter implements Filterable {
     private static boolean renewalState = false;
     private static boolean othersState = false;
     public View notAlerted;
+    private String currentFilterText;
 
     @Override
     public Filter getFilter() {
@@ -149,7 +150,22 @@ public class EmployerAdapter extends BaseSwipeAdapter implements Filterable {
         };
     }
 
-    private void updateWrappedItems(){
+    public void setFilterText(String filterText) {
+        if (filterText.length() > 0) {
+            openEnrollmentState = true;
+            renewalState = true;
+            othersState = true;
+        }
+
+        currentFilterText = filterText;
+        getFilter().filter(filterText);
+    }
+
+    public void drawerStateChanged(){
+        getFilter().filter(currentFilterText);
+    }
+
+    private void updateWrappedItems() {
         wrapped_items = buildWrappedItems(currentFilter);
     }
 
@@ -390,21 +406,18 @@ public class EmployerAdapter extends BaseSwipeAdapter implements Filterable {
 
     public boolean toggleOthers() {
         othersState = !othersState;
-        updateWrappedItems();
-        notifyDataSetChanged();
+        drawerStateChanged();
         return othersState;
     }
 
     public void toggleRenewals() {
         renewalState = !renewalState;
-        updateWrappedItems();
-        notifyDataSetChanged();
+        drawerStateChanged();
     }
 
     public void toggleOpenEnrollments() {
         openEnrollmentState = !openEnrollmentState;
-        updateWrappedItems();
-        notifyDataSetChanged();
+        drawerStateChanged();
     }
 
     public boolean isItemSwipeable(int position) {
@@ -855,6 +868,13 @@ class OpenEnrollmentAlertedWrapper extends BrokerClientWrapper {
                 Intents.launchEmployerDetails(mainActivity, BrokerUtilities.getBrokerClientId(brokerClient));
             }
         });
+        ImageButton imageButton = (ImageButton)convertView.findViewById(R.id.imageButton);
+        imageButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intents.launchEmployerDetails(mainActivity, BrokerUtilities.getBrokerClientId(brokerClient));
+            }
+        });
         fillSwipeButtons(convertView, mainActivity, brokerClient);
     }
 
@@ -980,7 +1000,7 @@ class RenewalWrapper extends BrokerClientWrapper {
         TextView companyName = (TextView) view.findViewById(R.id.textViewCompanyName);
         companyName.setText((brokerClient).employerName);
         TextView planYearTextView = (TextView) view.findViewById(R.id.textViewPlanYear);
-        CharSequence dateString = Utilities.DateAsMonthDayYear(planYear.planYearBegins);
+        CharSequence dateString = Utilities.DateAsMonthYear(planYear.planYearBegins);
         planYearTextView.setText(dateString);
         TextView daysLeft = (TextView) view.findViewById(R.id.textViewDaysLeft);
         ImageView imageViewCheck = (ImageView) view.findViewById(R.id.imageViewCheck);
@@ -995,6 +1015,13 @@ class RenewalWrapper extends BrokerClientWrapper {
             daysLeft.setText(String.valueOf(BrokerUtilities.daysLeftToApplicationDue(planYear, LocalDate.now())));
         }
         view.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intents.launchEmployerDetails(mainActivityFinal, BrokerUtilities.getBrokerClientId(brokerClient));
+            }
+        });
+        ImageButton imageButton = (ImageButton)view.findViewById(R.id.imageButton);
+        imageButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Intents.launchEmployerDetails(mainActivityFinal, BrokerUtilities.getBrokerClientId(brokerClient));
@@ -1066,12 +1093,24 @@ class OtherWrapper extends BrokerClientWrapper {
         PlanYear curPlanYear = null;
         int daysLeft = -1;
 
+        String planYearText;
         if (planYear != null
                 && planYear.planYearBegins != null) {
-            TextView textViewPlanYear = (TextView) view.findViewById(R.id.textViewPlanYear);
-            textViewPlanYear.setText(Utilities.DateAsMonthDay(planYear.planYearBegins));
+            planYearText = Utilities.DateAsMonthYear(planYear.planYearBegins);
+        } else {
+            planYearText = "";
         }
+        TextView textViewPlanYear = (TextView) view.findViewById(R.id.textViewPlanYear);
+        textViewPlanYear.setText(planYearText);
+
         view.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intents.launchEmployerDetails(mainActivityFinal, BrokerUtilities.getBrokerClientId(brokerClient));
+            }
+        });
+        ImageButton imageButton = (ImageButton)view.findViewById(R.id.imageButton);
+        imageButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Intents.launchEmployerDetails(mainActivityFinal, BrokerUtilities.getBrokerClientId(brokerClient));

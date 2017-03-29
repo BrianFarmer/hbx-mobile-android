@@ -57,6 +57,8 @@ public class NetworkErrorDialog extends AppCompatDialogFragment {
         }
 
         view = inflater.inflate(R.layout.error_message, container, false);
+        setCancelable(false);
+
         TextView textViewErrorMessage = (TextView) view.findViewById(R.id.textViewErrorMessage);
         textViewErrorMessage.setText(question);
 
@@ -83,7 +85,6 @@ public class NetworkErrorDialog extends AppCompatDialogFragment {
                 }
             }
         });
-
         return view;
     }
 
@@ -92,7 +93,6 @@ public class NetworkErrorDialog extends AppCompatDialogFragment {
         super.onAttach(context);
         this.context = context;
     }
-
     public static abstract class Handler {
         abstract public void finished();
     }

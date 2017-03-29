@@ -1,5 +1,7 @@
 package org.dchbx.coveragehq;
 
+import android.util.Log;
+
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.reflect.TypeToken;
@@ -16,6 +18,8 @@ import org.joda.time.DateTime;
 import org.joda.time.LocalDate;
 
 import java.lang.reflect.Type;
+import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -23,6 +27,8 @@ import java.util.Map;
  */
 
 public class JsonParser {
+    private static final String TAG = "JsonParser";
+
     public org.dchbx.coveragehq.models.brokeragency.BrokerAgency   parseEmployerList(String string) throws Exception {
         GsonBuilder gsonBuilder = new GsonBuilder();
         gsonBuilder.registerTypeAdapter(LocalDate.class, new LocalDateDeserializer());
@@ -97,16 +103,30 @@ public class JsonParser {
         return gson.fromJson(body.replace("\"\"", "null"), SecurityAnswerResponse.class);
     }
 
-    public GitAccounts parseGitAccounts(String body) {
+    public GitAccounts parseGitAccounts(String body) throws Exception {
         GsonBuilder gsonBuilder = new GsonBuilder();
         gsonBuilder.registerTypeAdapter(DateTime.class, new DateTimeDeserializer());
         gsonBuilder.registerTypeAdapter(LocalDate.class, new LocalDateDeserializer());
         Gson gson = gsonBuilder.create();
-        Type type = new TypeToken<Map<String, AccountInfo>>() {
+        Type type = new TypeToken<List<Map<String, AccountInfo>>>() {
         }.getType();
-        Object object = gson.fromJson(body.replace("\"\"", "null"), type);
+        Object object = null;
+        try {
+            object = gson.fromJson(body.replace("\"\"", "null"), type);
+        } catch (Throwable t){
+            Log.e(TAG, "exception parsing accounts", t);
+        }
         GitAccounts gitAccounts = new GitAccounts();
-        gitAccounts.setAccountInfo((Map<String, AccountInfo>) object);
+        List<Map<String, AccountInfo>> list = (List<Map<String, AccountInfo>>) object;
+        HashMap<String, AccountInfo> map = new HashMap<>();
+        for (Map<String, AccountInfo> stringAccountInfoMap : list) {
+            if (map.containsKey(stringAccountInfoMap.keySet().iterator().next())){
+                throw new Exception("duplicate account name key found");
+            }
+            map.putAll(stringAccountInfoMap);
+        }
+
+        gitAccounts.setAccountInfo(map);
         return gitAccounts;
     }
 }

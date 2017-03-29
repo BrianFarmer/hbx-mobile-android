@@ -144,5 +144,10 @@ public class EventBusMessages implements Messages {
     public void testTimeOut() {
         eventBus.post(new Events.TestTimeout());
     }
+
+    @Override
+    public void getCarriers() {
+        eventBus.post(new Events.GetCarriers());
+    }
 }
 

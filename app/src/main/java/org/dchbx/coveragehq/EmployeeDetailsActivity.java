@@ -1,11 +1,13 @@
 package org.dchbx.coveragehq;
 
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.res.Resources;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.v4.app.FragmentTabHost;
 import android.support.v4.content.ContextCompat;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -36,13 +38,13 @@ import java.util.Map;
 
 public class EmployeeDetailsActivity extends BrokerActivity {
     private static final String HOME_TAB = "HomeTab";
+    private static final String INFO_TAB = "InfoTab";
     private static String TAG = "EmployeeDetailsActivity";
 
     private String employeeId;
     private String employerId;
     private RosterEntry employee;
 
-    private LocalDate coverageYear;
 
     private boolean detailsVisible = true;
     private boolean healthPlanVisible = false;
@@ -62,9 +64,9 @@ public class EmployeeDetailsActivity extends BrokerActivity {
         employerId = intent.getStringExtra(Intents.BROKER_CLIENT_ID);
         String coverageYearString = intent.getStringExtra(Intents.COVERAGE_YEAR);
         if (coverageYearString == null){
-            coverageYear = null;
+            currentDate = null;
         } else {
-            coverageYear = LocalDate.parse(intent.getStringExtra(Intents.COVERAGE_YEAR));
+            currentDate = LocalDate.parse(intent.getStringExtra(Intents.COVERAGE_YEAR));
         }
         getMessages().getEmployee(employeeId, employerId);
 
@@ -109,8 +111,8 @@ public class EmployeeDetailsActivity extends BrokerActivity {
         Map<String,String> properties=new HashMap<String,String>();
         Analytics.trackEvent("Employee Details", properties);
 
-        if (coverageYear == null){
-            coverageYear = BrokerUtilities.getMostRecentPlanYear(employee);
+        if (currentDate == null){
+            currentDate = BrokerUtilities.getMostRecentPlanYear(employee);
         }
 
         try {
@@ -126,7 +128,6 @@ public class EmployeeDetailsActivity extends BrokerActivity {
         }
 
         Resources resources = getResources();
-        LocalDate initialCoverageYear = new LocalDate(2000, 1, 1);
 
         if (employee.enrollments != null
             && employee.enrollments.size() > 0) {
@@ -142,25 +143,24 @@ public class EmployeeDetailsActivity extends BrokerActivity {
                 textViewCoverageYear.setVisibility(View.INVISIBLE);
 
 
-                if (coverageYear == null) {
+                if (currentDate == null) {
                     for (Enrollment curEnrollment : employee.enrollments) {
-                        if (curEnrollment.startOn.compareTo(initialCoverageYear) > 0) {
-                            initialCoverageYear = curEnrollment.startOn;
+                        if (curEnrollment.startOn.compareTo(currentDate) > 0) {
+                            currentDate = curEnrollment.startOn;
                             enrollment = curEnrollment;
                         }
                     }
-                    coverageYear = initialCoverageYear;
                 } else {
-                    enrollment = BrokerUtilities.getPlanYearForCoverageYear(employee, coverageYear);
+                    enrollment = BrokerUtilities.getPlanYearForCoverageYear(employee, currentDate);
                 }
 
                 Spinner spinnerCoverageYear = (Spinner) findViewById(R.id.spinnerCoverageYear);
                 spinnerCoverageYear.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
                     @Override
                     public void onItemSelected(AdapterView<?> adapterView, View view, int pos, long l) {
-                        coverageYear = employee.enrollments.get(pos).startOn;
+                        currentDate = employee.enrollments.get(pos).startOn;
                         try {
-                            Enrollment enrollment = BrokerUtilities.getEnrollmentForCoverageYear(employee, coverageYear);
+                            Enrollment enrollment = BrokerUtilities.getEnrollmentForCoverageYear(employee, currentDate);
                             populateCoverageYearDependencies(enrollment, EmployeeDetailsActivity.this.getResources());
                         } catch (Exception e) {
                             e.printStackTrace();
@@ -179,7 +179,7 @@ public class EmployeeDetailsActivity extends BrokerActivity {
                 for (Enrollment curEnrollment : employee.enrollments) {
                     String thisYear = String.format("%s - %s", Utilities.DateAsMonthDayYear(curEnrollment.startOn), Utilities.DateAsMonthDayYear(Utilities.calculateOneYearOut(curEnrollment.startOn)));
                     list.add(thisYear);
-                    if (curEnrollment.startOn.compareTo(coverageYear) == 0) {
+                    if (curEnrollment.startOn.compareTo(currentDate) == 0) {
                         coverageYearIndex = i;
                     }
                     i++;
@@ -191,7 +191,7 @@ public class EmployeeDetailsActivity extends BrokerActivity {
                 spinnerCoverageYear.setSelection(coverageYearIndex);
             } else {
                 enrollment = employee.enrollments.get(0);
-                coverageYear = enrollment.startOn;
+                currentDate = enrollment.startOn;
                 Spinner spinnerCoverageYear = (Spinner) findViewById(R.id.spinnerCoverageYear);
                 spinnerCoverageYear.setVisibility(View.INVISIBLE);
                 TextView textViewCoverageYear = (TextView) findViewById(R.id.textViewCoverageYear);
@@ -255,7 +255,7 @@ public class EmployeeDetailsActivity extends BrokerActivity {
     private void populateTags(){
         FragmentTabHost tabHost = (FragmentTabHost) findViewById(R.id.tabhost);
         tabHost.setup(this, getSupportFragmentManager(), android.R.id.tabcontent);
-
+        LayoutInflater inflater = LayoutInflater.from(this); 
         Drawable drawable = ContextCompat.getDrawable(this, R.drawable.info_tab_normal);
         TabHost.TabSpec tabSpec = tabHost.newTabSpec(INFO_TAB)
                 .setIndicator(createTabIndicator(inflater, tabHost, R.string.info_tab_name, R.drawable.info_tab_states, true));
@@ -278,6 +278,10 @@ public class EmployeeDetailsActivity extends BrokerActivity {
                 selectedTabChanged(tabId);
             }
         });
+
+    }
+
+    private void selectedTabChanged(String tabId) {
 
     }
 
@@ -305,5 +309,20 @@ public class EmployeeDetailsActivity extends BrokerActivity {
             v = findViewById(++id);
         }
         return id;
+    }
+
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void doThis(Events.Error error) {
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setMessage(R.string.error_login_again)
+                .setCancelable(false)
+                .setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+                        Intents.restartApp(EmployeeDetailsActivity.this);
+                        finish();
+                    }
+                });
+        AlertDialog alert = builder.create();
+        alert.show();
     }
 }

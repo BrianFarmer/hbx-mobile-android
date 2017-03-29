@@ -2,7 +2,6 @@ package org.dchbx.coveragehq;
 
 import android.content.Intent;
 import android.net.Uri;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
@@ -13,17 +12,15 @@ import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 
-public class CarriersActivity extends AppCompatActivity {
+public class CarriersActivity extends BrokerActivity {
 
     private EventBus eventBus;
+    private boolean inErrorState = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
-        eventBus = EventBus.getDefault();
-        eventBus.register(this);
-        eventBus.post(new Events.GetCarriers());
+        getMessages().getCarriers();
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)

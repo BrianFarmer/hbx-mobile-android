@@ -1,9 +1,6 @@
 package org.dchbx.coveragehq;
 
 import android.util.Log;
-import android.view.View;
-import android.widget.Spinner;
-import android.widget.TextView;
 
 import org.dchbx.coveragehq.models.brokeragency.BrokerAgency;
 import org.dchbx.coveragehq.models.brokeragency.BrokerClient;
@@ -385,6 +382,10 @@ public class BrokerUtilities {
     public static PlanStatus getPlanStatus(PlanYear planYear, LocalDate today) {
         PlanStatus planStatus = new PlanStatus();
 
+        if (planYear.state.compareTo("terminated") == 0){
+            planStatus.statusStringId = R.string.terminated;
+            planStatus.statusColorId = R.color.terminated_color;
+        }
         if (planYear !=  null) {
             boolean inOpenEnrollment = BrokerUtilities.isInOpenEnrollment(planYear, today);
             if (inOpenEnrollment) {
@@ -413,7 +414,7 @@ public class BrokerUtilities {
                         planStatus.statusStringId = R.string.coverage_expired;
                         planStatus.statusColorId = R.color.textgray;
                     } else {
-                        planStatus.statusStringId = R.string.active;
+                        planStatus.statusStringId = R.string.in_coverage;
                         planStatus.statusColorId = R.color.textgray;
                     }
                 }
@@ -602,6 +603,8 @@ public class BrokerUtilities {
                         mostRecent = enrollment.startOn;
                     }
                 }
+            } else {
+                mostRecent = enrollment.startOn;
             }
         }
 

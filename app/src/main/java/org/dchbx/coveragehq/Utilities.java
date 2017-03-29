@@ -37,6 +37,10 @@ public class Utilities {
         return DateTimeFormat.forPattern("MMM dd").print(date);
     }
 
+    public static String DateAsMonthYear(LocalDate date){
+        return DateTimeFormat.forPattern("MMM yy").print(date);
+    }
+
     public static String DateAsMonthDayYear(LocalDate date){
         return DateTimeFormat.forPattern("MMM dd, yyyy").print(date);
     }

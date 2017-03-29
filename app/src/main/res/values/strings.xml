@@ -204,11 +204,13 @@
     <string name="renewal_processing">Renewal Processing</string>
     <string name="settings">Settings</string>
     <string name="exit">Exit</string>
-    <string name="network_access_error">The is application requires network access. Please correct this  or try again later.</string>
+    <string name="network_access_error">This application requires network access. Please correct this  or try again later.</string>
     <string name="retry">Retry</string>
     <string name="hbx_mail_url">mailto:info@dchealthlink.com?subject=DC Health Link SmallBiz for Employers and Brokers</string>
-    <string name="send_sms_text_message_to_employee">Send SMS to Employee</string>
-    <string name="send_email_to_employee">Send Email to Employee</string>
-    <string name="open_employee_details">Employee Details</string>
+    <string name="error_login_again">An error happend, please login again.</string>
+    <string name="call_employee">Call Employee</string>
+    <string name="send_sms_text_message_to_employee">Send Employee SMS</string>
+    <string name="send_email_to_employee">Send employee email</string>
+    <string name="open_employee_details">Open employee details</string>
     <string name="aca_glossary">ACA Glossary</string>
 </resources>

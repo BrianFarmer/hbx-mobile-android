@@ -20,19 +20,19 @@ public class Events {
     static public class CancelRequest {
         private int id;
 
-        public CancelRequest(int id){
+        public CancelRequest(int id) {
             this.id = id;
         }
     }
 
     static public class CancelableRequest {
-        static private int id =- 1;
+        static private int id = -1;
 
-        public CancelableRequest(){
-            id ++;
+        public CancelableRequest() {
+            id++;
         }
 
-        public int getId (){
+        public int getId() {
             return id;
         }
     }
@@ -50,20 +50,21 @@ public class Events {
     }
 
 
-    static public class GetLogin extends CancelableRequest{
+    static public class GetLogin extends CancelableRequest {
         private String TAG = "GetLogin";
-        public GetLogin(){
+
+        public GetLogin() {
             Log.d(TAG, "Get login ctor");
         }
     }
 
-    static public class LoginRequest extends CancelableRequest{
+    static public class LoginRequest extends CancelableRequest {
         private CharSequence accountName;
         private CharSequence password;
         private boolean rememberMe;
         private final boolean useFingerprintSensor;
 
-        public LoginRequest(CharSequence accountName, CharSequence password, Boolean rememberMe, boolean useFingerprintSensor){
+        public LoginRequest(CharSequence accountName, CharSequence password, Boolean rememberMe, boolean useFingerprintSensor) {
             this.accountName = accountName;
             this.password = password;
             this.rememberMe = rememberMe;
@@ -93,9 +94,10 @@ public class Events {
     static public class GetEmployer extends CancelableRequest {
         private String employerId;
 
-        public GetEmployer(String employerId){
+        public GetEmployer(String employerId) {
             this.employerId = employerId;
         }
+
         public String getEmployerId() {
             return employerId;
         }
@@ -104,9 +106,10 @@ public class Events {
     static public class GetRoster extends CancelableRequest {
         private String employerId;
 
-        public GetRoster(String employerId){
+        public GetRoster(String employerId) {
             this.employerId = employerId;
         }
+
         public String getEmployerId() {
             return employerId;
         }
@@ -116,7 +119,7 @@ public class Events {
         private String url;
         private ImageView imageView;
 
-        public GetCarrierImage(String url, ImageView imageView){
+        public GetCarrierImage(String url, ImageView imageView) {
             this.url = url;
             this.imageView = imageView;
         }
@@ -124,18 +127,18 @@ public class Events {
 
     }
 
-    static public class GetCarriers extends CancelableRequest{
+    static public class GetCarriers extends CancelableRequest {
         // https://dchealthlink.com/shared/json/carriers.json
     }
 
-    static public class ResponseToRequest{
+    static public class ResponseToRequest {
         private int id;
 
-        ResponseToRequest(int id){
+        ResponseToRequest(int id) {
             this.id = id;
         }
 
-        public int getId(){
+        public int getId() {
             return id;
         }
     }
@@ -156,7 +159,7 @@ public class Events {
         }
     }
 
-    static public class GetBrokerAgencyResult extends ResponseToRequest{
+    static public class GetBrokerAgencyResult extends ResponseToRequest {
 
         private final BrokerAgency brokerAgency;
 
@@ -170,7 +173,7 @@ public class Events {
         }
     }
 
-    static public class BrokerClient extends ResponseToRequest{
+    static public class BrokerClient extends ResponseToRequest {
 
         private final org.dchbx.coveragehq.models.brokeragency.BrokerClient brokerClient;
         private final Employer employer;
@@ -190,7 +193,7 @@ public class Events {
         }
     }
 
-    static public class RosterResult extends ResponseToRequest{
+    static public class RosterResult extends ResponseToRequest {
         private final Roster roster;
 
         public RosterResult(int id, org.dchbx.coveragehq.models.roster.Roster roster) {
@@ -243,7 +246,7 @@ public class Events {
             this.userType = null;
         }
 
-        public int getLoginResult(){
+        public int getLoginResult() {
             return loginResult;
         }
 
@@ -265,7 +268,7 @@ public class Events {
             this.userType = userType;
         }
 
-        public int getLoginResult(){
+        public int getLoginResult() {
             return loginResult;
         }
     }
@@ -281,7 +284,7 @@ public class Events {
             this.loginResult = loginResult;
         }
 
-        public int getLoginResult(){
+        public int getLoginResult() {
             return loginResult;
         }
     }
@@ -297,14 +300,14 @@ public class Events {
         private UserType userType;
         private boolean timedout;
 
-        public GetLoginResult(CharSequence errorMessagge, Exception e){
+        public GetLoginResult(CharSequence errorMessagge, Exception e) {
             this.errorMessagge = errorMessagge;
             this.exception = e;
             useFingerprintSensor = false;
         }
 
 
-        public GetLoginResult(CharSequence accountName, CharSequence password, CharSequence securityAnswer, Boolean rememberMe, boolean useFingerprintSensor, UserType userType, boolean timedout){
+        public GetLoginResult(CharSequence accountName, CharSequence password, CharSequence securityAnswer, Boolean rememberMe, boolean useFingerprintSensor, UserType userType, boolean timedout) {
             this.accountName = accountName;
             this.password = password;
             this.securityAnswer = securityAnswer;
@@ -329,7 +332,7 @@ public class Events {
 
         public boolean isLoggedIn() {
             return (this.accountName != null
-            && this.accountName.length() > 0);
+                    && this.accountName.length() > 0);
         }
 
         public CharSequence getSecurityAnswer() {
@@ -420,7 +423,7 @@ public class Events {
             return employerId;
         }
 
-        public String getEmployeeId(){
+        public String getEmployeeId() {
             return employeeId;
         }
     }
@@ -499,7 +502,7 @@ public class Events {
     static public class SessionTimeoutCountdownTick {
         private final int secondsLeft;
 
-        public SessionTimeoutCountdownTick(int secondsLeft){
+        public SessionTimeoutCountdownTick(int secondsLeft) {
             this.secondsLeft = secondsLeft;
         }
 
@@ -511,7 +514,7 @@ public class Events {
     static public class StayLoggedInResult {
         private final boolean success;
 
-        public StayLoggedInResult(boolean success){
+        public StayLoggedInResult(boolean success) {
             this.success = success;
         }
 
@@ -520,15 +523,16 @@ public class Events {
         }
     }
 
-    static public class StayLoggedIn{}
+    static public class StayLoggedIn {
+    }
 
     static public class GetFingerprintStatus {
 
-        public GetFingerprintStatus(){
+        public GetFingerprintStatus() {
         }
     }
 
-    static public class FingerprintStatus{
+    static public class FingerprintStatus {
 
         private final boolean hardwareDetected;
         private final boolean fingerprintsEnrolled;
@@ -536,7 +540,7 @@ public class Events {
         private final String errorMessage;
         private final boolean osSupportsFingerprint;
 
-        public FingerprintStatus(boolean osSupportsFingerprint, boolean hardwareDetected, boolean fingerprintsEnrolled){
+        public FingerprintStatus(boolean osSupportsFingerprint, boolean hardwareDetected, boolean fingerprintsEnrolled) {
             error = false;
             errorMessage = null;
             this.osSupportsFingerprint = osSupportsFingerprint;
@@ -680,7 +684,7 @@ public class Events {
             Failed
         }
 
-        public ReloginResult(ReloginResultEnum reloginResultEnum, String securityQuestion){
+        public ReloginResult(ReloginResultEnum reloginResultEnum, String securityQuestion) {
             this.reloginResultEnum = reloginResultEnum;
             this.securityQuestion = securityQuestion;
         }
@@ -696,11 +700,24 @@ public class Events {
     static public class EmployeeFragmentUpdate {
         public RosterEntry employee;
         public LocalDate currentEnrollmentStartDate;
-    public static class TestTimeoutResult {
+
+        public static class TestTimeoutResult {
+            public boolean timedOut;
+
+            public TestTimeoutResult(boolean timedOut) {
+                this.timedOut = timedOut;
+            }
+        }
+    }
+
+    static public class TestTimeoutResult {
         public boolean timedOut;
 
-        public TestTimeoutResult(boolean timedOut){
+        public TestTimeoutResult(boolean timedOut) {
             this.timedOut = timedOut;
         }
+    }
+
+    static public class TestTimeout {
     }
 }
