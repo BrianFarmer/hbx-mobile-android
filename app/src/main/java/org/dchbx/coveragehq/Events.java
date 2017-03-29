@@ -695,6 +695,9 @@ public class Events {
     }
 
     static public class EmployerActivityReady {
+        public EmployerActivityReady(){
+
+        }
     }
 
     static public class EmployeeFragmentUpdate {

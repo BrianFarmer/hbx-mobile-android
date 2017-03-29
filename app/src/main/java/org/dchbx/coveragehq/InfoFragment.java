@@ -61,6 +61,7 @@ public class InfoFragment extends BrokerFragment {
     private ArrayList<String> filterStrings;
     private Boolean renewalsDrawerShown = true;
     private boolean participationDrawerShown = true;
+    private boolean costsDrawerShown = true;
     private int getEmployerRequestId = 0;
     private PieData data;
     private Boolean employerReady = false;
@@ -136,7 +137,7 @@ public class InfoFragment extends BrokerFragment {
         }
     }
 
-    @Subscribe(threadMode = ThreadMode.MAIN)
+    @Subscribe(sticky = true, threadMode = ThreadMode.MAIN)
     public void doThis(Events.EmployerActivityReady employerReady) {
         this.employerReady = true;
         fetchData();
@@ -300,7 +301,7 @@ public class InfoFragment extends BrokerFragment {
 
             showRenewals(renewalsDrawerShown, renewalsDrawerShown);
             showParticipation(participationDrawerShown, !renewalsDrawerShown);
-            showCosts(true, false);
+            showCosts(costsDrawerShown, false);
         }
     }
 
@@ -416,6 +417,8 @@ public class InfoFragment extends BrokerFragment {
                 || roster.roster == null
                 || roster.roster.size() == 0) {
                 participationDrawerShown = false;
+                costsDrawerShown = false;
+
                 TextView textViewEnrolled = (TextView) view.findViewById(R.id.textViewEnrolled);
                 textViewEnrolled.setText("0");
                 TextView textViewWaived = (TextView) view.findViewById(R.id.textViewWaived);
@@ -426,6 +429,8 @@ public class InfoFragment extends BrokerFragment {
                 textViewTotalEmployees.setText("0");
             } else {
                 participationDrawerShown = true;
+                costsDrawerShown = true;
+
                 BrokerUtilities.EmployeeCounts employeeCounts = BrokerUtilities.getEmployeeCounts(roster, coverageYear);
                 TextView textViewEnrolled = (TextView) view.findViewById(R.id.textViewEnrolled);
                 textViewEnrolled.setText(Integer.toString(employeeCounts.Enrolled));
