@@ -27,13 +27,12 @@
         android:layout_marginRight="20sp"
         android:minLines="1"
         android:background="@android:color/transparent"
-        android:layout_marginTop="8sp"
-        android:layout_marginBottom="8sp"
+        android:paddingTop="10sp"
+        android:paddingBottom="10sp"
         android:textSize="16sp"
         android:textColor="@color/white"
         android:textColorHint="@color/white"
         android:inputType="text"
-        android:singleLine="true"
         >
         <requestFocus/>
     </EditText>
@@ -58,12 +57,12 @@
         android:layout_marginRight="20sp"
         android:textSize="16sp"
         android:background="@android:color/transparent"
-        android:layout_marginTop="8sp"
-        android:layout_marginBottom="8sp"
+        android:paddingTop="10sp"
+        android:paddingBottom="10sp"
         android:drawableTint="#ffffff"
         android:textColorHint="@color/white"
         android:textColor="@color/white"
-        android:singleLine="true"
+        android:minLines="1"
         tools:imeOptions="actionNext"
         />
 
