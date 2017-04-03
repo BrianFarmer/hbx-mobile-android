@@ -54,11 +54,6 @@ public class EmployeeInfoFragment extends BrokerFragment {
         return view;
     }
 
-
-
-
-
-
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void doThis(Events.EmployeeFragmentUpdate  employeeFragmentUpdate) throws Exception {
         this.employee = employeeFragmentUpdate.employee;

@@ -4,12 +4,6 @@ import android.app.IntentService;
 import android.content.Intent;
 import android.util.Log;
 
-import com.google.gson.JsonDeserializationContext;
-import com.google.gson.JsonDeserializer;
-import com.google.gson.JsonElement;
-import com.google.gson.JsonParseException;
-import com.google.gson.JsonPrimitive;
-
 import org.dchbx.coveragehq.models.brokeragency.BrokerAgency;
 import org.dchbx.coveragehq.models.brokeragency.BrokerClient;
 import org.dchbx.coveragehq.models.employer.Employer;
@@ -20,9 +14,7 @@ import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 import org.joda.time.DateTime;
-import org.joda.time.LocalDate;
 
-import java.lang.reflect.Type;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -647,32 +639,20 @@ public class BrokerWorker extends IntentService {
         eventBus.post(new Events.TestTimeoutResult(timeout != null
                                                    && timeout.compareTo(DateTime.now()) < 0));
     }
-}
 
-class DateTimeDeserializer implements JsonDeserializer<DateTime> {
-    public DateTime deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context)
-            throws JsonParseException {
-        JsonPrimitive primitive = json.getAsJsonPrimitive();
-        if (primitive.isString()){
-            String s = primitive.toString();
-            if (s.length() == 0){
-                return null;
-            }
+    @Subscribe(threadMode = ThreadMode.BACKGROUND)
+    public void doThis(Events.GetUserEmployee getUserEmployee) {
+        eventBus.post(new Events.GetUserEmployeeResults(config.getCoverageConnection().getUserEmployee()));
+    }
+
+    @Subscribe(threadMode = ThreadMode.BACKGROUND)
+    public void doThis(Events.MoveImageToData moveImageToData){
+        try{
+            config.getCoverageConnection().moveImageToData(moveImageToData.isFrontOfCard(), moveImageToData.getUri());
+            eventBus.post(new Events.MoveImageToDataResult(true));
+        } catch (Exception e){
+            eventBus.post(new Events.MoveImageToDataResult(false, e.getMessage()));
         }
-        return new DateTime(primitive.getAsString());
     }
 }
 
-class LocalDateDeserializer implements JsonDeserializer<LocalDate> {
-    public LocalDate deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context)
-            throws JsonParseException {
-        JsonPrimitive primitive = json.getAsJsonPrimitive();
-        if (primitive.isString()){
-            String s = primitive.toString();
-            if (s.length() == 0){
-                return null;
-            }
-        }
-        return new LocalDate(primitive.getAsString());
-    }
-}

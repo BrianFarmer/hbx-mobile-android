@@ -1,5 +1,6 @@
 package org.dchbx.coveragehq;
 
+import android.net.Uri;
 import android.util.Log;
 import android.widget.ImageView;
 
@@ -722,5 +723,76 @@ public class Events {
     }
 
     static public class TestTimeout {
+    }
+
+    static public class GetUserEmployee {
+    }
+
+    static public class GetUserEmployeeResults {
+        private UserEmployee userEmployee;
+
+        public GetUserEmployeeResults(UserEmployee userEmployee) {
+            this.userEmployee = userEmployee;
+        }
+
+        public UserEmployee getUserEmployee() {
+            return userEmployee;
+        }
+    }
+
+    public static class CapturePhoto {
+        private boolean front;
+
+        public CapturePhoto(boolean front) {
+            this.front = front;
+        }
+
+        public boolean isFront() {
+            return front;
+        }
+    }
+
+    public static class UpdateInsuranceCard {
+    }
+
+    static public class MoveImageToData {
+        private boolean frontOfCard;
+        private Uri uri;
+
+        public MoveImageToData(boolean frontOfCard, Uri fileName) {
+
+            this.frontOfCard = frontOfCard;
+            this.uri = fileName;
+        }
+
+        public boolean isFrontOfCard() {
+            return frontOfCard;
+        }
+
+        public Uri getUri() {
+            return uri;
+        }
+    }
+
+    static public class MoveImageToDataResult {
+        private boolean success;
+        private String message;
+
+        public MoveImageToDataResult(boolean success) {
+            this.success = success;
+        }
+
+        public MoveImageToDataResult(boolean success, String message) {
+            this.success = success;
+            this.message = message;
+        }
+
+        public boolean isSuccess() {
+            return success;
+        }
+
+        public String getMessage() {
+            return message;
+        }
     }
 }

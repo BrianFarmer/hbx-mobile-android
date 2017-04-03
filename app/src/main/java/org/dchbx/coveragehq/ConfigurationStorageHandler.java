@@ -2,9 +2,6 @@ package org.dchbx.coveragehq;
 
 import android.content.Context;
 import android.content.SharedPreferences;
-import android.util.Log;
-
-import java.util.Map;
 
 public class ConfigurationStorageHandler extends IServerConfigurationStorageHandler {
     private static String TAG = "ConfigurationStorage";
@@ -21,6 +18,8 @@ public class ConfigurationStorageHandler extends IServerConfigurationStorageHand
             editor.putString(brokerApplication.getString(R.string.shared_preference_account_name), serverConfiguration.accountName);
         }
         editor.putBoolean(brokerApplication.getString(R.string.shared_preference_remember_me), serverConfiguration.rememberMe);
+        editor.putBoolean(brokerApplication.getString(R.string.have_front_insurance_card), serverConfiguration.haveFrontInsuranceCard);
+        editor.putBoolean(brokerApplication.getString(R.string.have_rear_insurance_card), serverConfiguration.haveRearInsuranceCard);
         //editor.putString("UserType", serverConfiguration.userType.name());
         editor.commit();
     }
@@ -36,7 +35,8 @@ public class ConfigurationStorageHandler extends IServerConfigurationStorageHand
             serverConfiguration.accountName = sharedPref.getString(brokerApplication.getString(R.string.shared_preference_account_name), null);
         }
         serverConfiguration.rememberMe = sharedPref.getBoolean(brokerApplication.getString(R.string.shared_preference_remember_me), true);
-        //serverConfiguration.userType = ServerConfiguration.UserType.valueOf(sharedPref.getString("UserType", ServerConfiguration.UserType.Unknown.name()));
+        serverConfiguration.haveFrontInsuranceCard = sharedPref.getBoolean(brokerApplication.getString(R.string.have_front_insurance_card), false);
+        serverConfiguration.haveRearInsuranceCard = sharedPref.getBoolean(brokerApplication.getString(R.string.have_rear_insurance_card), false);
     }
 
     @Override

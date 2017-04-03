@@ -1,5 +1,7 @@
 package org.dchbx.coveragehq;
 
+import android.net.Uri;
+
 import org.joda.time.LocalDate;
 
 public interface Messages {
@@ -30,4 +32,8 @@ public interface Messages {
     void EmployerActivityReady();
     void testTimeOut();
     void getCarriers();
+    void getUserEmployee();
+    void capturePhoto(boolean front);
+    void updateInsurancyCard();
+    void moveImageToData(boolean frontOfCard, Uri uri);
 }

@@ -1,5 +1,7 @@
 package org.dchbx.coveragehq;
 
+import android.net.Uri;
+
 import org.greenrobot.eventbus.EventBus;
 import org.joda.time.LocalDate;
 
@@ -148,6 +150,26 @@ public class EventBusMessages implements Messages {
     @Override
     public void getCarriers() {
         eventBus.post(new Events.GetCarriers());
+    }
+
+    @Override
+    public void getUserEmployee() {
+        eventBus.post(new Events.GetUserEmployee());
+    }
+
+    @Override
+    public void capturePhoto(boolean front) {
+        eventBus.post(new Events.CapturePhoto(front));
+    }
+
+    @Override
+    public void updateInsurancyCard() {
+        eventBus.post(new Events.UpdateInsuranceCard());
+    }
+
+    @Override
+    public void moveImageToData(boolean frontOfCard, Uri uri) {
+        eventBus.post(new Events.MoveImageToData(frontOfCard, uri));
     }
 }
 

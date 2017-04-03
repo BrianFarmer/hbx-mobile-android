@@ -41,6 +41,8 @@ public class ServerConfiguration {
     public String securityAnswerPath;
     public String carrierPath;
     public String authenticityToken;
+    public Boolean haveFrontInsuranceCard;
+    public Boolean haveRearInsuranceCard;
 
     public String stayLoggedInPath = "reset_user_clock";
 

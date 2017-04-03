@@ -3,7 +3,7 @@ package org.dchbx.coveragehq;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.res.Resources;
-import android.graphics.drawable.Drawable;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.FragmentTabHost;
 import android.support.v4.content.ContextCompat;
@@ -37,8 +37,8 @@ import java.util.List;
 import java.util.Map;
 
 public class EmployeeDetailsActivity extends BrokerActivity {
-    private static final String HOME_TAB = "HomeTab";
     private static final String INFO_TAB = "InfoTab";
+    private static final String CARD_TAB = "CardTab";
     private static String TAG = "EmployeeDetailsActivity";
 
     private String employeeId;
@@ -52,6 +52,11 @@ public class EmployeeDetailsActivity extends BrokerActivity {
 
     private LocalDate currentDate = null;
     private Enrollment currentEnrollment;
+    private FragmentTabHost tabHost;
+
+    private static int currentPhotoRequestId = 1;
+    private boolean front;
+    private Uri cameraUri = null;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -71,12 +76,46 @@ public class EmployeeDetailsActivity extends BrokerActivity {
         getMessages().getEmployee(employeeId, employerId);
 
         configToolbar();
+        configTabs();
+    }
+
+    private void configTabs() {
+        // only show tabs when logged in as employee
+        if (employeeId != null){
+            return;
+        }
+
+        LayoutInflater inflater = getLayoutInflater();
+
+        tabHost = (FragmentTabHost)findViewById(R.id.tabhost);
+        tabHost.setup(this, getSupportFragmentManager(), android.R.id.tabcontent);
+
+        tabHost.addTab(tabHost.newTabSpec(INFO_TAB).setIndicator(createTabIndicator(inflater, tabHost,
+                                                                                    R.string.info_tab_name,
+                                                                                    R.drawable.info_tab_states,
+                                                                                    true)), EmployeeInfoFragment.class, null);
+        tabHost.addTab(tabHost.newTabSpec(CARD_TAB).setIndicator(createTabIndicator(inflater, tabHost,
+                R.string.card_tab_name,
+                R.drawable.info_tab_states,
+                true)), InsuranceCardFragment.class, null);
+
+        tabHost.setOnTabChangedListener(new TabHost.OnTabChangeListener() {
+            @Override
+            public void onTabChanged(String tabId) {
+                selectedTabChanged(tabId);
+            }
+        });
     }
 
     @Override
     protected void onResume(){
         super.onResume();
         getMessages().testTimeOut();
+
+        if (cameraUri != null){
+            getMessages().moveImageToData(front, cameraUri);
+            cameraUri = null;
+        }
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)
@@ -209,8 +248,10 @@ public class EmployeeDetailsActivity extends BrokerActivity {
         TextView textViewSsnField = (TextView) findViewById(R.id.textViewSsnField);
         textViewSsnField.setText(String.format(resources.getString(R.string.ssn_field_format), employee.ssnMasked));
 
-        TextView textViewHiredOn = (TextView) findViewById(R.id.textViewHiredOn);
-        textViewHiredOn.setText(String.format(resources.getString(R.string.hired_on_field_format), Utilities.DateAsString(employee.hiredOn)));
+        if (employee.hiredOn != null) {
+            TextView textViewHiredOn = (TextView) findViewById(R.id.textViewHiredOn);
+            textViewHiredOn.setText(String.format(resources.getString(R.string.hired_on_field_format), Utilities.DateAsString(employee.hiredOn)));
+        }
 
         // Populate the employee's dependants.
         RelativeLayout parent = (RelativeLayout) findViewById(R.id.relativeLayoutEmpoyeeDetails);
@@ -238,8 +279,6 @@ public class EmployeeDetailsActivity extends BrokerActivity {
         }
 
         setVisibility(R.string.dependents_group_tag, false, R.id.imageViewDependentsDrawer, R.drawable.blue_uparrow, R.drawable.blue_circle_plus);
-
-
     }
 
     private void populateCoverageYearDependencies(Enrollment enrollment, Resources resources) throws Exception {
@@ -252,34 +291,6 @@ public class EmployeeDetailsActivity extends BrokerActivity {
 
     }
 
-    private void populateTags(){
-        FragmentTabHost tabHost = (FragmentTabHost) findViewById(R.id.tabhost);
-        tabHost.setup(this, getSupportFragmentManager(), android.R.id.tabcontent);
-        LayoutInflater inflater = LayoutInflater.from(this); 
-        Drawable drawable = ContextCompat.getDrawable(this, R.drawable.info_tab_normal);
-        TabHost.TabSpec tabSpec = tabHost.newTabSpec(INFO_TAB)
-                .setIndicator(createTabIndicator(inflater, tabHost, R.string.info_tab_name, R.drawable.info_tab_states, true));
-
-        try {
-            tabHost.addTab(
-                    tabSpec,
-                    InfoFragment.class, null);
-        } catch (Throwable e){
-            Log.e(TAG, "exception", e);
-        }
-        tabHost.addTab(
-                tabHost.newTabSpec(HOME_TAB)
-                        .setIndicator(createTabIndicator(inflater, tabHost, R.string.roster_tab_name, R.drawable.roster_tab_states, false)),
-                RosterFragment.class, null);
-
-        tabHost.setOnTabChangedListener(new TabHost.OnTabChangeListener() {
-            @Override
-            public void onTabChanged(String tabId) {
-                selectedTabChanged(tabId);
-            }
-        });
-
-    }
 
     private void selectedTabChanged(String tabId) {
 
@@ -324,5 +335,21 @@ public class EmployeeDetailsActivity extends BrokerActivity {
                 });
         AlertDialog alert = builder.create();
         alert.show();
+    }
+
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void doThis(Events.CapturePhoto capturePhoto) throws Exception {
+        front = capturePhoto.isFront();
+        Intents.launchCamera(this, ++ currentPhotoRequestId);
+    }
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        // Check which request we're responding to
+        if (requestCode == currentPhotoRequestId) {
+            // Make sure the request was succcessful
+            if (resultCode == RESULT_OK) {
+                cameraUri = data.getData();
+            }
+        }
     }
 }

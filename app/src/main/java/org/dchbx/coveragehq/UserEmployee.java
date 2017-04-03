@@ -5,4 +5,6 @@ package org.dchbx.coveragehq;
  */
 
 public class UserEmployee {
+    public String insuranceCardFrontFileName;
+    public String insuranceCardRearFileName;
 }
