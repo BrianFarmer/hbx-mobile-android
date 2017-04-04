@@ -22,6 +22,9 @@ public class BrokerFragment extends Fragment {
     }
 
     public void init() {
+        if (messages != null){
+            return;
+        }
         messages = BrokerApplication.getBrokerApplication().getMessages(this);
     }
 

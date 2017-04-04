@@ -1,6 +1,7 @@
 package org.dchbx.coveragehq;
 
 import android.net.Uri;
+import android.support.annotation.NonNull;
 import android.util.Log;
 
 import org.dchbx.coveragehq.models.brokeragency.BrokerAgency;
@@ -10,6 +11,7 @@ import org.dchbx.coveragehq.models.roster.Roster;
 import org.dchbx.coveragehq.models.roster.RosterEntry;
 import org.joda.time.DateTime;
 
+import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -289,14 +291,27 @@ public abstract class CoverageConnection {
 
     public UserEmployee getUserEmployee(){
         UserEmployee userEmployee = new UserEmployee();
-        if (serverConfiguration.haveFrontInsuranceCard){
-            userEmployee.insuranceCardFrontFileName = BrokerApplication.getBrokerApplication().getFilesDir() + FrontCardFileName;
+        File frontFile = new File(getFrontCardFileName());
+        if (serverConfiguration.haveFrontInsuranceCard && frontFile.exists()){
+            userEmployee.insuranceCardFrontFileName = getFrontCardFileName();
         }
-        if (serverConfiguration.haveRearInsuranceCard){
-            userEmployee.insuranceCardRearFileName = BrokerApplication.getBrokerApplication().getFilesDir() + RearCardFileName;
+
+        File rearFile = new File(getRearCardFileName());
+        if (serverConfiguration.haveRearInsuranceCard && rearFile.exists()){
+            userEmployee.insuranceCardRearFileName = getRearCardFileName();
         }
 
         return userEmployee;
+    }
+
+    @NonNull
+    private String getRearCardFileName() {
+        return BrokerApplication.getBrokerApplication().getFilesDir() + RearCardFileName;
+    }
+
+    @NonNull
+    private String getFrontCardFileName() {
+        return BrokerApplication.getBrokerApplication().getFilesDir() + FrontCardFileName;
     }
 
     public void moveImageToData(boolean frontOfCard, Uri fileName) throws IOException, CertificateException, NoSuchAlgorithmException, UnrecoverableKeyException, InvalidKeyException, NoSuchPaddingException, BadPaddingException, KeyStoreException, NoSuchProviderException, IllegalBlockSizeException {
@@ -334,6 +349,21 @@ public abstract class CoverageConnection {
             serverConfiguration.haveRearInsuranceCard = true;
         }
 
+        clearStorageHandler.store(serverConfiguration);
+    }
+
+    public void removeInsuraceCardImage(boolean front) throws IOException, CertificateException, NoSuchAlgorithmException, UnrecoverableKeyException, InvalidKeyException, NoSuchPaddingException, BadPaddingException, KeyStoreException, NoSuchProviderException, IllegalBlockSizeException {
+        String fileName;
+        if (front){
+            fileName = getFrontCardFileName();
+            serverConfiguration.haveFrontInsuranceCard = false;
+        } else {
+            fileName = getRearCardFileName();
+            serverConfiguration.haveRearInsuranceCard = false;
+        }
+        File file = new File(fileName);
+        file.delete();
+        serverConfiguration.haveFrontInsuranceCard = false;
         clearStorageHandler.store(serverConfiguration);
     }
 }

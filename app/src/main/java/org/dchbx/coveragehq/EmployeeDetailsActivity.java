@@ -352,4 +352,9 @@ public class EmployeeDetailsActivity extends BrokerActivity {
             }
         }
     }
+
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void doThis(Events.MoveImageToDataResult moveImageToDataResult) {
+        getMessages().updateInsurancyCard();
+    }
 }

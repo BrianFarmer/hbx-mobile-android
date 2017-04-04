@@ -36,4 +36,5 @@ public interface Messages {
     void capturePhoto(boolean front);
     void updateInsurancyCard();
     void moveImageToData(boolean frontOfCard, Uri uri);
+    void removeInsuraceCardImage(boolean front);
 }

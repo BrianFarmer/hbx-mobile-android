@@ -220,4 +220,5 @@
     <string name="card_tab_name">Card</string>
     <string name="have_front_insurance_card">haveFrontInsuranceCard</string>
     <string name="have_rear_insurance_card">haveRearInsuranceCard</string>
+    <string name="file_error">A file error happened trying to remove the file, please try again later.</string>
 </resources>

@@ -3,6 +3,7 @@ package org.dchbx.coveragehq;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
+import android.support.v7.app.AlertDialog;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -31,7 +32,15 @@ public class InsuranceCardFragment extends BrokerFragment {
         return view;
     }
 
-    @Subscribe(threadMode = ThreadMode.MAIN)
+
+    @Override
+    public void onResume(){
+        super.onResume();
+        init();
+        Log.d(TAG, "resuminng insurance card fragment");
+    }
+
+    @Subscribe(threadMode = ThreadMode.MAIN, sticky = true)
     public void doThis(Events.UpdateInsuranceCard updateInsuranceCard) {
         getMessages().getUserEmployee();
     }
@@ -39,6 +48,18 @@ public class InsuranceCardFragment extends BrokerFragment {
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void doThis(Events.GetUserEmployeeResults getUserEmployeeResults) {
         populate(getUserEmployeeResults.getUserEmployee());
+    }
+
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void doThis(Events.RemoveInsuraceCardImageResult removeInsuraceCardImageResult) {
+        if (removeInsuraceCardImageResult.isSuccess()){
+            getMessages().getUserEmployee();
+        } else {
+            AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+            builder.setMessage(R.string.file_error)
+                    .setTitle(R.string.app_title);
+            AlertDialog dialog = builder.create();
+        }
     }
 
     private void populate(UserEmployee userEmployee) {
@@ -82,7 +103,7 @@ public class InsuranceCardFragment extends BrokerFragment {
             frontReplace.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    replaceFront();
+                    takePictureFront();
                 }
             });
 
@@ -117,26 +138,23 @@ public class InsuranceCardFragment extends BrokerFragment {
             rearReplace.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    replaceRear();
+                    takePictureRear();
                 }
             });
+
+            BitmapFactory.Options options = new BitmapFactory.Options();
+            options.inPreferredConfig = Bitmap.Config.ARGB_8888;
+            Bitmap bitmap = BitmapFactory.decodeFile(userEmployee.insuranceCardRearFileName, options);
+            rearView.setImageBitmap(bitmap);
         }
     }
 
-    private void replaceFront() {
-
-    }
-
     private void removeFront() {
-
-    }
-
-    private void replaceRear() {
-
+        getMessages().removeInsuraceCardImage(true);
     }
 
     private void removeRear() {
-
+        getMessages().removeInsuraceCardImage(false);
     }
 
     private void takePictureFront() {

@@ -154,7 +154,7 @@ public class EventBusMessages implements Messages {
 
     @Override
     public void getUserEmployee() {
-        eventBus.post(new Events.GetUserEmployee());
+        eventBus.postSticky(new Events.GetUserEmployee());
     }
 
     @Override
@@ -164,12 +164,17 @@ public class EventBusMessages implements Messages {
 
     @Override
     public void updateInsurancyCard() {
-        eventBus.post(new Events.UpdateInsuranceCard());
+        eventBus.postSticky(new Events.UpdateInsuranceCard());
     }
 
     @Override
     public void moveImageToData(boolean frontOfCard, Uri uri) {
         eventBus.post(new Events.MoveImageToData(frontOfCard, uri));
+    }
+
+    @Override
+    public void removeInsuraceCardImage(boolean front) {
+        eventBus.post(new Events.RemoveInsuraceCardImage(front));
     }
 }
 

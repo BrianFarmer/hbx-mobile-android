@@ -654,5 +654,15 @@ public class BrokerWorker extends IntentService {
             eventBus.post(new Events.MoveImageToDataResult(false, e.getMessage()));
         }
     }
+
+    @Subscribe(threadMode = ThreadMode.BACKGROUND)
+    public void doThis(Events.RemoveInsuraceCardImage removeInsuraceCardImage){
+        try{
+            config.getCoverageConnection().removeInsuraceCardImage(removeInsuraceCardImage.isFront());
+            eventBus.post(new Events.RemoveInsuraceCardImageResult(true));
+        } catch (Exception e){
+            eventBus.post(new Events.RemoveInsuraceCardImageResult(false));
+        }
+    }
 }
 

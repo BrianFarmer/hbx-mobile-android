@@ -795,4 +795,28 @@ public class Events {
             return message;
         }
     }
+
+    static public class RemoveInsuraceCardImage {
+        private boolean front;
+
+        public RemoveInsuraceCardImage(boolean front) {
+            this.front = front;
+        }
+
+        public boolean isFront() {
+            return front;
+        }
+    }
+
+    public static class RemoveInsuraceCardImageResult {
+        private boolean success;
+
+        public RemoveInsuraceCardImageResult(boolean success) {
+            this.success = success;
+        }
+
+        public boolean isSuccess() {
+            return success;
+        }
+    }
 }
