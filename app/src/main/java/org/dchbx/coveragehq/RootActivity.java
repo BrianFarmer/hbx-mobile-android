@@ -77,7 +77,7 @@ public class RootActivity extends BrokerActivity {
                     finish();
                     break;
                 case Employee:
-                    Intents.launchEmployeeDetailsActivity(this);
+                    Intents.launchInsuredUserDetailsActivity(this);
                     finish();
                     break;
                 default:

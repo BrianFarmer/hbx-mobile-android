@@ -29,19 +29,36 @@
         android:layout_below="@id/toolbar"
         />
 
-    <FrameLayout
+    <android.support.v4.app.FragmentTabHost
+        android:id="@+id/tabhost"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_below="@+id/employee_header"
         android:layout_alignParentBottom="true"
+        android:layout_below="@+id/employee_header"
+        android:layout_marginTop="5sp"
+        android:layout_centerHorizontal="true"
+        android:layout_gravity="center"
         >
-
-        <fragment
-            android:id="@+id/employee_info_fragment"
-            class="org.dchbx.coveragehq.EmployeeInfoFragment"
+        <RelativeLayout
+            android:id="@+id/tablayout"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            tools:layout="@layout/employee_info_fragment"
-            />
-    </FrameLayout>
+            >
+            <FrameLayout
+                android:id="@android:id/tabcontent"
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_alignParentTop="true"
+                android:layout_above="@android:id/tabs"
+                />
+            <TabWidget
+                android:id="@android:id/tabs"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_alignParentBottom="true"
+                android:layout_centerHorizontal="true"
+                />
+        </RelativeLayout>
+    </android.support.v4.app.FragmentTabHost>
+
 </RelativeLayout>

@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <ScrollView
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:layout_alignParentTop="true"
@@ -10,93 +11,205 @@
 
     <RelativeLayout android:layout_width="match_parent"
                     android:layout_height="match_parent">
-
-        <Button
-            android:id="@+id/buttonCaptureFront"
-            android:text="@string/front"
-            android:drawableLeft="@drawable/camera"
+        <RelativeLayout
+            android:id="@+id/noImageArea"
+            android:background="@drawable/no_image_background"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_alignParentLeft="true"
-            android:padding="20sp"
-            android:textColor="@color/mainblue"
-            android:background="@color/transparent"
-            />
+            android:layout_marginRight="@dimen/insurance_card_side_margin"
+            android:layout_marginLeft="@dimen/insurance_card_side_margin"
+            >
+
+            <TextView
+                android:id="@+id/noImage"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentTop="true"
+                android:layout_centerHorizontal="true"
+                android:text="@string/no_images"
+                android:textAllCaps="true"
+                android:textColor="@color/textgray"
+                android:textSize="20dp"
+                android:layout_marginBottom="20dp"
+                android:layout_marginTop="76dp"
+                />
+
+            <TextView
+                android:id="@+id/takePhotos"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/noImage"
+                android:layout_centerHorizontal="true"
+                android:text="@string/take_photos_of_your_health_id_card"
+                android:textColor="@color/textgray"
+                android:textSize="20dp"
+                android:layout_marginBottom="62dp"
+                android:layout_marginTop="16dp"
+                />
+        </RelativeLayout>
+        <RelativeLayout
+            android:id="@+id/relativeLayoutFrontCapture"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@drawable/camera_button_background"
+            android:layout_marginRight="@dimen/insurance_card_side_margin"
+            android:layout_marginLeft="@dimen/insurance_card_side_margin"
+            android:layout_marginTop="15dp"
+            android:layout_marginBottom="15dp"
+            android:layout_below="@+id/noImageArea"
+            >
+            <LinearLayout
+                android:color="@color/transparent"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:layout_centerHorizontal="true"
+                android:layout_alignParentTop="true"
+                android:orientation="horizontal"
+                >
+
+                <ImageView
+                    android:id="@+id/imageViewFrontCamera"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:adjustViewBounds="true"
+                    android:scaleType="fitCenter"
+                    android:src="@drawable/camera_inverted"
+                    />
+                <Button
+                    android:id="@+id/buttonCaptureFront"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:background="@android:color/transparent"
+                    android:text="@string/front"
+                    android:textColor="@color/mainbackgroundcolor"
+                    android:textSize="20dp"
+                    android:layout_marginLeft="@dimen/insurance_card_image_label_spacing"
+                    />
+            </LinearLayout>
+        </RelativeLayout>
         <ImageView
             android:id="@+id/imageViewFrontView"
+            android:adjustViewBounds="true"
+            android:scaleType="fitCenter"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_below="@+id/buttonCaptureFront"
+            android:layout_below="@+id/relativeLayoutFrontCapture"
             android:layout_alignParentLeft="true"
+            android:layout_marginRight="@dimen/insurance_card_side_margin"
+            android:layout_marginLeft="@dimen/insurance_card_side_margin"
             />
         <Button
             android:id="@+id/buttonRemoveFront"
             android:text="@string/remove"
+            android:textSize="20dp"
             android:drawableLeft="@drawable/red_x"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_below="@+id/imageViewFrontView"
             android:layout_alignParentLeft="true"
-            android:drawablePadding="20sp"
-            android:padding="20sp"
+            android:padding="10dp"
+            android:drawablePadding="@dimen/insurance_card_image_label_spacing"
             android:textColor="@color/button_red"
             android:background="@color/transparent"
+            android:layout_marginLeft="40dp"
             />
         <Button
             android:id="@+id/buttonReplaceFront"
             android:text="@string/replace"
+            android:textSize="20dp"
             android:drawableLeft="@drawable/camera"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_below="@+id/imageViewFrontView"
-            android:layout_toRightOf="@+id/buttonRemoveFront"
-            android:padding="20sp"
+            android:layout_alignParentRight="true"
+            android:padding="10dp"
+            android:drawablePadding="@dimen/insurance_card_image_label_spacing"
+            android:layout_marginRight="40dp"
             android:textColor="@color/mainblue"
             android:background="@color/transparent"
             />
-        <Button
-            android:id="@+id/buttonCaptureRear"
-            android:text="@string/rear"
-            android:drawableLeft="@drawable/camera"
+        <RelativeLayout
+            android:id="@+id/relativeLayoutRearCapture"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_alignParentLeft="true"
-            android:layout_below="@+id/buttonRemoveFront"
-            android:paddingTop="20sp"
-            android:paddingBottom="20sp"
-            android:textColor="@color/mainblue"
-            android:background="@color/transparent"
-            />
+            android:layout_below="@+id/buttonReplaceFront"
+            android:background="@drawable/camera_button_background"
+            android:layout_marginRight="@dimen/insurance_card_side_margin"
+            android:layout_marginLeft="@dimen/insurance_card_side_margin"
+            android:layout_marginTop="15dp"
+            android:layout_marginBottom="15dp"
+            >
+            <LinearLayout
+                android:color="@color/transparent"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:layout_centerHorizontal="true"
+                android:layout_alignParentTop="true"
+                android:orientation="horizontal"
+                >
+
+                <ImageView
+                    android:id="@+id/imageViewRearCamera"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:adjustViewBounds="true"
+                    android:scaleType="fitCenter"
+                    android:src="@drawable/camera_inverted"
+                    />
+                <Button
+                    android:id="@+id/buttonCaptureRear"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:background="@android:color/transparent"
+                    android:text="@string/rear"
+                    android:textColor="@color/mainbackgroundcolor"
+                    android:textSize="20dp"
+                    android:layout_marginLeft="@dimen/insurance_card_image_label_spacing"
+                    />
+            </LinearLayout>
+        </RelativeLayout>
         <ImageView
             android:id="@+id/imageViewRearView"
+            android:adjustViewBounds="true"
+            android:scaleType="fitCenter"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_alignParentLeft="true"
-            android:layout_below="@+id/buttonCaptureRear"
+            android:layout_below="@+id/relativeLayoutRearCapture"
+            android:layout_marginRight="@dimen/insurance_card_side_margin"
+            android:layout_marginLeft="@dimen/insurance_card_side_margin"
             />
         <Button
             android:id="@+id/buttonRemoveRear"
             android:text="@string/remove"
+            android:textSize="20dp"
             android:drawableLeft="@drawable/red_x"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_alignParentLeft="true"
             android:layout_below="@+id/imageViewRearView"
-            android:padding="20sp"
+            android:layout_alignParentLeft="true"
+            android:padding="10dp"
+            android:drawablePadding="@dimen/insurance_card_image_label_spacing"
             android:textColor="@color/button_red"
             android:background="@color/transparent"
+            android:layout_marginLeft="40dp"
             />
         <Button
             android:id="@+id/buttonReplaceRear"
             android:text="@string/replace"
+            android:textSize="20dp"
             android:drawableLeft="@drawable/camera"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_below="@+id/imageViewRearView"
-            android:layout_toRightOf="@+id/buttonRemoveRear"
-            android:padding="20sp"
-            android:background="@color/transparent"
+            android:layout_alignParentRight="true"
+            android:padding="10dp"
+            android:drawablePadding="@dimen/insurance_card_image_label_spacing"
+            android:layout_marginRight="40dp"
             android:textColor="@color/mainblue"
+            android:background="@color/transparent"
             />
     </RelativeLayout>
 </ScrollView>

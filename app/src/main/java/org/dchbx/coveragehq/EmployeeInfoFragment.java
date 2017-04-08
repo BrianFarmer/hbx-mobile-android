@@ -44,13 +44,13 @@ public class EmployeeInfoFragment extends BrokerFragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         try {
-
             view = LayoutInflater.from(getActivity()).inflate(R.layout.employee_info_fragment, null);
         } catch (Exception e){
             Log.e(TAG, "Exception infloating view", e);
             throw e;
         }
         init();
+        getMessages().getUserEmployee();
         return view;
     }
 

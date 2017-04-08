@@ -36,7 +36,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class EmployeeDetailsActivity extends BrokerActivity {
+public class InsuredDetailsActivity extends BrokerActivity {
     private static final String INFO_TAB = "InfoTab";
     private static final String CARD_TAB = "CardTab";
     private static String TAG = "EmployeeDetailsActivity";
@@ -189,7 +189,7 @@ public class EmployeeDetailsActivity extends BrokerActivity {
                         currentDate = employee.enrollments.get(pos).startOn;
                         try {
                             Enrollment enrollment = BrokerUtilities.getEnrollmentForCoverageYear(employee, currentDate);
-                            populateCoverageYearDependencies(enrollment, EmployeeDetailsActivity.this.getResources());
+                            populateCoverageYearDependencies(enrollment, InsuredDetailsActivity.this.getResources());
                         } catch (Exception e) {
                             e.printStackTrace();
                         }
@@ -318,7 +318,7 @@ public class EmployeeDetailsActivity extends BrokerActivity {
                 .setCancelable(false)
                 .setPositiveButton("OK", new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int id) {
-                        Intents.restartApp(EmployeeDetailsActivity.this);
+                        Intents.restartApp(InsuredDetailsActivity.this);
                         finish();
                     }
                 });

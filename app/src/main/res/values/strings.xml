@@ -221,4 +221,6 @@
     <string name="have_front_insurance_card">haveFrontInsuranceCard</string>
     <string name="have_rear_insurance_card">haveRearInsuranceCard</string>
     <string name="file_error">A file error happened trying to remove the file, please try again later.</string>
+    <string name="no_images">No Images</string>
+    <string name="take_photos_of_your_health_id_card">Take photos of your health ID card.</string>
 </resources>

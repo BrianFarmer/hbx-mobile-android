@@ -64,6 +64,11 @@ public class Intents {
         rootActivity.startActivity(intent);
     }
 
+    public static void launchInsuredUserDetailsActivity(RootActivity rootActivity) {
+        Intent intent = new Intent(rootActivity, EmployeeDetailsActivity.class);
+        rootActivity.startActivity(intent);
+    }
+
     public static void launchCamera(Activity activity, int requestId) {
 
         Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
