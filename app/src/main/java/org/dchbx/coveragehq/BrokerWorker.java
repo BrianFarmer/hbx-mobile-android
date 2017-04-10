@@ -277,8 +277,12 @@ public class BrokerWorker extends IntentService {
     public void doThis(Events.LogoutRequest logoutRequest) {
         Log.d(TAG, "Received LogoutRequest message");
 
-        config.getCoverageConnection().logout(logoutRequest.getClearAccount());
-        if (sessionTimeoutTimer != null){
+        try {
+            config.getCoverageConnection().logout(logoutRequest.getClearAccount());
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+            if (sessionTimeoutTimer != null){
             sessionTimeoutTimer.cancel();
             sessionTimeoutTimer = null;
         }

@@ -164,6 +164,11 @@ public class LoginActivity extends BrokerActivity {
 
 
     @Override
+    public void onBackPressed(){
+        System.exit(0);
+    }
+
+    @Override
     public void onResume(){
         super.onResume();
         fingerprintHardwareState = FingerprintHardwareState.NotChecked;

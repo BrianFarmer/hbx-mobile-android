@@ -121,18 +121,21 @@ public abstract class CoverageConnection {
         return Events.GetLoginResult.UserType.Unknown;
     }
 
-    public void logout(boolean clearAccount) {
+    public void logout(boolean clearAccount) throws IOException, CertificateException, NoSuchAlgorithmException, UnrecoverableKeyException, InvalidKeyException, NoSuchPaddingException, BadPaddingException, KeyStoreException, NoSuchProviderException, IllegalBlockSizeException {
         serverConfiguration.sessionId = null;
         serverConfiguration.password = null;
         serverConfiguration.securityAnswer = null;
         serverConfiguration.securityQuestion = null;
-        serverConfiguration.rememberMe = false;
+        //serverConfiguration.rememberMe = false;
         serverConfiguration.authenticityToken = null;
         serverConfiguration.userType = ServerConfiguration.UserType.Unknown;
 
         if (clearAccount){
-            serverConfiguration.accountName = null;
+            if (!serverConfiguration.rememberMe) {
+                serverConfiguration.accountName = null;
+            }
             clearStorageHandler.clear();
+            clearStorageHandler.store(serverConfiguration);
         }
     }
 
