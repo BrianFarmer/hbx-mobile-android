@@ -84,35 +84,40 @@ public class RosterFragment extends BrokerFragment implements EmployeeFilterDial
    }
 
     private void populateSideIndex() {
-        TreeMap<Character, Integer> foundChars = new TreeMap<>();
-        for (int i = 0; i < filteredEmployees.size(); i ++){
-            RosterEntry employee = filteredEmployees.get(i);
-            if (employee.lastName != null
-                && employee.lastName.length() > 0
-                && foundChars.get(employee.lastName.charAt(0)) == null){
-                foundChars.put(employee.lastName.charAt(0), i);
-            }
-        }
-
         LinearLayout linearLayoutSideIndex = (LinearLayout)view.findViewById(R.id.linearLayoutSideIndex);
         linearLayoutSideIndex.removeAllViews();
-        LayoutInflater layoutInflater = LayoutInflater.from(getActivity());
-        for (final Map.Entry<Character, Integer> entry: foundChars.entrySet()) {
-            TextView sideIndexItem = (TextView) layoutInflater.inflate(R.layout.side_index_item, null);
-            sideIndexItem.setText(entry.getKey().toString());
-            sideIndexItem.setTag(entry.getValue());
-            sideIndexItem.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    RosterFragment.this.filterLetter = entry.getKey().toString();
-                    try {
-                        listViewRoster.setSelection((Integer)view.getTag());
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                    }
+        if (filteredEmployees.size() > 15) {
+            TreeMap<Character, Integer> foundChars = new TreeMap<>();
+            for (int i = 0; i < filteredEmployees.size(); i ++){
+                RosterEntry employee = filteredEmployees.get(i);
+                if (employee.lastName != null
+                    && employee.lastName.length() > 0
+                    && foundChars.get(employee.lastName.charAt(0)) == null){
+                    foundChars.put(employee.lastName.charAt(0), i);
                 }
-            });
-            linearLayoutSideIndex.addView(sideIndexItem);
+            }
+
+            linearLayoutSideIndex.setVisibility(View.VISIBLE);
+            LayoutInflater layoutInflater = LayoutInflater.from(getActivity());
+            for (final Map.Entry<Character, Integer> entry : foundChars.entrySet()) {
+                TextView sideIndexItem = (TextView) layoutInflater.inflate(R.layout.side_index_item, null);
+                sideIndexItem.setText(entry.getKey().toString());
+                sideIndexItem.setTag(entry.getValue());
+                sideIndexItem.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        RosterFragment.this.filterLetter = entry.getKey().toString();
+                        try {
+                            listViewRoster.setSelection((Integer) view.getTag());
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
+                    }
+                });
+                linearLayoutSideIndex.addView(sideIndexItem);
+            }
+        } else {
+            linearLayoutSideIndex.setVisibility(View.GONE);
         }
     }
 
