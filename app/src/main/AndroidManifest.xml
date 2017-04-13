@@ -70,6 +70,11 @@
             android:configChanges="orientation|keyboardHidden|screenSize"
             android:label=""
             />
+        <activity
+            android:name="org.dchbx.coveragehq.InsuredDetailsActivity"
+            android:configChanges="orientation|keyboardHidden|screenSize"
+            android:label=""
+            />
     </application>
 
 </manifest>

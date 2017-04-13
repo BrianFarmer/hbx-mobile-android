@@ -83,6 +83,11 @@ public class EventBusMessages implements Messages {
     }
 
     @Override
+    public void getInsured() {
+        eventBus.post(new Events.GetEmployee(null, null));
+    }
+
+    @Override
     public void coverageYearChanged(LocalDate year) {
         eventBus.post(new Events.CoverageYear(year));
     }

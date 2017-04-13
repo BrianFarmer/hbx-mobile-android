@@ -223,4 +223,7 @@
     <string name="file_error">A file error happened trying to remove the file, please try again later.</string>
     <string name="no_images">No Images</string>
     <string name="take_photos_of_your_health_id_card">Take photos of your health ID card.</string>
+    <string name="aptc_credit">APTC Credit</string>
+    <string name="dental_plan_drawer_label">Dental Plan</string>
+    <string name="monthly_premium">Monthly Premium</string>
 </resources>

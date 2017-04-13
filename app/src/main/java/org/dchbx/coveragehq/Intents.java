@@ -65,7 +65,7 @@ public class Intents {
     }
 
     public static void launchInsuredUserDetailsActivity(RootActivity rootActivity) {
-        Intent intent = new Intent(rootActivity, EmployeeDetailsActivity.class);
+        Intent intent = new Intent(rootActivity, InsuredDetailsActivity.class);
         rootActivity.startActivity(intent);
     }
 

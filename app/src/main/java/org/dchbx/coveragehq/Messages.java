@@ -18,6 +18,7 @@ public interface Messages {
     void getRoster();
     void getRoster(String employerId);
     void getEmployee(String employeeId, String employerId);
+    void getInsured();
     void coverageYearChanged(LocalDate coverageYear);
     void getGitAccounts(String s);
     void startSessioniTimeoutCountdown();

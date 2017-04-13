@@ -62,8 +62,8 @@ public class InsuredDetailsActivity extends BrokerActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        setContentView(R.layout.employee_details_activity);
-        getMessages().getEmployee(employeeId, employerId);
+        setContentView(R.layout.insured_user_details_activity);
+        getMessages().getInsured();
         configToolbar();
         configTabs();
     }
@@ -82,7 +82,7 @@ public class InsuredDetailsActivity extends BrokerActivity {
         tabHost.addTab(tabHost.newTabSpec(INFO_TAB).setIndicator(createTabIndicator(inflater, tabHost,
                                                                                     R.string.info_tab_name,
                                                                                     R.drawable.info_tab_states,
-                                                                                    true)), EmployeeInfoFragment.class, null);
+                                                                                    true)), InsuredInfoFragment.class, null);
         tabHost.addTab(tabHost.newTabSpec(CARD_TAB).setIndicator(createTabIndicator(inflater, tabHost,
                 R.string.card_tab_name,
                 R.drawable.ivl_tab_card_states,
