@@ -696,6 +696,9 @@ public class Events {
     }
 
     static public class TestTimeout {
+        public TestTimeout(){
+            Log.d("TestTimeout", "TestTimeout ctor");
+        }
     }
 
     public static class TestTimeoutResult {

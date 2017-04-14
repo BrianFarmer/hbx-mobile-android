@@ -650,6 +650,7 @@ public class BrokerWorker extends IntentService {
     public void doThis(Events.TestTimeout testTimeout) {
         eventBus.post(new Events.TestTimeoutResult(timeout != null
                                                    && timeout.compareTo(DateTime.now()) < 0));
+        timeout = null;
     }
 }
 

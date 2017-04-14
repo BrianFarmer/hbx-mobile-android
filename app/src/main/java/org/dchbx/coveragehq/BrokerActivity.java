@@ -22,6 +22,7 @@ import java.util.ArrayList;
 
 public class BrokerActivity extends BaseActivity {
     private static final String TAG = "BrokerActivity";
+    private boolean shuttingDown = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -43,7 +44,8 @@ public class BrokerActivity extends BaseActivity {
 
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void doThis(Events.TestTimeoutResult testTimeoutResult) {
-        if (testTimeoutResult.timedOut){
+        if (testTimeoutResult.timedOut && !shuttingDown){
+            shuttingDown = true;
             Intents.restartApp(this);
             finish();
         }

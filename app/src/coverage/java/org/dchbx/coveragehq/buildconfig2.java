@@ -26,7 +26,7 @@ class BuildConfig2 extends EnrollConfigBase {
     }
 
     public static int getTimeoutCountdownSeconds() {
-        return 30;
+        return 10;
     }
 
     //

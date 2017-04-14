@@ -1,7 +1,11 @@
 package org.dchbx.coveragehq;
 
 import android.app.Activity;
+import android.app.AlarmManager;
+import android.app.PendingIntent;
+import android.content.Context;
 import android.content.Intent;
+import android.util.Log;
 
 import org.joda.time.LocalDate;
 
@@ -47,9 +51,22 @@ public class Intents {
     }
 
     public static void restartApp(Activity activity){
+        try {
+            Intent mStartActivity = new Intent(activity, RootActivity.class);
+            mStartActivity.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+            int mPendingIntentId = 123456;
+            PendingIntent mPendingIntent = PendingIntent.getActivity(activity, mPendingIntentId, mStartActivity, PendingIntent.FLAG_CANCEL_CURRENT);
+            AlarmManager mgr = (AlarmManager) activity.getSystemService(Context.ALARM_SERVICE);
+            mgr.set(AlarmManager.RTC, System.currentTimeMillis() + 100, mPendingIntent);
+        } catch (Throwable t){
+            Log.d(TAG, "Throw during restart");
+        }
+
+
+/*
         Intent intent = new Intent(activity, RootActivity.class);
         intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-        activity.startActivity(intent);
+        activity.startActivity(intent);*/
     }
 
     public static void launchBrokerDetailsActivity(RootActivity rootActivity) {
