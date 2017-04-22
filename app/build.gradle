@@ -9,8 +9,8 @@ android {
         applicationId "org.dchbx.coveragehq"
         minSdkVersion 16
         targetSdkVersion 25
-        versionCode 34
-        versionName "1.0.34"
+        versionCode 36
+        versionName "1.0.36"
         testInstrumentationRunner 'android.support.test.runner.AndroidJUnitRunner'
     }
 
@@ -32,6 +32,9 @@ android {
         }
         enroll {
             applicationId 'org.dchbx.coveragehq_preprod'
+        }
+        ivlpreprod {
+            applicationId 'org.dchbx.coveragehq_ivl_preprod'
         }
         coverage {
             applicationId 'org.dchbx.coveragehq'

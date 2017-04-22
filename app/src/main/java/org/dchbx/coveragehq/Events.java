@@ -4,12 +4,15 @@ import android.net.Uri;
 import android.util.Log;
 import android.widget.ImageView;
 
-import org.dchbx.coveragehq.models.roster.RosterEntry;
-import org.joda.time.LocalDate;
-
 import org.dchbx.coveragehq.models.brokeragency.BrokerAgency;
 import org.dchbx.coveragehq.models.employer.Employer;
 import org.dchbx.coveragehq.models.roster.Roster;
+import org.dchbx.coveragehq.models.roster.RosterEntry;
+import org.dchbx.coveragehq.models.roster.SummaryOfBenefits;
+import org.dchbx.coveragehq.models.services.Service;
+import org.joda.time.LocalDate;
+
+import java.util.List;
 
 public class Events {
     static int lastCancelableRequestId = 0;
@@ -364,7 +367,7 @@ public class Events {
             Broker,
             Employer,
             Employee,
-            Unknown
+            SignUpEmployee, Unknown
         }
     }
 
@@ -696,7 +699,7 @@ public class Events {
     }
 
     static public class EmployerActivityReady {
-        public EmployerActivityReady(){
+        public EmployerActivityReady() {
 
         }
     }
@@ -818,5 +821,71 @@ public class Events {
         public boolean isSuccess() {
             return success;
         }
+    }
+
+    public static class GetInsuredAndBenefits {
+        private LocalDate currentDate;
+
+        public GetInsuredAndBenefits(LocalDate currentDate) {
+            this.currentDate = currentDate;
+        }
+
+        public LocalDate getCurrentDate() {
+            return currentDate;
+        }
+    }
+
+    public static class GetInsuredAndSummaryOfBenefitsResult {
+        private final RosterEntry insured;
+        private final List<SummaryOfBenefits> summaryOfBenefitsList;
+
+        public GetInsuredAndSummaryOfBenefitsResult(RosterEntry insured, List<SummaryOfBenefits> summaryOfBenefitsList) {
+            this.insured = insured;
+            this.summaryOfBenefitsList = summaryOfBenefitsList;
+        }
+
+        public RosterEntry getInsured() {
+            return insured;
+        }
+
+        public List<SummaryOfBenefits> getSummaryOfBenefitsList() {
+            return summaryOfBenefitsList;
+        }
+    }
+
+    public static class GetInsuredAndServices {
+        private final LocalDate enrollmentDate;
+
+        public GetInsuredAndServices(LocalDate enrollmentDate) {
+            this.enrollmentDate = enrollmentDate;
+        }
+
+        public LocalDate getEnrollmentDate() {
+            return enrollmentDate;
+        }
+    }
+
+    public static class GetInsuredAndServicesResult {
+        private final RosterEntry insured;
+        private final List<Service> servicesList;
+
+        public GetInsuredAndServicesResult(RosterEntry insured, List<Service> servicesList) {
+            this.insured = insured;
+            this.servicesList = servicesList;
+        }
+
+        public RosterEntry getInsured() {
+            return insured;
+        }
+
+        public List<Service> getServicesList() {
+            return servicesList;
+        }
+    }
+
+    public static class SignUp {
+    }
+
+    public static class SignUpResult {
     }
 }

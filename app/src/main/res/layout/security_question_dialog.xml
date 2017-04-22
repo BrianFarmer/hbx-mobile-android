@@ -6,7 +6,7 @@
                 style="@style/DialogStyle">
 
     <TextView
-        android:id="@+id/securityQuestionTitleBar"
+        android:id="@+id/contactDialogTitleBar"
         style="@style/contactInfoTitleBar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -17,7 +17,7 @@
     <TextView
         android:id="@+id/textViewSecurityQuestion"
         style="@style/security_question"
-        android:layout_below="@+id/securityQuestionTitleBar"
+        android:layout_below="@+id/contactDialogTitleBar"
     />
     <EditText
         android:id="@+id/editTextSecurityAnswer"

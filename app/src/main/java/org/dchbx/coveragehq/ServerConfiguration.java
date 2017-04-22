@@ -9,7 +9,8 @@ public class ServerConfiguration {
         Unknown,
         Broker,
         Employer,
-        Employee
+        Employee,
+        SignUpEmployee
     }
 
     public String accountName = null;

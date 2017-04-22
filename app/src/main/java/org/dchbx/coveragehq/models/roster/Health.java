@@ -38,5 +38,25 @@ public class Health {
     @SerializedName("terminate_reason")
     @Expose
     public String terminateReason;
-
+    @SerializedName("summary_of_benefits_url")
+    @Expose
+    public String summaryOfBenefitsUrl;
+    @SerializedName("provider_directory_url")
+    @Expose
+    public String provider_directory_url;
+    @SerializedName("rx_formulary_url")
+    @Expose
+    public String RxFormularyUrl;
+    @SerializedName("services_rates_url")
+    @Expose
+    public String servicesRatesUrl;
+    @SerializedName("carrier_name")
+    @Expose
+    public String carrierName;
+    @SerializedName("applied_aptc_amount_in_cent")
+    @Expose
+    public double applied_aptc_amount_in_cent;
+    @SerializedName("elected_aptc_pct")
+    @Expose
+    public double electedAptcPct;
 }

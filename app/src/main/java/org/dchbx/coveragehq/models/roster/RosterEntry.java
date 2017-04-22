@@ -41,6 +41,12 @@ public class RosterEntry {
     @SerializedName("id")
     @Expose
     public String id;
+    @Expose
+    public String email;
+    @Expose
+    public String phone;
+    @Expose
+    public List<Address> addresses = new ArrayList<>();
     @SerializedName("enrollments")
     @Expose
     public List<Enrollment> enrollments = new ArrayList<Enrollment>();
@@ -50,4 +56,19 @@ public class RosterEntry {
     @SerializedName("dependents")
     @Expose
     public List<Dependent> dependents = new ArrayList<>();
+
+    @SerializedName("summary_of_benefits_url")
+    @Expose
+    public String summaryOfBenefitsUrl;
+
+    @SerializedName("provider_directory_url")
+    @Expose
+    public String providerDirectoryUrl;
+
+    @SerializedName("rx_formulary_url")
+    @Expose
+    public String rxFormularyUrl;
+    @SerializedName("services_rates_url")
+    @Expose
+    public String servicesRatesUrl;
 }

@@ -152,10 +152,10 @@
     <string name="health_plan_drawer_label">Health Plan</string>
     <string name="dependents_drawer">Dependents</string>
     <string name="plan_name_field">Plan Name: %s</string>
-    <string name="benefit_group_field">Benefit Group: %s</string>
+    <string name="plan_selected_field">Plan Selected: %s</string>
     <string name="health_plan_group_tag">health_plan_group</string>
     <string name="premiums_label">Premium</string>
-    <string name="plan_start_field">Plan Start: %s</string>
+    <string name="plan_type_field" formatted="false">Plan Type: %s %s</string>
     <string name="metal_level_field">Metal Level: %s</string>
     <string name="unknown">Unknown</string>
     <string name="dependents_group_tag">dependents_group_tag</string>
@@ -204,7 +204,8 @@
     <string name="renewal_processing">Renewal Processing</string>
     <string name="settings">Settings</string>
     <string name="exit">Exit</string>
-    <string name="network_access_error">This application requires network access. Please correct this  or try again later.</string>
+    <string name="old_network_access_error">This application requires network access. Please correct this  or try again later.</string>
+    <string name="network_access_error">We\'ve lost our connection to the server. Choose \'retry\' to try again, \'settings\' to adjust your network settings, or close the app and restart it.</string>
     <string name="retry">Retry</string>
     <string name="hbx_mail_url">mailto:info@dchealthlink.com?subject=DC Health Link SmallBiz for Employers and Brokers</string>
     <string name="error_login_again">An error happend, please login again.</string>
@@ -226,4 +227,17 @@
     <string name="aptc_credit">APTC Credit</string>
     <string name="dental_plan_drawer_label">Dental Plan</string>
     <string name="monthly_premium">Monthly Premium</string>
+    <string name="choose_your_maximum_premium_and_deductible">Choose your maximum premium and deductible.</string>
+    <string name="monthly_premium_maximum">Monthly Premium (Maximum)</string>
+    <string name="plan_deductible_maximum">Plan Deductible (Maximum)</string>
+    <string name="resources_links_header_text"><![CDATA[Resources & Links]]></string>
+    <string name="summary_of_benefits_coverage_header_text"><![CDATA[Summary of benefits & Coverage]]></string>
+    <string name="co_pay_label">Co-Pay</string>
+    <string name="co_insurance_label">Co-Insurance</string>
+    <string name="terms_and_conditions">Terms and Conditions</string>
+    <string name="summary_of_benefits_coverage"><![CDATA[Summary of Benefits & Coverage]]></string>
+    <string name="plan_contact_info">Plan Contact Info</string>
+    <string name="email">Email</string>
+    <string name="website">Website</string>
+    <string name="dc_health_link_id_field">DC Health Link ID: %s</string>
 </resources>

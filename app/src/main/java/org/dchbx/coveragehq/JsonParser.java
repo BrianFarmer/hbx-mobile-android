@@ -10,10 +10,12 @@ import org.dchbx.coveragehq.models.Security.LoginResponse;
 import org.dchbx.coveragehq.models.Security.SecurityAnswerResponse;
 import org.dchbx.coveragehq.models.brokeragency.BrokerAgency;
 import org.dchbx.coveragehq.models.employer.Employer;
-import org.dchbx.coveragehq.models.gitaccounts.*;
 import org.dchbx.coveragehq.models.gitaccounts.AccountInfo;
+import org.dchbx.coveragehq.models.gitaccounts.GitAccounts;
 import org.dchbx.coveragehq.models.roster.Roster;
 import org.dchbx.coveragehq.models.roster.RosterEntry;
+import org.dchbx.coveragehq.models.roster.SummaryOfBenefits;
+import org.dchbx.coveragehq.models.services.Service;
 import org.joda.time.DateTime;
 import org.joda.time.LocalDate;
 
@@ -128,5 +130,21 @@ public class JsonParser {
 
         gitAccounts.setAccountInfo(map);
         return gitAccounts;
+    }
+
+    public List<SummaryOfBenefits> parseSummaryOfBenefits(String body) {
+        GsonBuilder gsonBuilder = new GsonBuilder();
+        Gson gson = gsonBuilder.create();
+        Type type = new TypeToken<List<SummaryOfBenefits>>() {}.getType();
+        Object object = gson.fromJson(body.replace("\"\"", "null"), type);
+        return (List<SummaryOfBenefits>)object;
+    }
+
+    public List<Service> parseServices(String body) {
+        GsonBuilder gsonBuilder = new GsonBuilder();
+        Gson gson = gsonBuilder.create();
+        Type type = new TypeToken<List<Service>>() {}.getType();
+        Object object = gson.fromJson(body.replace("\"\"", "null"), type);
+        return (List<Service>)object;
     }
 }

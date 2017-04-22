@@ -13,9 +13,11 @@ import org.joda.time.LocalDate;
 public class Intents {
     private static String TAG = "Intents";
 
+    public static final String ENROLLMENT_DATE_ID = "BrokerClientId";
     public static final String BROKER_CLIENT_ID = "BrokerClientId";
     public static final String EMPLOYEE_ID = "EmployeeId";
     public static final String COVERAGE_YEAR = "CoverageEYear";
+    public static final String SHOW_HEALTH_ID = "ShowHealth";
 
     static final int REQUEST_IMAGE_CAPTURE = 1;
 
@@ -75,5 +77,17 @@ public class Intents {
         if (takePictureIntent.resolveActivity(BrokerApplication.getBrokerApplication().getPackageManager()) != null) {
             activity.startActivityForResult(takePictureIntent, requestId);
         }
+    }
+
+    public static void launchSummaryOfBenefitsActivity(Activity activity, LocalDate date, boolean showHealth) {
+        Intent intent = new Intent(activity, SummaryOfBenefitsActivity.class);
+        intent.putExtra(ENROLLMENT_DATE_ID, date.toString());
+        intent.putExtra(SHOW_HEALTH_ID, showHealth);
+        activity.startActivity(intent);
+    }
+
+    public static void launchChoosePlan(Activity activity) {
+        Intent intent = new Intent(activity, FilterPlansActivity.class);
+        activity.startActivity(intent);
     }
 }

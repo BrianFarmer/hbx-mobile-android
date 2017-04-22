@@ -249,7 +249,6 @@ public class BrokerWorker extends IntentService {
                     timedout = true;
                 }
             }
-
             ServerConfiguration serverConfiguration = config.getCoverageConnection().getLogin();
             BrokerWorker.eventBus.post(new Events.GetLoginResult(serverConfiguration.accountName, serverConfiguration.password,
                     serverConfiguration.securityAnswer, serverConfiguration.rememberMe, serverConfiguration.useFingerprintSensor,
@@ -642,6 +641,7 @@ public class BrokerWorker extends IntentService {
     public void doThis(Events.TestTimeout testTimeout) {
         eventBus.post(new Events.TestTimeoutResult(timeout != null
                                                    && timeout.compareTo(DateTime.now()) < 0));
+        timeout = null;
     }
 
     @Subscribe(threadMode = ThreadMode.BACKGROUND)
@@ -667,6 +667,56 @@ public class BrokerWorker extends IntentService {
         } catch (Exception e){
             eventBus.post(new Events.RemoveInsuraceCardImageResult(false));
         }
+    }
+
+    /*
+    @Subscribe(threadMode = ThreadMode.BACKGROUND)
+    public void doThis(Events.GetInsuredAndBenefits getInsuredAndBenefits) {
+        try {
+            Log.d(TAG, "Received GetInsuredAndBenefits message");
+
+            if (!SystemUtilities.detectNetwork()){
+                Log.e(TAG, "no network, returning from BrokerWorker");
+                BrokerWorker.eventBus.post(new Events.Error("No Networking", null));
+                return;
+            }
+
+            CoverageConnection.InsuredAndSummary insuredAndSummaryOfBenefits = config.getCoverageConnection().getInsuredAndSummaryOfBenefits(getInsuredAndBenefits.getCurrentDate());
+
+            BrokerWorker.eventBus.post(new Events.GetInsuredAndSummaryOfBenefitsResult(insuredAndSummaryOfBenefits.getInsured(), insuredAndSummaryOfBenefits.getSummaries()));
+            updateSessionTimer();
+        } catch (Exception e) {
+            Log.e(TAG, "Exception processing GetEmployee");
+            BrokerWorker.eventBus.post(new Events.Error("Error getting employee", "Events.GetEmployee"));
+        }
+    }
+    */
+
+    @Subscribe(threadMode = ThreadMode.BACKGROUND)
+    public void doThis(Events.GetInsuredAndServices getInsuredAndServices) {
+        try {
+            Log.d(TAG, "Received GetInsuredAndBenefits message");
+
+            if (!SystemUtilities.detectNetwork()){
+                Log.e(TAG, "no network, returning from BrokerWorker");
+                BrokerWorker.eventBus.post(new Events.Error("No Networking", null));
+                return;
+            }
+
+            CoverageConnection.InsuredAndServices insuredAndServices = config.getCoverageConnection().getInsuredAndServices(getInsuredAndServices.getEnrollmentDate());
+
+            BrokerWorker.eventBus.post(new Events.GetInsuredAndServicesResult(insuredAndServices.getInsured(), insuredAndServices.getServices()));
+            updateSessionTimer();
+        } catch (Exception e) {
+            Log.e(TAG, "Exception processing GetEmployee");
+            BrokerWorker.eventBus.post(new Events.Error("Error getting employee", "Events.GetEmployee"));
+        }
+    }
+
+    @Subscribe(threadMode = ThreadMode.BACKGROUND)
+    public void doThis(Events.SignUp signUp) {
+        config.getCoverageConnection().configureForSignUp();
+        BrokerWorker.eventBus.post(new Events.SignUpResult());
     }
 }
 

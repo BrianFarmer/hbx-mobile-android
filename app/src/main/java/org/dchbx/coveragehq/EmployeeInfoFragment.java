@@ -127,24 +127,24 @@ public class EmployeeInfoFragment extends BrokerFragment {
         textViewEnrollmentStatus.setTextColor(ContextCompat.getColor(getActivity(), Utilities.colorFromEmployeeStatus(currentEnrollment.health.status)));
 
 
-        TextView textViewBenefitGroupField = (TextView) view.findViewById(R.id.textViewBenefitGroupField);
+        TextView textViewBenefitGroupField = (TextView) view.findViewById(R.id.planSelected);
         if (health.benefitGroupName != null) {
-            textViewBenefitGroupField.setText(String.format(resources.getString(R.string.benefit_group_field), health.benefitGroupName));
+            textViewBenefitGroupField.setText(String.format(resources.getString(R.string.plan_selected_field), health.benefitGroupName));
         } else {
-            textViewBenefitGroupField.setText(String.format(resources.getString(R.string.benefit_group_field), health.status));
+            textViewBenefitGroupField.setText(String.format(resources.getString(R.string.plan_selected_field), health.status));
         }
 
-        TextView textViewPlanNameField = (TextView) view.findViewById(R.id.textViewPlanNameField);
+        TextView textViewPlanNameField = (TextView) view.findViewById(R.id.dcHealthLinkIdField);
         if (health.planName != null) {
             textViewPlanNameField.setText(String.format(resources.getString(R.string.plan_name_field), health.planName));
         } else {
             textViewPlanNameField.setText(String.format(resources.getString(R.string.plan_name_field), health.status));
         }
-        TextView textViewPlanStartField = (TextView) view.findViewById(R.id.textViewPlanStartField);
+        TextView textViewPlanStartField = (TextView) view.findViewById(R.id.planTypeField);
         if (health.terminatedOn != null){
-            textViewPlanStartField.setText(String.format(resources.getString(R.string.plan_start_field), health.terminatedOn));
+            textViewPlanStartField.setText(String.format(resources.getString(R.string.plan_type_field), health.terminatedOn));
         } else {
-            textViewPlanStartField.setText(String.format(resources.getString(R.string.plan_start_field), Utilities.DateAsString(coverageYear)));
+            textViewPlanStartField.setText(String.format(resources.getString(R.string.plan_type_field), Utilities.DateAsString(coverageYear)));
         }
         TextView textViewMetalLevelField = (TextView) view.findViewById(R.id.textViewMetalLevelField);
         if (health.metalLevel != null){

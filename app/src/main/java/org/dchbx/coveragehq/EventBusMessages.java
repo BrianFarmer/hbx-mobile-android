@@ -181,5 +181,20 @@ public class EventBusMessages implements Messages {
     public void removeInsuraceCardImage(boolean front) {
         eventBus.post(new Events.RemoveInsuraceCardImage(front));
     }
+
+    @Override
+    public void getInsuredAndBenefits(LocalDate currentDate) {
+        eventBus.post(new Events.GetInsuredAndBenefits(currentDate));
+    }
+
+    @Override
+    public void getInsuredAndServices(LocalDate currentDate) {
+        eventBus.post(new Events.GetInsuredAndServices(currentDate));
+    }
+
+    @Override
+    public void signUp() {
+        eventBus.post(new Events.SignUp());
+    }
 }
 

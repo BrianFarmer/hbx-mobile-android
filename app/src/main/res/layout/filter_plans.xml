@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+
+    <TextView
+        android:id="@+id/textViewChoose"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:layout_marginTop="70dp"
+        android:layout_marginLeft="57dp"
+        android:layout_marginRight="57dp"
+        android:text="@string/choose_your_maximum_premium_and_deductible"
+        android:textAlignment="center"
+        android:textSize="24dp"
+        />
+
+    <SeekBar
+        android:id="@+id/monthlyPremium"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/textViewChoose"
+        android:layout_marginTop="54dp"
+        android:layout_marginLeft="34dp"
+        android:layout_marginRight="34dp"
+        />
+
+    <TextView
+        android:id="@+id/textViewMonthlyPremiumLabel"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/monthlyPremium"
+        android:layout_marginTop="26dp"
+        android:text="@string/monthly_premium_maximum"
+        android:textAlignment="center"
+        android:textSize="20dp"
+        />
+    <SeekBar
+        android:id="@+id/planDeductable"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/textViewMonthlyPremiumLabel"
+        android:layout_marginTop="54dp"
+        android:layout_marginLeft="34dp"
+        android:layout_marginRight="34dp"
+        />
+
+    <TextView
+        android:id="@+id/textViewPlanDeductableLabel"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/planDeductable"
+        android:layout_marginTop="26dp"
+        android:text="@string/plan_deductible_maximum"
+        android:textAlignment="center"
+        android:textSize="20dp"
+        />
+
+    <Button
+        android:id="@+id/filterButton"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_marginBottom="18dp"
+        android:text="Button"
+        android:textSize="20dp"
+        />
+
+
+</RelativeLayout>

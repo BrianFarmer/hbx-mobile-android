@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@color/mainbackgroundcolor"
+    >
+
+    <TextView
+        android:id="@+id/label"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingLeft="20dp"
+        android:paddingRight="20dp"
+        android:paddingTop="17dp"
+        android:paddingBottom="14dp"
+        android:layout_alignParentLeft="true"
+        android:textSize="16dp"
+        android:text="TextView"
+        android:background="@color/lightgray"
+        android:textColor="@color/mainblue"
+        />
+
+    <RelativeLayout
+        android:id="@+id/body"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/label"
+        >
+        <TextView
+            android:id="@+id/copayLabel"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentStart="true"
+            android:layout_alignParentTop="true"
+            android:paddingTop="18dp"
+            android:paddingLeft="20dp"
+            android:paddingRight="20dp"
+            android:textSize="16dp"
+            android:text="@string/co_pay_label"
+            android:textColor="@color/textgray"
+            android:fontFamily="sans-serif-light"
+            />
+
+        <TextView
+            android:id="@+id/copay"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentLeft="true"
+            android:layout_below="@+id/copayLabel"
+            android:paddingTop="0dp"
+            android:paddingLeft="20dp"
+            android:paddingRight="20dp"
+            android:textSize="16dp"
+            android:text="TextView"
+            android:textColor="@color/textgray"
+            android:fontFamily="sans-serif-light"
+            />
+
+        <TextView
+            android:id="@+id/coinsuranceLabel"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentLeft="true"
+            android:layout_below="@+id/copay"
+            android:paddingTop="18dp"
+            android:paddingLeft="20dp"
+            android:paddingRight="20dp"
+            android:textSize="16dp"
+            android:text="@string/co_insurance_label"
+            android:textColor="@color/textgray"
+            android:fontFamily="sans-serif-light"
+            />
+
+        <TextView
+            android:id="@+id/coinsurance"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentLeft="true"
+            android:layout_below="@+id/coinsuranceLabel"
+            android:paddingTop="0dp"
+            android:paddingBottom="18dp"
+            android:paddingLeft="20dp"
+            android:paddingRight="20dp"
+            android:textSize="16dp"
+            android:text="TextView"
+            android:textColor="@color/textgray"
+            android:fontFamily="sans-serif-light"
+            />
+    </RelativeLayout>
+
+
+</RelativeLayout>

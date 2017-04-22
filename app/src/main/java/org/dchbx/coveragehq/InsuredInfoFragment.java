@@ -6,9 +6,11 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import org.dchbx.coveragehq.models.roster.Address;
 import org.dchbx.coveragehq.models.roster.Dependent;
 import org.dchbx.coveragehq.models.roster.Enrollment;
 import org.dchbx.coveragehq.models.roster.Health;
@@ -25,9 +27,7 @@ public class InsuredInfoFragment extends BrokerFragment {
     private static String TAG = "EmployeeInfoFragment";
 
 
-    private String employeeId;
-    private String employerId;
-    private RosterEntry employee;
+    private RosterEntry insured;
     private LocalDate coverageYear;
 
     private boolean detailsVisible = true;
@@ -51,7 +51,8 @@ public class InsuredInfoFragment extends BrokerFragment {
     private LocalDate currentDate;
     private Enrollment currentEnrollment;
     private Resources resources = null;
-
+    private String carrier;
+    private Carriers carriers;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -74,32 +75,27 @@ public class InsuredInfoFragment extends BrokerFragment {
         textViewHealthPlanDrawer = (TextView) view.findViewById(R.id.textViewHealthPlanDrawer);
         textViewDentalPlanDrawer = (TextView) view.findViewById(R.id.textViewDentalPlanDrawer);
         textViewDependentsDrawer = (TextView) view.findViewById(R.id.textViewDependentsDrawer);
-        textViewNotEnrolled = (TextView) view.findViewById(R.id.textViewHealthPlanNotEnrolled);
-        relativeLayoutHealthPlanWrapper = (RelativeLayout) view.findViewById(R.id.relativeLayoutHealthPlanWrapper);
-        textViewDentalPlanNotEnrolled = (TextView) view.findViewById(R.id.textViewDentalPlanNotEnrolled);
-        relativeLayoutDentalPlanWrapper = (RelativeLayout) view.findViewById(R.id.relativeLayoutDentalPlanWrapper);
-        textViewDentalPlanNotEnrolled = (TextView) view.findViewById(R.id.textViewDentalPlanNotEnrolled);
         relativeLayoutDependentsWrapper = (RelativeLayout) view.findViewById(R.id.relativeLayoutDependentsWrapper);
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void doThis(Events.Employee getUserEmployeeResults) throws Exception {
-        employee = this.employee = getUserEmployeeResults.getEmployee();
-        currentDate = BrokerUtilities.getMostRecentPlanYear(employee);
-        this.currentEnrollment = BrokerUtilities.getEnrollment(employee, currentDate);
-        coverageYear = BrokerUtilities.getMostRecentPlanYear(employee);
+        this.insured = getUserEmployeeResults.getEmployee();
+        currentDate = BrokerUtilities.getMostRecentPlanYear(insured);
+        this.currentEnrollment = BrokerUtilities.getEnrollment(insured, currentDate);
+        coverageYear = BrokerUtilities.getMostRecentPlanYear(insured);
 
         populate();
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void doThis(Events.EmployeeFragmentUpdate  employeeFragmentUpdate) throws Exception {
-        this.employee = employeeFragmentUpdate.employee;
+        this.insured = employeeFragmentUpdate.employee;
         this.currentDate = employeeFragmentUpdate.currentEnrollmentStartDate;
-        this.currentEnrollment = BrokerUtilities.getEnrollment(employee, currentDate);
+        this.currentEnrollment = BrokerUtilities.getEnrollment(insured, currentDate);
 
         if (coverageYear == null){
-            coverageYear = BrokerUtilities.getMostRecentPlanYear(employee);
+            coverageYear = BrokerUtilities.getMostRecentPlanYear(insured);
         }
 
         try {
@@ -110,7 +106,7 @@ public class InsuredInfoFragment extends BrokerFragment {
     }
 
     private void populate() throws Exception {
-        if (employee == null) {
+        if (insured == null) {
             return;
         }
 
@@ -118,17 +114,91 @@ public class InsuredInfoFragment extends BrokerFragment {
         LocalDate initialCoverageYear = new LocalDate(2000, 1, 1);
 
         populateHealthPlan();
+        populateDentalPlan();
 
         TextView textViewDobField = (TextView) view.findViewById(R.id.textViewDobField);
-        textViewDobField.setText(String.format(resources.getString(R.string.dob_field_format), Utilities.DateAsString(employee.dateOfBirth)));
+        textViewDobField.setText(String.format(resources.getString(R.string.dob_field_format), Utilities.DateAsString(insured.dateOfBirth)));
 
         TextView textViewSsnField = (TextView) view.findViewById(R.id.textViewSsnField);
-        textViewSsnField.setText(String.format(resources.getString(R.string.ssn_field_format), employee.ssnMasked));
+        textViewSsnField.setText(String.format(resources.getString(R.string.ssn_field_format), insured.ssnMasked));
 
-        // Populate the employee's dependants.
+
+        TextView address1 = (TextView) view.findViewById(R.id.address1);
+        TextView address2 = (TextView) view.findViewById(R.id.address2);
+        TextView cityStateZip = (TextView) view.findViewById(R.id.cityStateZip);
+        TextView phoneNumber = (TextView) view.findViewById(R.id.phoneNumber);
+        TextView emailAddress = (TextView) view.findViewById(R.id.emailAddress);
+
+        Address displayAddress = BrokerUtilities.getDisplayAddress(insured);
+        if (displayAddress == null){
+            address1.setVisibility(View.GONE);
+            address2.setVisibility(View.GONE);
+            cityStateZip.setVisibility(View.GONE);
+        }
+
+        if (displayAddress.address1 == null
+            || displayAddress.address1.trim().length() == 0){
+            address1.setVisibility(View.GONE);
+        } else {
+            address1.setVisibility(View.VISIBLE);
+            address1.setText(displayAddress.address1);
+        }
+        if (displayAddress.address2 == null
+            || displayAddress.address2.trim().length() == 0){
+            address2.setVisibility(View.GONE);
+        } else {
+            address2.setVisibility(View.VISIBLE);
+            address2.setText(displayAddress.address2);
+        }
+        if ((displayAddress.city == null
+             || displayAddress.city.trim().length() == 0)
+            && (displayAddress.state == null
+                || displayAddress.state.trim().length() == 0)
+            && (displayAddress.zip == null
+             || displayAddress.zip.trim().length() == 0)){
+            cityStateZip.setVisibility(View.GONE);
+        } else {
+            String cityStateZipString = "";
+            if (displayAddress.city != null
+                && displayAddress.city.trim().length() > 0) {
+                cityStateZipString = displayAddress.city;
+            }
+            if (displayAddress.state != null
+                    && displayAddress.state.trim().length() > 0) {
+                if (cityStateZipString.length() > 0){
+                    cityStateZipString += ", ";
+                }
+                cityStateZipString += displayAddress.state;
+            }
+            if (displayAddress.zip != null
+                    && displayAddress.zip.trim().length() > 0) {
+                if (cityStateZipString.length() > 0){
+                    cityStateZipString += " ";
+                }
+                cityStateZipString += displayAddress.zip;
+            }
+            cityStateZip.setVisibility(View.VISIBLE);
+            cityStateZip.setText(cityStateZipString);
+        }
+        if (insured.phone == null
+                || insured.phone.trim().length() == 0){
+            phoneNumber.setVisibility(View.GONE);
+        } else {
+            phoneNumber.setVisibility(View.VISIBLE);
+            phoneNumber.setText(insured.phone);
+        }
+        if (insured.email == null
+                || insured.email.trim().length() == 0){
+            emailAddress.setVisibility(View.GONE);
+        } else {
+            emailAddress.setVisibility(View.VISIBLE);
+            emailAddress.setText(insured.email);
+        }
+
+        // Populate the insured's dependants.
         RelativeLayout parent = (RelativeLayout) view.findViewById(R.id.relativeLayoutDependentsWrapper);
         int aboveId = R.id.textViewDependentsDrawer;
-        for (Dependent dependent : employee.dependents) {
+        for (Dependent dependent : insured.dependents) {
             View viewDependantRoot = LayoutInflater.from(this.getActivity()).inflate(R.layout.dependent_info, parent, false);
             TextView textViewName = (TextView) viewDependantRoot.findViewById(R.id.textViewName);
             textViewName.setText(BrokerUtilities.getFullName(dependent));
@@ -168,28 +238,7 @@ public class InsuredInfoFragment extends BrokerFragment {
             }
         });
 
-        textViewHealthPlanDrawer.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                if (healthPlanVisible){
-                    healthPlanVisible = false;
-                } else {
-                    healthPlanVisible = true;
-                }
-            }
-        });
 
-        textViewDentalPlanDrawer.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                if (dentalPlanVisible){
-                    dentalPlanVisible = false;
-                } else {
-                    dentalPlanVisible = true;
-
-                }
-            }
-        });
 
         textViewDependentsDrawer.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -206,62 +255,99 @@ public class InsuredInfoFragment extends BrokerFragment {
     }
 
     private void populateDentalPlan() throws Exception {
-        if (currentEnrollment == null
-            || currentEnrollment.dental == null){
-            textViewDentalPlanNotEnrolled.setVisibility(View.VISIBLE);
-            relativeLayoutDentalPlanWrapper.setVisibility(View.GONE);
-        }
-        Health dental = currentEnrollment.dental;
-        textViewDentalPlanNotEnrolled.setVisibility(View.GONE);
-        relativeLayoutDentalPlanWrapper.setVisibility(View.VISIBLE);
+
+        textViewDentalPlanDrawer.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if (dentalPlanVisible){
+                    dentalPlanVisible = false;
+                } else {
+                    dentalPlanVisible = true;
+                }
+            }
+        });
+        ViewGroup viewGroup = (ViewGroup) view.findViewById(R.id.dentalPlanInfo);
+        populatePlan(currentEnrollment.dental, viewGroup, false);
     }
 
+
     private void populateHealthPlan() throws Exception {
-        TextView textViewNotEnrolled = (TextView) view.findViewById(R.id.textViewHealthPlanNotEnrolled);
-        RelativeLayout relativeLayoutPlanWrapper = (RelativeLayout) view.findViewById(R.id.relativeLayoutHealthPlanWrapper);
+        textViewHealthPlanDrawer.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if (healthPlanVisible){
+                    healthPlanVisible = false;
+                } else {
+                    healthPlanVisible = true;
+                }
+            }
+        });
+        ViewGroup view = (ViewGroup) this.view.findViewById(R.id.healthPlanInfo);
+        populatePlan(currentEnrollment.health, (ViewGroup)view, true);
+    }
+
+    private void populatePlan(Health plan, ViewGroup includeView, final Boolean health){
+
+        carrier = plan.carrierName;
+        TextView textViewNotEnrolled = (TextView) includeView.findViewById(R.id.notEnrolled);
+        RelativeLayout relativeLayoutPlanWrapper = (RelativeLayout) includeView.findViewById(R.id.wrapper);
         if (currentEnrollment == null
-            || currentEnrollment.health == null){
+            || plan == null){
             textViewNotEnrolled.setVisibility(View.VISIBLE);
             relativeLayoutPlanWrapper.setVisibility(View.GONE);
             return;
         }
-        Health health = currentEnrollment.health;
         textViewNotEnrolled.setVisibility(View.GONE);
         relativeLayoutPlanWrapper.setVisibility(View.VISIBLE);
 
 
-        TextView textViewBenefitGroupField = (TextView) view.findViewById(R.id.textViewBenefitGroupField);
-        if (health.benefitGroupName != null) {
-            textViewBenefitGroupField.setText(String.format(resources.getString(R.string.benefit_group_field), health.benefitGroupName));
-        } else {
-            textViewBenefitGroupField.setText(String.format(resources.getString(R.string.benefit_group_field), health.status));
-        }
+        TextView planSelected = (TextView) includeView.findViewById(R.id.planSelected);
+        planSelected.setText(String.format(resources.getString(R.string.plan_selected_field), Utilities.DateAsMonthDayYear(currentEnrollment.startOn)));
 
-        TextView textViewPlanNameField = (TextView) view.findViewById(R.id.textViewPlanNameField);
-        if (health.planName != null) {
-            textViewPlanNameField.setText(String.format(resources.getString(R.string.plan_name_field), health.planName));
-        } else {
-            textViewPlanNameField.setText(String.format(resources.getString(R.string.plan_name_field), health.status));
-        }
-        TextView textViewPlanStartField = (TextView) view.findViewById(R.id.textViewPlanStartField);
-        if (health.terminatedOn != null){
-            textViewPlanStartField.setText(String.format(resources.getString(R.string.plan_start_field), health.terminatedOn));
-        } else {
-            textViewPlanStartField.setText(String.format(resources.getString(R.string.plan_start_field), Utilities.DateAsString(coverageYear)));
-        }
-        TextView textViewMetalLevelField = (TextView) view.findViewById(R.id.textViewMetalLevelField);
-        if (health.metalLevel != null){
-            textViewMetalLevelField.setText(String.format(resources.getString(R.string.metal_level_field), health.metalLevel));
-        } else {
-            textViewMetalLevelField.setText(String.format(resources.getString(R.string.metal_level_field), health.status));
-        }
-        TextView textViewPremiums = (TextView) view.findViewById(R.id.textViewPremium);
+        TextView planIdField = (TextView) includeView.findViewById(R.id.planIdField);
+        planIdField.setText(String.format(resources.getString(R.string.dc_health_link_id_field), insured.id));
+
+        TextView planTypeField = (TextView)includeView.findViewById(R.id.planTypeField);
+        planTypeField.setText(String.format(resources.getString(R.string.plan_type_field), plan.planType, plan.metalLevel));
+
+        TextView textViewPremiums = (TextView) includeView.findViewById(R.id.textViewPremium);
         String totalPremiumString = "";
-        if (health.totalPremium != null) {
-            totalPremiumString = String.format("$%.2f", health.totalPremium);
+        if (plan.totalPremium != null) {
+            totalPremiumString = String.format("$%.2f", plan.totalPremium);
         }
         textViewPremiums.setText(totalPremiumString);
 
+        TextView textViewPremiumLabel = (TextView) includeView.findViewById(R.id.textViewPremiumLabel);
+        if (plan.totalPremium != null) {
+            totalPremiumString = String.format("$%.2f", plan.totalPremium/12);
+        }
+        textViewPremiums.setText(totalPremiumString);
+
+        TextView textViewAptcCredit = (TextView) includeView.findViewById(R.id.textViewAptcCredit);
+        String aptcCreditString = null;
+        aptcCreditString = String.format("$%.2f", plan.totalPremium/12);
+        textViewAptcCredit.setText(aptcCreditString);
+
+        TextView textViewYearlyDeductable = (TextView) includeView.findViewById(R.id.textViewYearlyDeductable);
+        String yearlyDeductableString = null;
+        textViewYearlyDeductable.setText("$XXX.XX");
+
+
+
+        Button planContactInfo = (Button)includeView.findViewById(R.id.planContactInfo);
+        planContactInfo.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                PlanContactInfoDialog dialog = PlanContactInfoDialog.build(InsuredInfoFragment.this.getActivity(), carrier);
+            }
+        });
+        Button summaryButton = (Button)includeView.findViewById(R.id.summary);
+        summaryButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intents.launchSummaryOfBenefitsActivity(InsuredInfoFragment.this.getActivity(), currentDate, health);
+            }
+        });
     }
 
     public int findId(){

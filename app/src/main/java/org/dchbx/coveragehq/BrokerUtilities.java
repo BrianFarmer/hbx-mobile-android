@@ -7,6 +7,7 @@ import org.dchbx.coveragehq.models.brokeragency.BrokerClient;
 import org.dchbx.coveragehq.models.brokeragency.ContactInfo;
 import org.dchbx.coveragehq.models.employer.Employer;
 import org.dchbx.coveragehq.models.employer.PlanYear;
+import org.dchbx.coveragehq.models.roster.Address;
 import org.dchbx.coveragehq.models.roster.Dependent;
 import org.dchbx.coveragehq.models.roster.Enrollment;
 import org.dchbx.coveragehq.models.roster.Roster;
@@ -618,5 +619,18 @@ public class BrokerUtilities {
             }
         }
         return null;
+    }
+
+    public static Address getDisplayAddress(RosterEntry employee) {
+        if (employee.addresses == null){
+            return null;
+        }
+
+        for (Address address : employee.addresses) {
+            if (address.kind.compareToIgnoreCase("home") == 0){
+                return address;
+            }
+        }
+        return employee.addresses.get(0);
     }
 }

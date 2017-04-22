@@ -173,4 +173,14 @@ public class GitUrlHandler extends UrlHandler {
     public RosterEntry processEmployeeDetails(IConnectionHandler.GetReponse getReponse) {
         return parser.parseEmployeeDetails(getReponse.body);
     }
+
+    public GetParameters getSummaryOfBenefitsParameters(String summaryOfBenefitsUrl){
+        GetParameters getParameters = new GetParameters();
+        if (serverConfiguration.sessionId != null) {
+            getParameters.cookies = new HashMap<>();
+            getParameters.cookies.put("_session_id", serverConfiguration.sessionId);
+        }
+        getParameters.url = HttpUrl.parse(serverConfiguration.accountName + summaryOfBenefitsUrl);
+        return getParameters;
+    }
 }

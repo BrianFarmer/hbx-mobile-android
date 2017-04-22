@@ -1,0 +1,134 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                xmlns:app="http://schemas.android.com/apk/res-auto"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+
+    <ImageView
+        android:id="@+id/carrierImageView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:layout_marginLeft="8dp"
+        android:layout_marginRight="8dp"
+        android:layout_marginTop="8dp"
+        app:srcCompat="@drawable/aca_glossary"
+        />
+
+    <TextView
+        android:id="@+id/planName"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignLeft="@+id/carrierImageView"
+        android:layout_alignStart="@+id/carrierImageView"
+        android:layout_below="@+id/carrierImageView"
+        android:layout_marginTop="15dp"
+        android:text="TextView"
+        android:textSize="18sp"
+        />
+
+    <TextView
+        android:id="@+id/planInfo"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignLeft="@+id/planName"
+        android:layout_alignStart="@+id/planName"
+        android:layout_below="@+id/planName"
+        android:text="TextView"
+        android:textSize="18sp"
+        />
+
+    <TextView
+        android:id="@+id/planTypeLabel"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/planInfo"
+        android:layout_marginTop="19dp"
+        android:fontFamily="roboto"
+        android:text="Plan Type:"
+        android:textSize="18sp"
+        />
+
+    <TextView
+        android:id="@+id/planLocationLabel"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignLeft="@+id/planTypeLabel"
+        android:layout_alignStart="@+id/planTypeLabel"
+        android:layout_below="@+id/planTypeLabel"
+        android:layout_marginTop="20dp"
+        android:text="Plan Location:"
+        android:textSize="18sp"
+        />
+
+    <TextView
+        android:id="@+id/medalLevelLabel"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignLeft="@+id/planLocationLabel"
+        android:layout_alignStart="@+id/planLocationLabel"
+        android:layout_centerVertical="true"
+        android:text="Medal Level:"
+        android:textSize="18sp"
+        />
+
+    <Button
+        android:id="@+id/button"
+        android:layout_width="105dp"
+        android:layout_height="wrap_content"
+        android:layout_alignLeft="@+id/medalLevelLabel"
+        android:layout_alignParentBottom="true"
+        android:layout_alignStart="@+id/medalLevelLabel"
+        android:layout_marginBottom="17dp"
+        android:text="Details"
+        android:textSize="16dp"
+        />
+
+    <Button
+        android:id="@+id/button2"
+        android:layout_width="105dp"
+        android:layout_height="wrap_content"
+        android:layout_alignBottom="@+id/button"
+        android:layout_alignEnd="@+id/carrierImageView"
+        android:layout_alignRight="@+id/carrierImageView"
+        android:text="Enroll"
+        android:textSize="16dp"
+        />
+
+    <TextView
+        android:id="@+id/planType"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="TextView"
+        android:textSize="18sp"
+        android:layout_alignBaseline="@+id/planTypeLabel"
+        android:layout_alignBottom="@+id/planTypeLabel"
+        android:layout_toRightOf="@+id/planLocationLabel"
+        android:layout_toEndOf="@+id/planLocationLabel"
+        android:layout_marginLeft="30dp"
+        android:layout_marginStart="30dp"
+        />
+
+    <TextView
+        android:id="@+id/planLocation"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBottom="@+id/planLocationLabel"
+        android:layout_toEndOf="@+id/button"
+        android:layout_toRightOf="@+id/button"
+        android:text="TextView"
+        android:textSize="18sp"
+        />
+
+    <TextView
+        android:id="@+id/metalType"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBottom="@+id/medalLevelLabel"
+        android:layout_toEndOf="@+id/planLocationLabel"
+        android:layout_toRightOf="@+id/planLocationLabel"
+        android:text="TextView"
+        android:textSize="18sp"
+        />
+
+</RelativeLayout>

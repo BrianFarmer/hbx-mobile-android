@@ -15,9 +15,9 @@ class BuildConfig2 extends EnrollConfigBase {
         serverConfiguration.dataInfo.port = 443;
 
         serverConfiguration.loginInfo = new ServerConfiguration.HostInfo();
-        serverConfiguration.loginInfo.host = "hbx-mobile.dchbx.org";
-        serverConfiguration.loginInfo.scheme = "https";
-        serverConfiguration.loginInfo.port = 443;
+        serverConfiguration.loginInfo.host = "mobile.dcmic.org";
+        serverConfiguration.loginInfo.scheme = "http";
+        serverConfiguration.loginInfo.port = 3003;
 
 
         //serverConfiguration.employerListPath = "api/v1/mobile_api/employers_list";
@@ -26,7 +26,7 @@ class BuildConfig2 extends EnrollConfigBase {
     }
 
     public static int getTimeoutCountdownSeconds() {
-        return 10;
+        return 30;
     }
 
     //
@@ -38,6 +38,6 @@ class BuildConfig2 extends EnrollConfigBase {
     }
 
     public static String getVersion() {
-        return null;
+        return "preprod";
     }
 }

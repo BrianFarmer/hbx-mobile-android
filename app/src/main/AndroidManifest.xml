@@ -55,11 +55,6 @@
             android:name="org.dchbx.coveragehq.LoginActivity"
             android:label="@string/title_activity_login"
             />
-        <!--
-            service
-            android:name=".BrokerWorker"
-            android:exported="false"/
-        -->
         <activity android:name="org.dchbx.coveragehq.CarriersActivity"/>
         <activity
             android:name="org.dchbx.coveragehq.EmployerDetailsActivity"
@@ -72,6 +67,11 @@
             />
         <activity
             android:name="org.dchbx.coveragehq.InsuredDetailsActivity"
+            android:configChanges="orientation|keyboardHidden|screenSize"
+            android:label=""
+            />
+        <activity
+            android:name="org.dchbx.coveragehq.SummaryOfBenefitsActivity"
             android:configChanges="orientation|keyboardHidden|screenSize"
             android:label=""
             />

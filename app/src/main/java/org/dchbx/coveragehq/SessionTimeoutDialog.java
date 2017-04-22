@@ -24,6 +24,7 @@ import java.util.Timer;
 public class SessionTimeoutDialog extends BrokerAppCompatDialogFragment {
 
     private ProgressDialog progressDialog;
+    private boolean exittingInProgress = false;
 
     enum DialogState {
         CountingDown,
@@ -67,7 +68,7 @@ public class SessionTimeoutDialog extends BrokerAppCompatDialogFragment {
             @Override
             public void onClick(View v) {
                 showProgress();
-                getMessages().stayLoggedIn();
+                    getMessages().stayLoggedIn();
             }
         });
 
@@ -98,9 +99,12 @@ public class SessionTimeoutDialog extends BrokerAppCompatDialogFragment {
 
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void doThis(Events.SessionTimedOut sessionTimedOut) {
-        getMessages().logoutRequest(false);
-        Intents.restartApp(getActivity());
-        dismiss();
+        if (!exittingInProgress) {
+            exittingInProgress = true;
+            getMessages().logoutRequest(false);
+            Intents.restartApp(getActivity());
+            dismiss();
+        }
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)

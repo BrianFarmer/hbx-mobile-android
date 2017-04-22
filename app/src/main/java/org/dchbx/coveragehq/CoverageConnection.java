@@ -7,9 +7,13 @@ import android.util.Log;
 import org.dchbx.coveragehq.models.brokeragency.BrokerAgency;
 import org.dchbx.coveragehq.models.employer.Employer;
 import org.dchbx.coveragehq.models.gitaccounts.GitAccounts;
+import org.dchbx.coveragehq.models.roster.Enrollment;
 import org.dchbx.coveragehq.models.roster.Roster;
 import org.dchbx.coveragehq.models.roster.RosterEntry;
+import org.dchbx.coveragehq.models.roster.SummaryOfBenefits;
+import org.dchbx.coveragehq.models.services.Service;
 import org.joda.time.DateTime;
+import org.joda.time.LocalDate;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -24,6 +28,7 @@ import java.security.NoSuchProviderException;
 import java.security.UnrecoverableKeyException;
 import java.security.cert.CertificateException;
 import java.util.Arrays;
+import java.util.List;
 
 import javax.crypto.BadPaddingException;
 import javax.crypto.IllegalBlockSizeException;
@@ -63,6 +68,10 @@ public abstract class CoverageConnection {
 
     public void saveLoginInfo(boolean useEncrypted) throws BadPaddingException, NoSuchAlgorithmException, NoSuchPaddingException, IllegalBlockSizeException, NoSuchProviderException, InvalidKeyException, UnrecoverableKeyException, CertificateException, KeyStoreException, IOException {
         clearStorageHandler.store(serverConfiguration);
+    }
+
+    public void configureForSignUp() {
+        serverConfiguration.userType = ServerConfiguration.UserType.SignUpEmployee;
     }
 
     enum LoginResult {
@@ -128,6 +137,8 @@ public abstract class CoverageConnection {
                 return Events.GetLoginResult.UserType.Employer;
             case Employee:
                 return Events.GetLoginResult.UserType.Employee;
+            case SignUpEmployee:
+                return Events.GetLoginResult.UserType.SignUpEmployee;
         }
         return Events.GetLoginResult.UserType.Unknown;
     }
@@ -369,4 +380,75 @@ public abstract class CoverageConnection {
         serverConfiguration.haveFrontInsuranceCard = false;
         clearStorageHandler.store(serverConfiguration);
     }
+
+    public static class InsuredAndSummary {
+        private final RosterEntry insured;
+        private final List<SummaryOfBenefits> summaries;
+
+        public InsuredAndSummary(RosterEntry insured, List<SummaryOfBenefits> summaries){
+            this.insured = insured;
+            this.summaries = summaries;
+        }
+
+        public RosterEntry getInsured() {
+            return insured;
+        }
+
+        public List<SummaryOfBenefits> getSummaries() {
+            return summaries;
+        }
+    }
+
+    public static class InsuredAndServices {
+        private final RosterEntry insured;
+        private final List<Service> services;
+
+        public InsuredAndServices(RosterEntry insured, List<Service> services){
+            this.insured = insured;
+            this.services = services;
+        }
+
+        public RosterEntry getInsured() {
+            return insured;
+        }
+
+        public List<Service> getServices() {
+            return services;
+        }
+    }
+
+    public InsuredAndServices getInsuredAndServices(LocalDate enrollmentDate) throws Exception {
+        RosterEntry insured = getEmployee(null);
+
+        Enrollment enrollment = BrokerUtilities.getEnrollment(insured, enrollmentDate);
+        List<Service> services = dataCache.getServices(enrollment.health.servicesRatesUrl, DateTime.now());
+        if (services == null){
+            UrlHandler.GetParameters servicesParameters = urlHandler.getServicesParameters(enrollment.health.servicesRatesUrl);
+            IConnectionHandler.GetReponse getReponse = connectionHandler.get(servicesParameters);
+            services = urlHandler.processServices(getReponse);
+        }
+        return new InsuredAndServices(insured, services);
+    }
+
+/*
+    public InsuredAndSummary getInsuredAndSummaryOfServices(LocalDate enrollmentDate) throws Exception {
+        RosterEntry rosterEntry = getEmployee(null);
+        Enrollment enrollment = BrokerUtilities.getEnrollment(rosterEntry, enrollmentDate);
+        DateTime now = DateTime.now();
+        List<SummaryOfBenefits> benefitsList = dataCache.getSummary(enrollment.health.summaryOfBenefitsUrl, now);
+        if (benefitsList == null){
+            UrlHandler.GetParameters getParameters;
+            try{
+                getParameters = urlHandler.getSummaryOfBenefitsParameters(enrollment.health.summaryOfBenefitsUrl);
+            } catch (Exception e){
+                Log.e(TAG, "gettting parameters", e);
+                throw e;
+            }
+            IConnectionHandler.GetReponse getReponse = connectionHandler.get(getParameters);
+            benefitsList = urlHandler.processSummaryOfBenefits(getReponse);
+            dataCache.store(enrollment.health.summaryOfBenefitsUrl, benefitsList, now);
+        }
+        InsuredAndSummary insuredAndSummary = new InsuredAndSummary(rosterEntry, benefitsList);
+        return insuredAndSummary;
+    }*/
 }

@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                xmlns:tools="http://schemas.android.com/tools"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                style="@style/DialogStyle">
+
+    <TextView
+        android:id="@+id/contactDialogTitleBar"
+        style="@style/contactInfoTitleBar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:maxLines="2"
+        android:text="Plan Contact Info"
+        />
+
+    <TextView
+        android:id="@+id/callLabel"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/contactDialogTitleBar"
+        android:layout_alignParentLeft="true"
+        android:layout_marginTop="24dp"
+        android:layout_marginLeft="29dp"
+        android:text="Call"
+        android:textColor="@color/textgray"
+        android:textSize="12dp"
+        />
+
+    <TextView
+        android:id="@+id/websiteLabel"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignLeft="@+id/callLabel"
+        android:layout_below="@+id/callLabel"
+        android:layout_marginTop="17dp"
+        android:text="@string/website"
+        android:textColor="@color/textgray"
+        android:textSize="12dp"
+        />
+
+    <TextView
+        android:id="@+id/carrierPhoneNumber"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignTop="@+id/callLabel"
+        android:layout_marginLeft="33dp"
+        android:layout_marginStart="33dp"
+        android:layout_toEndOf="@+id/callLabel"
+        android:layout_toRightOf="@+id/callLabel"
+        android:text=""
+        android:textColor="@color/textgray"
+        android:textSize="12dp"
+        />
+
+    <TextView
+        android:id="@+id/carrierWebSite"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignLeft="@+id/carrierPhoneNumber"
+        android:layout_alignTop="@+id/websiteLabel"
+        android:text=""
+        android:textColor="@color/textgray"
+        android:textSize="12dp"
+        android:maxLines="3"
+        />
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="20dp"
+        android:orientation="horizontal"
+        android:layout_below="@+id/websiteLabel"
+        >
+        <Button
+            android:id="@+id/buttonCancel"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="20dp"
+            android:background="@color/alertRed"
+            android:textColor="@color/white"
+            android:textAllCaps="true"
+            android:textSize="15sp"
+            android:text="@string/cancel" />
+    </LinearLayout>
+
+</RelativeLayout>

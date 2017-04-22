@@ -1,10 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <ScrollView
     xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:layout_below="@+id/textViewEnrollmentStatus"
-    android:layout_alignParentBottom="true">
+    android:layout_alignParentBottom="true"
+    android:background="@color/mainbackgroundcolor">
     <RelativeLayout
         android:orientation="vertical"
         android:layout_width="match_parent"
@@ -69,6 +71,61 @@
                 android:tag="@string/details_group"
                 style="@style/employee_field"
                 />
+            <TextView
+                android:text=""
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/textViewSsnField"
+                android:layout_alignParentLeft="true"
+                android:layout_alignParentStart="true"
+                android:id="@+id/address1"
+                android:tag="@string/details_group"
+                style="@style/employee_field"
+                />
+            <TextView
+                android:text=""
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/address1"
+                android:layout_alignParentLeft="true"
+                android:layout_alignParentStart="true"
+                android:id="@+id/address2"
+                android:tag="@string/details_group"
+                style="@style/employee_field"
+                />
+            <TextView
+                android:text=""
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/address2"
+                android:layout_alignParentLeft="true"
+                android:layout_alignParentStart="true"
+                android:id="@+id/cityStateZip"
+                android:tag="@string/details_group"
+                style="@style/employee_field"
+                />
+            <TextView
+                android:text=""
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/cityStateZip"
+                android:layout_alignParentLeft="true"
+                android:layout_alignParentStart="true"
+                android:id="@+id/phoneNumber"
+                android:tag="@string/details_group"
+                style="@style/employee_field"
+                />
+            <TextView
+                android:text=""
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/phoneNumber"
+                android:layout_alignParentLeft="true"
+                android:layout_alignParentStart="true"
+                android:id="@+id/emailAddress"
+                android:tag="@string/details_group"
+                style="@style/employee_field"
+                />
         </RelativeLayout>
         <TextView
             android:layout_width="wrap_content"
@@ -96,185 +153,18 @@
             android:src="@drawable/blue_circle_plus"
             style="@style/expandable_image_employee"
             />
-        <TextView
-            android:text="Not enrolled in any plan for this year"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_below="@id/textViewHealthPlanDrawer"
-            android:layout_alignParentLeft="true"
-            android:layout_alignParentStart="true"
-            android:layout_marginLeft="25sp"
-            android:layout_marginStart="25sp"
-            android:id="@+id/textViewHealthPlanNotEnrolled"
-            android:tag="@string/health_plan_group_tag"
-            style="@style/employee_field"
-            />
-        <RelativeLayout
-            android:id="@+id/relativeLayoutHealthPlanWrapper"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_below="@id/textViewHealthPlanNotEnrolled"
-            >
-            <TextView
-                android:text="@string/benefit_group_field"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_alignParentTop="true"
-                android:layout_alignParentLeft="true"
-                android:layout_alignParentStart="true"
-                android:id="@+id/textViewBenefitGroupField"
-                android:tag="@string/health_plan_group_tag"
-                style="@style/employee_field"
-                />
-            <TextView
-                android:text="@string/plan_name_field"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_below="@id/textViewBenefitGroupField"
-                android:layout_alignParentLeft="true"
-                android:layout_alignParentStart="true"
-                android:id="@+id/textViewPlanNameField"
-                android:tag="@string/health_plan_group_tag"
-                style="@style/employee_field"
-                />
-            <TextView
-                android:text="@string/plan_start_field"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_below="@id/textViewPlanNameField"
-                android:layout_alignParentLeft="true"
-                android:layout_alignParentStart="true"
-                android:id="@+id/textViewPlanStartField"
-                android:tag="@string/health_plan_group_tag"
-                style="@style/employee_field"
-                />
-            <TextView
-                android:text="@string/metal_level_field"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_below="@id/textViewPlanStartField"
-                android:layout_alignParentLeft="true"
-                android:layout_alignParentStart="true"
-                android:id="@+id/textViewMetalLevelField"
-                android:tag="@string/health_plan_group_tag"
-                style="@style/employee_field"
-                />
-            <LinearLayout
-                android:orientation="horizontal"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:layout_below="@+id/textViewMetalLevelField"
-                android:layout_alignParentLeft="true"
-                android:layout_alignParentStart="true"
-                android:tag="@string/health_plan_group_tag"
-                android:id="@+id/linearLayoutContributions"
-                >
-                <LinearLayout
-                    android:orientation="vertical"
-                    android:layout_width="0dp"
-                    android:layout_weight="1"
-                    android:layout_height="wrap_content"
-                    android:id="@+id/linearLayoutPremiums"
-                    >
-                    <TextView
-                        android:text="@string/monthly_premium"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:maxLines="2"
-                        android:id="@+id/textViewPremiumLabel"
-                        style="@style/employee_costs_label_employee"
-                        />
-                    <TextView
-                        android:text=""
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:id="@+id/textViewPremium"
-                        style="@style/employee_costs_employee"
-                        />
-                </LinearLayout>
-                <LinearLayout
-                    android:orientation="vertical"
-                    android:layout_width="0dp"
-                    android:layout_weight="1"
-                    android:layout_height="wrap_content"
-                    android:id="@+id/linearLayoutEmployeePays"
-                    >
-                    <TextView
-                        android:text="@string/aptc_credit"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:maxLines="2"
-                        android:id="@+id/textViewAptcCreditLabel"
-                        style="@style/total_costs_label_employee"
-                        />
-                    <TextView
-                        android:text=""
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:id="@+id/textViewAptcCredit"
-                        style="@style/total_costs_employee"
-                        />
-                </LinearLayout>
-                <LinearLayout
-                    android:orientation="vertical"
-                    android:layout_width="0dp"
-                    android:layout_weight="1"
-                    android:layout_height="wrap_content"
-                    android:id="@+id/linearLayoutAnnualPremium"
-                    >
-                    <TextView
-                        android:text="Annual Premium"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:maxLines="2"
-                        android:id="@+id/textViewAnnualPremiumLabel"
-                        style="@style/total_costs_label_employee"
-                        />
-                    <TextView
-                        android:text=""
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:id="@+id/textViewAnnualPremium"
-                        style="@style/total_costs_employee"
-                        />
-                </LinearLayout>
-                <LinearLayout
-                    android:orientation="vertical"
-                    android:layout_width="0dp"
-                    android:layout_weight="1"
-                    android:layout_height="wrap_content"
-                    android:id="@+id/linearLayoutYearlyDeductable"
-                    >
-                    <TextView
-                        android:text="Yearly Deductable"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:maxLines="2"
-                        android:id="@+id/textViewYearlyDeductableLabel"
-                        style="@style/total_costs_label_employee"
-                        />
-                    <TextView
-                        android:text=""
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:id="@+id/textViewYearlyDeductable"
-                        style="@style/total_costs_employee"
-                        />
-                </LinearLayout>
-            </LinearLayout>
-            <Button
-                android:id="@+id/buttonSummary"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="Summary And Benefits"
-                />
-        </RelativeLayout>
+        <include android:id="@+id/healthPlanInfo"
+                 android:layout_width="match_parent"
+                 android:layout_height="wrap_content"
+                 android:layout_below="@+id/textViewHealthPlanDrawer"
+                 layout="@layout/insured_plan_info"
+            ></include>
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/dental_plan_drawer_label"
             android:id="@+id/textViewDentalPlanDrawer"
-            android:layout_below="@+id/relativeLayoutHealthPlanWrapper"
+            android:layout_below="@+id/healthPlanInfo"
             android:layout_alignParentLeft="true"
             android:layout_alignParentStart="true"
             android:layout_toLeftOf="@+id/imageViewHealthPlanDrawer"
@@ -295,54 +185,18 @@
             android:src="@drawable/blue_circle_plus"
             style="@style/expandable_image_employee"
             />
-        <TextView
-            android:text="Not enrolled in any plan for this year"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_below="@id/textViewDentalPlanDrawer"
-            android:layout_alignParentLeft="true"
-            android:layout_alignParentStart="true"
-            android:layout_marginLeft="25sp"
-            android:layout_marginStart="25sp"
-            android:id="@+id/textViewDentalPlanNotEnrolled"
-            android:tag="@string/health_plan_group_tag"
-            style="@style/employee_field"
-            />
-        <RelativeLayout
-            android:id="@+id/relativeLayoutDentalPlanWrapper"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_below="@id/textViewDentalPlanNotEnrolled"
-            >
-            <TextView
-                android:text="@string/benefit_group_field"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_alignParentTop="true"
-                android:layout_alignParentLeft="true"
-                android:layout_alignParentStart="true"
-                android:id="@+id/textViewDentalBenefitGroupField"
-                android:tag="@string/health_plan_group_tag"
-                style="@style/employee_field"
-                />
-            <TextView
-                android:text="@string/plan_name_field"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_below="@id/textViewDentalBenefitGroupField"
-                android:layout_alignParentLeft="true"
-                android:layout_alignParentStart="true"
-                android:id="@+id/textViewDentalPlanNameField"
-                android:tag="@string/health_plan_group_tag"
-                style="@style/employee_field"
-                />
-        </RelativeLayout>
+        <include android:id="@+id/dentalPlanInfo"
+                 android:layout_width="match_parent"
+                 android:layout_height="wrap_content"
+                 android:layout_below="@+id/textViewDentalPlanDrawer"
+                 layout="@layout/insured_plan_info"
+            ></include>
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/dependents_drawer"
             android:id="@+id/textViewDependentsDrawer"
-            android:layout_below="@+id/relativeLayoutDentalPlanWrapper"
+            android:layout_below="@+id/dentalPlanInfo"
             android:layout_alignParentLeft="true"
             android:layout_alignParentStart="true"
             android:layout_toLeftOf="@+id/imageViewDependentsDrawer"

@@ -15,12 +15,13 @@ import org.greenrobot.eventbus.ThreadMode;
  */
 
 public class RootActivity extends BrokerActivity {
-    private final String TAG = "RootActivity";
+    private static final String TAG = "RootActivity";
     private static boolean loginRunning;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        Log.d(TAG, "**************** onCreate");
         BuildConfig2.initMobileCenter();
     }
 
@@ -28,6 +29,7 @@ public class RootActivity extends BrokerActivity {
     @Override
     protected void onResume() {
         super.onResume();
+        Log.d(TAG, "**************** onResume");
         getMessages().getLogin();
     }
 
@@ -37,6 +39,7 @@ public class RootActivity extends BrokerActivity {
     }
 
     private void showLogin() {
+        Log.d(TAG, "**************** showLogin");
         Intent intent = new Intent(this, LoginActivity.class);
         startActivity(intent);
         loginRunning = true;
@@ -80,6 +83,10 @@ public class RootActivity extends BrokerActivity {
                     Intents.launchInsuredUserDetailsActivity(this);
                     finish();
                     break;
+                case SignUpEmployee:
+                    Intents.launchChoosePlan(this);
+                    finish();
+                    break;
                 default:
                     if (!loginRunning) {
                         showLogin();
@@ -91,12 +98,16 @@ public class RootActivity extends BrokerActivity {
     }
 
     public static void restartApp(Context context) {
-        Intent mStartActivity = new Intent(context, RootActivity.class);
-        int mPendingIntentId = 123456;
-        PendingIntent mPendingIntent = PendingIntent.getActivity(context, mPendingIntentId,    mStartActivity, PendingIntent.FLAG_CANCEL_CURRENT);
-        AlarmManager mgr = (AlarmManager)context.getSystemService(Context.ALARM_SERVICE);
-        mgr.set(AlarmManager.RTC, System.currentTimeMillis() + 100, mPendingIntent);
-        System.exit(0);
-
+        try {
+            Intent mStartActivity = new Intent(context, RootActivity.class);
+            mStartActivity.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+            int mPendingIntentId = 123456;
+            PendingIntent mPendingIntent = PendingIntent.getActivity(context, mPendingIntentId, mStartActivity, PendingIntent.FLAG_CANCEL_CURRENT);
+            AlarmManager mgr = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
+            mgr.set(AlarmManager.RTC, System.currentTimeMillis() + 100, mPendingIntent);
+            System.exit(0);
+        } catch (Throwable t){
+            Log.d(TAG, "Throw during restart");
+        }
     }
 }

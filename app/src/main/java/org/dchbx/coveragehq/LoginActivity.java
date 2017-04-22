@@ -86,6 +86,8 @@ public class LoginActivity extends BrokerActivity {
         setContentView(BuildConfig2.getLoginLayout());
         pastFingerprint = false;
 
+        Log.d(TAG, "!!!!!!!!!!! onCreate");
+
 
         TextView textViewVersion = (TextView) findViewById(R.id.textViewVersion);
         String version = BuildConfig2.getVersion();
@@ -151,6 +153,16 @@ public class LoginActivity extends BrokerActivity {
             getMessages().getFingerprintStatus();
         }
 
+        Button signUp = (Button)findViewById(R.id.signUp);
+        if (signUp != null){
+            signUp.setOnClickListener(new OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    getMessages().signUp();
+                }
+            });
+        }
+
         Button logInButton = (Button) findViewById(R.id.buttonLogIn);
         logInButton.setOnClickListener(new OnClickListener() {
             @Override
@@ -171,6 +183,8 @@ public class LoginActivity extends BrokerActivity {
     @Override
     public void onResume(){
         super.onResume();
+        Log.d(TAG, "!!!!!!!!!!! onResume");
+
         fingerprintHardwareState = FingerprintHardwareState.NotChecked;
         if (haveLoginInfo) {
             getMessages().getFingerprintStatus();
@@ -219,7 +233,15 @@ public class LoginActivity extends BrokerActivity {
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)
+    public void doThis(Events.SignUpResult signUpResult) {
+        RootActivity.loginDone();
+        finish();
+    }
+
+    @Subscribe(threadMode = ThreadMode.MAIN)
     public void doThis(Events.GetLoginResult loginResult){
+        Log.d(TAG, "!!!!!!!!!!! doThis(Events.GetLoginResult)");
+
         if (loginResult != null)
         {
             if (loginResult.getErrorMessagge() != null){
@@ -285,6 +307,8 @@ public class LoginActivity extends BrokerActivity {
 
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void doThis(Events.FingerprintStatus fingerprintStatus){
+        Log.d(TAG, "!!!!!!!!!!! doThis(Events.FingerprintStatus)");
+
         //getMessages().getLogin();
         if (!fingerprintStatus.isHardwareDetected()){
             switchEnableFingerprintLogin.setVisibility(View.GONE);

@@ -5,9 +5,12 @@ import org.dchbx.coveragehq.models.brokeragency.BrokerAgency;
 import org.dchbx.coveragehq.models.employer.Employer;
 import org.dchbx.coveragehq.models.roster.Roster;
 import org.dchbx.coveragehq.models.roster.RosterEntry;
+import org.dchbx.coveragehq.models.roster.SummaryOfBenefits;
+import org.dchbx.coveragehq.models.services.Service;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 
 import okhttp3.FormBody;
 import okhttp3.HttpUrl;
@@ -111,7 +114,7 @@ public abstract class UrlHandler {
         return getParameters;
     }
     /*
-    protected HttpUrl getEmployerDetailsUrl(String employerId) {
+        protected HttpUrl getEmployerDetailsUrl(String employerId) {
         if (employerId.substring(0,4).compareToIgnoreCase("http") == 0){
             return HttpUrl.parse(employerId);
         }
@@ -232,4 +235,31 @@ public abstract class UrlHandler {
     public abstract HashMap<String,ArrayList<String>> getNeededLoginCookes();
     public abstract PostParameters getLoginPostParameters(String accountName, String password);
     public abstract CoverageConnection.LoginResult processLoginReponse(String accountName, String password, Boolean rememberMe, IConnectionHandler.PostResponse loginPostResponse, boolean useFingerprintSensor) throws CoverageException;
-}
+
+    public GetParameters getSummaryOfBenefitsParameters(String summaryOfBenefitsUrl){
+        GetParameters getParameters = new GetParameters();
+        if (serverConfiguration.sessionId != null) {
+            getParameters.cookies = new HashMap<>();
+            getParameters.cookies.put("_session_id", serverConfiguration.sessionId);
+        }
+        getParameters.url = HttpUrl.parse(summaryOfBenefitsUrl);
+        return getParameters;
+    }
+
+    public GetParameters getServicesParameters(String servicesUrl){
+        GetParameters getParameters = new GetParameters();
+        if (serverConfiguration.sessionId != null) {
+            getParameters.cookies = new HashMap<>();
+            getParameters.cookies.put("_session_id", serverConfiguration.sessionId);
+        }
+        getParameters.url = HttpUrl.parse(servicesUrl);
+        return getParameters;
+    }
+
+    public List<SummaryOfBenefits> processSummaryOfBenefits(IConnectionHandler.GetReponse response){
+        return parser.parseSummaryOfBenefits(response.body);
+    }
+
+    public List<Service> processServices(IConnectionHandler.GetReponse response){
+        return parser.parseServices(response.body);
+    }}

@@ -38,4 +38,7 @@ public interface Messages {
     void updateInsurancyCard();
     void moveImageToData(boolean frontOfCard, Uri uri);
     void removeInsuraceCardImage(boolean front);
+    void getInsuredAndBenefits(LocalDate currentDate);
+    void getInsuredAndServices(LocalDate currentDate);
+    void signUp();
 }
