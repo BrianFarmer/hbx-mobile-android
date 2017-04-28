@@ -147,4 +147,8 @@ public class JsonParser {
         Object object = gson.fromJson(body.replace("\"\"", "null"), type);
         return (List<Service>)object;
     }
+
+    public RosterEntry parseIndividual(String body) {
+        return parseEmployeeDetails(body);
+    }
 }

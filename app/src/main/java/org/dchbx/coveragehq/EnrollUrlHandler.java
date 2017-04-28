@@ -1,10 +1,11 @@
 package org.dchbx.coveragehq;
 
+import org.dchbx.coveragehq.models.Security.LoginResponse;
+import org.dchbx.coveragehq.models.Security.SecurityAnswerResponse;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 
-import org.dchbx.coveragehq.models.Security.LoginResponse;
-import org.dchbx.coveragehq.models.Security.SecurityAnswerResponse;
 import okhttp3.FormBody;
 import okhttp3.HttpUrl;
 
@@ -64,8 +65,7 @@ public class EnrollUrlHandler extends UrlHandler {
         serverConfiguration.employerDetailPath = securityAnswerResponse.employer_details_endpoint;
         serverConfiguration.brokerDetailPath = securityAnswerResponse.broker_endpoint;
         serverConfiguration.employerRosterPathForBroker = securityAnswerResponse.employee_roster_endpoint;
-
-
+        serverConfiguration.individualPath = securityAnswerResponse.individual_endpoint;
     }
 
     @Override

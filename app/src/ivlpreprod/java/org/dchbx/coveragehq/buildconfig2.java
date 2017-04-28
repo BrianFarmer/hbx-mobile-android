@@ -14,10 +14,18 @@ class BuildConfig2 extends EnrollConfigBase {
         serverConfiguration.dataInfo.scheme = "https";
         serverConfiguration.dataInfo.port = 443;
 
+
         serverConfiguration.loginInfo = new ServerConfiguration.HostInfo();
+
+        serverConfiguration.loginInfo.host = "hbx-mobile-preprod.dchbx.org";
+        serverConfiguration.loginInfo.scheme = "https";
+        serverConfiguration.loginInfo.port = 443;
+
+        /*
         serverConfiguration.loginInfo.host = "mobile.dcmic.org";
         serverConfiguration.loginInfo.scheme = "http";
         serverConfiguration.loginInfo.port = 3003;
+        */
 
 
         //serverConfiguration.employerListPath = "api/v1/mobile_api/employers_list";

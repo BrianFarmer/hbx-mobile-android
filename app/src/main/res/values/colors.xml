@@ -6,6 +6,7 @@
     <color name="alertRed">#ed1c24</color>
     <color name="button_red">#e72b2d</color>
     <color name="in_renewal">#efbf40</color>
+    <color name="physician_icon">#efbf40</color>
     <color name="open_enrollment_minimum_met">#69A30D</color>
     <color name="light_blue">#00a3e2</color>
     <color name="blueish_green">#00a99e</color>
@@ -42,4 +43,8 @@
     <color name="contribution_text">#044972</color>
     <color name="coverage_year">#E0FFFF</color>
     <color name="linkcolor">@color/mainblue</color>
+    <color name="monthly_green">#69a30d</color>
+    <color name="aptc_purple">#92278f</color>
+    <color name="annual_blue">#007bc4</color>
+    <color name="yearly_deductble_blue">#044972</color>
 </resources>

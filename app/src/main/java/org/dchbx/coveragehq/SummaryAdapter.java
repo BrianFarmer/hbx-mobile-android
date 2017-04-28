@@ -8,6 +8,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
+import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
@@ -36,7 +37,10 @@ public class SummaryAdapter extends BaseAdapter {
 
         items = new ArrayList<>();
         items.add(new ResourcesHeaderWrapper());
-        items.add(new ResourcesItemWrapper(activity.getString(R.string.terms_and_conditions), plan.summaryOfBenefitsUrl, this));
+        items.add(new ResourcesItemWrapper(plan.summaryOfBenefitsUrl, this, R.drawable.pdf_document, activity.getString(R.string.terms_conditions_pdf)));
+        items.add(new ResourcesItemWrapper(plan.provider_directory_url, this, R.drawable.physicians, activity.getString(R.string.provider_directory)));
+        items.add(new ResourcesItemWrapper(plan.RxFormularyUrl, this, R.drawable.prescription_formulary, activity.getString(R.string.rx_formulary)));
+        items.add(new ContactWrapper(this, plan));
         items.add(new SummaryHeaderWrapper());
         for (Service service : servicesList) {
             items.add(new SummaryItemWrapper(service, items.size(), this));
@@ -120,6 +124,7 @@ abstract class SummaryItemWrapperBase {
     public abstract void fillValues(View convertView, final SummaryOfBenefitsActivity mainActivity) throws Exception;
 }
 
+
 class ResourcesHeaderWrapper extends SummaryItemWrapperBase {
     private static String TAG = ResourcesHeaderWrapper.class.getSimpleName();
 
@@ -140,17 +145,14 @@ class ResourcesHeaderWrapper extends SummaryItemWrapperBase {
     }
 }
 
-class ResourcesItemWrapper extends SummaryItemWrapperBase {
-    private static String TAG = ResourcesItemWrapper.class.getSimpleName();
-    private final String text;
-    private final String url;
+class ContactWrapper extends SummaryItemWrapperBase {
+    private static String TAG = ContactWrapper.class.getSimpleName();
     private final SummaryAdapter summaryAdapter;
-    private boolean bodyVisible = false;
+    private final Health plan;
 
-    public ResourcesItemWrapper(String text, String url, SummaryAdapter summaryAdapter){
-        this.text = text;
-        this.url = url;
+    public ContactWrapper(SummaryAdapter summaryAdapter, Health plan){
         this.summaryAdapter = summaryAdapter;
+        this.plan = plan;
     }
 
     @Override
@@ -167,35 +169,56 @@ class ResourcesItemWrapper extends SummaryItemWrapperBase {
     @Override
     public void fillValues(View convertView, SummaryOfBenefitsActivity mainActivity) throws Exception {
         Log.d(TAG, "in ResourcesItemWrapper.fillValues");
-        TextView label = (TextView) convertView.findViewById(R.id.label);
-        label.setText(text);
+        TextView label = (TextView) convertView.findViewById(R.id.resourceName);
+        label.setText(R.string.plan_contact_information);
         label.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                RelativeLayout body = (RelativeLayout) ((ViewGroup)view.getParent()).findViewById(R.id.body);
-                if (bodyVisible){
-                    Log.d(TAG, "hiding body");
-                    body.setVisibility(View.GONE);
-                    bodyVisible = false;
-                } else {
-                    Log.d(TAG, "showing body");
-                    body.setVisibility(View.VISIBLE);
-                    bodyVisible = true;
-                }
-                summaryAdapter.notifyDataSetChanged();
+                PlanContactInfoDialog dialog = PlanContactInfoDialog.build(summaryAdapter.getActivity(), plan.carrierName);
             }
         });
-        RelativeLayout body = (RelativeLayout) convertView.findViewById(R.id.body);
-        if (bodyVisible){
-            body.setVisibility(View.VISIBLE);
-        } else {
-            body.setVisibility(View.GONE);
-        }
-        TextView resourceName = (TextView) body.findViewById(R.id.resourceName);
+        ImageView resourceImage = (ImageView) convertView.findViewById(R.id.resourceImage);
+        resourceImage.setImageResource(R.drawable.phone);
+    }
+}
+
+class ResourcesItemWrapper extends SummaryItemWrapperBase {
+    private static String TAG = ResourcesItemWrapper.class.getSimpleName();
+    private final String url;
+    private final SummaryAdapter summaryAdapter;
+    private final String expandedText;
+    private final int imageResourceId;
+
+    public ResourcesItemWrapper(String url, SummaryAdapter summaryAdapter, int imageResourceId, String expandedText){
+        this.url = url;
+        this.summaryAdapter = summaryAdapter;
+        this.expandedText = expandedText;
+        this.imageResourceId = imageResourceId;
+    }
+
+    @Override
+    public int getType() {
+        return 1;
+    }
+
+    @Override
+    public View generateView(LayoutInflater inflater, ViewGroup parent) {
+        Log.d(TAG, "in ResourcesItemWrapper.generateView");
+        return inflater.inflate(R.layout.summary_resource_item, parent, false);
+    }
+
+    @Override
+    public void fillValues(View convertView, SummaryOfBenefitsActivity mainActivity) throws Exception {
+        Log.d(TAG, "in ResourcesItemWrapper.fillValues");
+
+        ImageView resourceImage = (ImageView) convertView.findViewById(R.id.resourceImage);
+        resourceImage.setImageResource(imageResourceId);
+        TextView resourceName = (TextView) convertView.findViewById(R.id.resourceName);
+        resourceName.setText(expandedText);
         resourceName.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent intent = new Intent(Intent.ACTION_DIAL);
+                Intent intent = new Intent(Intent.ACTION_VIEW);
                 intent.setData(Uri.parse(url));
                 summaryAdapter.getActivity().startActivity(intent);
             }

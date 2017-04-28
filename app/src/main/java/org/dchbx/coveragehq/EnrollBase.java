@@ -22,7 +22,7 @@ class EnrollConfigBase {
     private static StorageHandlerType storageHandlerType = Clear;
 
     static String getString(){
-        return "Hoo Woo!!!";
+        return "what is this used for";
     }
     public static boolean isBrokerBuild() {
         return true;

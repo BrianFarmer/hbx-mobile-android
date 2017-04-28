@@ -3,6 +3,7 @@ package org.dchbx.coveragehq;
 import org.dchbx.coveragehq.models.brokeragency.BrokerAgency;
 import org.dchbx.coveragehq.models.employer.Employer;
 import org.dchbx.coveragehq.models.roster.Roster;
+import org.dchbx.coveragehq.models.roster.RosterEntry;
 import org.dchbx.coveragehq.models.services.Service;
 import org.joda.time.DateTime;
 
@@ -20,6 +21,7 @@ public class DataCache implements IDataCache {
     private HashMap<String, CachedData<Employer>> employers = new HashMap<>();
     private HashMap<String, CachedData<Roster>> rosters = new HashMap<>();
     private HashMap<String, CachedData<List<Service>>> servicesCache = new HashMap<>();
+    private HashMap<String, CachedData<RosterEntry>> individuals = new HashMap<>();
 
     @Override
     public void store(BrokerAgency brokerAgency, DateTime time) {
@@ -50,6 +52,11 @@ public class DataCache implements IDataCache {
     @Override
     public void store(String id, List<Service> services, DateTime time) {
         servicesCache.put(id, new CachedData<>(services, time));
+    }
+
+    @Override
+    public void store(String id, RosterEntry individual, DateTime now) {
+        individuals.put(id, new CachedData<>(individual, now));
     }
 
     @Override

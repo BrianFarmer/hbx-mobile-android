@@ -5,46 +5,26 @@
                 android:background="@color/mainbackgroundcolor"
     >
 
-    <TextView
-        android:id="@+id/label"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="TextView"
-        android:paddingLeft="20dp"
-        android:paddingRight="20dp"
-        android:paddingTop="17dp"
-        android:paddingBottom="14dp"
-        android:background="@color/lightgray"
-        android:textColor="@color/mainblue"
+    <ImageView
+        android:id="@+id/resourceImage"
+        android:layout_width="46dp"
+        android:layout_height="46dp"
+        android:layout_marginLeft="16dp"
+        android:layout_marginTop="20dp"
+        android:layout_marginBottom="20dp"
         />
-    <RelativeLayout
-        android:id="@+id/body"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/label"
-        >
-        <ImageView
-            android:id="@+id/resourceImage"
-            android:layout_width="46dp"
-            android:layout_height="46dp"
-            android:layout_marginLeft="16dp"
-            android:layout_marginTop="20dp"
-            android:layout_marginBottom="20dp"
-            android:src="@drawable/pdf_document"
-            />
 
-        <TextView
-            android:id="@+id/resourceName"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:gravity="center_vertical"
-            android:layout_alignParentRight="true"
-            android:layout_toRightOf="@+id/resourceImage"
-            android:layout_alignTop="@+id/resourceImage"
-            android:layout_alignBottom="@+id/resourceImage"
-            android:paddingLeft="16dp"
-            android:text="Terms and Conditions as a PDF"
-            android:textSize="16dp"
-            />
-    </RelativeLayout>
+    <TextView
+        android:id="@+id/resourceName"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:gravity="center_vertical"
+        android:layout_alignParentRight="true"
+        android:layout_toRightOf="@+id/resourceImage"
+        android:layout_alignTop="@+id/resourceImage"
+        android:layout_alignBottom="@+id/resourceImage"
+        android:paddingLeft="16dp"
+        android:text="Terms and Conditions as a PDF"
+        android:textSize="16dp"
+        />
 </RelativeLayout>

@@ -1,16 +1,22 @@
 package org.dchbx.coveragehq;
 
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.res.Resources;
 import android.net.Uri;
 import android.os.Bundle;
+import android.support.design.widget.NavigationView;
 import android.support.v4.app.FragmentTabHost;
 import android.support.v4.content.ContextCompat;
+import android.support.v4.widget.DrawerLayout;
+import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.Toolbar;
+import android.telephony.TelephonyManager;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
@@ -38,6 +44,8 @@ import java.util.Map;
 
 public class InsuredDetailsActivity extends BrokerActivity {
     private static final String INFO_TAB = "InfoTab";
+    private static final String GLOSSARY_TAB = "GlossaryTab";
+    private static final String LIFE_EVENT_TAB = "LifeEventTab";
     private static final String CARD_TAB = "CardTab";
     private static String TAG = "EmployeeDetailsActivity";
 
@@ -57,6 +65,8 @@ public class InsuredDetailsActivity extends BrokerActivity {
     private static int currentPhotoRequestId = 1;
     private boolean front;
     private Uri cameraUri = null;
+    private DrawerLayout drawerLayout;
+    private NavigationView navigationView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -83,6 +93,14 @@ public class InsuredDetailsActivity extends BrokerActivity {
                                                                                     R.string.info_tab_name,
                                                                                     R.drawable.info_tab_states,
                                                                                     true)), InsuredInfoFragment.class, null);
+        tabHost.addTab(tabHost.newTabSpec(GLOSSARY_TAB).setIndicator(createTabIndicator(inflater, tabHost,
+                R.string.glossary_tab_name,
+                R.drawable.ivl_tab_card_states,
+                true)), GlossaryFragment.class, null);
+        tabHost.addTab(tabHost.newTabSpec(LIFE_EVENT_TAB).setIndicator(createTabIndicator(inflater, tabHost,
+                R.string.life_event_tab_name,
+                R.drawable.ivl_tab_card_states,
+                true)), LifeEventFragment.class, null);
         tabHost.addTab(tabHost.newTabSpec(CARD_TAB).setIndicator(createTabIndicator(inflater, tabHost,
                 R.string.card_tab_name,
                 R.drawable.ivl_tab_card_states,
@@ -116,19 +134,94 @@ public class InsuredDetailsActivity extends BrokerActivity {
     }
 
     private void configToolbar() {
+        this.drawerLayout = (DrawerLayout)findViewById(R.id.drawer_layout);
+        this.navigationView = (NavigationView)findViewById(R.id.navigation);
+
         // Initializing Toolbar and setting it as the actionbar
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         toolbar.setLogo(R.drawable.app_header);
         toolbar.setTitle("");
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        getSupportActionBar().setDisplayShowHomeEnabled(true);
+
+        //getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        //getSupportActionBar().setDisplayShowHomeEnabled(true);
+
         toolbar.setNavigationOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 finish();
             }
         });
+
+
+        ActionBarDrawerToggle actionBarDrawerToggle = new ActionBarDrawerToggle(this,drawerLayout,toolbar,R.string.drawer_open, R.string.drawer_close){
+
+            @Override
+            public void onDrawerClosed(View drawerView) {
+                // Code here will be triggered once the drawer closes as we dont want anything to happen so we leave this blank
+                super.onDrawerClosed(drawerView);
+            }
+
+            @Override
+            public void onDrawerOpened(View drawerView) {
+                // Code here will be triggered once the drawer open as we dont want anything to happen so we leave this blank
+
+                super.onDrawerOpened(drawerView);
+            }
+        };
+
+
+        navigationView.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
+            @Override
+            public boolean onNavigationItemSelected(MenuItem item) {
+                //Closing drawer on item click
+                drawerLayout.closeDrawers();
+
+                switch (item.getItemId()){
+                    case R.id.nav_call_healthlink:
+                        if (((TelephonyManager)BrokerApplication.getBrokerApplication().getSystemService(Context.TELEPHONY_SERVICE)).getPhoneType()
+                                == TelephonyManager.PHONE_TYPE_NONE) {
+                            AlertDialog.Builder builder = new AlertDialog.Builder(InsuredDetailsActivity.this);
+                            builder.setMessage("DC Health Link: " + Constants.HbxPhoneNumber)
+                                    .setCancelable(false)
+                                    .setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                                        public void onClick(DialogInterface dialog, int id) {
+                                            dialog.dismiss();
+                                        }
+                                    });
+                            AlertDialog alert = builder.create();
+                            alert.show();
+                        } else {
+                            Intent phoneIntent = new Intent(Intent.ACTION_DIAL);
+                            phoneIntent.setData(Uri.parse("tel:" + Constants.HbxPhoneNumber));
+                            startActivity(phoneIntent);
+                        }
+                        return true;
+                    case R.id.nav_email_healthlink:
+                        Intent emailIntent = new Intent(Intent.ACTION_SENDTO);
+                        emailIntent.setData(Uri.parse(BrokerApplication.getBrokerApplication().getString(R.string.hbx_mail_url)));
+                        startActivity(emailIntent);
+                        return true;
+                    case R.id.nav_logout:
+                        getMessages().logoutRequest();
+                        Intent i = new Intent(InsuredDetailsActivity.this, RootActivity.class);
+                        i.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                        startActivity(i);
+                        return true;
+                }
+                return false;
+            }
+        });
+
+        //Setting the actionbarToggle to drawer layout
+        drawerLayout.setDrawerListener(actionBarDrawerToggle);
+
+        //MenuItem carriersMenuItem=navigationView.getMenu().findItem(R.id.nav_call_healthlink);
+        MenuItem callMenuItem=navigationView.getMenu().findItem(R.id.nav_call_healthlink);
+        callMenuItem.setIcon(R.drawable.call_color);
+
+        //calling sync state is necessay or else your hamburger icon wont show up
+        actionBarDrawerToggle.syncState();
     }
 
 

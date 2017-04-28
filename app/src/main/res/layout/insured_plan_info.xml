@@ -47,6 +47,25 @@
             android:id="@+id/planTypeField"
             style="@style/employee_field"
             />
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/planIdField"
+            android:layout_toRightOf="@+id/planTypeField"
+            android:layout_alignTop="@+id/planTypeField"
+            android:id="@+id/planMetalRing"
+            style="@style/employee_field"
+            />
+        <TextView
+            android:text="@string/plan_type_field"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/planIdField"
+            android:layout_toRightOf="@+id/planMetalRing"
+            android:layout_alignTop="@+id/planMetalRing"
+            android:id="@+id/planMetalField"
+            style="@style/employee_field"
+            />
         <LinearLayout
             android:orientation="horizontal"
             android:layout_width="match_parent"
@@ -65,19 +84,21 @@
                 android:id="@+id/linearLayoutPremiums"
                 >
                 <TextView
-                    android:text="@string/monthly_premium"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:maxLines="2"
-                    android:id="@+id/textViewPremiumLabel"
-                    style="@style/employee_costs_label_employee"
-                    />
-                <TextView
                     android:text=""
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:id="@+id/textViewPremium"
                     style="@style/employee_costs_employee"
+                    android:textColor="@color/monthly_green"
+                    />
+                <TextView
+                    android:text="@string/monthly_premium"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:maxLines="2"
+                    android:id="@+id/textViewPremiumLabel"
+                    android:textColor="@color/monthly_green"
+                    style="@style/employee_costs_label_employee"
                     />
             </LinearLayout>
             <LinearLayout
@@ -88,19 +109,21 @@
                 android:id="@+id/linearLayoutEmployeePays"
                 >
                 <TextView
+                    android:text=""
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/textViewAptcCredit"
+                    style="@style/total_costs_employee"
+                    android:textColor="@color/aptc_purple"
+                    />
+                <TextView
                     android:text="@string/aptc_credit"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:maxLines="2"
                     android:id="@+id/textViewAptcCreditLabel"
                     style="@style/total_costs_label_employee"
-                    />
-                <TextView
-                    android:text=""
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:id="@+id/textViewAptcCredit"
-                    style="@style/total_costs_employee"
+                    android:textColor="@color/aptc_purple"
                     />
             </LinearLayout>
             <LinearLayout
@@ -111,19 +134,21 @@
                 android:id="@+id/linearLayoutAnnualPremium"
                 >
                 <TextView
-                    android:text="Annual Premium"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:maxLines="2"
-                    android:id="@+id/textViewAnnualPremiumLabel"
-                    style="@style/total_costs_label_employee"
-                    />
-                <TextView
                     android:text=""
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:id="@+id/textViewAnnualPremium"
                     style="@style/total_costs_employee"
+                    android:textColor="@color/annual_blue"
+                    />
+                <TextView
+                    android:text="@string/annual_premium"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:maxLines="2"
+                    android:id="@+id/textViewAnnualPremiumLabel"
+                    style="@style/total_costs_label_employee"
+                    android:textColor="@color/annual_blue"
                     />
             </LinearLayout>
             <LinearLayout
@@ -134,19 +159,21 @@
                 android:id="@+id/linearLayoutYearlyDeductable"
                 >
                 <TextView
+                    android:text=""
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/textViewYearlyDeductable"
+                    style="@style/total_costs_employee"
+                    android:textColor="@color/yearly_deductble_blue"
+                    />
+                <TextView
                     android:text="Yearly Deductable"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:maxLines="2"
                     android:id="@+id/textViewYearlyDeductableLabel"
                     style="@style/total_costs_label_employee"
-                    />
-                <TextView
-                    android:text=""
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:id="@+id/textViewYearlyDeductable"
-                    style="@style/total_costs_employee"
+                    android:textColor="@color/yearly_deductble_blue"
                     />
             </LinearLayout>
         </LinearLayout>

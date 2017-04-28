@@ -5,12 +5,13 @@ import org.dchbx.coveragehq.models.gitaccounts.GitAccounts;
 public class ServerConfiguration {
 
 
+
     public enum UserType {
         Unknown,
         Broker,
         Employer,
         Employee,
-        SignUpEmployee
+        Individual
     }
 
     public String accountName = null;
@@ -38,6 +39,7 @@ public class ServerConfiguration {
     public String employerDetailPath;
     public String brokerDetailPath;
     public String employerRosterPathForBroker;
+    public String individualPath;
     public String loginPath;
     public String securityAnswerPath;
     public String carrierPath;

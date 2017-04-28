@@ -4,6 +4,9 @@ import android.net.Uri;
 import android.support.annotation.NonNull;
 import android.util.Log;
 
+import org.dchbx.coveragehq.exceptions.BrokerNotFoundException;
+import org.dchbx.coveragehq.exceptions.EmployerNotFoundException;
+import org.dchbx.coveragehq.exceptions.IndividualNotFoundException;
 import org.dchbx.coveragehq.models.brokeragency.BrokerAgency;
 import org.dchbx.coveragehq.models.employer.Employer;
 import org.dchbx.coveragehq.models.gitaccounts.GitAccounts;
@@ -71,7 +74,7 @@ public abstract class CoverageConnection {
     }
 
     public void configureForSignUp() {
-        serverConfiguration.userType = ServerConfiguration.UserType.SignUpEmployee;
+        serverConfiguration.userType = ServerConfiguration.UserType.Individual;
     }
 
     enum LoginResult {
@@ -86,6 +89,19 @@ public abstract class CoverageConnection {
 
     public void checkSecurityAnswer(String securityAnswer) throws Exception {
         clearStorageHandler.store(serverConfiguration);
+    }
+
+    public RosterEntry getIndividual(UrlHandler urlHandler, ServerConfiguration serverConfiguration) throws IOException, CoverageException, IndividualNotFoundException {
+        UrlHandler.GetParameters getParameters = urlHandler.getIndividualParameters(null);
+        IConnectionHandler.GetReponse response = connectionHandler.get(getParameters);
+        RosterEntry individual;
+        try{
+            individual = urlHandler.processIndividual(response);
+        } catch (Exception e){
+            Log.e(TAG, "exception parsing json", e);
+            throw  e;
+        }
+        return individual;
     }
 
     private Employer getEmployer(UrlHandler urlHandler, ServerConfiguration serverConfiguration) throws Exception {
@@ -121,7 +137,19 @@ public abstract class CoverageConnection {
             dataCache.store(employer, DateTime.now());
             serverConfiguration.userType = org.dchbx.coveragehq.ServerConfiguration.UserType.Employer;
             return serverConfiguration.userType;
-        } catch (CoverageException e){
+        } catch (EmployerNotFoundException e){
+            // Eatinng exceptions here is intentional. Failure to get broker object
+            // will cause an exception and we then need to try to get an employer.
+            Log.d(TAG, "intentionally eating exception caused by failture getting employer");
+        }
+        try {
+            RosterEntry individual = getIndividual(urlHandler, serverConfiguration);
+            dataCache.store(serverConfiguration.individualPath, individual, DateTime.now());
+            serverConfiguration.userType = ServerConfiguration.UserType.Individual;
+            return serverConfiguration.userType;
+        } catch (IndividualNotFoundException e){
+            // Eatinng exceptions here is intentional. Failure to get broker object
+            // will cause an exception and we then need to try to get an employer.
             return ServerConfiguration.UserType.Unknown;
         }
     }
@@ -137,8 +165,8 @@ public abstract class CoverageConnection {
                 return Events.GetLoginResult.UserType.Employer;
             case Employee:
                 return Events.GetLoginResult.UserType.Employee;
-            case SignUpEmployee:
-                return Events.GetLoginResult.UserType.SignUpEmployee;
+            case Individual:
+                return Events.GetLoginResult.UserType.IndividualEmployee;
         }
         return Events.GetLoginResult.UserType.Unknown;
     }
@@ -257,7 +285,6 @@ public abstract class CoverageConnection {
             UrlHandler.GetParameters getParameters = urlHandler.getEmployeeDetailsParameters();
             IConnectionHandler.GetReponse getReponse = connectionHandler.get(getParameters);
             return urlHandler.processEmployeeDetails(getReponse);
-
         }
         Roster roster = getRoster(DateTime.now());
         DateTime now = DateTime.now();

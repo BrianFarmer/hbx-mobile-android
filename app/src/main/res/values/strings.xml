@@ -145,7 +145,7 @@
     <string name="no_filter_label">Show All</string>
     <string name="coverage_year_label">Coverage Year</string>
     <string name="details_group">details_group</string>
-    <string name="details_drawer">Details</string>
+    <string name="details_drawer">Account Info</string>
     <string name="dob_field_format">DOB: %s</string>
     <string name="ssn_field_format">SSN: %s</string>
     <string name="hired_on_field_format">Hired On: %s</string>
@@ -155,7 +155,7 @@
     <string name="plan_selected_field">Plan Selected: %s</string>
     <string name="health_plan_group_tag">health_plan_group</string>
     <string name="premiums_label">Premium</string>
-    <string name="plan_type_field" formatted="false">Plan Type: %s %s</string>
+    <string name="plan_type_field" formatted="false">Plan Type: %s</string>
     <string name="metal_level_field">Metal Level: %s</string>
     <string name="unknown">Unknown</string>
     <string name="dependents_group_tag">dependents_group_tag</string>
@@ -218,7 +218,9 @@
     <string name="replace">Replace</string>
     <string name="front">Front</string>
     <string name="rear">Rear</string>
-    <string name="card_tab_name">Card</string>
+    <string name="card_tab_name">ID Card</string>
+    <string name="glossary_tab_name">Glossary</string>
+    <string name="life_event_tab_name">Life Events</string>
     <string name="have_front_insurance_card">haveFrontInsuranceCard</string>
     <string name="have_rear_insurance_card">haveRearInsuranceCard</string>
     <string name="file_error">A file error happened trying to remove the file, please try again later.</string>
@@ -240,4 +242,65 @@
     <string name="email">Email</string>
     <string name="website">Website</string>
     <string name="dc_health_link_id_field">DC Health Link ID: %s</string>
+    <string name="not_available">Not Available</string>
+    <string name="annual_premium">Annual Premium</string>
+    <string name="life_event_html" formatted="false">
+<![CDATA[
+    <html>
+        <STYLE type="text/css">
+            BODY {
+                color: #555555;
+                margin:  0 0 0;
+				font-family: Roboto;
+            }
+			div.margin{
+				margin-left: 30px;
+				margin-right: 30px;
+				margin-top: 55px;
+			}
+			div.thankyou{
+				font-size: 24px;
+				font-weight: bold;
+				color: black;
+			}
+			div.pleasenote{
+				font-size: 24px;
+				font-weight: bold;
+				color: #e72b2d;
+			}
+			div.notify{
+				font-size: 24px;
+				color: black;
+			}
+			div.include{
+				font-size: 24px;
+				color: black;
+			}
+			li.listitem{
+				font-size: 24px;
+				color: black;
+			}
+        </STYLE>
+        <body>
+			<div class="margin">
+				<div class="thankyou">Thank you for enrolling in a health insurance plan with DC Health Link.</div>
+				<br>
+				<div class="pleasenote">Please note:</div>
+				<div class="notify">You must notify DC Health Link online at <a href="https://dchealthlink.com">dchealthlink.com</a> of a life-changing event.</div>
+				<br>
+				<div class="include">These can include:</div>
+				<ul class="list">
+					<li class="listitem">Losing health insurance</li>
+					<li class="listitem">Getting married or entering a domestic partnership</li>
+					<li class="listitem">A change in family size (birth, adoption, foster child)</li>
+				</ul>
+			</div>
+        </body>
+    </html>
+]]>
+    </string>
+    <string name="terms_conditions_pdf">Terms and Conditions as a PDF</string>
+    <string name="provider_directory">Provider Directory</string>
+    <string name="rx_formulary">Rx Formulary</string>
+    <string name="plan_contact_information">Plan Contact Information</string>
 </resources>

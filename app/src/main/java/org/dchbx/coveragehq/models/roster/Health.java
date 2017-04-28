@@ -55,8 +55,11 @@ public class Health {
     public String carrierName;
     @SerializedName("applied_aptc_amount_in_cent")
     @Expose
-    public double applied_aptc_amount_in_cent;
+    public Double applied_aptc_amount_in_cent;
     @SerializedName("elected_aptc_pct")
     @Expose
     public double electedAptcPct;
+    @SerializedName("plan_id")
+    @Expose
+    public String planId;
 }

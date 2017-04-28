@@ -2,7 +2,6 @@ package org.dchbx.coveragehq;
 
 import org.dchbx.coveragehq.models.Security.SecurityAnswerResponse;
 import org.dchbx.coveragehq.models.gitaccounts.GitAccounts;
-import org.dchbx.coveragehq.models.roster.RosterEntry;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -168,10 +167,6 @@ public class GitUrlHandler extends UrlHandler {
         org.dchbx.coveragehq.models.gitaccounts.AccountInfo accountInfo = serverConfiguration.gitAccounts.accountInfoMap.get(serverConfiguration.password);
         getParameters.url = HttpUrl.parse(serverConfiguration.accountName + "/" + serverConfiguration.password + "/" + accountInfo.individualEndpointPath);
         return getParameters;
-    }
-
-    public RosterEntry processEmployeeDetails(IConnectionHandler.GetReponse getReponse) {
-        return parser.parseEmployeeDetails(getReponse.body);
     }
 
     public GetParameters getSummaryOfBenefitsParameters(String summaryOfBenefitsUrl){

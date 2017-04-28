@@ -1,8 +1,15 @@
 package org.dchbx.coveragehq;
 
+import android.util.Log;
+
+import org.dchbx.coveragehq.exceptions.BrokerNotFoundException;
+import org.dchbx.coveragehq.exceptions.EmployerNotFoundException;
+import org.dchbx.coveragehq.exceptions.IndividualNotFoundException;
 import org.dchbx.coveragehq.models.Security.SecurityAnswerResponse;
 import org.dchbx.coveragehq.models.brokeragency.BrokerAgency;
 import org.dchbx.coveragehq.models.employer.Employer;
+import org.dchbx.coveragehq.models.roster.Enrollment;
+import org.dchbx.coveragehq.models.roster.Health;
 import org.dchbx.coveragehq.models.roster.Roster;
 import org.dchbx.coveragehq.models.roster.RosterEntry;
 import org.dchbx.coveragehq.models.roster.SummaryOfBenefits;
@@ -20,6 +27,7 @@ import okhttp3.HttpUrl;
  */
 
 public abstract class UrlHandler {
+    private static String TAG = "UrlHandler";
 
     public class PutParameters {
         FormBody body;
@@ -74,7 +82,32 @@ public abstract class UrlHandler {
         return getParameters;
     }
 
-    public Employer processEmployerDetails(IConnectionHandler.GetReponse response) {
+
+    GetParameters getIndividualParameters(String employerId) {
+        GetParameters getParameters = new GetParameters();
+        if (serverConfiguration.sessionId != null) {
+            getParameters.cookies = new HashMap<>();
+            getParameters.cookies.put("_session_id", serverConfiguration.sessionId);
+        }
+        getParameters.url = HttpUrl.parse(serverConfiguration.individualPath);
+        return getParameters;
+    }
+
+    public RosterEntry processIndividual(IConnectionHandler.GetReponse response) throws IndividualNotFoundException {
+
+        if (response.responseCode == 401
+                || response.responseCode == 404){
+            throw new IndividualNotFoundException();
+        }
+        return parser.parseIndividual(response.body);
+    }
+
+    public Employer processEmployerDetails(IConnectionHandler.GetReponse response) throws EmployerNotFoundException {
+        if (response.responseCode == 401
+                || response.responseCode == 404){
+            throw new EmployerNotFoundException();
+        }
+
         return parser.parseEmployerDetails(response.body);
     }
 
@@ -219,12 +252,55 @@ public abstract class UrlHandler {
         return getParameters;
     }
 
-    public GetParameters getEmployeeDetailsParameters() {
-        return null;
+    public RosterEntry processEmployeeDetails(IConnectionHandler.GetReponse getResponse) throws IndividualNotFoundException, CoverageException {
+        if (getResponse.responseCode == 401
+                || getResponse.responseCode == 404){
+            throw new IndividualNotFoundException();
+        }
+        if (getResponse.responseCode > 299
+            || getResponse.responseCode < 200){
+            throw new CoverageException("Error get individual");
+        }
+        RosterEntry rosterEntry = parser.parseEmployeeDetails(getResponse.body);
+        if (rosterEntry.enrollments != null){
+            for (Enrollment enrollment : rosterEntry.enrollments) {
+                if (enrollment.health != null){
+                    checkPlanUrls(enrollment.health);
+                }
+                if (enrollment.dental != null){
+                    checkPlanUrls(enrollment.dental);
+                }
+            }
+
+        }
+        return rosterEntry;
     }
 
-    public RosterEntry processEmployeeDetails(IConnectionHandler.GetReponse getReponse) {
-        return null;
+    private void checkPlanUrls(Health plan) {
+        if (plan.servicesRatesUrl != null){
+            plan.servicesRatesUrl = checkUrl(plan.servicesRatesUrl);
+        }
+        if (plan.provider_directory_url != null){
+            plan.provider_directory_url = checkUrl(plan.provider_directory_url);
+        }
+        if (plan.RxFormularyUrl != null){
+            plan.RxFormularyUrl = checkUrl(plan.RxFormularyUrl);
+        }
+    }
+
+    protected String checkUrl(String url){
+        Log.d(TAG, "checking url; " + url);
+        return url;
+    }
+
+    public GetParameters getEmployeeDetailsParameters() {
+        GetParameters getParameters = new GetParameters();
+        if (serverConfiguration.sessionId != null) {
+            getParameters.cookies = new HashMap<>();
+            getParameters.cookies.put("_session_id", serverConfiguration.sessionId);
+        }
+        getParameters.url = HttpUrl.parse(serverConfiguration.individualPath);
+        return getParameters;
     }
 
     abstract FormBody getSecurityAnswerFormBody(String securityAnswer);

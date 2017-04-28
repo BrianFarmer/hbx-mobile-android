@@ -7,6 +7,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
@@ -24,16 +25,21 @@ import org.joda.time.LocalDate;
  */
 
 public class InsuredInfoFragment extends BrokerFragment {
-    private static String TAG = "EmployeeInfoFragment";
+    private static String TAG = "InsuredInfoFragment";
 
 
     private RosterEntry insured;
     private LocalDate coverageYear;
 
-    private boolean detailsVisible = true;
-    private boolean healthPlanVisible = false;
-    private boolean dentalPlanVisible = false;
-    private boolean dependentsVisible = false;
+    private static boolean detailsVisibleInitialState = false;
+    private static boolean healthPlanVisibleInitialState = true;
+    private static boolean dentalPlanVisibleInitialState = false;
+    private static boolean dependentsVisibleInitialState = false;
+
+    private boolean detailsVisible = detailsVisibleInitialState;
+    private boolean healthPlanVisible = healthPlanVisibleInitialState;
+    private boolean dentalPlanVisible = dentalPlanVisibleInitialState;
+    private boolean dependentsVisible = dependentsVisibleInitialState;
 
     private View view;
     private TextView textViewDetailsDrawer;
@@ -59,7 +65,7 @@ public class InsuredInfoFragment extends BrokerFragment {
                              Bundle savedInstanceState) {
         try {
             view = LayoutInflater.from(getActivity()).inflate(R.layout.insured_info_fragment, null);
-        } catch (Exception e){
+        } catch (Exception e) {
             Log.e(TAG, "Exception infloating view", e);
             throw e;
         }
@@ -89,19 +95,60 @@ public class InsuredInfoFragment extends BrokerFragment {
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)
-    public void doThis(Events.EmployeeFragmentUpdate  employeeFragmentUpdate) throws Exception {
+    public void doThis(Events.EmployeeFragmentUpdate employeeFragmentUpdate) throws Exception {
         this.insured = employeeFragmentUpdate.employee;
         this.currentDate = employeeFragmentUpdate.currentEnrollmentStartDate;
         this.currentEnrollment = BrokerUtilities.getEnrollment(insured, currentDate);
 
-        if (coverageYear == null){
+        if (coverageYear == null) {
             coverageYear = BrokerUtilities.getMostRecentPlanYear(insured);
         }
 
         try {
             populate();
-        } catch (Exception e){
+        } catch (Exception e) {
             Log.e(TAG, "exception populating activity", e);
+        }
+    }
+
+    private void configDrawer(int drawerLabelId, int drawerImageId, int drawerWrapper, boolean initialState, final DrawerState drawerState)  {
+        TextView drawerLabel = (TextView) view.findViewById(drawerLabelId);
+        final ImageView drawerImage = (ImageView) view.findViewById(drawerImageId);
+        final RelativeLayout wrapper = (RelativeLayout) view.findViewById(drawerWrapper);
+
+        if (initialState){
+            wrapper.setVisibility(View.VISIBLE);
+            drawerImage.setImageResource(R.drawable.blue_uparrow);
+        } else {
+            wrapper.setVisibility(View.GONE);
+            drawerImage.setImageResource(R.drawable.blue_circle_plus);
+        }
+
+        drawerLabel.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                invertDrawer(wrapper, drawerState, drawerImage);
+            }
+        });
+        drawerImage.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                invertDrawer(wrapper, drawerState, drawerImage);
+            }
+        });
+    }
+
+    private void invertDrawer(RelativeLayout wrapper, DrawerState drawerState, ImageView drawerImage) {
+        boolean currentState = drawerState.drawerState();
+
+        if (currentState) {
+            wrapper.setVisibility(View.GONE);
+            drawerState.setState(false);
+            drawerImage.setImageResource(R.drawable.blue_circle_plus);
+        } else {
+            wrapper.setVisibility(View.VISIBLE);
+            drawerState.setState(true);
+            drawerImage.setImageResource(R.drawable.blue_uparrow);
         }
     }
 
@@ -112,6 +159,52 @@ public class InsuredInfoFragment extends BrokerFragment {
 
         resources = getResources();
         LocalDate initialCoverageYear = new LocalDate(2000, 1, 1);
+
+        configDrawer(R.id.textViewDetailsDrawer, R.id.imageViewDetailsDrawer, R.id.relativeLayoutDetailsWrapper, detailsVisibleInitialState, new DrawerState() {
+            public boolean drawerState() {
+                return InsuredInfoFragment.this.detailsVisible;
+            }
+
+            @Override
+            public void setState(boolean newState) {
+                InsuredInfoFragment.this.detailsVisible = newState;
+            }
+        });
+
+        configDrawer(R.id.textViewHealthPlanDrawer, R.id.imageViewHealthPlanDrawer, R.id.healthPlanInfo, healthPlanVisibleInitialState, new DrawerState() {
+            public boolean drawerState() {
+                return InsuredInfoFragment.this.healthPlanVisible;
+            }
+
+            @Override
+            public void setState(boolean newState) {
+                InsuredInfoFragment.this.healthPlanVisible = newState;
+            }
+        });
+
+        configDrawer(R.id.textViewDentalPlanDrawer, R.id.imageViewDentalPlanDrawer, R.id.dentalPlanInfo, dentalPlanVisibleInitialState, new DrawerState() {
+            public boolean drawerState() {
+                return InsuredInfoFragment.this.dentalPlanVisible;
+            }
+
+            @Override
+            public void setState(boolean newState) {
+                InsuredInfoFragment.this.dentalPlanVisible = newState;
+            }
+        });
+
+        configDrawer(R.id.textViewDependentsDrawer, R.id.imageViewDependentsDrawer, R.id.relativeLayoutDependentsWrapper, dependentsVisibleInitialState, new DrawerState() {
+            public boolean drawerState() {
+                return InsuredInfoFragment.this.detailsVisible;
+            }
+
+            @Override
+            public void setState(boolean newState) {
+                InsuredInfoFragment.this.detailsVisible = newState;
+            }
+        });
+
+
 
         populateHealthPlan();
         populateDentalPlan();
@@ -305,28 +398,49 @@ public class InsuredInfoFragment extends BrokerFragment {
         planSelected.setText(String.format(resources.getString(R.string.plan_selected_field), Utilities.DateAsMonthDayYear(currentEnrollment.startOn)));
 
         TextView planIdField = (TextView) includeView.findViewById(R.id.planIdField);
-        planIdField.setText(String.format(resources.getString(R.string.dc_health_link_id_field), insured.id));
-
+        if (plan.planId != null) {
+            planIdField.setText(String.format(resources.getString(R.string.dc_health_link_id_field), plan.planId));
+        } else {
+            planIdField.setText(String.format(resources.getString(R.string.dc_health_link_id_field), resources.getString(R.string.not_available)));
+        }
         TextView planTypeField = (TextView)includeView.findViewById(R.id.planTypeField);
-        planTypeField.setText(String.format(resources.getString(R.string.plan_type_field), plan.planType, plan.metalLevel));
+        ImageView planMetalRing = (ImageView) includeView.findViewById(R.id.planMetalRing);
+        TextView planMetalField = (TextView) includeView.findViewById(R.id.planMetalField);
+        if (plan.planType != null) {
+            planTypeField.setVisibility(View.VISIBLE);
+            planTypeField.setText(String.format(resources.getString(R.string.plan_type_field),plan.planType));
+        } else {
+            planTypeField.setText(String.format(resources.getString(R.string.plan_type_field), resources.getString(R.string.not_available)));
+        }
 
-        TextView textViewPremiums = (TextView) includeView.findViewById(R.id.textViewPremium);
+        if (plan.metalLevel != null){
+            planMetalRing.setVisibility(View.VISIBLE);
+            planMetalField.setVisibility(View.VISIBLE);
+            planMetalField.setText(plan.metalLevel);
+        } else {
+            planMetalRing.setVisibility(View.GONE);
+            planMetalField.setVisibility(View.GONE);
+        }
+
+        TextView textViewAnnualPremium = (TextView) includeView.findViewById(R.id.textViewAnnualPremium);
         String totalPremiumString = "";
         if (plan.totalPremium != null) {
             totalPremiumString = String.format("$%.2f", plan.totalPremium);
         }
-        textViewPremiums.setText(totalPremiumString);
+        textViewAnnualPremium.setText(totalPremiumString);
 
-        TextView textViewPremiumLabel = (TextView) includeView.findViewById(R.id.textViewPremiumLabel);
+        TextView textViewPremium = (TextView) includeView.findViewById(R.id.textViewPremium);
         if (plan.totalPremium != null) {
             totalPremiumString = String.format("$%.2f", plan.totalPremium/12);
         }
-        textViewPremiums.setText(totalPremiumString);
+        textViewPremium.setText(totalPremiumString);
 
-        TextView textViewAptcCredit = (TextView) includeView.findViewById(R.id.textViewAptcCredit);
-        String aptcCreditString = null;
-        aptcCreditString = String.format("$%.2f", plan.totalPremium/12);
-        textViewAptcCredit.setText(aptcCreditString);
+        if (plan.applied_aptc_amount_in_cent != null) {
+            TextView textViewAptcCredit = (TextView) includeView.findViewById(R.id.textViewAptcCredit);
+            String aptcCreditString = null;
+            aptcCreditString = String.format("%.0f%%", plan.applied_aptc_amount_in_cent * 100);
+            textViewAptcCredit.setText(aptcCreditString);
+        }
 
         TextView textViewYearlyDeductable = (TextView) includeView.findViewById(R.id.textViewYearlyDeductable);
         String yearlyDeductableString = null;
@@ -358,4 +472,9 @@ public class InsuredInfoFragment extends BrokerFragment {
         }
         return id;
     }
+}
+
+interface DrawerState {
+    boolean drawerState ();
+    void setState(boolean newState);
 }

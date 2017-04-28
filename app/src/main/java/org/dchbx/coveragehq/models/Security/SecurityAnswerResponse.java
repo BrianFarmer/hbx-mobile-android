@@ -10,4 +10,5 @@ public class SecurityAnswerResponse {
     public String broker_endpoint;
     public String employer_details_endpoint;
     public String employee_roster_endpoint;
+    public String individual_endpoint;
 }

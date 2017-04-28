@@ -3,6 +3,7 @@ package org.dchbx.coveragehq;
 import org.dchbx.coveragehq.models.brokeragency.BrokerAgency;
 import org.dchbx.coveragehq.models.employer.Employer;
 import org.dchbx.coveragehq.models.roster.Roster;
+import org.dchbx.coveragehq.models.roster.RosterEntry;
 import org.dchbx.coveragehq.models.services.Service;
 import org.joda.time.DateTime;
 
@@ -15,6 +16,7 @@ public interface IDataCache {
     void store(Roster roster, DateTime time);
     void store(String id, Roster roster, DateTime time);
     void store(String id, List<Service> services, DateTime time);
+    void store(String id, RosterEntry individual, DateTime now);
     BrokerAgency getBrokerAgency(DateTime time);
     Employer getEmployer(DateTime time);
     Employer getEmployer(String id, DateTime time);
