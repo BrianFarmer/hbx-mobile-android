@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                xmlns:tools="http://schemas.android.com/tools"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content">
     <TextView
@@ -53,18 +54,22 @@
             android:layout_below="@id/planIdField"
             android:layout_toRightOf="@+id/planTypeField"
             android:layout_alignTop="@+id/planTypeField"
+            android:layout_alignBottom="@+id/planTypeField"
+            android:paddingLeft="5dp"
             android:id="@+id/planMetalRing"
-            style="@style/employee_field"
             />
+
         <TextView
-            android:text="@string/plan_type_field"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_below="@id/planIdField"
-            android:layout_toRightOf="@+id/planMetalRing"
-            android:layout_alignTop="@+id/planMetalRing"
             android:id="@+id/planMetalField"
             style="@style/employee_field"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignTop="@+id/planMetalRing"
+            android:layout_below="@id/planIdField"
+            android:layout_toRightOf="@+id/planMetalRing"
+            android:paddingLeft="5dp"
+            android:paddingStart="5dp"
+            android:text="@string/plan_type_field"
             />
         <LinearLayout
             android:orientation="horizontal"

@@ -240,7 +240,6 @@ public class LoginActivity extends BrokerActivity {
 
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void doThis(Events.GetLoginResult loginResult){
-        Log.d(TAG, "!!!!!!!!!!! doThis(Events.GetLoginResult)");
 
         if (loginResult != null)
         {

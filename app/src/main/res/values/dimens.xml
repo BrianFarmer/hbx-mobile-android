@@ -4,4 +4,5 @@
     <dimen name="activity_vertical_margin">16dp</dimen>
     <dimen name="insurance_card_side_margin">21dp</dimen>
     <dimen name="insurance_card_image_label_spacing">20dp</dimen>
+    <dimen name="metal_ring">24dp</dimen>
 </resources>

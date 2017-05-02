@@ -47,4 +47,16 @@
     <color name="aptc_purple">#92278f</color>
     <color name="annual_blue">#007bc4</color>
     <color name="yearly_deductble_blue">#044972</color>
+    <color name="metal_silver">#c0c0c0</color>
+    <color name="metal_gold">#FABB18</color>
+    <color name="metal_bronze">#CD7F32</color>
+    <color name="metal_platinum">#E5E4E2</color>
+    <color name="life_event_color">#98397a</color>
+    <color name="id_card_color">#044972 </color>
+    <color name="home_color">#69a30d </color>
+    <color name="glossary_color">#e72b2d</color>
+    <color name="active_color">@color/white</color>
+    <color name="normal_color">@color/mainblue</color>
+    <color name="border">@color/white</color>
+    <color name="solid_button">@color/white</color>
 </resources>

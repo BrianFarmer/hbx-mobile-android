@@ -7,13 +7,13 @@
     <ImageView
         android:id="@+id/imageViewDcHealthLinkLogo"
         android:layout_width="match_parent"
-        android:scaleType="fitXY"
-        android:layout_height="wrap_content"
-        android:layout_marginLeft="20sp"
-        android:layout_marginRight="20sp"
-        android:layout_marginBottom="18sp"
-        android:layout_marginTop="18sp"
-        android:src="@drawable/app_header"
+        android:scaleType="center"
+        android:layout_height="36.7dp"
+        android:layout_marginLeft="20dp"
+        android:layout_marginRight="20dp"
+        android:layout_marginBottom="18dp"
+        android:layout_marginTop="18dp"
+        android:src="@drawable/app_header_vector"
         android:adjustViewBounds="true"
         />
 
@@ -23,13 +23,14 @@
         android:layout_height="wrap_content"
         android:hint="@string/account_name"
         android:layout_below="@id/imageViewDcHealthLinkLogo"
-        android:layout_marginLeft="20sp"
-        android:layout_marginRight="20sp"
+        android:layout_marginLeft="20dp"
+        android:layout_marginRight="20dp"
+        android:layout_marginTop="25dp"
         android:minLines="1"
         android:background="@android:color/transparent"
-        android:paddingTop="10sp"
-        android:paddingBottom="10sp"
-        android:textSize="16sp"
+        android:paddingTop="10dp"
+        android:paddingBottom="10dp"
+        android:textSize="16dp"
         android:textColor="@color/white"
         android:textColorHint="@color/white"
         android:inputType="text"
@@ -42,8 +43,8 @@
         android:id="@+id/viewAccountSeparator"
         style="@style/NormalSeparator"
         android:layout_below="@id/editTextAcountName"
-        android:layout_marginLeft="20sp"
-        android:layout_marginRight="20sp"
+        android:layout_marginLeft="20dp"
+        android:layout_marginRight="20dp"
         android:background="@android:color/white"
         />
 
@@ -54,12 +55,12 @@
         android:layout_below="@id/viewAccountSeparator"
         android:hint="@string/password"
         android:inputType="textPassword"
-        android:layout_marginLeft="20sp"
-        android:layout_marginRight="20sp"
-        android:textSize="16sp"
+        android:layout_marginLeft="20dp"
+        android:layout_marginRight="20dp"
+        android:textSize="16dp"
         android:background="@android:color/transparent"
-        android:paddingTop="10sp"
-        android:paddingBottom="10sp"
+        android:paddingTop="10dp"
+        android:paddingBottom="10dp"
         android:drawableTint="#ffffff"
         android:textColorHint="@color/white"
         android:textColor="@color/white"
@@ -71,11 +72,10 @@
         android:id="@+id/viewPasswordSeparator"
         style="@style/NormalSeparator"
         android:layout_below="@id/editTextPassword"
-        android:layout_marginLeft="20sp"
-        android:layout_marginRight="20sp"
+        android:layout_marginLeft="20dp"
+        android:layout_marginRight="20dp"
         android:background="#ffffff"
         />
-
 
     <Switch
         android:layout_width="match_parent"
@@ -84,14 +84,23 @@
         android:id="@+id/switchEnableFingerprintLogin"
         android:layout_below="@+id/viewPasswordSeparator"
         android:checked="false"
-        android:layout_marginLeft="20sp"
-        android:layout_marginRight="20sp"
-        android:textSize="16sp"
-        android:layout_marginTop="10sp"
-        android:layout_marginBottom="10sp"
+        android:layout_marginLeft="20dp"
+        android:layout_marginRight="20dp"
+        android:textSize="16dp"
+        android:layout_marginTop="19dp"
         android:textColor="@color/white"
         android:thumb="@drawable/switchselector"
         android:track="@drawable/trackselector"
+        />
+
+    <View
+        android:id="@+id/viewSwitchSeparator"
+        style="@style/NormalSeparator"
+        android:layout_below="@id/switchEnableFingerprintLogin"
+        android:layout_marginLeft="20dp"
+        android:layout_marginRight="20dp"
+        android:layout_marginTop="19dp"
+        android:background="#ffffff"
         />
 
     <Switch
@@ -99,13 +108,12 @@
         android:layout_height="wrap_content"
         android:text="@string/remember_me"
         android:id="@+id/switchRememberMe"
-        android:layout_below="@+id/switchEnableFingerprintLogin"
+        android:layout_below="@+id/viewSwitchSeparator"
         android:checked="false"
-        android:layout_marginLeft="20sp"
-        android:layout_marginRight="20sp"
-        android:textSize="16sp"
-        android:layout_marginTop="10sp"
-        android:layout_marginBottom="10sp"
+        android:layout_marginLeft="20dp"
+        android:layout_marginRight="20dp"
+        android:textSize="16dp"
+        android:layout_marginTop="19dp"
         android:textColor="@color/white"
         android:thumb="@drawable/switchselector"
         android:track="@drawable/trackselector"
@@ -118,26 +126,12 @@
         android:id="@+id/buttonLogIn"
         android:layout_below="@+id/switchRememberMe"
         android:background="@drawable/login_button"
-        android:layout_marginLeft="20sp"
-        android:layout_marginRight="20sp"
-        android:textSize="16sp"
+        android:layout_marginLeft="20dp"
+        android:layout_marginRight="20dp"
+        android:layout_marginTop="35dp"
+        android:textSize="16dp"
         android:textStyle="bold"
         android:textColor="@color/mainblue"
-        />
-
-    <TextView
-        android:id="@+id/textViewExistingCustomer"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="@string/existing_customers"
-        android:maxLines="3"
-        android:layout_below="@+id/buttonLogIn"
-        android:layout_marginTop="20sp"
-        android:layout_marginLeft="45sp"
-        android:layout_marginRight="45sp"
-        android:textColor="@color/white"
-        android:textAlignment="center"
-        android:textSize="16sp"
         />
 
     <Button
@@ -145,25 +139,11 @@
         android:text="Sign Up"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/textViewExistingCustomer"
-        android:layout_marginLeft="20sp"
-        android:layout_marginRight="20sp"
-        android:layout_marginTop="20sp"
-        />
-
-    <TextView
-        android:id="@+id/textView2"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="@string/not_existing"
-        android:maxLines="3"
-        android:layout_below="@+id/signUp"
-        android:layout_marginTop="16sp"
-        android:layout_marginLeft="45sp"
-        android:layout_marginRight="45sp"
-        android:textColor="@color/white"
-        android:textAlignment="center"
-        android:textSize="16sp"
+        android:layout_below="@+id/buttonLogIn"
+        android:layout_marginLeft="20dp"
+        android:layout_marginRight="20dp"
+        android:layout_marginTop="35dp"
+        android:background="@drawable/border_round_corner"
         />
 
     <TextView
@@ -174,7 +154,7 @@
         android:layout_alignParentRight="true"
         android:layout_alignParentBottom="true"
         android:textColor="@color/black"
-        android:textSize="12sp"
+        android:textSize="12dp"
         />
 
 

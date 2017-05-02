@@ -10,10 +10,6 @@
             android:icon="@drawable/email_menu"
             android:title="@string/email_dc_healthlink" />
         <item
-            android:id="@+id/nav_aca_glossary"
-            android:icon="@drawable/aca_glossary"
-            android:title="@string/aca_glossary" />
-        <item
             android:id="@+id/nav_logout"
             android:icon="@drawable/logout"
             android:title="@string/logout_menu_item" />

@@ -85,7 +85,7 @@ public class EmployeeDetailsActivity extends BrokerActivity {
                                                                                     true)), EmployeeInfoFragment.class, null);
         tabHost.addTab(tabHost.newTabSpec(CARD_TAB).setIndicator(createTabIndicator(inflater, tabHost,
                 R.string.card_tab_name,
-                R.drawable.ivl_tab_card_states,
+                R.drawable.ivl_tab_home_states,
                 true)), InsuranceCardFragment.class, null);
 
         tabHost.setOnTabChangedListener(new TabHost.OnTabChangeListener() {

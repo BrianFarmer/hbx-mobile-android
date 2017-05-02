@@ -5,18 +5,20 @@
     android:layout_height="match_parent"
     android:background="@color/mainblue"
 >
+
     <ImageView
         android:id="@+id/imageViewDcHealthLinkLogo"
         android:layout_width="match_parent"
-        android:scaleType="fitXY"
-        android:layout_height="wrap_content"
+        android:scaleType="center"
+        android:layout_height="36.7dp"
         android:layout_marginLeft="40dp"
         android:layout_marginRight="40dp"
-        android:layout_marginBottom="30dp"
-        android:layout_marginTop="30dp"
-        android:src="@drawable/app_header"
+        android:layout_marginBottom="18dp"
+        android:layout_marginTop="18dp"
+        android:src="@drawable/app_header_vector"
         android:adjustViewBounds="true"
         />
+
 
     <Spinner
         android:layout_width="match_parent"

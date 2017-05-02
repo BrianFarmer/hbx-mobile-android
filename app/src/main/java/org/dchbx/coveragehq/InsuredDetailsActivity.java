@@ -25,6 +25,7 @@ import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.Spinner;
 import android.widget.TabHost;
+import android.widget.TabWidget;
 import android.widget.TextView;
 
 import com.microsoft.azure.mobile.analytics.Analytics;
@@ -91,27 +92,44 @@ public class InsuredDetailsActivity extends BrokerActivity {
 
         tabHost.addTab(tabHost.newTabSpec(INFO_TAB).setIndicator(createTabIndicator(inflater, tabHost,
                                                                                     R.string.info_tab_name,
-                                                                                    R.drawable.info_tab_states,
-                                                                                    true)), InsuredInfoFragment.class, null);
+                                                                                    R.drawable.ivl_tab_home_states,
+                                                                                    true, R.color.home_color, R.color.transparent)), InsuredInfoFragment.class, null);
         tabHost.addTab(tabHost.newTabSpec(GLOSSARY_TAB).setIndicator(createTabIndicator(inflater, tabHost,
                 R.string.glossary_tab_name,
-                R.drawable.ivl_tab_card_states,
-                true)), GlossaryFragment.class, null);
+                R.drawable.ivl_tab_glossary_states,
+                false, R.color.glossary_color, R.color.transparent)), GlossaryFragment.class, null);
         tabHost.addTab(tabHost.newTabSpec(LIFE_EVENT_TAB).setIndicator(createTabIndicator(inflater, tabHost,
                 R.string.life_event_tab_name,
-                R.drawable.ivl_tab_card_states,
-                true)), LifeEventFragment.class, null);
+                R.drawable.ivl_tab_life_events_states,
+                false, R.color.life_event_color, R.color.transparent)), LifeEventFragment.class, null);
         tabHost.addTab(tabHost.newTabSpec(CARD_TAB).setIndicator(createTabIndicator(inflater, tabHost,
                 R.string.card_tab_name,
-                R.drawable.ivl_tab_card_states,
-                true)), InsuranceCardFragment.class, null);
+                R.drawable.ivl_tab_id_card_states,
+                false, R.color.id_card_color, R.color.transparent)), InsuranceCardFragment.class, null);
 
         tabHost.setOnTabChangedListener(new TabHost.OnTabChangeListener() {
             @Override
             public void onTabChanged(String tabId) {
-                selectedTabChanged(tabId);
+                if (tabId.compareToIgnoreCase(INFO_TAB) == 0){
+                    selectedTabChanged(tabId, R.color.home_color, R.color.transparent);
+                    return;
+                }
+                if (tabId.compareToIgnoreCase(GLOSSARY_TAB) == 0){
+                    selectedTabChanged(tabId, R.color.glossary_color, R.color.transparent);
+                    return;
+                }
+                if (tabId.compareToIgnoreCase(LIFE_EVENT_TAB) == 0){
+                    selectedTabChanged(tabId, R.color.life_event_color, R.color.transparent);
+                    return;
+                }
+                if (tabId.compareToIgnoreCase(CARD_TAB) == 0){
+                    selectedTabChanged(tabId, R.color.id_card_color, R.color.transparent);
+                    return;
+                }
+
             }
         });
+        tabHost.setCurrentTab(0);
     }
 
     @Override
@@ -374,23 +392,32 @@ public class InsuredDetailsActivity extends BrokerActivity {
     }
 
 
-    private void selectedTabChanged(String tabId) {
-
+    private void selectedTabChanged(String tabId, int selectedColor, int unselectedColor) {
+        int currentTab = tabHost.getCurrentTab();
+        TabWidget tabWidget = tabHost.getTabWidget();
+        int unselectedTabColor = ContextCompat.getColor(this, unselectedColor);
+        int selectedTabColor = ContextCompat.getColor(this, selectedColor);
+        for(int i = 0; i < 4; i ++){
+            View tab = tabWidget.getChildTabViewAt(i);
+            TextView tabTitle = (TextView) tab.findViewById(R.id.tabtitle);
+            if (i != currentTab) {
+                tab.setBackgroundColor(unselectedTabColor);
+            } else {
+                tab.setBackgroundColor(selectedTabColor);
+            }
+        }
     }
 
-    public View createTabIndicator(LayoutInflater inflater, FragmentTabHost tabHost, int textResource, int iconResource, boolean selected) {
-        View tabIndicator = inflater.inflate(R.layout.tab_indicator, tabHost.getTabWidget(), false);
-        TextView tabTitle = (TextView) tabIndicator.findViewById(R.id.tabtitle);
-        tabTitle.setText(textResource);
+    public View createTabIndicator(LayoutInflater inflater, FragmentTabHost tabHost, int textResource, int iconResource, boolean selected,
+                                   int selectedColor, int unselectedColor) {
+        View tabIndicator = inflater.inflate(R.layout.ivl_tab_indicator, tabHost.getTabWidget(), false);
         ImageView tabImage = (ImageView) tabIndicator.findViewById(R.id.tabicon);
         tabImage.setImageResource(iconResource);
 
         if (selected){
-            tabIndicator.setBackgroundColor(ContextCompat.getColor(this, R.color.selected_tab_color));
-            tabTitle.setTextColor(ContextCompat.getColor(this, R.color.unselected_tab_color));
+            tabIndicator.setBackgroundColor(ContextCompat.getColor(this, selectedColor));
         }else {
-            tabIndicator.setBackgroundColor(ContextCompat.getColor(this, R.color.unselected_tab_color));
-            tabTitle.setTextColor(ContextCompat.getColor(this, R.color.selected_tab_color));
+            tabIndicator.setBackgroundColor(ContextCompat.getColor(this, unselectedColor));
         }
         return tabIndicator;
     }

@@ -271,14 +271,14 @@ class SummaryItemWrapper extends SummaryItemWrapperBase{
     }
 
     @Override
-    public void fillValues(View convertView, SummaryOfBenefitsActivity mainActivity) throws Exception {
+    public void fillValues(final View convertView, SummaryOfBenefitsActivity mainActivity) throws Exception {
         Log.d(TAG, "in SummaryItemWrapper.fillValues");
         TextView label = (TextView) convertView.findViewById(R.id.label);
         label.setText(service.service);
         label.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                RelativeLayout body = (RelativeLayout) view.findViewById(R.id.body);
+                RelativeLayout body = (RelativeLayout) convertView.findViewById(R.id.body);
                 if (bodyVisible){
                     Log.d(TAG, "hiding body");
                     body.setVisibility(View.GONE);
@@ -297,6 +297,18 @@ class SummaryItemWrapper extends SummaryItemWrapperBase{
             body.setVisibility(View.VISIBLE);
         } else {
             body.setVisibility(View.GONE);
+        }
+        TextView copay = (TextView) body.findViewById(R.id.copay);
+        if (service.copay != null) {
+            copay.setText(service.copay);
+        } else {
+            copay.setText("");
+        }
+        TextView coinsurance = (TextView) body.findViewById(R.id.coinsurance);
+        if (service.coinsurance != null) {
+            coinsurance.setText(service.coinsurance);
+        } else {
+            copay.setText("");
         }
     }
 }

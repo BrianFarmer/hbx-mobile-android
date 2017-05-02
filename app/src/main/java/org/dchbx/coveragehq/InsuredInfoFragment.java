@@ -417,6 +417,7 @@ public class InsuredInfoFragment extends BrokerFragment {
             planMetalRing.setVisibility(View.VISIBLE);
             planMetalField.setVisibility(View.VISIBLE);
             planMetalField.setText(plan.metalLevel);
+            planMetalRing.setImageResource(getMetalRingResource(plan.metalLevel));
         } else {
             planMetalRing.setVisibility(View.GONE);
             planMetalField.setVisibility(View.GONE);
@@ -462,6 +463,19 @@ public class InsuredInfoFragment extends BrokerFragment {
                 Intents.launchSummaryOfBenefitsActivity(InsuredInfoFragment.this.getActivity(), currentDate, health);
             }
         });
+    }
+
+    private int getMetalRingResource(String metalLevel) {
+        if (metalLevel.equalsIgnoreCase("silver")){
+            return R.drawable.metal_silver;
+        }
+        if (metalLevel.equalsIgnoreCase("gold")){
+            return R.drawable.metal_gold;
+        }
+        if (metalLevel.equalsIgnoreCase("platinum")){
+            return R.drawable.metal_platinum;
+        }
+        return R.drawable.metal_bronze;
     }
 
     public int findId(){
