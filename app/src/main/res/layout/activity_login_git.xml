@@ -3,8 +3,9 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:background="@color/mainblue"
->
+    >
 
     <ImageView
         android:id="@+id/imageViewDcHealthLinkLogo"
@@ -15,6 +16,7 @@
         android:layout_marginRight="40dp"
         android:layout_marginBottom="18dp"
         android:layout_marginTop="18dp"
+        app:srcCompat="@drawable/app_header_vector"
         android:src="@drawable/app_header_vector"
         android:adjustViewBounds="true"
         />
@@ -120,17 +122,6 @@
         android:textColor="@color/white"
         android:textAlignment="center"
         android:textSize="18sp"
-        />
-
-    <TextView
-        android:id="@+id/textViewVersion"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="version"
-        android:layout_alignParentRight="true"
-        android:layout_alignParentBottom="true"
-        android:textColor="@color/black"
-        android:textSize="12sp"
         />
 
     <TextView
