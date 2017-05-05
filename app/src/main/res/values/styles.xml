@@ -685,4 +685,102 @@
         <item name="android:textColor">@color/linkcolor</item>
     </style>
 
+    <style name="ivl_question">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_alignParentTop">true</item>
+        <item name="android:layout_centerHorizontal">true</item>
+        <item name="android:layout_marginLeft">28dp</item>
+        <item name="android:layout_marginRight">28dp</item>
+        <item name="android:layout_marginTop">55dp</item>
+        <item name="android:textAlignment">center</item>
+        <item name="android:breakStrategy">balanced</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:textSize">32dp</item>
+        <item name="android:textColor">@color/textdarkgray</item>
+    </style>
+
+    <style name="ivl_view">
+        <item name="android:layout_marginLeft">48dp</item>
+        <item name="android:layout_marginRight">48dp</item>
+    </style>
+
+    <style name="ivl_label" parent="ivl_view">
+        <item name="android:textSize">20dp</item>
+        <item name="android:textStyle">normal</item>
+        <item name="android:textColor">@color/textdarkgray</item>
+    </style>
+
+    <style name="ivl_edit" parent="ivl_view">
+        <item name="android:layout_marginTop">15dp</item>
+        <item name="android:layout_marginBottom">0dp</item>
+        <item name="android:layout_marginLeft">48dp</item>
+        <item name="android:layout_marginRight">48dp</item>
+        <item name="android:textSize">24dp</item>
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:paddingTop">10dp</item>
+        <item name="android:textStyle">normal</item>
+        <item name="android:paddingBottom">10dp</item>
+        <item name="android:textColor">@color/ivl_edittext</item>
+        <item name="android:textColorHint">@color/ivl_hint_color</item>
+        <item name="android:backgroundTint">@color/mainblue</item>
+    </style>
+
+    <style name="ivl_number" parent="ivl_edit">
+        <item name="android:inputType">number</item>
+    </style>
+
+    <style name="ivl_date_edit" parent="ivl_edit">
+        <item name="android:inputType">date</item>
+    </style>
+
+    <style name="ivl_ssn_edit" parent="ivl_edit">
+
+    </style>
+
+    <style name="ivl_email_address" parent="ivl_edit">
+        <item name="android:inputType">textEmailAddress</item>
+    </style>
+
+    <style name="ivl_password" parent="ivl_edit">
+        <item name="android:inputType">textPassword</item>
+    </style>
+
+    <style name="ivl_button" parent="ivl_view">
+        <item name="android:textSize">20dp</item>
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:paddingTop">20dp</item>
+        <item name="android:paddingBottom">20dp</item>
+    </style>
+
+    <style name="ivl_solid_button" parent="ivl_button">
+        <item name="android:background">@drawable/button_solid_round_corner</item>
+    </style>
+
+    <style name="ivl_open_button" parent="ivl_button">
+        <item name="android:background">@drawable/blue_border_round_corner</item>
+        <item name="android:textColor">@color/mainblue</item>
+    </style>
+
+    <style name="ivl_forward" parent="ivl_view">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:background">@color/transparent</item>
+        <item name="android:paddingTop">20dp</item>
+        <item name="android:scaleType">center</item>
+    </style>
+
+    <style name="ivl_link">
+        <item name="android:textColor">@color/mainblue</item>
+        <item name="android:textSize">20sp</item>
+    </style>
+
+    <style name="ivl_link_image">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_centerVertical">true</item>
+    </style>
+
 </resources>

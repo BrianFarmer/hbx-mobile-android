@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                xmlns:app="http://schemas.android.com/apk/res-auto"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+
+    <TextView
+        android:id="@+id/question"
+        style="@style/ivl_question"
+        android:text="@string/what_is_your_social_security_number"
+        />
+    <EditText
+        android:id="@+id/ssn"
+        android:layout_below="@+id/question"
+        style="@style/ivl_date_edit"
+    />
+
+    <ImageButton
+        android:id="@+id/forward"
+        android:layout_below="@+id/date_of_birth"
+        android:layout_marginTop="170dp"
+        android:layout_alignRight="@+id/date_of_birth"
+        style="@style/ivl_forward"
+    />
+</RelativeLayout>

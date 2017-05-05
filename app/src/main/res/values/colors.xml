@@ -7,6 +7,7 @@
     <color name="button_red">#e72b2d</color>
     <color name="in_renewal">#efbf40</color>
     <color name="physician_icon">#efbf40</color>
+    <color name="green">#69a30d</color>
     <color name="open_enrollment_minimum_met">#69A30D</color>
     <color name="light_blue">#00a3e2</color>
     <color name="blueish_green">#00a99e</color>
@@ -22,6 +23,7 @@
     <color name="lightgray">#ebebeb</color>
     <color name="textmediumgray">#959595</color>
     <color name="textgreen">#018b01</color>
+    <color name="textdarkgray">#414141</color>
     <color name="white">#ffffff</color>
     <color name="mainbackgroundcolor">@color/white</color>
     <color name="black">#000000</color>
@@ -58,5 +60,11 @@
     <color name="active_color">@color/white</color>
     <color name="normal_color">@color/mainblue</color>
     <color name="border">@color/white</color>
-    <color name="solid_button">@color/white</color>
+    <color name="ivl_btn_border">@color/white</color>
+    <color name="solid_button">@color/mainblue</color>
+    <color name="solid_button_pressed">#044972</color>
+    <color name="login_button">@color/white</color>
+    <color name="login_button_pressed">#044972</color>
+    <color name="ivl_edittext">@color/green</color>
+    <color name="ivl_hint_color">@color/textmediumgray</color>
 </resources>

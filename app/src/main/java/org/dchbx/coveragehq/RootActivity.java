@@ -87,7 +87,7 @@ public class RootActivity extends BrokerActivity {
                     Intents.launchInsuredUserDetailsActivity(this);
                     finish();
                     break;
-                case SignupIndividual:
+                case SignUpIndividual:
                     Intents.launchChoosePlan(this);
                     finish();
                     break;

@@ -44,6 +44,13 @@ public class PlanContactInfoDialog extends BrokerAppCompatDialogFragment {
         view = inflater.inflate(R.layout.carrier_contact_dialog, container, false);
         setCancelable(false);
         getMessages().getCarriers();
+        Button buttonCancel = (Button) view.findViewById(R.id.buttonCancel);
+        buttonCancel.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                dismiss();
+            }
+        });
         return view;
     }
 
@@ -51,27 +58,35 @@ public class PlanContactInfoDialog extends BrokerAppCompatDialogFragment {
     public void doThis(Events.Carriers carriers){
         final Carrier carrier = carriers.getCarriers().get(carrierName.toLowerCase());
         TextView carrierPhoneNumber = (TextView) view.findViewById(R.id.carrierPhoneNumber);
-        carrierPhoneNumber.setText(carrier.phone);
-        carrierPhoneNumber.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Intent intent = new Intent(Intent.ACTION_DIAL);
-                intent.setData(Uri.parse("tel:" + carrier.phone));
-                startActivity(intent);
-                dismiss();
-            }
-        });
+        if (carrier.phone != null){
+            carrierPhoneNumber.setText(carrier.phone);
+            carrierPhoneNumber.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    Intent intent = new Intent(Intent.ACTION_DIAL);
+                    intent.setData(Uri.parse("tel:" + carrier.phone));
+                    startActivity(intent);
+                    dismiss();
+                }
+            });
+        } else {
+            carrierPhoneNumber.setText("No phone number");
+        }
         TextView carrierWebSite = (TextView) view.findViewById(R.id.carrierWebSite);
-        carrierWebSite.setText(carrier.url);
-        carrierWebSite.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Intent intent = new Intent(Intent.ACTION_VIEW);
-                intent.setData(Uri.parse(carrier.url));
-                startActivity(intent);
-                dismiss();
-            }
-        });
+        if (carrier.url != null) {
+            carrierWebSite.setText(carrier.url);
+            carrierWebSite.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    Intent intent = new Intent(Intent.ACTION_VIEW);
+                    intent.setData(Uri.parse(carrier.url));
+                    startActivity(intent);
+                    dismiss();
+                }
+            });
+        } else {
+            carrierWebSite.setText("No website");
+        }
         Button buttonExit = (Button) view.findViewById(R.id.buttonCancel);
         buttonExit.setOnClickListener(new View.OnClickListener() {
             @Override

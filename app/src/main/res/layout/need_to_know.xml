@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+
+
+    <TextView
+        android:id="@+id/question"
+        android:text="@string/need_to_know_label"
+        style="@style/ivl_question"
+    />
+
+    <EditText
+        android:id="@+id/firstName"
+        android:layout_below="@+id/question"
+        android:text=""
+        android:hint="@string/first_name"
+        style="@style/ivl_edit"
+        />
+
+    <EditText
+        android:id="@+id/lastName"
+        android:text=""
+        android:hint="@string/last_name"
+        style="@style/ivl_edit"
+        android:layout_below="@+id/firstName"
+        />
+
+    <EditText
+        android:id="@+id/emailAddress"
+        android:layout_below="@+id/lastName"
+        android:hint="@string/email_address"
+        style="@style/ivl_email_address"
+        />
+
+    <EditText
+        android:id="@+id/password"
+        android:hint="@string/password"
+        android:layout_below="@+id/emailAddress"
+        style="@style/ivl_password"
+        />
+
+    <Button
+        android:id="@+id/continueButton"
+        style="@style/ivl_solid_button"
+        android:text="@string/continue_string"
+        android:layout_below="@+id/password"
+        android:layout_marginTop="25dp"
+        />
+
+    <Button
+        android:id="@+id/skipThis"
+        style="@style/ivl_open_button"
+        android:text="@string/skip_this"
+        android:layout_below="@+id/continueButton"
+        android:layout_marginTop="17dp"
+        />
+
+</RelativeLayout>

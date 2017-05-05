@@ -87,7 +87,7 @@ public class Intents {
     }
 
     public static void launchChoosePlan(Activity activity) {
-        Intent intent = new Intent(activity, FilterPlansActivity.class);
+        Intent intent = new Intent(activity, Family.class);
         activity.startActivity(intent);
     }
 }

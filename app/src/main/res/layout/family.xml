@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                xmlns:app="http://schemas.android.com/apk/res-auto"
+    >
+
+    <TextView
+        android:id="@+id/question"
+        style="@style/ivl_question"
+        android:text="@string/who_will_be_covered_under_your_plan"
+        />
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_below="@+id/question"
+        android:layout_above="@+id/includeWhoQuestion"
+        ></ScrollView>
+    <RelativeLayout
+        android:id="@+id/includeWhoQuestion"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:layout_above="@+id/addFamilyMember"
+        android:layout_marginBottom="30dp"
+        android:layout_marginTop="30dp"
+        >
+        <TextView
+            android:id="@+id/shouldInclude"
+            style="@style/ivl_link"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Who should I include in my family?"
+            />
+        <ImageView
+            android:layout_toRightOf="@+id/shouldInclude"
+            android:layout_marginLeft="8dp"
+            style="@style/ivl_link_image"
+            app:srcCompat="@drawable/open_link_arrow"
+            />
+    </RelativeLayout>
+
+    <Button
+        android:id="@+id/addFamilyMember"
+        style="@style/ivl_open_button"
+        android:text="@string/add_a_family_member"
+        android:layout_above="@+id/continueButton"
+        />
+
+    <Button
+        android:id="@+id/continueButton"
+        style="@style/ivl_solid_button"
+        android:layout_marginTop="15dp"
+        android:layout_marginBottom="13dp"
+        android:layout_alignParentBottom="true"
+        android:text="@string/continue_string"
+        />
+
+</RelativeLayout>

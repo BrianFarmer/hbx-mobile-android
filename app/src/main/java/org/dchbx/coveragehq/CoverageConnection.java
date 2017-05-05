@@ -74,7 +74,7 @@ public abstract class CoverageConnection {
     }
 
     public void configureForSignUp() {
-        serverConfiguration.userType = ServerConfiguration.UserType.Individual;
+        serverConfiguration.userType = ServerConfiguration.UserType.SignUpIndividual;
     }
 
     enum LoginResult {
@@ -167,6 +167,8 @@ public abstract class CoverageConnection {
                 return Events.GetLoginResult.UserType.Employee;
             case Individual:
                 return Events.GetLoginResult.UserType.IndividualEmployee;
+            case SignUpIndividual:
+                return Events.GetLoginResult.UserType.SignUpIndividual;
         }
         return Events.GetLoginResult.UserType.Unknown;
     }

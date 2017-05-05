@@ -303,4 +303,15 @@
     <string name="provider_directory">Provider Directory</string>
     <string name="rx_formulary">Rx Formulary</string>
     <string name="plan_contact_information">Plan Contact Information</string>
+    <string name="please_select_from_the_following_options_to_continue">Please select from the following options to continue...</string>
+    <string name="need_to_know_label">We need to know a bit more about you.</string>
+    <string name="first_name">First Name</string>
+    <string name="last_name">Last Name</string>
+    <string name="email_address">Email Address</string>
+    <string name="continue_string">Continue</string>
+    <string name="skip_this">Skip this. Show me plans.</string>
+    <string name="what_is_your_social_security_number">What is your social security number?</string>
+    <string name="what_is_your_date_of_birth">What is your date of birth?</string>
+    <string name="who_will_be_covered_under_your_plan">Who will be covered under your plan?</string>
+    <string name="add_a_family_member">+ add a family member</string>
 </resources>

@@ -9,6 +9,10 @@ public class BaseActivity extends AppCompatActivity {
 
     protected Messages messages = null;
 
+    public Messages getMessages() {
+        return messages;
+    }
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);

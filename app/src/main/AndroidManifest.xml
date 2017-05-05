@@ -75,6 +75,11 @@
             android:configChanges="orientation|keyboardHidden|screenSize"
             android:label=""
             />
+        <activity
+            android:name="org.dchbx.coveragehq.Family"
+            android:configChanges="orientation|keyboardHidden|screenSize"
+            android:label=""
+            />
     </application>
 
 </manifest>

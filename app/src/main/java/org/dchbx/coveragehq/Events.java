@@ -367,7 +367,7 @@ public class Events {
             Broker,
             Employer,
             Employee,
-            SignupIndividual,
+            SignUpIndividual,
             IndividualEmployee,
             Unknown
         }

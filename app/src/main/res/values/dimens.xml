@@ -5,4 +5,6 @@
     <dimen name="insurance_card_side_margin">21dp</dimen>
     <dimen name="insurance_card_image_label_spacing">20dp</dimen>
     <dimen name="metal_ring">24dp</dimen>
+    <dimen name="ivl_left_margin">40dp</dimen>
+    <dimen name="ivl_right_margin">40dp</dimen>
 </resources>

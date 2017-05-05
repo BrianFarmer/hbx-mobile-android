@@ -11,7 +11,7 @@ public class ServerConfiguration {
         Broker,
         Employer,
         Employee,
-        Individual
+        SignUpIndividual, Individual
     }
 
     public String accountName = null;
