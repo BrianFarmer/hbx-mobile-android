@@ -10,12 +10,12 @@
         style="@style/ivl_question"
         android:text="@string/who_will_be_covered_under_your_plan"
         />
-    <ScrollView
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
+    <ListView
+        android:id="@+id/memberList"
+        style="@style/ivl_list"
         android:layout_below="@+id/question"
         android:layout_above="@+id/includeWhoQuestion"
-        ></ScrollView>
+        />
     <RelativeLayout
         android:id="@+id/includeWhoQuestion"
         android:layout_width="wrap_content"
@@ -55,5 +55,6 @@
         android:layout_alignParentBottom="true"
         android:text="@string/continue_string"
         />
+
 
 </RelativeLayout>

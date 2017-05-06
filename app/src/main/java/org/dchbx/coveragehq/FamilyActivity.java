@@ -9,7 +9,7 @@ import org.greenrobot.eventbus.ThreadMode;
  * Created by plast on 5/4/2017.
  */
 
-public class Family extends BaseActivity {
+public class FamilyActivity extends BaseActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);

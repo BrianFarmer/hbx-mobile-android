@@ -614,7 +614,8 @@ public class BrokerUtilities {
 
     public static Enrollment getEnrollment(RosterEntry employee, LocalDate date) {
         for (Enrollment enrollment : employee.enrollments) {
-            if (enrollment.startOn.compareTo(date) == 0) {
+            if (enrollment.startOn != null
+                && enrollment.startOn.compareTo(date) == 0) {
                 return enrollment;
             }
         }

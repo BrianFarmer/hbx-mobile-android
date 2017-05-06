@@ -204,8 +204,6 @@ public class InsuredInfoFragment extends BrokerFragment {
             }
         });
 
-
-
         populateHealthPlan();
         populateDentalPlan();
 
@@ -349,18 +347,28 @@ public class InsuredInfoFragment extends BrokerFragment {
 
     private void populateDentalPlan() throws Exception {
 
-        textViewDentalPlanDrawer.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                if (dentalPlanVisible){
-                    dentalPlanVisible = false;
-                } else {
-                    dentalPlanVisible = true;
+        if (currentEnrollment.dental != null
+            && currentEnrollment.dental.status != null
+            && currentEnrollment.dental.status.compareTo("not enrolled") == 0) {
+            textViewDentalPlanDrawer.setVisibility(View.VISIBLE);
+
+            textViewDentalPlanDrawer.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    if (dentalPlanVisible) {
+                        dentalPlanVisible = false;
+                    } else {
+                        dentalPlanVisible = true;
+                    }
                 }
-            }
-        });
-        ViewGroup viewGroup = (ViewGroup) view.findViewById(R.id.dentalPlanInfo);
-        populatePlan(currentEnrollment.dental, viewGroup, false);
+            });
+            populatePlan(currentEnrollment.dental, R.id.dentalPlanInfo, false);
+        } else {
+            textViewDentalPlanDrawer.setVisibility(View.GONE);
+            ViewGroup includeView = (ViewGroup) this.view.findViewById(R.id.dentalPlanInfo);
+            includeView.setVisibility(View.GONE);
+            includeView.setVisibility(View.GONE);
+        }
     }
 
 
@@ -375,13 +383,14 @@ public class InsuredInfoFragment extends BrokerFragment {
                 }
             }
         });
-        ViewGroup view = (ViewGroup) this.view.findViewById(R.id.healthPlanInfo);
-        populatePlan(currentEnrollment.health, (ViewGroup)view, true);
+        populatePlan(currentEnrollment.health, R.id.healthPlanInfo, true);
     }
 
-    private void populatePlan(Health plan, ViewGroup includeView, final Boolean health){
-
+    private void populatePlan(Health plan, int groupId, final Boolean health){
+        ViewGroup includeView = (ViewGroup) this.view.findViewById(groupId);
+        includeView.setVisibility(View.VISIBLE);
         carrier = plan.carrierName;
+        final String extraCarrier = carrier;
         TextView textViewNotEnrolled = (TextView) includeView.findViewById(R.id.notEnrolled);
         RelativeLayout relativeLayoutPlanWrapper = (RelativeLayout) includeView.findViewById(R.id.wrapper);
         if (currentEnrollment == null
@@ -450,12 +459,14 @@ public class InsuredInfoFragment extends BrokerFragment {
 
 
         Button planContactInfo = (Button)includeView.findViewById(R.id.planContactInfo);
-        planContactInfo.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                PlanContactInfoDialog dialog = PlanContactInfoDialog.build(InsuredInfoFragment.this.getActivity(), carrier);
-            }
-        });
+        if (carrier != null) {
+            planContactInfo.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    PlanContactInfoDialog dialog = PlanContactInfoDialog.build(InsuredInfoFragment.this.getActivity(), extraCarrier);
+                }
+            });
+        }
         Button summaryButton = (Button)includeView.findViewById(R.id.summary);
         summaryButton.setOnClickListener(new View.OnClickListener() {
             @Override

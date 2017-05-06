@@ -76,7 +76,7 @@
             android:label=""
             />
         <activity
-            android:name="org.dchbx.coveragehq.Family"
+            android:name="org.dchbx.coveragehq.FamilyActivity"
             android:configChanges="orientation|keyboardHidden|screenSize"
             android:label=""
             />

@@ -29,7 +29,6 @@ public class SummaryAdapter extends BaseAdapter {
     private List<Service> servicesList;
     private ArrayList<SummaryItemWrapperBase> items;
 
-
     public SummaryAdapter(SummaryOfBenefitsActivity activity, List<Service> servicesList, Health plan){
         this.activity = activity;
         this.servicesList = servicesList;
