@@ -111,7 +111,7 @@
                 android:layout_width="0dp"
                 android:layout_weight="1"
                 android:layout_height="wrap_content"
-                android:id="@+id/linearLayoutEmployeePays"
+                android:id="@+id/aptcLayout"
                 >
                 <TextView
                     android:text=""
@@ -122,11 +122,20 @@
                     android:textColor="@color/aptc_purple"
                     />
                 <TextView
-                    android:text="@string/aptc_credit"
+                    android:text="@string/aptc"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:maxLines="2"
-                    android:id="@+id/textViewAptcCreditLabel"
+                    android:id="@+id/textViewAptcLabel"
+                    style="@style/total_costs_label_employee"
+                    android:textColor="@color/aptc_purple"
+                    />
+                <TextView
+                    android:text="@string/credit"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:maxLines="2"
+                    android:id="@+id/textViewCreditLabel"
                     style="@style/total_costs_label_employee"
                     android:textColor="@color/aptc_purple"
                     />
@@ -147,11 +156,20 @@
                     android:textColor="@color/annual_blue"
                     />
                 <TextView
-                    android:text="@string/annual_premium"
+                    android:text="@string/annual"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:maxLines="2"
-                    android:id="@+id/textViewAnnualPremiumLabel"
+                    android:id="@+id/textViewAnnualLabel"
+                    style="@style/total_costs_label_employee"
+                    android:textColor="@color/annual_blue"
+                    />
+                <TextView
+                    android:text="@string/premium"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:maxLines="2"
+                    android:id="@+id/textViewPremiumStringLabel"
                     style="@style/total_costs_label_employee"
                     android:textColor="@color/annual_blue"
                     />

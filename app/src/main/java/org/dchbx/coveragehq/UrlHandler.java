@@ -1,5 +1,6 @@
 package org.dchbx.coveragehq;
 
+import android.net.Uri;
 import android.util.Log;
 
 import org.dchbx.coveragehq.exceptions.BrokerNotFoundException;
@@ -290,7 +291,16 @@ public abstract class UrlHandler {
 
     protected String checkUrl(String url){
         Log.d(TAG, "checking url; " + url);
-        return url;
+        if (url.toLowerCase().startsWith("http")){
+            return url;
+        }
+
+        HttpUrl rootUrl = HttpUrl.parse(serverConfiguration.individualPath);
+        Uri.Builder builder = new Uri.Builder();
+        Uri qualifiedUrl = builder.scheme(rootUrl.scheme())
+                .authority(rootUrl.host())
+                .build();
+        return qualifiedUrl.toString() + url;
     }
 
     public GetParameters getEmployeeDetailsParameters() {

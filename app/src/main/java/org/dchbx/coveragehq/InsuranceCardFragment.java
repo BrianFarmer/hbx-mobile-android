@@ -2,6 +2,7 @@ package org.dchbx.coveragehq;
 
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.v7.app.AlertDialog;
 import android.util.Log;
@@ -10,6 +11,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 
 import org.greenrobot.eventbus.Subscribe;
@@ -23,6 +25,7 @@ public class InsuranceCardFragment extends BrokerFragment {
     private String TAG = "InsuranceCardFragment";
     private View view;
     private UserEmployee userEmployee;
+    private Uri cameraUri;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -48,7 +51,7 @@ public class InsuranceCardFragment extends BrokerFragment {
 
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void doThis(Events.GetUserEmployeeResults getUserEmployeeResults) {
-        populate(getUserEmployeeResults.getUserEmployee());
+        populate(getUserEmployeeResults.getUserEmployee(), cameraUri);
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)
@@ -63,7 +66,7 @@ public class InsuranceCardFragment extends BrokerFragment {
         }
     }
 
-    private void populate(UserEmployee userEmployee) {
+    private void populate(UserEmployee userEmployee, Uri cameraUri) {
         if (userEmployee != null){
             this.userEmployee = userEmployee;
         } else {
@@ -81,10 +84,18 @@ public class InsuranceCardFragment extends BrokerFragment {
         ImageView rearView = (ImageView) view.findViewById(R.id.imageViewRearView);
         Button rearRemove = (Button) view.findViewById(R.id.buttonRemoveRear);
         Button rearReplace = (Button) view.findViewById(R.id.buttonReplaceRear);
+        LinearLayout frontLayout = (LinearLayout)view.findViewById(R.id.frontLayout);
+        LinearLayout rearLayout = (LinearLayout)view.findViewById(R.id.rearLayout);
 
         if (userEmployee.insuranceCardFrontFileName == null
             && userEmployee.insuranceCardRearFileName == null){
             noImageArea.setVisibility(View.VISIBLE);
+            frontLayout.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    takePictureFront();
+                }
+            });
             frontCapture.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
@@ -140,6 +151,12 @@ public class InsuranceCardFragment extends BrokerFragment {
             }
 
             if (userEmployee.insuranceCardRearFileName == null) {
+                rearLayout.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        takePictureRear();
+                    }
+                });
                 rearCapture.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {

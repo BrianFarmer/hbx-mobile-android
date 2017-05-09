@@ -392,6 +392,9 @@ public abstract class CoverageConnection {
             serverConfiguration.haveRearInsuranceCard = true;
         }
 
+        File fileToDelete = new File(filename);
+        fileToDelete.delete();
+
         clearStorageHandler.store(serverConfiguration);
     }
 
@@ -406,7 +409,6 @@ public abstract class CoverageConnection {
         }
         File file = new File(fileName);
         file.delete();
-        serverConfiguration.haveFrontInsuranceCard = false;
         clearStorageHandler.store(serverConfiguration);
     }
 

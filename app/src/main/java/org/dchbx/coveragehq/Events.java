@@ -758,6 +758,9 @@ public class Events {
     }
 
     public static class UpdateInsuranceCard {
+
+        public UpdateInsuranceCard() {
+        }
     }
 
     static public class MoveImageToData {

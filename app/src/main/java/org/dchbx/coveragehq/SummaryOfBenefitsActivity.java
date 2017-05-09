@@ -56,7 +56,7 @@ public class SummaryOfBenefitsActivity extends BrokerActivity {
         // Initializing Toolbar and setting it as the actionbar
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-        toolbar.setLogo(R.drawable.app_header);
+        toolbar.setLogo(R.drawable.app_header_vector);
         toolbar.setTitle("");
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setDisplayShowHomeEnabled(true);

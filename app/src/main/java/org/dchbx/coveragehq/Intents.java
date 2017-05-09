@@ -2,7 +2,7 @@ package org.dchbx.coveragehq;
 
 import android.app.Activity;
 import android.content.Intent;
-import android.provider.MediaStore;
+import android.net.Uri;
 
 import org.joda.time.LocalDate;
 
@@ -71,12 +71,8 @@ public class Intents {
         rootActivity.startActivity(intent);
     }
 
-    public static void launchCamera(Activity activity, int requestId) {
+    public static void launchCamera(Activity activity, int requestId, Uri outputFileUri) {
 
-        Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-        if (takePictureIntent.resolveActivity(BrokerApplication.getBrokerApplication().getPackageManager()) != null) {
-            activity.startActivityForResult(takePictureIntent, requestId);
-        }
     }
 
     public static void launchSummaryOfBenefitsActivity(Activity activity, LocalDate date, boolean showHealth) {

@@ -329,7 +329,7 @@ public class EmployeeDetailsActivity extends BrokerActivity {
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void doThis(Events.CapturePhoto capturePhoto) throws Exception {
         front = capturePhoto.isFront();
-        Intents.launchCamera(this, ++ currentPhotoRequestId);
+        Intents.launchCamera(this, ++ currentPhotoRequestId, null);
     }
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {

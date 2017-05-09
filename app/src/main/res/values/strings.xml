@@ -226,7 +226,8 @@
     <string name="file_error">A file error happened trying to remove the file, please try again later.</string>
     <string name="no_images">No Images</string>
     <string name="take_photos_of_your_health_id_card">Take photos of your health ID card.</string>
-    <string name="aptc_credit">APTC Credit</string>
+    <string name="aptc">APTC</string>
+    <string name="credit">Credit</string>
     <string name="dental_plan_drawer_label">Dental Plan</string>
     <string name="monthly_premium">Monthly Premium</string>
     <string name="choose_your_maximum_premium_and_deductible">Choose your maximum premium and deductible.</string>
@@ -243,7 +244,8 @@
     <string name="website">Website</string>
     <string name="dc_health_link_id_field">DC Health Link ID: %s</string>
     <string name="not_available">Not Available</string>
-    <string name="annual_premium">Annual Premium</string>
+    <string name="annual">Annual</string>
+    <string name="premium">Premium</string>
     <string name="life_event_html" formatted="false">
 <![CDATA[
     <html>

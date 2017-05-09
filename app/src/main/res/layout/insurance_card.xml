@@ -18,6 +18,7 @@
             android:layout_height="wrap_content"
             android:layout_marginRight="@dimen/insurance_card_side_margin"
             android:layout_marginLeft="@dimen/insurance_card_side_margin"
+            android:layout_marginTop="21dp"
             >
 
             <TextView
@@ -59,9 +60,12 @@
             android:layout_below="@+id/noImageArea"
             >
             <LinearLayout
+                android:id="@+id/frontLayout"
                 android:color="@color/transparent"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:paddingLeft="75dp"
+                android:paddingRight="75dp"
                 android:gravity="center"
                 android:layout_centerHorizontal="true"
                 android:layout_alignParentTop="true"
@@ -141,9 +145,12 @@
             android:layout_marginBottom="15dp"
             >
             <LinearLayout
+                android:id="@+id/rearLayout"
                 android:color="@color/transparent"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:paddingLeft="75dp"
+                android:paddingRight="75dp"
                 android:gravity="center"
                 android:layout_centerHorizontal="true"
                 android:layout_alignParentTop="true"

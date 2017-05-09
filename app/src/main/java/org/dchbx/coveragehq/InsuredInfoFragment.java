@@ -8,6 +8,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
@@ -434,22 +435,26 @@ public class InsuredInfoFragment extends BrokerFragment {
 
         TextView textViewAnnualPremium = (TextView) includeView.findViewById(R.id.textViewAnnualPremium);
         String totalPremiumString = "";
+        String monthlyPremium = "";
         if (plan.totalPremium != null) {
             totalPremiumString = String.format("$%.2f", plan.totalPremium);
+            monthlyPremium = String.format("$%.2f", plan.totalPremium/12);
         }
         textViewAnnualPremium.setText(totalPremiumString);
 
         TextView textViewPremium = (TextView) includeView.findViewById(R.id.textViewPremium);
-        if (plan.totalPremium != null) {
-            totalPremiumString = String.format("$%.2f", plan.totalPremium/12);
-        }
-        textViewPremium.setText(totalPremiumString);
+        textViewPremium.setText(monthlyPremium);
 
-        if (plan.applied_aptc_amount_in_cent != null) {
+        LinearLayout aptcLayout = (LinearLayout) includeView.findViewById(R.id.aptcLayout);
+        if (plan.applied_aptc_amount_in_cent != null
+            && plan.applied_aptc_amount_in_cent > 0) {
+            aptcLayout.setVisibility(View.VISIBLE);
             TextView textViewAptcCredit = (TextView) includeView.findViewById(R.id.textViewAptcCredit);
             String aptcCreditString = null;
             aptcCreditString = String.format("%.0f%%", plan.applied_aptc_amount_in_cent * 100);
             textViewAptcCredit.setText(aptcCreditString);
+        } else {
+            aptcLayout.setVisibility(View.GONE);
         }
 
         TextView textViewYearlyDeductable = (TextView) includeView.findViewById(R.id.textViewYearlyDeductable);

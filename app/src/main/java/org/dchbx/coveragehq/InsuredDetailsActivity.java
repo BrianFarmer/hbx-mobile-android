@@ -6,9 +6,12 @@ import android.content.Intent;
 import android.content.res.Resources;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Environment;
+import android.provider.MediaStore;
 import android.support.design.widget.NavigationView;
 import android.support.v4.app.FragmentTabHost;
 import android.support.v4.content.ContextCompat;
+import android.support.v4.content.FileProvider;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AlertDialog;
@@ -38,6 +41,7 @@ import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 import org.joda.time.LocalDate;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -68,6 +72,7 @@ public class InsuredDetailsActivity extends BrokerActivity {
     private Uri cameraUri = null;
     private DrawerLayout drawerLayout;
     private NavigationView navigationView;
+    private boolean frontPicture;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -449,18 +454,65 @@ public class InsuredDetailsActivity extends BrokerActivity {
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void doThis(Events.CapturePhoto capturePhoto) throws Exception {
         front = capturePhoto.isFront();
-        Intents.launchCamera(this, ++ currentPhotoRequestId);
+
+        Intent intent = new Intent("android.media.action.IMAGE_CAPTURE");
+        frontPicture = capturePhoto.isFront();
+        Uri outputFileUri = getPhotoFileUri();
+        intent.putExtra(MediaStore.EXTRA_OUTPUT, outputFileUri);
+        if (intent.resolveActivity(BrokerApplication.getBrokerApplication().getPackageManager()) != null) {
+            startActivityForResult(intent, ++ currentPhotoRequestId);
+        }
     }
+
+
+
+
+    public Uri getPhotoFileUri() {
+        // Only continue if the SD Card is mounted
+        if (isExternalStorageAvailable()) {
+            // Get safe storage directory for photos
+            // Use `getExternalFilesDir` on Context to access package-specific directories.
+            // This way, we don't need to request external read/write runtime permissions.
+            File mediaStorageDir = new File(
+                    getExternalFilesDir(Environment.DIRECTORY_PICTURES), TAG);
+
+            // Create the storage directory if it does not exist
+            if (!mediaStorageDir.exists() && !mediaStorageDir.mkdirs()){
+                Log.d(TAG, "failed to create directory");
+            }
+
+            // Return the file target for the photo based on filename
+            File file = new File(mediaStorageDir.getPath() + File.separator + (frontPicture?"front_image.jpg":"rear_image.jpg"));
+
+            // wrap File object into a content provider
+            // required for API >= 24
+            // See https://guides.codepath.com/Sharing-Content-with-Intents#sharing-files-with-api-24-or-higher
+            return FileProvider.getUriForFile(this, "org.dchbx.fileprovider", file);
+        }
+        return null;
+    }
+
+
+
+
+
+
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         // Check which request we're responding to
         if (requestCode == currentPhotoRequestId) {
             // Make sure the request was succcessful
             if (resultCode == RESULT_OK) {
-                cameraUri = data.getData();
+                cameraUri = getPhotoFileUri();
             }
         }
     }
+
+    private boolean isExternalStorageAvailable() {
+        String state = Environment.getExternalStorageState();
+        return state.equals(Environment.MEDIA_MOUNTED);
+    }
+
 
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void doThis(Events.MoveImageToDataResult moveImageToDataResult) {
