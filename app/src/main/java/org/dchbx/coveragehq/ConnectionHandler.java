@@ -444,7 +444,7 @@ public class ConnectionHandler implements IConnectionHandler{
     }
 
     @Override
-    public GetReponse getHackedSSL(UrlHandler.GetParameters getParameters) throws IOException, CoverageException {
+    public GetResponse getHackedSSL(UrlHandler.GetParameters getParameters) throws IOException, CoverageException {
         if (getParameters == null){
             throw new IllegalArgumentException  ("getParameters is null");
         }
@@ -478,7 +478,7 @@ public class ConnectionHandler implements IConnectionHandler{
             throw new CoverageException("error getting: " + getParameters.url.toString());
         }
 
-        GetReponse getReponse = new GetReponse();
+        GetResponse getReponse = new GetResponse();
         getReponse.responseCode = response.code();
         getReponse.body = response.body().string();
         getReponse.cookies = getCookies(response.headers().toMultimap());
@@ -487,7 +487,7 @@ public class ConnectionHandler implements IConnectionHandler{
     }
 
     @Override
-    public GetReponse get(UrlHandler.GetParameters getParameters) throws IOException, CoverageException {
+    public GetResponse get(UrlHandler.GetParameters getParameters) throws IOException, CoverageException {
         if (getParameters == null){
             throw new IllegalArgumentException  ("getParameters is null");
         }
@@ -517,7 +517,7 @@ public class ConnectionHandler implements IConnectionHandler{
 
         client.newCall(request).execute();*/
 
-        GetReponse getReponse = new GetReponse();
+        GetResponse getReponse = new GetResponse();
         getReponse.responseCode = response.code();
         getReponse.body = response.body().string();
         getReponse.cookies = getCookies(response.headers().toMultimap());

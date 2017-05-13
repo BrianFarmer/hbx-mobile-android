@@ -6,6 +6,8 @@ import android.widget.ImageView;
 
 import org.dchbx.coveragehq.models.brokeragency.BrokerAgency;
 import org.dchbx.coveragehq.models.employer.Employer;
+import org.dchbx.coveragehq.models.planshopping.Plan;
+import org.dchbx.coveragehq.models.planshopping.PlanShoppingParameters;
 import org.dchbx.coveragehq.models.roster.Roster;
 import org.dchbx.coveragehq.models.roster.RosterEntry;
 import org.dchbx.coveragehq.models.roster.SummaryOfBenefits;
@@ -892,5 +894,56 @@ public class Events {
     }
 
     public static class SignUpResult {
+    }
+
+    public static class GetPlanShopping {
+    }
+
+    public static class GetPlanShoppingResult {
+        private final PlanShoppingParameters planShoppingParameters;
+
+        public GetPlanShoppingResult(PlanShoppingParameters planShoppingParameters){
+            this.planShoppingParameters = planShoppingParameters;
+        }
+
+        public PlanShoppingParameters getPlanShoppingParameters() {
+            return planShoppingParameters;
+        }
+    }
+
+    public static class UpdatePlanShopping {
+        private final PlanShoppingParameters planShoppingParameters;
+
+        public UpdatePlanShopping(PlanShoppingParameters planShoppingParameters) {
+            this.planShoppingParameters = planShoppingParameters;
+        }
+
+        public PlanShoppingParameters getPlanShoppingParameters() {
+            return planShoppingParameters;
+        }
+    }
+
+    public static class ResetPlanShopping {
+    }
+
+    public static class ResetPlanShoppingResult {
+    }
+
+    public static class UpdatePlanShoppingResult {
+    }
+
+    public static class GetPlans {
+    }
+
+    public static class GetPlansResult {
+        private final List<Plan> planList;
+
+        public GetPlansResult(List<Plan> planList){
+            this.planList = planList;
+        }
+
+        public List<Plan> getPlanList() {
+            return planList;
+        }
     }
 }

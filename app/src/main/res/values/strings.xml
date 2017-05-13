@@ -316,4 +316,9 @@
     <string name="what_is_your_date_of_birth">What is your date of birth?</string>
     <string name="who_will_be_covered_under_your_plan">Who will be covered under your plan?</string>
     <string name="add_a_family_member">+ add a family member</string>
+    <string name="you_primary">You (Primary)</string>
+    <string name="family_member">Family Member #%1d</string>
+    <string name="age">Age</string>
+    <string name="choose_premium_and_deductible">Choose your maximum premium and deductible.</string>
+    <string name="see_plans_available">See %1d plans available</string>
 </resources>

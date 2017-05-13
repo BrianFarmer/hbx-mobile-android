@@ -157,7 +157,7 @@ public class EnrollUrlHandler extends UrlHandler {
         return getParameters;
     }
 
-    public void processStayLoggedInResponse(IConnectionHandler.GetReponse getReponse) throws Exception {
+    public void processStayLoggedInResponse(IConnectionHandler.GetResponse getReponse) throws Exception {
         if (getReponse.responseCode < 200
             || getReponse.responseCode > 299){
             throw new Exception("Unable to reset sesssion time");

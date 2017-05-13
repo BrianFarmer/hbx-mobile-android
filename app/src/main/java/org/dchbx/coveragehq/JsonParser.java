@@ -6,12 +6,15 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.reflect.TypeToken;
 
+import org.dchbx.coveragehq.models.Security.Endpoints;
 import org.dchbx.coveragehq.models.Security.LoginResponse;
 import org.dchbx.coveragehq.models.Security.SecurityAnswerResponse;
 import org.dchbx.coveragehq.models.brokeragency.BrokerAgency;
 import org.dchbx.coveragehq.models.employer.Employer;
 import org.dchbx.coveragehq.models.gitaccounts.AccountInfo;
 import org.dchbx.coveragehq.models.gitaccounts.GitAccounts;
+import org.dchbx.coveragehq.models.planshopping.Plan;
+import org.dchbx.coveragehq.models.planshopping.PlanShoppingParameters;
 import org.dchbx.coveragehq.models.roster.Roster;
 import org.dchbx.coveragehq.models.roster.RosterEntry;
 import org.dchbx.coveragehq.models.roster.SummaryOfBenefits;
@@ -141,14 +144,41 @@ public class JsonParser {
     }
 
     public List<Service> parseServices(String body) {
-        GsonBuilder gsonBuilder = new GsonBuilder();
-        Gson gson = gsonBuilder.create();
         Type type = new TypeToken<List<Service>>() {}.getType();
-        Object object = gson.fromJson(body.replace("\"\"", "null"), type);
-        return (List<Service>)object;
+        return (List<Service>)parse(body, type);
     }
 
     public RosterEntry parseIndividual(String body) {
         return parseEmployeeDetails(body);
+    }
+
+    private static <T> T parse(String jsonString, Type type){
+        GsonBuilder gsonBuilder = new GsonBuilder();
+        gsonBuilder.registerTypeAdapter(DateTime.class, new DateTimeDeserializer());
+        gsonBuilder.registerTypeAdapter(LocalDate.class, new LocalDateDeserializer());
+        Gson gson = gsonBuilder.create();
+        Object object = gson.fromJson(jsonString.replace("\"\"", "null"), type);
+        return (T)object;
+    }
+
+    private static <T> T parse(String jsonString, Class<T> c){
+        GsonBuilder gsonBuilder = new GsonBuilder();
+        gsonBuilder.registerTypeAdapter(DateTime.class, new DateTimeDeserializer());
+        gsonBuilder.registerTypeAdapter(LocalDate.class, new LocalDateDeserializer());
+        Gson gson = gsonBuilder.create();
+        return gson.fromJson(jsonString.replace("\"\"", "null"), c);
+    }
+
+    public static PlanShoppingParameters parsePlanShoppingParameters(String body) {
+        return parse(body, PlanShoppingParameters.class);
+    }
+
+    public Endpoints parseEndpoionts(String body) {
+        return parse(body, Endpoints.class);
+    }
+
+    public List<Plan> parsePlans(String body) {
+        Type type = new TypeToken<List<Plan>>() {}.getType();
+        return (List<Plan>)parse(body, type);
     }
 }

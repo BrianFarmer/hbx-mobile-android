@@ -116,7 +116,7 @@ public class DevUrlHandler extends UrlHandler {
         return CoverageConnection.LoginResult.Success;
     }
 
-    public void processLoginPageReponse(IConnectionHandler.GetReponse getReponse) throws CoverageException {
+    public void processLoginPageReponse(IConnectionHandler.GetResponse getReponse) throws CoverageException {
         serverConfiguration.sessionId = getReponse.cookies.get("_session_id").get(0);
         Pattern pattern = Pattern.compile("<meta name=\\\"csrf-token\\\" content=\\\"([^\"]+)\\\"");
         Matcher matcher = pattern.matcher(getReponse.body);

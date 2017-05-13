@@ -2,6 +2,7 @@ package org.dchbx.coveragehq;
 
 import android.net.Uri;
 
+import org.dchbx.coveragehq.models.planshopping.PlanShoppingParameters;
 import org.greenrobot.eventbus.EventBus;
 import org.joda.time.LocalDate;
 
@@ -195,6 +196,26 @@ public class EventBusMessages implements Messages {
     @Override
     public void signUp() {
         eventBus.post(new Events.SignUp());
+    }
+
+    @Override
+    public void getPlanShopping() {
+        eventBus.post(new Events.GetPlanShopping());
+    }
+
+    @Override
+    public void resetPlanShopping() {
+        eventBus.post(new Events.ResetPlanShopping());
+    }
+
+    @Override
+    public void updatePlanShopping(PlanShoppingParameters planShoppingParameters) {
+        eventBus.post(new Events.UpdatePlanShopping(planShoppingParameters));
+    }
+
+    @Override
+    public void getPlans() {
+        eventBus.post(new Events.GetPlans());
     }
 }
 

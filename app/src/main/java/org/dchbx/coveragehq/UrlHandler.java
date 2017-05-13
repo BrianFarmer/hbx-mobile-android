@@ -6,9 +6,11 @@ import android.util.Log;
 import org.dchbx.coveragehq.exceptions.BrokerNotFoundException;
 import org.dchbx.coveragehq.exceptions.EmployerNotFoundException;
 import org.dchbx.coveragehq.exceptions.IndividualNotFoundException;
+import org.dchbx.coveragehq.models.Security.Endpoints;
 import org.dchbx.coveragehq.models.Security.SecurityAnswerResponse;
 import org.dchbx.coveragehq.models.brokeragency.BrokerAgency;
 import org.dchbx.coveragehq.models.employer.Employer;
+import org.dchbx.coveragehq.models.planshopping.Plan;
 import org.dchbx.coveragehq.models.roster.Enrollment;
 import org.dchbx.coveragehq.models.roster.Health;
 import org.dchbx.coveragehq.models.roster.Roster;
@@ -94,7 +96,7 @@ public abstract class UrlHandler {
         return getParameters;
     }
 
-    public RosterEntry processIndividual(IConnectionHandler.GetReponse response) throws IndividualNotFoundException {
+    public RosterEntry processIndividual(IConnectionHandler.GetResponse response) throws IndividualNotFoundException {
 
         if (response.responseCode == 401
                 || response.responseCode == 404){
@@ -103,7 +105,7 @@ public abstract class UrlHandler {
         return parser.parseIndividual(response.body);
     }
 
-    public Employer processEmployerDetails(IConnectionHandler.GetReponse response) throws EmployerNotFoundException {
+    public Employer processEmployerDetails(IConnectionHandler.GetResponse response) throws EmployerNotFoundException {
         if (response.responseCode == 401
                 || response.responseCode == 404){
             throw new EmployerNotFoundException();
@@ -217,7 +219,7 @@ public abstract class UrlHandler {
     }
 
 
-    public Roster processRoster(IConnectionHandler.GetReponse response) {
+    public Roster processRoster(IConnectionHandler.GetResponse response) {
         return parser.parseRoster(response.body);
     }
 
@@ -227,11 +229,11 @@ public abstract class UrlHandler {
         return getParameters;
     }
 
-    public Carriers processCarrier(IConnectionHandler.GetReponse response){
+    public Carriers processCarrier(IConnectionHandler.GetResponse response){
         return parser.parseCarriers(response.body);
     }
 
-    public BrokerAgency processBrokerAgency(IConnectionHandler.GetReponse getReponse) throws Exception {
+    public BrokerAgency processBrokerAgency(IConnectionHandler.GetResponse getReponse) throws Exception {
         if (getReponse.responseCode == 401
             || getReponse.responseCode == 404){
             throw new BrokerNotFoundException();
@@ -253,7 +255,7 @@ public abstract class UrlHandler {
         return getParameters;
     }
 
-    public RosterEntry processEmployeeDetails(IConnectionHandler.GetReponse getResponse) throws IndividualNotFoundException, CoverageException {
+    public RosterEntry processEmployeeDetails(IConnectionHandler.GetResponse getResponse) throws IndividualNotFoundException, CoverageException {
         if (getResponse.responseCode == 401
                 || getResponse.responseCode == 404){
             throw new IndividualNotFoundException();
@@ -342,10 +344,43 @@ public abstract class UrlHandler {
         return getParameters;
     }
 
-    public List<SummaryOfBenefits> processSummaryOfBenefits(IConnectionHandler.GetReponse response){
+    public List<SummaryOfBenefits> processSummaryOfBenefits(IConnectionHandler.GetResponse response){
         return parser.parseSummaryOfBenefits(response.body);
     }
 
-    public List<Service> processServices(IConnectionHandler.GetReponse response){
+    public List<Service> processServices(IConnectionHandler.GetResponse response){
         return parser.parseServices(response.body);
-    }}
+    }
+
+    public GetParameters getPlansParameters() {
+        GetParameters parameters = new GetParameters();
+
+        String queryParameters = "?coverage_kind=health&active_year=2017";
+        for (Integer age : serverConfiguration.planShoppingParameters.ages) {
+            queryParameters = queryParameters + "&ages=" + age.toString();
+        }
+        parameters.url = HttpUrl.parse(serverConfiguration.planEndpoint + queryParameters);
+        return parameters;
+    }
+
+    public GetParameters getEndpointsParameters(){
+        GetParameters getParameters = new GetParameters();
+        getParameters.url = new HttpUrl.Builder()
+                .scheme(serverConfiguration.loginInfo.scheme)
+                .host(serverConfiguration.loginInfo.host)
+                .addPathSegments(serverConfiguration.endpointsPath)
+                .port(serverConfiguration.loginInfo.port)
+                .build();
+        return getParameters;
+    }
+
+    public void processEndpoints(IConnectionHandler.GetResponse getResponse) {
+        Endpoints endpoints = parser.parseEndpoionts(getResponse.body);
+        serverConfiguration.planEndpoint = endpoints.plan_endpoint;
+        serverConfiguration.verifyIdentityEndpoint = endpoints.verify_identity_endpoint;
+    }
+
+    public List<Plan> processPlans(IConnectionHandler.GetResponse getResponse) {
+        return parser.parsePlans(getResponse.body);
+    }
+}

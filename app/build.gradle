@@ -9,8 +9,8 @@ android {
         applicationId "org.dchbx.coveragehq"
         minSdkVersion 16
         targetSdkVersion 25
-        versionCode 40
-        versionName "1.0.40"
+        versionCode 41
+        versionName "1.0.41"
         testInstrumentationRunner 'android.support.test.runner.AndroidJUnitRunner'
         vectorDrawables.useSupportLibrary = true
     }

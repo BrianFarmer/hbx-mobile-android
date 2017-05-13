@@ -8,6 +8,7 @@ import org.dchbx.coveragehq.models.brokeragency.BrokerAgency;
 import org.dchbx.coveragehq.models.brokeragency.BrokerClient;
 import org.dchbx.coveragehq.models.employer.Employer;
 import org.dchbx.coveragehq.models.gitaccounts.GitAccounts;
+import org.dchbx.coveragehq.models.planshopping.Plan;
 import org.dchbx.coveragehq.models.roster.Roster;
 import org.dchbx.coveragehq.models.roster.RosterEntry;
 import org.greenrobot.eventbus.EventBus;
@@ -15,6 +16,7 @@ import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 import org.joda.time.DateTime;
 
+import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -718,5 +720,34 @@ public class BrokerWorker extends IntentService {
         config.getCoverageConnection().configureForSignUp();
         BrokerWorker.eventBus.post(new Events.SignUpResult());
     }
-}
+
+    @Subscribe(threadMode = ThreadMode.BACKGROUND)
+    public void doThis(Events.GetPlanShopping getPlanShopping){
+        BrokerWorker.eventBus.post(new Events.GetPlanShoppingResult(config.getCoverageConnection().getPlanShoppingParameters()));
+    }
+
+    @Subscribe(threadMode = ThreadMode.BACKGROUND)
+    public void doThis(Events.ResetPlanShopping resetPlanShopping){
+        config.getCoverageConnection().configureForSignUp();
+        BrokerWorker.eventBus.post(new Events.ResetPlanShoppingResult());
+    }
+
+    @Subscribe(threadMode = ThreadMode.BACKGROUND)
+    public void doThis(Events.UpdatePlanShopping updatePlanShopping){
+        try {
+            config.getCoverageConnection().updatePlanShopping(updatePlanShopping);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        BrokerWorker.eventBus.post(new Events.UpdatePlanShoppingResult());
+    }
+
+    @Subscribe(threadMode = ThreadMode.BACKGROUND)
+    public void doThis(Events.GetPlans getPlans){
+        try {
+            List<Plan> plans = config.getCoverageConnection().getPlans();
+            BrokerWorker.eventBus.post(new Events.GetPlansResult(plans));
+        } catch (Exception e) {
+        }
+    }}
 

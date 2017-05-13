@@ -1,5 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <selector xmlns:android="http://schemas.android.com/apk/res/android">
-    <item android:state_pressed="true" android:drawable="@drawable/border_round_corner"/>
-    <item android:state_pressed="false" android:drawable="@drawable/button_solid_round_corner"/>
+    <item android:state_pressed="true"
+          android:drawable="@drawable/border_round_corner"
+          android:tint="#ff0000"/>
+    <item android:state_pressed="false"
+          android:drawable="@drawable/border_round_corner"
+          android:tint="#007bc4"/>
 </selector>

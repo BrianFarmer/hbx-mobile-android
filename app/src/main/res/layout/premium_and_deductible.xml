@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              android:layout_width="match_parent"
+              android:layout_height="match_parent">
+
+    <TextView
+        android:id="@+id/question"
+        style="@style/ivl_question"
+        android:text="@string/choose_premium_and_deductible"
+        />
+
+    <SeekBar
+        android:id="@+id/premium"
+        style="@style/ivl_slider"
+        android:layout_below="@+id/question"
+        android:progress="100"
+        />
+
+    <TextView
+        android:id="@+id/premiumLabel"
+        style="@style/ivl_label"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/premium"
+        android:layout_marginTop="27dp"
+        android:text="@string/monthly_premium"
+        />
+
+    <SeekBar
+        android:id="@+id/deductible"
+        style="@style/ivl_slider"
+        android:layout_below="@+id/premiumLabel"
+        android:progress="100"
+        />
+
+    <TextView
+        android:id="@+id/deductibleLabel"
+        style="@style/ivl_label"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="27dp"
+        android:text="@string/plan_deductible_maximum"
+        android:layout_below="@+id/deductible"
+        />
+
+    <Button
+        android:id="@+id/plansAvailable"
+        style="@style/ivl_open_button"
+        android:layout_alignParentBottom="true"
+        android:text=""
+        />
+
+</RelativeLayout>

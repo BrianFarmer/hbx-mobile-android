@@ -84,7 +84,7 @@ public class GithubCoverageConnection extends CoverageConnection {
     @Override
     public GitAccounts getGitAccounts(String urlRoot) throws Exception {
         UrlHandler.GetParameters getParameters = gitUrlHandler.getGitAccountGetParameters(urlRoot);
-        IConnectionHandler.GetReponse getReponse = connectionHandler.get(getParameters);
+        IConnectionHandler.GetResponse getReponse = connectionHandler.get(getParameters);
         return gitUrlHandler.processGetGitAccounts(getReponse, urlRoot);
     }
 
@@ -97,7 +97,7 @@ public class GithubCoverageConnection extends CoverageConnection {
         return null;
     }
 
-    public RosterEntry processEmployeeDetails(IConnectionHandler.GetReponse getReponse) {
+    public RosterEntry processEmployeeDetails(IConnectionHandler.GetResponse getResponse) {
         return null;
     }
 

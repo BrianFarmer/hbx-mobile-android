@@ -30,6 +30,7 @@ class BuildConfig2 extends EnrollConfigBase {
 
         //serverConfiguration.employerListPath = "api/v1/mobile_api/employers_list";
         serverConfiguration.loginPath = "login";
+        serverConfiguration.endpointsPath = "endpoints";
         return serverConfiguration;
     }
 

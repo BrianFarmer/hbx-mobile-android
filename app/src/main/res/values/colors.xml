@@ -61,8 +61,10 @@
     <color name="normal_color">@color/mainblue</color>
     <color name="border">@color/white</color>
     <color name="ivl_btn_border">@color/white</color>
-    <color name="solid_button">@color/mainblue</color>
-    <color name="solid_button_pressed">#044972</color>
+    <color name="blue_button_up">@color/mainblue</color>
+    <color name="blue_button_down">#044972</color>
+    <color name="white_button_up">@color/white</color>
+    <color name="white_button_down">#044972</color>
     <color name="login_button">@color/white</color>
     <color name="login_button_pressed">#044972</color>
     <color name="ivl_edittext">@color/green</color>

@@ -3,6 +3,8 @@ package org.dchbx.coveragehq;
 import android.content.Context;
 import android.content.SharedPreferences;
 
+import org.dchbx.coveragehq.models.planshopping.PlanShoppingParameters;
+
 public class ConfigurationStorageHandler extends IServerConfigurationStorageHandler {
     private static String TAG = "ConfigurationStorage";
 
@@ -20,7 +22,8 @@ public class ConfigurationStorageHandler extends IServerConfigurationStorageHand
         editor.putBoolean(brokerApplication.getString(R.string.shared_preference_remember_me), serverConfiguration.rememberMe);
         editor.putBoolean(brokerApplication.getString(R.string.have_front_insurance_card), serverConfiguration.haveFrontInsuranceCard);
         editor.putBoolean(brokerApplication.getString(R.string.have_rear_insurance_card), serverConfiguration.haveRearInsuranceCard);
-        //editor.putString("UserType", serverConfiguration.userType.name());
+        editor.putString("planShoppingParameters", JsonSerializer.serialize(serverConfiguration.planShoppingParameters));
+
         editor.commit();
     }
 
@@ -37,6 +40,13 @@ public class ConfigurationStorageHandler extends IServerConfigurationStorageHand
         serverConfiguration.rememberMe = sharedPref.getBoolean(brokerApplication.getString(R.string.shared_preference_remember_me), true);
         serverConfiguration.haveFrontInsuranceCard = sharedPref.getBoolean(brokerApplication.getString(R.string.have_front_insurance_card), false);
         serverConfiguration.haveRearInsuranceCard = sharedPref.getBoolean(brokerApplication.getString(R.string.have_rear_insurance_card), false);
+
+        String planShoppingParametersString = sharedPref.getString("planShoppingParameters", null);
+        if (planShoppingParametersString == null){
+            serverConfiguration.planShoppingParameters = new PlanShoppingParameters();
+        } else {
+            serverConfiguration.planShoppingParameters = JsonParser.parsePlanShoppingParameters(planShoppingParametersString);
+        }
     }
 
     @Override

@@ -20,7 +20,7 @@ public class DevCoverageConnection extends CoverageConnection {
     @Override
     public LoginResult validateUserAndPassword(String accountName, String password, Boolean rememberMe, boolean useFingerprintSensor) throws Exception {
         UrlHandler.GetParameters getParameters = devUrlHandler.getLoginUrlParameters();
-        IConnectionHandler.GetReponse getReponse = connectionHandler.get(getParameters);
+        IConnectionHandler.GetResponse getReponse = connectionHandler.get(getParameters);
         devUrlHandler.processLoginPageReponse(getReponse);
 
         UrlHandler.PostParameters loginPostParameters = urlHandler.getLoginPostParameters(accountName.trim(), password);
@@ -31,7 +31,7 @@ public class DevCoverageConnection extends CoverageConnection {
     @Override
     public LoginResult revalidateUserAndPassword() throws Exception {
         UrlHandler.GetParameters getParameters = devUrlHandler.getLoginUrlParameters();
-        IConnectionHandler.GetReponse getReponse = connectionHandler.get(getParameters);
+        IConnectionHandler.GetResponse getReponse = connectionHandler.get(getParameters);
         devUrlHandler.processLoginPageReponse(getReponse);
 
         UrlHandler.PostParameters loginPostParameters = urlHandler.getLoginPostParameters(serverConfiguration.accountName.trim(), serverConfiguration.password);

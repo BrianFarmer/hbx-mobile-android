@@ -80,7 +80,7 @@ public class GitUrlHandler extends UrlHandler {
         return getParameters;
     }
 
-    public GitAccounts processGetGitAccounts(IConnectionHandler.GetReponse getReponse, String urlRoot) throws Exception {
+    public GitAccounts processGetGitAccounts(IConnectionHandler.GetResponse getReponse, String urlRoot) throws Exception {
         if (getReponse.responseCode < 200
             || getReponse.responseCode >= 300){
             throw new Exception("Error getting accounts");

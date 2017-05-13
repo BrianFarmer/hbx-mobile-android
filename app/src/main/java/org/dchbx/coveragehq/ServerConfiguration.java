@@ -1,10 +1,9 @@
 package org.dchbx.coveragehq;
 
 import org.dchbx.coveragehq.models.gitaccounts.GitAccounts;
+import org.dchbx.coveragehq.models.planshopping.PlanShoppingParameters;
 
 public class ServerConfiguration {
-
-
 
     public enum UserType {
         Unknown,
@@ -40,12 +39,17 @@ public class ServerConfiguration {
     public String brokerDetailPath;
     public String employerRosterPathForBroker;
     public String individualPath;
+    public String planEndpoint;
+    public String verifyIdentityEndpoint;
     public String loginPath;
+    public String endpointsPath;
     public String securityAnswerPath;
     public String carrierPath;
     public String authenticityToken;
     public Boolean haveFrontInsuranceCard;
     public Boolean haveRearInsuranceCard;
+
+    public PlanShoppingParameters planShoppingParameters;
 
     public String stayLoggedInPath = "reset_user_clock";
 

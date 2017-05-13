@@ -86,4 +86,9 @@ public class Intents {
         Intent intent = new Intent(activity, FamilyActivity.class);
         activity.startActivity(intent);
     }
+
+    public static void launchPremiumAndDeductible(Activity activity) {
+        Intent intent = new Intent(activity, PremiumAndDeductibleActivity.class);
+        activity.startActivity(intent);
+    }
 }

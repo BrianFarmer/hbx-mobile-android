@@ -90,6 +90,12 @@
             android:name="org.dchbx.coveragehq.FamilyActivity"
             android:configChanges="orientation|keyboardHidden|screenSize"
             android:label=""
+            android:windowSoftInputMode="adjustPan"
+            />
+        <activity
+            android:name="org.dchbx.coveragehq.PremiumAndDeductibleActivity"
+            android:configChanges="orientation|keyboardHidden|screenSize"
+            android:label=""
             />
     </application>
 

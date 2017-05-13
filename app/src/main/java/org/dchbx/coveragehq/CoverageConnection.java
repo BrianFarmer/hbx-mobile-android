@@ -10,6 +10,8 @@ import org.dchbx.coveragehq.exceptions.IndividualNotFoundException;
 import org.dchbx.coveragehq.models.brokeragency.BrokerAgency;
 import org.dchbx.coveragehq.models.employer.Employer;
 import org.dchbx.coveragehq.models.gitaccounts.GitAccounts;
+import org.dchbx.coveragehq.models.planshopping.Plan;
+import org.dchbx.coveragehq.models.planshopping.PlanShoppingParameters;
 import org.dchbx.coveragehq.models.roster.Enrollment;
 import org.dchbx.coveragehq.models.roster.Roster;
 import org.dchbx.coveragehq.models.roster.RosterEntry;
@@ -23,7 +25,6 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.security.InvalidAlgorithmParameterException;
 import java.security.InvalidKeyException;
 import java.security.KeyStoreException;
 import java.security.NoSuchAlgorithmException;
@@ -77,6 +78,15 @@ public abstract class CoverageConnection {
         serverConfiguration.userType = ServerConfiguration.UserType.SignUpIndividual;
     }
 
+    public PlanShoppingParameters getPlanShoppingParameters() {
+        return serverConfiguration.planShoppingParameters;
+    }
+
+    public void updatePlanShopping(Events.UpdatePlanShopping updatePlanShopping) throws IOException, CertificateException, NoSuchAlgorithmException, UnrecoverableKeyException, InvalidKeyException, NoSuchPaddingException, BadPaddingException, KeyStoreException, NoSuchProviderException, IllegalBlockSizeException {
+        serverConfiguration.planShoppingParameters = updatePlanShopping.getPlanShoppingParameters();
+        clearStorageHandler.store(serverConfiguration);
+    }
+
     enum LoginResult {
         Error,
         Failure,
@@ -93,7 +103,7 @@ public abstract class CoverageConnection {
 
     public RosterEntry getIndividual(UrlHandler urlHandler, ServerConfiguration serverConfiguration) throws IOException, CoverageException, IndividualNotFoundException {
         UrlHandler.GetParameters getParameters = urlHandler.getIndividualParameters(null);
-        IConnectionHandler.GetReponse response = connectionHandler.get(getParameters);
+        IConnectionHandler.GetResponse response = connectionHandler.get(getParameters);
         RosterEntry individual;
         try{
             individual = urlHandler.processIndividual(response);
@@ -106,7 +116,7 @@ public abstract class CoverageConnection {
 
     private Employer getEmployer(UrlHandler urlHandler, ServerConfiguration serverConfiguration) throws Exception {
         UrlHandler.GetParameters getParameters = urlHandler.getEmployerDetailsParameters(null);
-        IConnectionHandler.GetReponse response = connectionHandler.get(getParameters);
+        IConnectionHandler.GetResponse response = connectionHandler.get(getParameters);
         Employer employer;
         try{
             employer = urlHandler.processEmployerDetails(response);
@@ -202,7 +212,7 @@ public abstract class CoverageConnection {
         }
 
         UrlHandler.GetParameters employerDetailsParameters = urlHandler.getEmployerDetailsParameters(employerId);
-        IConnectionHandler.GetReponse getReponse = connectionHandler.get(employerDetailsParameters);
+        IConnectionHandler.GetResponse getReponse = connectionHandler.get(employerDetailsParameters);
         employer = urlHandler.processEmployerDetails(getReponse);
         dataCache.store(employerId, employer, time);
         return employer;
@@ -229,7 +239,7 @@ public abstract class CoverageConnection {
             return roster;
         }
         UrlHandler.GetParameters getParameters = urlHandler.getEmployerRosterParameters();
-        IConnectionHandler.GetReponse response = connectionHandler.get(getParameters);
+        IConnectionHandler.GetResponse response = connectionHandler.get(getParameters);
         roster = urlHandler.processRoster(response);
         dataCache.store(roster, now);
         return roster;
@@ -250,7 +260,7 @@ public abstract class CoverageConnection {
             return roster;
         }
         UrlHandler.GetParameters getParameters = urlHandler.getEmployerRosterParameters(rosterUrl);
-        IConnectionHandler.GetReponse response = connectionHandler.get(getParameters);
+        IConnectionHandler.GetResponse response = connectionHandler.get(getParameters);
         roster = urlHandler.processRoster(response);
         dataCache.store(rosterUrl, roster, now);
         return roster;
@@ -268,7 +278,7 @@ public abstract class CoverageConnection {
                 Log.e(TAG, "gettting parameters", e);
                 throw e;
             }
-            IConnectionHandler.GetReponse getReponse = connectionHandler.get(getParameters);
+            IConnectionHandler.GetResponse getReponse = connectionHandler.get(getParameters);
             brokerAgency = urlHandler.processBrokerAgency(getReponse);
             dataCache.store(brokerAgency, now);
         }
@@ -278,14 +288,14 @@ public abstract class CoverageConnection {
 
     public Carriers getCarriers() throws Exception {
         UrlHandler.GetParameters carriersUrl = urlHandler.getCarriersUrl();
-        IConnectionHandler.GetReponse response = connectionHandler.getHackedSSL(carriersUrl);
+        IConnectionHandler.GetResponse response = connectionHandler.getHackedSSL(carriersUrl);
         return urlHandler.processCarrier(response);
     }
 
     public RosterEntry getEmployee(String employeeId) throws Exception {
         if (employeeId == null){
             UrlHandler.GetParameters getParameters = urlHandler.getEmployeeDetailsParameters();
-            IConnectionHandler.GetReponse getReponse = connectionHandler.get(getParameters);
+            IConnectionHandler.GetResponse getReponse = connectionHandler.get(getParameters);
             return urlHandler.processEmployeeDetails(getReponse);
         }
         Roster roster = getRoster(DateTime.now());
@@ -299,10 +309,11 @@ public abstract class CoverageConnection {
         return BrokerUtilities.getRosterEntry(roster, employeeId);
     }
 
-    public ServerConfiguration getLogin() throws IOException, CertificateException, NoSuchAlgorithmException, UnrecoverableKeyException, InvalidKeyException, InvalidAlgorithmParameterException, NoSuchPaddingException, BadPaddingException, KeyStoreException, IllegalBlockSizeException {
+    public ServerConfiguration getLogin() throws Exception {
         if (serverConfiguration.accountName == null){
             clearStorageHandler.read(serverConfiguration);
         }
+        getEndPoints();
         return serverConfiguration;
     }
 
@@ -317,7 +328,7 @@ public abstract class CoverageConnection {
 
         BrokerAgency brokerAgency = dataCache.getBrokerAgency(time);
         UrlHandler.GetParameters employerDetailsParameters = urlHandler.getEmployerDetailsParameters(null);
-        IConnectionHandler.GetReponse getReponse = connectionHandler.get(employerDetailsParameters);
+        IConnectionHandler.GetResponse getReponse = connectionHandler.get(employerDetailsParameters);
         employer = urlHandler.processEmployerDetails(getReponse);
         dataCache.store(employer, time);
         return employer;
@@ -455,31 +466,22 @@ public abstract class CoverageConnection {
         List<Service> services = dataCache.getServices(enrollment.health.servicesRatesUrl, DateTime.now());
         if (services == null){
             UrlHandler.GetParameters servicesParameters = urlHandler.getServicesParameters(enrollment.health.servicesRatesUrl);
-            IConnectionHandler.GetReponse getReponse = connectionHandler.get(servicesParameters);
+            IConnectionHandler.GetResponse getReponse = connectionHandler.get(servicesParameters);
             services = urlHandler.processServices(getReponse);
         }
         return new InsuredAndServices(insured, services);
     }
 
-/*
-    public InsuredAndSummary getInsuredAndSummaryOfServices(LocalDate enrollmentDate) throws Exception {
-        RosterEntry rosterEntry = getEmployee(null);
-        Enrollment enrollment = BrokerUtilities.getEnrollment(rosterEntry, enrollmentDate);
-        DateTime now = DateTime.now();
-        List<SummaryOfBenefits> benefitsList = dataCache.getSummary(enrollment.health.summaryOfBenefitsUrl, now);
-        if (benefitsList == null){
-            UrlHandler.GetParameters getParameters;
-            try{
-                getParameters = urlHandler.getSummaryOfBenefitsParameters(enrollment.health.summaryOfBenefitsUrl);
-            } catch (Exception e){
-                Log.e(TAG, "gettting parameters", e);
-                throw e;
-            }
-            IConnectionHandler.GetReponse getReponse = connectionHandler.get(getParameters);
-            benefitsList = urlHandler.processSummaryOfBenefits(getReponse);
-            dataCache.store(enrollment.health.summaryOfBenefitsUrl, benefitsList, now);
-        }
-        InsuredAndSummary insuredAndSummary = new InsuredAndSummary(rosterEntry, benefitsList);
-        return insuredAndSummary;
-    }*/
+
+    public List<Plan> getPlans() throws IOException, CoverageException {
+        UrlHandler.GetParameters getParameters = urlHandler.getPlansParameters();
+        IConnectionHandler.GetResponse getResponse = connectionHandler.get(getParameters);
+        return urlHandler.processPlans(getResponse);
+    }
+
+    public void getEndPoints() throws IOException, CoverageException {
+        UrlHandler.GetParameters endPointParameters = urlHandler.getEndpointsParameters();
+        IConnectionHandler.GetResponse getResponse = connectionHandler.get(endPointParameters);
+        urlHandler.processEndpoints(getResponse);
+    }
 }
