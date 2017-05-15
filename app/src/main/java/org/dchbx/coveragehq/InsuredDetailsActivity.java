@@ -144,7 +144,7 @@ public class InsuredDetailsActivity extends BrokerActivity {
 
         if (cameraUri != null){
             getMessages().moveImageToData(front, cameraUri);
-            cameraUri = null;
+            //cameraUri = null;
         }
     }
 
@@ -517,5 +517,6 @@ public class InsuredDetailsActivity extends BrokerActivity {
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void doThis(Events.MoveImageToDataResult moveImageToDataResult) {
         getMessages().updateInsurancyCard();
+        cameraUri = null;
     }
 }

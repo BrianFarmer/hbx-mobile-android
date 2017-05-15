@@ -371,11 +371,10 @@ public abstract class CoverageConnection {
     public void moveImageToData(boolean frontOfCard, Uri fileName) throws IOException, CertificateException, NoSuchAlgorithmException, UnrecoverableKeyException, InvalidKeyException, NoSuchPaddingException, BadPaddingException, KeyStoreException, NoSuchProviderException, IllegalBlockSizeException {
         String filename;
         if (frontOfCard){
-            filename = FrontCardFileName;
+            filename = getFrontCardFileName();
         } else {
-            filename = RearCardFileName;
+            filename = getRearCardFileName();
         }
-        filename = BrokerApplication.getBrokerApplication().getFilesDir() + filename;
 
         InputStream inputStream = null;
         OutputStream outputStream = null;
@@ -399,12 +398,16 @@ public abstract class CoverageConnection {
 
         if (frontOfCard) {
             serverConfiguration.haveFrontInsuranceCard = true;
+
+            File frontFile = new File(getFrontCardFileName());
+            if (frontFile.exists()){
+                Log.d(TAG, "front file exists: " + getFrontCardFileName());
+            } else {
+                Log.d(TAG, "front file is missing: " + getFrontCardFileName());
+            }
         } else {
             serverConfiguration.haveRearInsuranceCard = true;
         }
-
-        File fileToDelete = new File(filename);
-        fileToDelete.delete();
 
         clearStorageHandler.store(serverConfiguration);
     }
