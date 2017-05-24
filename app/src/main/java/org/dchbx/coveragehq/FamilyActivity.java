@@ -5,7 +5,6 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.ListView;
 
-import org.dchbx.coveragehq.models.planshopping.PlanShoppingParameters;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 

@@ -3,8 +3,6 @@ package org.dchbx.coveragehq;
 import android.content.Context;
 import android.content.SharedPreferences;
 
-import org.dchbx.coveragehq.models.planshopping.PlanShoppingParameters;
-
 public class ConfigurationStorageHandler extends IServerConfigurationStorageHandler {
     private static String TAG = "ConfigurationStorage";
 
@@ -22,6 +20,8 @@ public class ConfigurationStorageHandler extends IServerConfigurationStorageHand
         editor.putBoolean(brokerApplication.getString(R.string.shared_preference_remember_me), serverConfiguration.rememberMe);
         editor.putBoolean(brokerApplication.getString(R.string.have_front_insurance_card), serverConfiguration.haveFrontInsuranceCard);
         editor.putBoolean(brokerApplication.getString(R.string.have_rear_insurance_card), serverConfiguration.haveRearInsuranceCard);
+        editor.putFloat("premiumFilter", (float) serverConfiguration.premiumFilter);
+        editor.putFloat("deductibleFilter", (float) serverConfiguration.deductibleFilter);
         editor.putString("planShoppingParameters", JsonSerializer.serialize(serverConfiguration.planShoppingParameters));
 
         editor.commit();
@@ -40,6 +40,8 @@ public class ConfigurationStorageHandler extends IServerConfigurationStorageHand
         serverConfiguration.rememberMe = sharedPref.getBoolean(brokerApplication.getString(R.string.shared_preference_remember_me), true);
         serverConfiguration.haveFrontInsuranceCard = sharedPref.getBoolean(brokerApplication.getString(R.string.have_front_insurance_card), false);
         serverConfiguration.haveRearInsuranceCard = sharedPref.getBoolean(brokerApplication.getString(R.string.have_rear_insurance_card), false);
+        serverConfiguration.premiumFilter = sharedPref.getFloat("premiumFilter", -1);
+        serverConfiguration.deductibleFilter = sharedPref.getFloat("deductibleFilter", -1);
 
         String planShoppingParametersString = sharedPref.getString("planShoppingParameters", null);
         if (planShoppingParametersString == null){
@@ -47,6 +49,7 @@ public class ConfigurationStorageHandler extends IServerConfigurationStorageHand
         } else {
             serverConfiguration.planShoppingParameters = JsonParser.parsePlanShoppingParameters(planShoppingParametersString);
         }
+
     }
 
     @Override

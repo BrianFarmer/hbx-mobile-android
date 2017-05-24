@@ -1,1 +1,1 @@
-include ':app', ':swipeactionadapter-2.0.0', ':swipeactionadapter', ':androidswipelayout', ':MPChartLib'
+include ':app', ':swipeactionadapter-2.0.0', ':swipeactionadapter', ':androidswipelayout', ':MPChartLib', ':rossdeckview'

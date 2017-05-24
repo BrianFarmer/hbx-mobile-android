@@ -7,4 +7,5 @@
     <dimen name="metal_ring">24dp</dimen>
     <dimen name="ivl_left_margin">40dp</dimen>
     <dimen name="ivl_right_margin">40dp</dimen>
+    <dimen name="ivl_seekbar_margin">45dp</dimen>
 </resources>

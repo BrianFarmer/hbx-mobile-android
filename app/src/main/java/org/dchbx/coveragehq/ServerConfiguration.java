@@ -1,7 +1,6 @@
 package org.dchbx.coveragehq;
 
 import org.dchbx.coveragehq.models.gitaccounts.GitAccounts;
-import org.dchbx.coveragehq.models.planshopping.PlanShoppingParameters;
 
 public class ServerConfiguration {
 
@@ -48,6 +47,8 @@ public class ServerConfiguration {
     public String authenticityToken;
     public Boolean haveFrontInsuranceCard;
     public Boolean haveRearInsuranceCard;
+    public double premiumFilter;
+    public double deductibleFilter;
 
     public PlanShoppingParameters planShoppingParameters;
 

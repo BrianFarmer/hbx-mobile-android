@@ -9,8 +9,6 @@ import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.TextView;
 
-import org.dchbx.coveragehq.models.planshopping.PlanShoppingParameters;
-
 import java.util.List;
 
 /**

@@ -7,7 +7,6 @@ import android.widget.ImageView;
 import org.dchbx.coveragehq.models.brokeragency.BrokerAgency;
 import org.dchbx.coveragehq.models.employer.Employer;
 import org.dchbx.coveragehq.models.planshopping.Plan;
-import org.dchbx.coveragehq.models.planshopping.PlanShoppingParameters;
 import org.dchbx.coveragehq.models.roster.Roster;
 import org.dchbx.coveragehq.models.roster.RosterEntry;
 import org.dchbx.coveragehq.models.roster.SummaryOfBenefits;
@@ -937,13 +936,43 @@ public class Events {
 
     public static class GetPlansResult {
         private final List<Plan> planList;
+        private final double premiumFilter;
+        private final double deductibleFilter;
 
-        public GetPlansResult(List<Plan> planList){
+        public GetPlansResult(List<Plan> planList, double premiumFilter, double deductibleFilter){
             this.planList = planList;
+            this.premiumFilter = premiumFilter;
+            this.deductibleFilter = deductibleFilter;
         }
 
         public List<Plan> getPlanList() {
             return planList;
+        }
+
+        public double getPremiumFilter() {
+            return premiumFilter;
+        }
+
+        public double getDeductibleFilter() {
+            return deductibleFilter;
+        }
+    }
+
+    public static class SetPlanFilter {
+        private final double premiumFilter;
+        private final double deductibleFilter;
+
+        public SetPlanFilter(double premiumFilter, double deductibleFilter){
+            this.premiumFilter = premiumFilter;
+            this.deductibleFilter = deductibleFilter;
+        }
+
+        public double getPremiumFilter() {
+            return premiumFilter;
+        }
+
+        public double getDeductibleFilter() {
+            return deductibleFilter;
         }
     }
 }

@@ -91,4 +91,9 @@ public class Intents {
         Intent intent = new Intent(activity, PremiumAndDeductibleActivity.class);
         activity.startActivity(intent);
     }
+
+    public static void launchPlanSelector(Activity activity) {
+        Intent intent = new Intent(activity, PlanSelector.class);
+        activity.startActivity(intent);
+    }
 }

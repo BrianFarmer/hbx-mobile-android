@@ -9,7 +9,7 @@
                   android:required="false" />
     <uses-sdk
         android:minSdkVersion="16"
-        android:targetSdkVersion="23"
+        android:targetSdkVersion="25"
         />
 
     <uses-permission android:name="android.permission.INTERNET"/>
@@ -94,6 +94,11 @@
             />
         <activity
             android:name="org.dchbx.coveragehq.PremiumAndDeductibleActivity"
+            android:configChanges="orientation|keyboardHidden|screenSize"
+            android:label=""
+            />
+        <activity
+            android:name="org.dchbx.coveragehq.PlanSelector"
             android:configChanges="orientation|keyboardHidden|screenSize"
             android:label=""
             />

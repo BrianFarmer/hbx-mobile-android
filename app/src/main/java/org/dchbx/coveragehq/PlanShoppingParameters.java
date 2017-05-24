@@ -1,4 +1,4 @@
-package org.dchbx.coveragehq.models.planshopping;
+package org.dchbx.coveragehq;
 
 import org.joda.time.LocalDate;
 

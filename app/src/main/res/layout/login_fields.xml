@@ -119,31 +119,29 @@
         android:track="@drawable/trackselector"
         />
     <Button
+        android:id="@+id/buttonLogIn"
+        android:text="@string/log_in"
+        android:background="@drawable/ivl_button_white_border"
+        android:textColor="@drawable/ivl_button_white_border_text_color"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="@string/log_in"
-        android:textAllCaps="true"
-        android:id="@+id/buttonLogIn"
         android:layout_below="@+id/switchRememberMe"
-        android:background="@drawable/login_button"
         android:layout_marginLeft="20dp"
         android:layout_marginRight="20dp"
         android:layout_marginTop="35dp"
-        android:textSize="16dp"
-        android:textStyle="bold"
-        android:textColor="@color/mainblue"
         />
 
     <Button
         android:id="@+id/signUp"
         android:text="Sign Up"
+        android:background="@drawable/ivl_button_white_border"
+        android:textColor="@drawable/ivl_button_white_border_text_color"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_below="@+id/buttonLogIn"
         android:layout_marginLeft="20dp"
         android:layout_marginRight="20dp"
         android:layout_marginTop="35dp"
-        android:background="@drawable/ivl_button_white_border"
         />
 
     <TextView

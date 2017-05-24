@@ -686,11 +686,14 @@
     </style>
 
     <style name="ivl_slider">
+        <item name="android:progressDrawable">@drawable/ivl_seekbar_progress</item>
+        <item name="android:thumb">@drawable/ivl_seekbar_thumb</item>
+
         <item name="android:layout_width">match_parent</item>
         <item name="android:layout_height">wrap_content</item>
         <item name="android:layout_centerHorizontal">true</item>
-        <item name="android:layout_marginLeft">28dp</item>
-        <item name="android:layout_marginRight">28dp</item>
+        <item name="android:layout_marginLeft">@dimen/ivl_seekbar_margin</item>
+        <item name="android:layout_marginRight">@dimen/ivl_seekbar_margin</item>
         <item name="android:layout_marginTop">15dp</item>
     </style>
 
@@ -718,6 +721,12 @@
         <item name="android:textSize">20dp</item>
         <item name="android:textStyle">normal</item>
         <item name="android:textColor">@color/textdarkgray</item>
+    </style>
+
+    <style name="ivl_hint">
+        <item name="android:textSize">24dp</item>
+        <item name="android:textStyle">normal</item>
+        <item name="android:textColor">@color/mainblue</item>
     </style>
 
     <style name="ivl_member_label">
@@ -775,15 +784,19 @@
     </style>
 
     <style name="ivl_solid_blue_button" parent="ivl_button">
-        <item name="android:background">@drawable/button_solid_round_corner</item>
+        <item name="android:background">@drawable/ivl_button_blue_solid</item>
         <item name="android:textColor">@color/white</item>
     </style>
-
 
     <style name="ivl_open_button" parent="ivl_button">
         <item name="android:background">@drawable/border_round_corner</item>
         <item name="android:tint">@drawable/ivl_button</item>
         <item name="android:textColor">@color/mainblue</item>
+    </style>
+
+    <style name="ivl_open_button_white_border" parent="ivl_button">
+        <item name="android:background">@drawable/border_round_corner</item>
+        <item name="android:textColor">@color/white</item>
     </style>
 
     <style name="ivl_forward" parent="ivl_view">

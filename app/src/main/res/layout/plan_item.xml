@@ -3,7 +3,8 @@
                 xmlns:app="http://schemas.android.com/apk/res-auto"
                 xmlns:tools="http://schemas.android.com/tools"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent">
+                android:layout_height="match_parent"
+                android:background="@color/white">
 
     <TextView
         android:text="TextView"
@@ -12,8 +13,8 @@
         android:layout_alignParentTop="true"
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true"
-        android:layout_toStartOf="@+id/imageView"
-        android:layout_toLeftOf="@+id/imageView"
+        android:layout_toStartOf="@+id/carrierLogo"
+        android:layout_toLeftOf="@+id/carrierLogo"
         style="@style/plan_drawer_text"
         android:id="@+id/textViewDrawerLabel"
         />
@@ -28,13 +29,13 @@
         android:layout_alignParentEnd="true"
         android:layout_alignBottom="@+id/textViewDrawerLabel"
         style="@style/plan_drawer_circle"
-        android:id="@+id/imageView"
+        android:id="@+id/carrierLogo"
         />
 
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_below="@+id/imageView"
+        android:layout_below="@+id/carrierLogo"
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true"
         android:id="@+id/relativeLayoutPlanDetails"

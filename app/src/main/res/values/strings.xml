@@ -229,7 +229,7 @@
     <string name="aptc">APTC</string>
     <string name="credit">Credit</string>
     <string name="dental_plan_drawer_label">Dental Plan</string>
-    <string name="monthly_premium">Monthly Premium</string>
+    <string name="monthly_premium">Monthly Premium (Maximum)</string>
     <string name="choose_your_maximum_premium_and_deductible">Choose your maximum premium and deductible.</string>
     <string name="monthly_premium_maximum">Monthly Premium (Maximum)</string>
     <string name="plan_deductible_maximum">Plan Deductible (Maximum)</string>
@@ -321,4 +321,13 @@
     <string name="age">Age</string>
     <string name="choose_premium_and_deductible">Choose your maximum premium and deductible.</string>
     <string name="see_plans_available">See %1d plans available</string>
+    <string name="keep">Keep</string>
+    <string name="reset">Reset</string>
+    <string name="discard">Discard</string>
+    <string name="plan_type">Plan Type:</string>
+    <string name="plan_location">Plan Location:</string>
+    <string name="medal_level">Medal Level:</string>
+    <string name="monthly">Monthly</string>
+    <string name="deductible">Deductible</string>
+    <string name="nationwide">Nationwide</string>
 </resources>

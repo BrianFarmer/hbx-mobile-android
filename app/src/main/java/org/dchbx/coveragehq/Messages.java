@@ -2,7 +2,6 @@ package org.dchbx.coveragehq;
 
 import android.net.Uri;
 
-import org.dchbx.coveragehq.models.planshopping.PlanShoppingParameters;
 import org.joda.time.LocalDate;
 
 public interface Messages {
@@ -46,4 +45,5 @@ public interface Messages {
     void resetPlanShopping();
     void updatePlanShopping(PlanShoppingParameters planShoppingParameters);
     void getPlans();
+    void updateFilters(int premiumFilter, int deductibleFilter);
 }

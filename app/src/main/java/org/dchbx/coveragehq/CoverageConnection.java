@@ -11,7 +11,6 @@ import org.dchbx.coveragehq.models.brokeragency.BrokerAgency;
 import org.dchbx.coveragehq.models.employer.Employer;
 import org.dchbx.coveragehq.models.gitaccounts.GitAccounts;
 import org.dchbx.coveragehq.models.planshopping.Plan;
-import org.dchbx.coveragehq.models.planshopping.PlanShoppingParameters;
 import org.dchbx.coveragehq.models.roster.Enrollment;
 import org.dchbx.coveragehq.models.roster.Roster;
 import org.dchbx.coveragehq.models.roster.RosterEntry;
@@ -85,6 +84,20 @@ public abstract class CoverageConnection {
     public void updatePlanShopping(Events.UpdatePlanShopping updatePlanShopping) throws IOException, CertificateException, NoSuchAlgorithmException, UnrecoverableKeyException, InvalidKeyException, NoSuchPaddingException, BadPaddingException, KeyStoreException, NoSuchProviderException, IllegalBlockSizeException {
         serverConfiguration.planShoppingParameters = updatePlanShopping.getPlanShoppingParameters();
         clearStorageHandler.store(serverConfiguration);
+    }
+
+    public void updatePlanFilters(double premiumFilter, double deductibleFilter) throws IOException, CertificateException, NoSuchAlgorithmException, UnrecoverableKeyException, InvalidKeyException, NoSuchPaddingException, BadPaddingException, KeyStoreException, NoSuchProviderException, IllegalBlockSizeException {
+        serverConfiguration.premiumFilter = premiumFilter;
+        serverConfiguration.deductibleFilter = deductibleFilter;
+        clearStorageHandler.store(serverConfiguration);
+    }
+
+    public double getPremiumFilter() {
+        return serverConfiguration.premiumFilter;
+    }
+
+    public double getDeductibleFilter() {
+        return serverConfiguration.deductibleFilter;
     }
 
     enum LoginResult {

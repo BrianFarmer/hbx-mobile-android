@@ -111,7 +111,7 @@ public class PlansFragment extends BrokerFragment {
                 textViewDrawerLabel.setText(planOffering.benefitGroupName);
                 final RelativeLayout planDetailsLayout = (RelativeLayout) planRoot.findViewById(R.id.relativeLayoutPlanDetails);
                 planDetailsLayout.setVisibility(View.GONE);
-                ImageView imageView = (ImageView) planRoot.findViewById(R.id.imageView);
+                ImageView imageView = (ImageView) planRoot.findViewById(R.id.carrierLogo);
                 imageView.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
