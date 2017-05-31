@@ -2,14 +2,16 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
           xmlns:tools="http://schemas.android.com/tools"
           package="org.dchbx.coveragehq"
-
     >
 
-    <uses-feature android:name="android.hardware.camera"
-                  android:required="false" />
     <uses-sdk
         android:minSdkVersion="16"
         android:targetSdkVersion="25"
+        />
+
+    <uses-feature
+        android:name="android.hardware.camera"
+        android:required="false"
         />
 
     <uses-permission android:name="android.permission.INTERNET"/>
@@ -26,82 +28,97 @@
         android:xlargeScreens="true"
         />
 
-    <android:uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
-    <android:uses-permission android:name="android.permission.READ_PHONE_STATE"/>
-    <android:uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"/>
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
+    <uses-permission android:name="android.permission.READ_PHONE_STATE"/>
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"/>
 
     <application
-        android:name="org.dchbx.coveragehq.BrokerApplication"
+        android:name=".BrokerApplication"
         android:allowBackup="true"
         android:icon="@drawable/launcher_icon"
         android:label="@string/app_name"
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
         >
-
         <provider
             android:name="android.support.v4.content.FileProvider"
             android:authorities="org.dchbx.fileprovider"
             android:exported="false"
-            android:grantUriPermissions="true">
+            android:grantUriPermissions="true"
+            >
             <meta-data
                 android:name="android.support.FILE_PROVIDER_PATHS"
-                android:resource="@xml/fileprovider" />
+                android:resource="@xml/fileprovider"
+                />
         </provider>
 
-        <activity
-            android:name="org.dchbx.coveragehq.RootActivity">
+        <activity android:name=".RootActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN"/>
+
                 <category android:name="android.intent.category.LAUNCHER"/>
             </intent-filter>
         </activity>
         <activity
-            android:name="org.dchbx.coveragehq.MainActivity"
-            android:label="">
-            <meta-data android:name="android.app.searchable"
-                   android:resource="@xml/searchable" />
+            android:name=".MainActivity"
+            android:label=""
+            >
+            <meta-data
+                android:name="android.app.searchable"
+                android:resource="@xml/searchable"
+                />
         </activity>
         <activity
-            android:name="org.dchbx.coveragehq.LoginActivity"
+            android:name=".LoginActivity"
             android:label="@string/title_activity_login"
             />
-        <activity android:name="org.dchbx.coveragehq.CarriersActivity"/>
+        <activity android:name=".CarriersActivity"/>
         <activity
-            android:name="org.dchbx.coveragehq.EmployerDetailsActivity"
+            android:name=".EmployerDetailsActivity"
             android:label=""
             />
         <activity
-            android:name="org.dchbx.coveragehq.EmployeeDetailsActivity"
+            android:name=".EmployeeDetailsActivity"
             android:configChanges="orientation|keyboardHidden|screenSize"
             android:label=""
             />
         <activity
-            android:name="org.dchbx.coveragehq.InsuredDetailsActivity"
+            android:name=".InsuredDetailsActivity"
             android:configChanges="orientation|keyboardHidden|screenSize"
             android:label=""
             />
         <activity
-            android:name="org.dchbx.coveragehq.SummaryOfBenefitsActivity"
+            android:name=".SummaryOfBenefitsActivity"
             android:configChanges="orientation|keyboardHidden|screenSize"
             android:label=""
             />
         <activity
-            android:name="org.dchbx.coveragehq.FamilyActivity"
+            android:name=".FamilyActivity"
             android:configChanges="orientation|keyboardHidden|screenSize"
             android:label=""
             android:windowSoftInputMode="adjustPan"
             />
         <activity
-            android:name="org.dchbx.coveragehq.PremiumAndDeductibleActivity"
+            android:name=".PremiumAndDeductibleActivity"
             android:configChanges="orientation|keyboardHidden|screenSize"
             android:label=""
             />
         <activity
-            android:name="org.dchbx.coveragehq.PlanSelector"
+            android:name=".PlanSelector"
             android:configChanges="orientation|keyboardHidden|screenSize"
             android:label=""
             />
+        <activity
+            android:name=".PlanDetailsActivity"
+            android:configChanges="orientation|keyboardHidden|screenSize"
+            android:label=""
+            />
+        <activity
+            android:name=".AppConfigActivity"
+            android:label="@string/title_activity_app_config"
+            android:theme="@style/AppTheme"
+            >
+        </activity>
     </application>
 
 </manifest>

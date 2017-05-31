@@ -221,5 +221,19 @@ public class EventBusMessages implements Messages {
     public void updateFilters(int premiumFilter, int deductibleFilter) {
         eventBus.post(new Events.SetPlanFilter(premiumFilter, deductibleFilter));
     }
-}
+
+    @Override
+    public void getPlan(String planId) {
+        eventBus.post(new Events.GetPlan(planId));
+    }
+
+    @Override
+    public void getAppConfig() {
+        eventBus.post(new Events.GetAppConfig());
+    }
+
+    @Override
+    public void updateAppConfig(BuildConfig2.AppConfig appConfig) {
+        eventBus.post(new Events.UpdateAppConfig(appConfig));
+    }}
 

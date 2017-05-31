@@ -46,4 +46,8 @@ public interface Messages {
     void updatePlanShopping(PlanShoppingParameters planShoppingParameters);
     void getPlans();
     void updateFilters(int premiumFilter, int deductibleFilter);
+    void getPlan(String planId);
+    void getAppConfig();
+    void updateAppConfig(BuildConfig2.AppConfig appConfig);
 }
+

@@ -1,6 +1,21 @@
 package org.dchbx.coveragehq;
 
 class BuildConfig2 extends EnrollConfigBase {
+
+    public enum DataSource {
+        GitHub,
+        EnrollServer,
+        MobileServer
+    }
+
+    public static class AppConfig{
+        public BuildConfig2.DataSource DataSource;
+        public String GithubUrl;
+        public String EnrollServerUrl;
+        public String MobileServerUrl;
+    }
+
+    private static DataSource dataSource;
     private static ServerConfiguration serverConfiguration = null;
 
     public static ServerConfiguration getServerConfiguration() {
@@ -48,5 +63,11 @@ class BuildConfig2 extends EnrollConfigBase {
 
     public static String getVersion() {
         return "preprod";
+    }
+
+    public AppConfig getAppConfig() {
+        AppConfig appConfig = new AppConfig();
+        appConfig.DataSource = dataSource;
+        return appConfig;
     }
 }

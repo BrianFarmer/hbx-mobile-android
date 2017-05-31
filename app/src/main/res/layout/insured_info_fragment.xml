@@ -194,7 +194,7 @@
                 android:paddingBottom="7dp"
                 android:paddingRight="25dp"
                 android:layout_alignParentRight="true"
-                android:layout_alignTop="@id/textViewDentalPlanDrawer"
+                android:layout_below="@+id/relativeLayoutDetailsWrapper"
                 android:layout_alignBottom="@id/textViewDentalPlanDrawer"
                 android:src="@drawable/blue_circle_plus"
                 style="@style/expandable_image_employee"
@@ -228,8 +228,21 @@
                 android:layout_alignParentRight="true"
                 android:layout_alignTop="@id/textViewDependentsDrawer"
                 android:layout_alignBottom="@id/textViewDependentsDrawer"
-                android:src="@drawable/blue_circle_plus"
+                android:src="@drawable/blue_circle_vector"
                 style="@style/expandable_image_employee"
+                />
+            <TextView
+                android:id="@+id/dependentsCount"
+                android:layout_height="60dp"
+                android:layout_width="60dp"
+                android:paddingTop="7dp"
+                android:paddingBottom="7dp"
+                android:paddingRight="25dp"
+                android:layout_alignParentRight="true"
+                android:layout_alignTop="@id/textViewDependentsDrawer"
+                android:layout_alignBottom="@id/textViewDependentsDrawer"
+                android:textColor="@color/mainblue"
+                android:gravity="center"
                 />
             <RelativeLayout
                 android:id="@+id/relativeLayoutDependentsWrapper"

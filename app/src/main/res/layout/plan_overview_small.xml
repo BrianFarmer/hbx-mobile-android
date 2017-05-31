@@ -218,7 +218,7 @@
             android:layout_marginTop="31dp"
             >
             <Button
-                android:id="@+id/button"
+                android:id="@+id/details"
                 android:layout_width="105dp"
                 android:layout_height="wrap_content"
                 android:layout_alignParentTop="true"
@@ -228,7 +228,7 @@
                 />
 
             <Button
-                android:id="@+id/button2"
+                android:id="@+id/enroll"
                 android:layout_width="105dp"
                 android:layout_height="wrap_content"
                 android:layout_alignParentTop="true"

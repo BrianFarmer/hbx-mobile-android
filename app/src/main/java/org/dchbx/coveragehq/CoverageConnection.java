@@ -100,6 +100,15 @@ public abstract class CoverageConnection {
         return serverConfiguration.deductibleFilter;
     }
 
+    public Plan getPlan(String planId) throws IOException, CoverageException {
+        for (Plan plan : getPlans()) {
+            if (plan.id.compareTo(planId) == 0){
+                return plan;
+            }
+        }
+        throw new CoverageException("plan not found");
+    }
+
     enum LoginResult {
         Error,
         Failure,

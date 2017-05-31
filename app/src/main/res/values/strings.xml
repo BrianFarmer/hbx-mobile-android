@@ -330,4 +330,6 @@
     <string name="monthly">Monthly</string>
     <string name="deductible">Deductible</string>
     <string name="nationwide">Nationwide</string>
+    <string name="enroll_in_this_plan">Enroll In This Plan</string>
+    <string name="title_activity_app_config">AppConfigActivity</string>
 </resources>

@@ -1,6 +1,7 @@
 package org.dchbx.coveragehq;
 
 import org.dchbx.coveragehq.models.planshopping.Plan;
+import org.dchbx.coveragehq.models.roster.Health;
 
 import java.text.NumberFormat;
 import java.util.ArrayList;
@@ -78,5 +79,19 @@ class PlanUtilities {
 
     public static String getFormattedDeductible(Plan plan) {
         return NumberFormat.getCurrencyInstance().format(plan.cost.deductible);
+    }
+
+    public static String getFormattedMonthlyPremium(Health plan) {
+        return NumberFormat.getCurrencyInstance().format(plan.totalPremium);
+    }
+
+    public static String getFormattedAnnualPremium(Health plan) {
+        return NumberFormat.getCurrencyInstance().format(plan.totalPremium*12);
+    }
+
+
+    public static String getFormattedDeductible(Health plan) {
+        //return NumberFormat.getCurrencyInstance().format(plan.deductible);
+        return plan.deductible;
     }
 }

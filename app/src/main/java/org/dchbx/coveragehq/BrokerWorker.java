@@ -760,5 +760,24 @@ public class BrokerWorker extends IntentService {
             // edit these exceptions since we are doing this asyncronously to the user.
         }
     }
+
+    @Subscribe(threadMode = ThreadMode.BACKGROUND)
+    public void doThis(Events.GetPlan getPlan) {
+        try {
+            Plan plan = config.getCoverageConnection().getPlan(getPlan.getPlanId());
+            BrokerWorker.eventBus.post(new Events.GetPlanResult(plan));
+        } catch (Exception e) {
+            // edit these exceptions since we are doing this asyncronously to the user.
+        }
+    }
+
+    @Subscribe(threadMode = ThreadMode.BACKGROUND)
+    public void doThis(Events.GetAppConfig getAppConfig) {
+        try {
+            BrokerWorker.eventBus.post(new Events.GetAppConfigResult(config.getAppConfig()));
+        } catch (Exception e) {
+            // edit these exceptions since we are doing this asyncronously to the user.
+        }
+    }
 }
 

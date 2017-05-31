@@ -22,7 +22,6 @@
         android:layout_below="@+id/notEnrolled"
         >
         <TextView
-            android:text="@string/plan_selected_field"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentTop="true"
@@ -31,19 +30,10 @@
             style="@style/employee_field"
             />
         <TextView
-            android:text="@string/dc_health_link_id_field"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_below="@id/planSelected"
-            android:layout_alignParentLeft="true"
-            android:id="@+id/planIdField"
-            style="@style/employee_field"
-            />
-        <TextView
             android:text="@string/plan_type_field"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_below="@id/planIdField"
+            android:layout_below="@id/planSelected"
             android:layout_alignParentLeft="true"
             android:id="@+id/planTypeField"
             style="@style/employee_field"
@@ -51,7 +41,7 @@
         <ImageView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_below="@id/planIdField"
+            android:layout_below="@id/planSelected"
             android:layout_toRightOf="@+id/planTypeField"
             android:layout_alignTop="@+id/planTypeField"
             android:layout_alignBottom="@+id/planTypeField"
@@ -65,7 +55,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignTop="@+id/planMetalRing"
-            android:layout_below="@id/planIdField"
+            android:layout_below="@id/planSelected"
             android:layout_toRightOf="@+id/planMetalRing"
             android:paddingLeft="5dp"
             android:paddingStart="5dp"
@@ -223,7 +213,7 @@
             android:layout_alignTop="@+id/summary"
             android:layout_marginRight="21dp"
             android:background="@color/white"
-            android:drawableLeft="@drawable/phone"
+            android:drawableLeft="@drawable/phone_line"
             android:drawablePadding="10dp"
             android:text="@string/plan_contact_info"
             android:textSize="12dp"

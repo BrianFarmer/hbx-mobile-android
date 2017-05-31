@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.content.Intent;
 import android.net.Uri;
 
+import org.dchbx.coveragehq.models.planshopping.Plan;
 import org.joda.time.LocalDate;
 
 /**
@@ -13,6 +14,7 @@ import org.joda.time.LocalDate;
 public class Intents {
     private static String TAG = "Intents";
 
+    public static final String PLAN_ID = "PlanId";
     public static final String ENROLLMENT_DATE_ID = "BrokerClientId";
     public static final String BROKER_CLIENT_ID = "BrokerClientId";
     public static final String EMPLOYEE_ID = "EmployeeId";
@@ -94,6 +96,12 @@ public class Intents {
 
     public static void launchPlanSelector(Activity activity) {
         Intent intent = new Intent(activity, PlanSelector.class);
+        activity.startActivity(intent);
+    }
+
+    public static void launchPlanDetails(Activity activity, Plan plan) {
+        Intent intent = new Intent(activity, PlanDetailsActivity.class);
+        intent.putExtra(PLAN_ID, plan.id);
         activity.startActivity(intent);
     }
 }

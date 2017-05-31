@@ -32,7 +32,7 @@ public class InsuredInfoFragment extends BrokerFragment {
     private RosterEntry insured;
     private LocalDate coverageYear;
 
-    private static boolean detailsVisibleInitialState = false;
+    private static boolean detailsVisibleInitialState = true;
     private static boolean healthPlanVisibleInitialState = true;
     private static boolean dentalPlanVisibleInitialState = false;
     private static boolean dependentsVisibleInitialState = false;
@@ -48,6 +48,7 @@ public class InsuredInfoFragment extends BrokerFragment {
     private TextView textViewHealthPlanDrawer;
     private TextView textViewDentalPlanDrawer;
     private TextView textViewDependentsDrawer;
+    private TextView dependentsCount;
     private TextView textViewDentalPlanNotEnrolled;
     private RelativeLayout relativeLayoutDentalPlanWrapper;
     private TextView textViewNotEnrolled;
@@ -82,6 +83,7 @@ public class InsuredInfoFragment extends BrokerFragment {
         textViewHealthPlanDrawer = (TextView) view.findViewById(R.id.textViewHealthPlanDrawer);
         textViewDentalPlanDrawer = (TextView) view.findViewById(R.id.textViewDentalPlanDrawer);
         textViewDependentsDrawer = (TextView) view.findViewById(R.id.textViewDependentsDrawer);
+        dependentsCount = (TextView) view.findViewById(R.id.dependentsCount);
         relativeLayoutDependentsWrapper = (RelativeLayout) view.findViewById(R.id.relativeLayoutDependentsWrapper);
     }
 
@@ -91,6 +93,7 @@ public class InsuredInfoFragment extends BrokerFragment {
         currentDate = BrokerUtilities.getMostRecentPlanYear(insured);
         this.currentEnrollment = BrokerUtilities.getEnrollment(insured, currentDate);
         coverageYear = BrokerUtilities.getMostRecentPlanYear(insured);
+        dependentsCount.setText(Integer.toString(insured.dependents.size()));
 
         populate();
     }
@@ -139,6 +142,33 @@ public class InsuredInfoFragment extends BrokerFragment {
         });
     }
 
+    private void configDependentsDrawer(int drawerLabelId, int drawerImageId, int drawerWrapper, boolean initialState, final DrawerState drawerState)  {
+        TextView drawerLabel = (TextView) view.findViewById(drawerLabelId);
+        final ImageView drawerImage = (ImageView) view.findViewById(drawerImageId);
+        final RelativeLayout wrapper = (RelativeLayout) view.findViewById(drawerWrapper);
+
+        if (initialState){
+            wrapper.setVisibility(View.VISIBLE);
+            drawerImage.setImageResource(R.drawable.blue_uparrow);
+        } else {
+            wrapper.setVisibility(View.GONE);
+            drawerImage.setImageResource(R.drawable.blue_circle_vector);
+        }
+
+        drawerLabel.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                invertDependentsDrawer(wrapper, drawerState, drawerImage);
+            }
+        });
+        drawerImage.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                invertDependentsDrawer(wrapper, drawerState, drawerImage);
+            }
+        });
+    }
+
     private void invertDrawer(RelativeLayout wrapper, DrawerState drawerState, ImageView drawerImage) {
         boolean currentState = drawerState.drawerState();
 
@@ -150,6 +180,22 @@ public class InsuredInfoFragment extends BrokerFragment {
             wrapper.setVisibility(View.VISIBLE);
             drawerState.setState(true);
             drawerImage.setImageResource(R.drawable.blue_uparrow);
+        }
+    }
+
+    private void invertDependentsDrawer(RelativeLayout wrapper, DrawerState drawerState, ImageView drawerImage) {
+        boolean currentState = drawerState.drawerState();
+
+        if (currentState) {
+            wrapper.setVisibility(View.GONE);
+            drawerState.setState(false);
+            drawerImage.setImageResource(R.drawable.blue_circle_vector);
+            dependentsCount.setVisibility(View.VISIBLE);
+        } else {
+            wrapper.setVisibility(View.VISIBLE);
+            drawerState.setState(true);
+            drawerImage.setImageResource(R.drawable.blue_uparrow);
+            dependentsCount.setVisibility(View.GONE);
         }
     }
 
@@ -194,7 +240,7 @@ public class InsuredInfoFragment extends BrokerFragment {
             }
         });
 
-        configDrawer(R.id.textViewDependentsDrawer, R.id.imageViewDependentsDrawer, R.id.relativeLayoutDependentsWrapper, dependentsVisibleInitialState, new DrawerState() {
+        configDependentsDrawer(R.id.textViewDependentsDrawer, R.id.imageViewDependentsDrawer, R.id.relativeLayoutDependentsWrapper, dependentsVisibleInitialState, new DrawerState() {
             public boolean drawerState() {
                 return InsuredInfoFragment.this.detailsVisible;
             }
@@ -366,6 +412,8 @@ public class InsuredInfoFragment extends BrokerFragment {
             populatePlan(currentEnrollment.dental, R.id.dentalPlanInfo, false);
         } else {
             textViewDentalPlanDrawer.setVisibility(View.GONE);
+            ImageView imageViewDentalPlanDrawer = (ImageView) this.view.findViewById(R.id.imageViewDentalPlanDrawer);
+            imageViewDentalPlanDrawer.setVisibility(View.GONE);
             ViewGroup includeView = (ViewGroup) this.view.findViewById(R.id.dentalPlanInfo);
             includeView.setVisibility(View.GONE);
             includeView.setVisibility(View.GONE);
@@ -405,13 +453,10 @@ public class InsuredInfoFragment extends BrokerFragment {
 
 
         TextView planSelected = (TextView) includeView.findViewById(R.id.planSelected);
-        planSelected.setText(String.format(resources.getString(R.string.plan_selected_field), Utilities.DateAsMonthDayYear(currentEnrollment.startOn)));
-
-        TextView planIdField = (TextView) includeView.findViewById(R.id.planIdField);
-        if (plan.planId != null) {
-            planIdField.setText(String.format(resources.getString(R.string.dc_health_link_id_field), plan.planId));
+        if (health){
+            planSelected.setText(currentEnrollment.health.planName);
         } else {
-            planIdField.setText(String.format(resources.getString(R.string.dc_health_link_id_field), resources.getString(R.string.not_available)));
+            planSelected.setText(currentEnrollment.dental.planName);
         }
         TextView planTypeField = (TextView)includeView.findViewById(R.id.planTypeField);
         ImageView planMetalRing = (ImageView) includeView.findViewById(R.id.planMetalRing);
@@ -437,8 +482,8 @@ public class InsuredInfoFragment extends BrokerFragment {
         String totalPremiumString = "";
         String monthlyPremium = "";
         if (plan.totalPremium != null) {
-            totalPremiumString = String.format("$%.2f", plan.totalPremium);
-            monthlyPremium = String.format("$%.2f", plan.totalPremium/12);
+            totalPremiumString = PlanUtilities.getFormattedAnnualPremium(plan);
+            monthlyPremium = PlanUtilities.getFormattedMonthlyPremium(plan);
         }
         textViewAnnualPremium.setText(totalPremiumString);
 
@@ -458,7 +503,7 @@ public class InsuredInfoFragment extends BrokerFragment {
         }
 
         TextView textViewYearlyDeductable = (TextView) includeView.findViewById(R.id.textViewYearlyDeductable);
-        String yearlyDeductableString = null;
+        String yearlyDeductableString = PlanUtilities.getFormattedDeductible(plan);
         textViewYearlyDeductable.setText("$XXX.XX");
 
 

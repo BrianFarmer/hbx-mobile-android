@@ -6,6 +6,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -64,7 +65,7 @@ public class PlanCardAdapter extends BaseAdapter {
         return v;
     }
 
-    private void populate(View v, Plan plan) {
+    private void populate(View v, final Plan plan) {
         if (plan == null){
             Log.d(TAG, "plan item is NULL!");
             return;
@@ -106,5 +107,13 @@ public class PlanCardAdapter extends BaseAdapter {
         annualPremium.setText(PlanUtilities.getFormattedYearPremium(plan));
         TextView deductible = (TextView) v.findViewById(R.id.deductible);
         deductible.setText(PlanUtilities.getFormattedDeductible(plan));
+
+        Button details = (Button) v.findViewById(R.id.details);
+        details.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intents.launchPlanDetails(PlanCardAdapter.this.activity, plan);
+            }
+        });
     }
 }

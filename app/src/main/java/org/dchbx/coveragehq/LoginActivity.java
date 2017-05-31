@@ -6,7 +6,7 @@ import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.graphics.Typeface;
 import android.os.Bundle;
-import android.support.test.espresso.idling.CountingIdlingResource;
+import android.support.test.espresso.idling.*;
 import android.support.v4.app.DialogFragment;
 import android.support.v7.app.AlertDialog;
 import android.text.SpannableString;
@@ -69,6 +69,7 @@ public class LoginActivity extends BrokerActivity {
     private boolean actionKnown = false;
 
 
+
     private CountingIdlingResource idlingResource = new CountingIdlingResource("Login");
     private ArrayList<String> urlLabels;
     private GitAccounts gitAccounts;
@@ -86,9 +87,18 @@ public class LoginActivity extends BrokerActivity {
         setContentView(BuildConfig2.getLoginLayout());
         pastFingerprint = false;
 
-        Log.d(TAG, "!!!!!!!!!!! onCreate");
-
-
+        View configButton = findViewById(R.id.configButton);
+        if (BuildVariant.showLoginConfig()){
+            configButton.setVisibility(View.VISIBLE);
+            configButton.setOnClickListener(new OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    AppConfigDialog.build(LoginActivity.this);
+                }
+            });
+        } else {
+            configButton.setVisibility(View.GONE);
+        }
         TextView textViewVersion = (TextView) findViewById(R.id.textViewVersion);
         String version = BuildConfig2.getVersion();
         textViewVersion.setVisibility(View.GONE);

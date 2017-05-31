@@ -11,6 +11,21 @@ import java.util.ArrayList;
 import static org.dchbx.coveragehq.ServerConfiguration.HostInfo;
 
 class BuildConfig2 {
+
+    public enum DataSource {
+        GitHub,
+        EnrollServer,
+        MobileServer
+    }
+
+    public static class AppConfig{
+        public BuildConfig2.DataSource DataSource;
+        public String GithubUrl;
+        public String EnrollServerUrl;
+        public String MobileServerUrl;
+    }
+
+    private static DataSource dataSource;
     private static int cacheTimeoutSeconds = 120;
     private static IDataCache dataCache = new DataCache();
 
@@ -127,5 +142,11 @@ class BuildConfig2 {
 
     public static String getVersion() {
         return "github";
+    }
+
+    public AppConfig getAppConfig() {
+        AppConfig appConfig = new AppConfig();
+        appConfig.DataSource = dataSource;
+        return appConfig;
     }
 }

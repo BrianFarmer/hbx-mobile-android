@@ -11,7 +11,7 @@ public class Cost {
     public String deductibleText;
     @SerializedName("deductible")
     @Expose
-    public Double deductible;
+    public double deductible;
     @SerializedName("monthly_premium")
     @Expose
     public Double monthlyPremium;

@@ -20,6 +20,9 @@ public class Health {
     @SerializedName("total_premium")
     @Expose
     public Double totalPremium;
+    @SerializedName("deductible")
+    @Expose
+    public String deductible;
     @SerializedName("plan_name")
     @Expose
     public String planName;

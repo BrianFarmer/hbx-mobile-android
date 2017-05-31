@@ -129,9 +129,7 @@ public class EmployeeInfoFragment extends BrokerFragment {
 
         TextView textViewBenefitGroupField = (TextView) view.findViewById(R.id.planSelected);
         if (health.benefitGroupName != null) {
-            textViewBenefitGroupField.setText(String.format(resources.getString(R.string.plan_selected_field), health.benefitGroupName));
-        } else {
-            textViewBenefitGroupField.setText(String.format(resources.getString(R.string.plan_selected_field), health.status));
+            textViewBenefitGroupField.setText(health.benefitGroupName);
         }
 
         TextView textViewPlanNameField = (TextView) view.findViewById(R.id.dcHealthLinkIdField);

@@ -901,7 +901,7 @@ public class Events {
     public static class GetPlanShoppingResult {
         private final PlanShoppingParameters planShoppingParameters;
 
-        public GetPlanShoppingResult(PlanShoppingParameters planShoppingParameters){
+        public GetPlanShoppingResult(PlanShoppingParameters planShoppingParameters) {
             this.planShoppingParameters = planShoppingParameters;
         }
 
@@ -939,7 +939,7 @@ public class Events {
         private final double premiumFilter;
         private final double deductibleFilter;
 
-        public GetPlansResult(List<Plan> planList, double premiumFilter, double deductibleFilter){
+        public GetPlansResult(List<Plan> planList, double premiumFilter, double deductibleFilter) {
             this.planList = planList;
             this.premiumFilter = premiumFilter;
             this.deductibleFilter = deductibleFilter;
@@ -962,7 +962,7 @@ public class Events {
         private final double premiumFilter;
         private final double deductibleFilter;
 
-        public SetPlanFilter(double premiumFilter, double deductibleFilter){
+        public SetPlanFilter(double premiumFilter, double deductibleFilter) {
             this.premiumFilter = premiumFilter;
             this.deductibleFilter = deductibleFilter;
         }
@@ -973,6 +973,60 @@ public class Events {
 
         public double getDeductibleFilter() {
             return deductibleFilter;
+        }
+    }
+
+    public static class GetPlan {
+        private final String planId;
+
+        public GetPlan(String planId) {
+            this.planId = planId;
+        }
+
+        public String getPlanId() {
+            return planId;
+        }
+    }
+
+    public static class GetPlanResult {
+        private final Plan plan;
+
+        public GetPlanResult(Plan plan) {
+            this.plan = plan;
+        }
+
+        public Plan getPlan() {
+            return plan;
+        }
+    }
+
+    public static class GetAppConfig {
+        public GetAppConfig() {
+        }
+    }
+
+    public static class UpdateAppConfig {
+        private final BuildConfig2.AppConfig appConfig;
+
+        public UpdateAppConfig(BuildConfig2.AppConfig appConfig) {
+
+            this.appConfig = appConfig;
+        }
+
+        public BuildConfig2.AppConfig getAppConfig() {
+            return appConfig;
+        }
+    }
+
+    public static class GetAppConfigResult {
+        private BuildConfig2.AppConfig appConfig;
+
+        public GetAppConfigResult(BuildConfig2.AppConfig appConfig){
+            this.appConfig = appConfig;
+        }
+
+        public BuildConfig2.AppConfig getAppConfig() {
+            return appConfig;
         }
     }
 }
