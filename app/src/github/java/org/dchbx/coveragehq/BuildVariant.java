@@ -21,4 +21,8 @@ public class BuildVariant {
     public static boolean showLoginConfig(){
         return true;
     }
+
+    public static EnrollConfigBase initialEnrollConfig(){
+        return new GitHubBuildConfig2();
+    }
 }

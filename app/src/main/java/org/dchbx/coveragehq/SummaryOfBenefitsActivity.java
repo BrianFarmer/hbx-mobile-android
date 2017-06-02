@@ -145,7 +145,6 @@ public class SummaryOfBenefitsActivity extends BrokerActivity {
     }
 
     private void populateCoverageYearDependencies(Enrollment enrollment, Resources resources) {
-        populateList();
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)
@@ -157,12 +156,12 @@ public class SummaryOfBenefitsActivity extends BrokerActivity {
 
     private void populate(){
         Log.d(TAG, "In SummaryOfBenefitsActivity.populate()");
-        populateHeader();
-        populateList();
-    }
+        if (insured.enrollments == null
+            || insured.enrollments.size() == 0) {
+            return;
+        }
 
-
-    private void populateList(){
+        currentEnrollment = BrokerUtilities.getEnrollment(insured, currentDate);
         this.summaryAdapter = new SummaryAdapter(this, servicesList, showHealth?currentEnrollment.health:currentEnrollment.dental);
         summaryList.setAdapter(summaryAdapter);
         Log.d(TAG, "populate complete");

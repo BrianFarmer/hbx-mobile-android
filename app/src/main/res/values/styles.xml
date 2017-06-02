@@ -267,6 +267,7 @@
 
     <style name="total_costs_label_employee" parent="employee_costs">
         <item name="android:textColor">@color/total_costs</item>
+        <item name="android:textSize">16sp</item>
     </style>
 
     <style name="employee_costs_employee" parent="employee_costs">

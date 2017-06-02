@@ -84,7 +84,7 @@ public class LoginActivity extends BrokerActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        setContentView(BuildConfig2.getLoginLayout());
+        setContentView(BrokerWorkerConfig.config().enrollConfig().getLoginLayout());
         pastFingerprint = false;
 
         View configButton = findViewById(R.id.configButton);
@@ -100,7 +100,7 @@ public class LoginActivity extends BrokerActivity {
             configButton.setVisibility(View.GONE);
         }
         TextView textViewVersion = (TextView) findViewById(R.id.textViewVersion);
-        String version = BuildConfig2.getVersion();
+        String version = BrokerWorkerConfig.config().enrollConfig().getVersion();
         textViewVersion.setVisibility(View.GONE);
         if (version != null) {
             try {
@@ -113,9 +113,9 @@ public class LoginActivity extends BrokerActivity {
         }
 
         // Set up the login form.
-        if (BuildConfig2.isGit()){
-            urls = BuildConfig2.getUrls();
-            urlLabels = BuildConfig2.getUrlLabels();
+        if (BrokerWorkerConfig.config().enrollConfig().isGit()){
+            urls = BrokerWorkerConfig.config().enrollConfig().getUrls();
+            urlLabels = BrokerWorkerConfig.config().enrollConfig().getUrlLabels();
             urlsSpinner = (Spinner)findViewById(R.id.spinnerUrlRoot);
             ArrayAdapter<String> dataAdapter = new ArrayAdapter<>(this,
                     android.R.layout.simple_spinner_item, urlLabels);
@@ -202,7 +202,7 @@ public class LoginActivity extends BrokerActivity {
     }
 
     private void attemptLogin() {
-        if (BuildConfig2.isGit()){
+        if (BrokerWorkerConfig.config().enrollConfig().isGit()){
             if (urlsSpinner == null
                 || accountsSpinner == null){
                 return;

@@ -2,6 +2,9 @@ package org.dchbx.coveragehq;
 
 import android.content.Context;
 import android.os.Bundle;
+import android.support.annotation.IdRes;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -14,7 +17,7 @@ import org.greenrobot.eventbus.ThreadMode;
 
 public class AppConfigDialog extends BrokerAppCompatDialogFragment {
     private View view;
-    private BuildConfig2.AppConfig appConfig;
+    private BrokerWorkerConfig.AppConfig appConfig;
     RadioGroup serverGroup;
     private EditText gitHubUrl;
     private EditText hbxMobileServerUrl;
@@ -66,6 +69,63 @@ public class AppConfigDialog extends BrokerAppCompatDialogFragment {
         gitHubUrl = (EditText)view.findViewById(R.id.gutHubUrl);
         hbxMobileServerUrl = (EditText) view.findViewById(R.id.hbxMobileServerUrl);
 
+        serverGroup.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(RadioGroup group, @IdRes int checkedId) {
+                if (checkedId != -1
+                    && appConfig != null){
+                    switch (checkedId){
+                        case R.id.github:
+                            appConfig.DataSource = BrokerWorkerConfig.DataSource.GitHub;
+                            break;
+                        case R.id.mobileServer:
+                            appConfig.DataSource = BrokerWorkerConfig.DataSource.MobileServer;
+                            break;
+                    }
+                }
+            }
+        });
+
+        gitHubUrl.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+                if (appConfig == null){
+                    return;
+                }
+                appConfig.GithubUrl = String.valueOf(gitHubUrl.getText());
+            }
+        });
+
+        hbxMobileServerUrl.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+                if (appConfig == null){
+                    return;
+                }
+                appConfig.MobileServerUrl = String.valueOf(hbxMobileServerUrl.getText());
+            }
+        });
+
         getMessages().getAppConfig();
         return view;
     }
@@ -74,14 +134,15 @@ public class AppConfigDialog extends BrokerAppCompatDialogFragment {
     public void doThis(Events.GetAppConfigResult getAppConfigResult) {
         appConfig = getAppConfigResult.getAppConfig();
 
+        gitHubUrl.setText(appConfig.GithubUrl);
+        hbxMobileServerUrl.setText(appConfig.MobileServerUrl);
+
         switch (appConfig.DataSource){
             case GitHub:
                 serverGroup.check(R.id.github);
-                gitHubUrl.setText(appConfig.GithubUrl);
                 break;
             case MobileServer:
                 serverGroup.check(R.id.mobileServer);
-                hbxMobileServerUrl.setText(appConfig.MobileServerUrl);
         }
     }
 }

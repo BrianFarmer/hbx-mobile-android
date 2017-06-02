@@ -306,6 +306,7 @@ public class InsuredDetailsActivity extends BrokerActivity {
                         try {
                             Enrollment enrollment = BrokerUtilities.getEnrollmentForCoverageYear(employee, currentDate);
                             populateCoverageYearDependencies(enrollment, InsuredDetailsActivity.this.getResources());
+                            getMessages().updateInsuredFragment(currentDate);
                         } catch (Exception e) {
                             e.printStackTrace();
                         }

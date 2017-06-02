@@ -711,12 +711,10 @@ public class Events {
         public RosterEntry employee;
         public LocalDate currentEnrollmentStartDate;
 
-        public static class TestTimeoutResult {
-            public boolean timedOut;
+        public EmployeeFragmentUpdate(RosterEntry employee, LocalDate currentEnrollmentStartDate){
 
-            public TestTimeoutResult(boolean timedOut) {
-                this.timedOut = timedOut;
-            }
+            this.employee = employee;
+            this.currentEnrollmentStartDate = currentEnrollmentStartDate;
         }
     }
 
@@ -1006,26 +1004,26 @@ public class Events {
     }
 
     public static class UpdateAppConfig {
-        private final BuildConfig2.AppConfig appConfig;
+        private final BrokerWorkerConfig.AppConfig appConfig;
 
-        public UpdateAppConfig(BuildConfig2.AppConfig appConfig) {
+        public UpdateAppConfig(BrokerWorkerConfig.AppConfig appConfig) {
 
             this.appConfig = appConfig;
         }
 
-        public BuildConfig2.AppConfig getAppConfig() {
+        public BrokerWorkerConfig.AppConfig getAppConfig() {
             return appConfig;
         }
     }
 
     public static class GetAppConfigResult {
-        private BuildConfig2.AppConfig appConfig;
+        private BrokerWorkerConfig.AppConfig appConfig;
 
-        public GetAppConfigResult(BuildConfig2.AppConfig appConfig){
+        public GetAppConfigResult(BrokerWorkerConfig.AppConfig appConfig){
             this.appConfig = appConfig;
         }
 
-        public BuildConfig2.AppConfig getAppConfig() {
+        public BrokerWorkerConfig.AppConfig getAppConfig() {
             return appConfig;
         }
     }

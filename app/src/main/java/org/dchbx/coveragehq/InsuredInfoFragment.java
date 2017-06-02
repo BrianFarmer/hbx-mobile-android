@@ -10,6 +10,7 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
+import android.widget.Spinner;
 import android.widget.TextView;
 
 import org.dchbx.coveragehq.models.roster.Address;
@@ -61,6 +62,7 @@ public class InsuredInfoFragment extends BrokerFragment {
     private Resources resources = null;
     private String carrier;
     private Carriers carriers;
+    private Spinner spinnerCoverageYear;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -85,6 +87,7 @@ public class InsuredInfoFragment extends BrokerFragment {
         textViewDependentsDrawer = (TextView) view.findViewById(R.id.textViewDependentsDrawer);
         dependentsCount = (TextView) view.findViewById(R.id.dependentsCount);
         relativeLayoutDependentsWrapper = (RelativeLayout) view.findViewById(R.id.relativeLayoutDependentsWrapper);
+        spinnerCoverageYear = (Spinner)view.findViewById(R.id.spinnerCoverageYear);
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)
@@ -100,7 +103,6 @@ public class InsuredInfoFragment extends BrokerFragment {
 
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void doThis(Events.EmployeeFragmentUpdate employeeFragmentUpdate) throws Exception {
-        this.insured = employeeFragmentUpdate.employee;
         this.currentDate = employeeFragmentUpdate.currentEnrollmentStartDate;
         this.currentEnrollment = BrokerUtilities.getEnrollment(insured, currentDate);
 
@@ -458,6 +460,8 @@ public class InsuredInfoFragment extends BrokerFragment {
         } else {
             planSelected.setText(currentEnrollment.dental.planName);
         }
+        TextView dcHealthLinkIdField = (TextView)includeView.findViewById(R.id.dcHealthLinkIdField);
+        dcHealthLinkIdField.setText(plan.healthLinkId);
         TextView planTypeField = (TextView)includeView.findViewById(R.id.planTypeField);
         ImageView planMetalRing = (ImageView) includeView.findViewById(R.id.planMetalRing);
         TextView planMetalField = (TextView) includeView.findViewById(R.id.planMetalField);
@@ -502,9 +506,9 @@ public class InsuredInfoFragment extends BrokerFragment {
             aptcLayout.setVisibility(View.GONE);
         }
 
-        TextView textViewYearlyDeductable = (TextView) includeView.findViewById(R.id.textViewYearlyDeductable);
-        String yearlyDeductableString = PlanUtilities.getFormattedDeductible(plan);
-        textViewYearlyDeductable.setText("$XXX.XX");
+        TextView textViewYearlyDeductible = (TextView) includeView.findViewById(R.id.textViewYearlyDeductible);
+        String yearlyDeductibleString = PlanUtilities.getFormattedDeductible(plan);
+        textViewYearlyDeductible.setText(yearlyDeductibleString);
 
 
 

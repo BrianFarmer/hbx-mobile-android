@@ -72,7 +72,7 @@ public class SessionTimeoutDialog extends BrokerAppCompatDialogFragment {
             }
         });
 
-        updateStatus(BuildConfig2.getTimeoutCountdownSeconds());
+        updateStatus(BrokerWorkerConfig.config().enrollConfig().getTimeoutCountdownSeconds());
         getMessages().startSessioniTimeoutCountdown();
 
 

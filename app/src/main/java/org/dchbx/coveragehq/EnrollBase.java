@@ -8,10 +8,25 @@ import org.joda.time.Duration;
 
 import java.util.ArrayList;
 
-import static org.dchbx.coveragehq.BuildConfig2.getServerConfiguration;
 import static org.dchbx.coveragehq.EnrollConfigBase.StorageHandlerType.Clear;
 
-class EnrollConfigBase {
+abstract class EnrollConfigBase {
+    public ServerConfiguration getServerConfiguration() {
+        return null;
+    }
+
+    public abstract int getTimeoutCountdownSeconds();
+
+    //
+    // This is the number of seconds the have to pass before the user gets
+    // a dialog telling them that the session is about to timeout.
+    //
+    public abstract int getSessionTimeoutSeconds();
+
+    public abstract String getVersion();
+
+    public abstract BrokerWorkerConfig.DataSource DataSource();
+
     public enum StorageHandlerType {
         Encrypted,
         Clear
@@ -24,44 +39,40 @@ class EnrollConfigBase {
     static String getString(){
         return "what is this used for";
     }
-    public static boolean isBrokerBuild() {
+    public boolean isBrokerBuild() {
         return true;
     }
 
-    public static int getDataSourceIndex (){
+    public int getDataSourceIndex (){
         return 0;
     }
 
-    public static void setServerConfigurationStorageHandlerType(StorageHandlerType newStorageHandlerType) {
-        storageHandlerType =newStorageHandlerType;
+    public void setServerConfigurationStorageHandlerType(StorageHandlerType newStorageHandlerType) {
+        storageHandlerType = newStorageHandlerType;
     }
 
-    public static IServerConfigurationStorageHandler getServerConfigurationStorageHandler() {
+    public IServerConfigurationStorageHandler getServerConfigurationStorageHandler() {
         //if (storageHandlerType == Clear) {
             return new ConfigurationStorageHandler();
         //}
         //return new EnrollServerConfigurationStorageHandler();
     }
 
-    public static boolean checkSession(ServerConfiguration serverConfiguration) {
+    public boolean checkSession(ServerConfiguration serverConfiguration) {
         return  serverConfiguration.sessionId != null
                 && serverConfiguration.sessionId.length() > 0;
     }
 
 
-    public static Duration getCacheTimeout() {
+    public Duration getCacheTimeout() {
         return Duration.standardSeconds(cacheTimeoutSeconds);
     }
 
-    public static BuildConfig2 getConfig() {
-        return new BuildConfig2();
-    }
-
-    public static int getLoginLayout() {
+    public int getLoginLayout() {
         return R.layout.activity_login;
     }
 
-    public static boolean isGit() {
+    public boolean isGit() {
         return false;
     }
 
@@ -89,15 +100,14 @@ class EnrollConfigBase {
         return new EnrollConnectionHandler(getServerConfiguration());
     }
 
-    public static void initMobileCenter() {
+    public void initMobileCenter() {
         MobileCenter.start(BrokerApplication.getBrokerApplication(), "3f262857-3956-470c-acc1-c23fc38d8118",
                 Analytics.class, Crashes.class);
     }
 
-    public static ArrayList<String> getUrls() { return null;  }
+    public ArrayList<String> getUrls() { return null;  }
 
-    public static ArrayList<String> getUrlLabels() {
+    public ArrayList<String> getUrlLabels() {
         return null;
     }
-
 }

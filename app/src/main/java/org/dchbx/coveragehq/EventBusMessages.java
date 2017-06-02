@@ -233,7 +233,13 @@ public class EventBusMessages implements Messages {
     }
 
     @Override
-    public void updateAppConfig(BuildConfig2.AppConfig appConfig) {
+    public void updateAppConfig(BrokerWorkerConfig.AppConfig appConfig) {
         eventBus.post(new Events.UpdateAppConfig(appConfig));
-    }}
+    }
+
+    @Override
+    public void updateInsuredFragment(LocalDate currentDate) {
+        eventBus.post(new Events.EmployeeFragmentUpdate(null, currentDate));
+    }
+}
 

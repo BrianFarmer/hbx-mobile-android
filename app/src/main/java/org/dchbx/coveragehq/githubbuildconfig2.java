@@ -10,42 +10,30 @@ import java.util.ArrayList;
 
 import static org.dchbx.coveragehq.ServerConfiguration.HostInfo;
 
-class BuildConfig2 {
+class GitHubBuildConfig2 extends EnrollConfigBase{
 
-    public enum DataSource {
-        GitHub,
-        EnrollServer,
-        MobileServer
-    }
-
-    public static class AppConfig{
-        public BuildConfig2.DataSource DataSource;
-        public String GithubUrl;
-        public String EnrollServerUrl;
-        public String MobileServerUrl;
-    }
-
-    private static DataSource dataSource;
     private static int cacheTimeoutSeconds = 120;
     private static IDataCache dataCache = new DataCache();
 
-    static String getString(){
-        return "Hoo Woo!!!";
-    }
     private static ServerConfiguration serverConfiguration = null;
-    public static boolean isBrokerBuild() {
+
+    @Override
+    public boolean isBrokerBuild() {
         return true;
     }
 
-    public static int getDataSourceIndex (){
+    @Override
+    public int getDataSourceIndex (){
         return 0;
     }
 
-    public static IServerConfigurationStorageHandler getServerConfigurationStorageHandler() {
+    @Override
+    public IServerConfigurationStorageHandler getServerConfigurationStorageHandler() {
         return new ConfigurationStorageHandler();
     }
 
-    public static ServerConfiguration getServerConfiguration() {
+    @Override
+    public ServerConfiguration getServerConfiguration() {
         if (serverConfiguration != null){
             return serverConfiguration;
         }
@@ -59,30 +47,30 @@ class BuildConfig2 {
         return serverConfiguration;
     }
 
-    public static boolean checkSession(ServerConfiguration serverConfiguration) {
+    @Override
+    public boolean checkSession(ServerConfiguration serverConfiguration) {
         return  serverConfiguration.sessionId != null
                 && serverConfiguration.sessionId.length() > 0;
     }
 
 
-    public static Duration getCacheTimeout() {
+    @Override
+    public Duration getCacheTimeout() {
         return Duration.standardSeconds(cacheTimeoutSeconds);
     }
 
-    public static BuildConfig2 getConfig() {
-        return new BuildConfig2();
-    }
-
-    public static boolean isGit() {
+    @Override
+    public boolean isGit() {
         return true;
     }
 
-    public static int getLoginLayout() {
+    @Override
+    public int getLoginLayout() {
         return R.layout.activity_login_git;
     }
 
 
-    public GitUrlHandler getUrlHandler() {
+    public GitUrlHandler getGitUrlHandler() {
         return new GitUrlHandler(getServerConfiguration(), new JsonParser());
     }
 
@@ -95,7 +83,7 @@ class BuildConfig2 {
     }
 
     public CoverageConnection getCoverageConnection() {
-        return new GithubCoverageConnection(getUrlHandler(), getConnectionHandler(), getServerConfiguration(), getParser(), getDataCache(), getServerConfigurationStorageHandler());
+        return new GithubCoverageConnection(getGitUrlHandler(), getConnectionHandler(), getServerConfiguration(), getParser(), getDataCache(), getServerConfigurationStorageHandler());
     }
 
     private JsonParser getParser() {
@@ -106,23 +94,18 @@ class BuildConfig2 {
         return new ConnectionHandler(serverConfiguration);
     }
 
-    public static void initMobileCenter() {
+    @Override
+    public void initMobileCenter() {
         MobileCenter.start(BrokerApplication.getBrokerApplication(), "3f262857-3956-470c-acc1-c23fc38d8118",
                 Analytics.class, Crashes.class);
     }
 
-    public static ArrayList<String> getUrls() {
-        ArrayList urls = new ArrayList();
-
-        urls.add("Choose a repository");
-        urls.add("https://raw.githubusercontent.com/dchealthlink/HBX-mobile-app-APIs/master/generated");
-        urls.add("https://raw.githubusercontent.com/BrianFarmer/HBX-mobile-app-APIs/master/from_templates/generated");
-        urls.add("https://raw.githubusercontent.com/BrianFarmer/HBX-mobile-app-APIs/TemplatedTests/accounts");
-        urls.add("https://raw.githubusercontent.com/dchealthlink/HBX-mobile-app-APIs/TemplatedTests/accounts");
-        return urls;
+    public String getUrl() {
+        return "https://raw.githubusercontent.com/dchealthlink/HBX-mobile-app-APIs/master/generated";
     }
 
-    public static ArrayList<String> getUrlLabels() {
+    @Override
+    public ArrayList<String> getUrlLabels() {
         ArrayList urls = new ArrayList();
         urls.add("Choose a repository");
         urls.add("HBX Mobile app api Master");
@@ -132,21 +115,23 @@ class BuildConfig2 {
         return urls;
     }
 
-    public static int getTimeoutCountdownSeconds() {
+    @Override
+    public int getTimeoutCountdownSeconds() {
         return 30;
     }
 
-    public static int getSessionTimeoutSeconds() {
+    @Override
+    public int getSessionTimeoutSeconds() {
         return 14*60;
     }
 
-    public static String getVersion() {
+    @Override
+    public String getVersion() {
         return "github";
     }
 
-    public AppConfig getAppConfig() {
-        AppConfig appConfig = new AppConfig();
-        appConfig.DataSource = dataSource;
-        return appConfig;
+    @Override
+    public BrokerWorkerConfig.DataSource DataSource() {
+        return BrokerWorkerConfig.DataSource.GitHub;
     }
 }

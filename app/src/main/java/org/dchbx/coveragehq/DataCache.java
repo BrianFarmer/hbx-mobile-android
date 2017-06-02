@@ -62,7 +62,7 @@ public class DataCache implements IDataCache {
     @Override
     public BrokerAgency getBrokerAgency(DateTime time) {
         if (brokerAgencyTime != null
-        && time.compareTo(brokerAgencyTime.plus(BuildConfig2.getCacheTimeout()))<=0){
+        && time.compareTo(brokerAgencyTime.plus(BrokerWorkerConfig.config().enrollConfig().getCacheTimeout()))<=0){
             return brokerAgency;
         }
         return null;
@@ -77,7 +77,7 @@ public class DataCache implements IDataCache {
     public Employer getEmployer(String id, DateTime time) {
         if (employers.containsKey(id)){
             CachedData<Employer> employerCachedData = employers.get(id);
-            if (time.compareTo(employerCachedData.time.plus(BuildConfig2.getCacheTimeout())) <= 0){
+            if (time.compareTo(employerCachedData.time.plus(BrokerWorkerConfig.config().enrollConfig().getCacheTimeout())) <= 0){
                 return employerCachedData.storedData;
             }
         }
@@ -93,7 +93,7 @@ public class DataCache implements IDataCache {
     public Roster getRoster(String id, DateTime time) {
         if (rosters.containsKey(id)){
             CachedData<Roster> rosterCachedData = rosters.get(id);
-            if (time.compareTo(rosterCachedData.time.plus(BuildConfig2.getCacheTimeout())) <= 0){
+            if (time.compareTo(rosterCachedData.time.plus(BrokerWorkerConfig.config().enrollConfig().getCacheTimeout())) <= 0){
                 return rosterCachedData.storedData;
             }
         }
@@ -104,7 +104,7 @@ public class DataCache implements IDataCache {
     public List<Service> getServices(String id, DateTime time) {
         if (servicesCache.containsKey(Default_Id)){
             CachedData<List<Service>> cachedData = servicesCache.get(Default_Id);
-            if (time.compareTo(cachedData.time.plus(BuildConfig2.getCacheTimeout())) <= 0){
+            if (time.compareTo(cachedData.time.plus(BrokerWorkerConfig.config().enrollConfig().getCacheTimeout())) <= 0){
                 return cachedData.storedData;
             }
         }
@@ -115,7 +115,7 @@ public class DataCache implements IDataCache {
     public Roster getRoster(DateTime time) {
         if (rosters.containsKey(Default_Id)){
             CachedData<Roster> rosterCachedData = rosters.get(Default_Id);
-            if (time.compareTo(rosterCachedData.time.plus(BuildConfig2.getCacheTimeout())) <= 0){
+            if (time.compareTo(rosterCachedData.time.plus(BrokerWorkerConfig.config().enrollConfig().getCacheTimeout())) <= 0){
                 return rosterCachedData.storedData;
             }
         }

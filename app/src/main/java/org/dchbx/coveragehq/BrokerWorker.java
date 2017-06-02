@@ -29,13 +29,12 @@ public class BrokerWorker extends IntentService {
 
     static EventBus eventBus;
     private AccountInfo inProgressAccountInfo; // this member is used to store the account info while the user is trying to login.
+    private BrokerWorkerConfig config = new BrokerWorkerConfig();
 
-    //static AccountInfoStorage accountInfoStorage = new SharedPreferencesAccountInfoStorage();
+    private EnrollConfigBase getConfig() {
+        return null;
+    }
 
-    //static HbxSite.ServerSiteConfig enrollFeatureServerSite = new HbxSite.ServerSiteConfig("http", "ec2-54-234-22-53.compute-1.amazonaws.com", 443);
-    //static HbxSite.ServerSiteConfig enrollFeatureServerSite = new HbxSite.ServerSiteConfig("http", "54.224.226.203", 443);
-
-    BuildConfig2 config = BuildConfig2.getConfig();
     private Timer countdownTimer;
     private DateTime timeout = null;
     private Timer sessionTimeoutTimer;
@@ -87,9 +86,9 @@ public class BrokerWorker extends IntentService {
             }
 
             ServerConfiguration serverConfiguration = config.getServerConfiguration();
-            UrlHandler urlHandler = config.getUrlHandler();
+            UrlHandler urlHandler = BrokerWorkerConfig.config().enrollConfig().getUrlHandler();
             String urlRoot = getGitAccounts.getUrlRoot();
-            GitAccounts gitAccounts = config.getCoverageConnection().getGitAccounts(urlRoot);
+            GitAccounts gitAccounts = BrokerWorkerConfig.config().getCoverageConnection().getGitAccounts(urlRoot);
                 Log.d(TAG, "got git accounts");
             BrokerWorker.eventBus.post(new Events.GitAccounts(gitAccounts));
 
@@ -436,7 +435,7 @@ public class BrokerWorker extends IntentService {
         if (sessionTimeoutTimer != null) {
             sessionTimeoutTimer.cancel();
         }
-        int timeoutMilliSeconds = BuildConfig2.getSessionTimeoutSeconds() * 1000;
+        int timeoutMilliSeconds = BrokerWorkerConfig.config().enrollConfig().getSessionTimeoutSeconds() * 1000;
         timeout = DateTime.now().plusMillis(timeoutMilliSeconds);
         sessionTimeoutTimer = new Timer();;
         sessionTimeoutTimer.schedule(new TimerTask() {
@@ -453,7 +452,7 @@ public class BrokerWorker extends IntentService {
     public void doThis(Events.StartSessionTimeout startSessionTimeout) {
         Log.d(TAG, "processing Events.StartSessionTimeout");
 
-        countdownTimerTicksLeft = BuildConfig2.getTimeoutCountdownSeconds();
+        countdownTimerTicksLeft = BrokerWorkerConfig.config().enrollConfig().getTimeoutCountdownSeconds();
         countdownTimer = new Timer();
         countdownTimer.schedule(new TimerTask() {
             @Override
@@ -538,9 +537,9 @@ public class BrokerWorker extends IntentService {
                 @Override
                 public void success(String encryptedText) {
                     try {
-                        ServerConfiguration serverConfiguration = BuildConfig2.getServerConfiguration();
+                        ServerConfiguration serverConfiguration = BrokerWorkerConfig.config().enrollConfig().getServerConfiguration();
                         serverConfiguration.encryptedString = encryptedText;
-                        IServerConfigurationStorageHandler serverConfigurationStorageHandler = BuildConfig2.getServerConfigurationStorageHandler();
+                        IServerConfigurationStorageHandler serverConfigurationStorageHandler = BrokerWorkerConfig.config().enrollConfig().getServerConfigurationStorageHandler();
                         serverConfigurationStorageHandler.store(serverConfiguration);
                         config.getCoverageConnection().saveLoginInfo(true);
                     } catch (Exception e) {
@@ -562,7 +561,7 @@ public class BrokerWorker extends IntentService {
     @Subscribe(threadMode = ThreadMode.BACKGROUND)
     public void doThis(Events.AuthenticateFingerprintDecrypt authenticateFingerprint) {
         try {
-            final ServerConfiguration serverConfiguration = BuildConfig2.getServerConfiguration();
+            final ServerConfiguration serverConfiguration = BrokerWorkerConfig.config().enrollConfig().getServerConfiguration();
 
             if (!SystemUtilities.detectNetwork()){
                 Log.e(TAG, "no network, returning from BrokerWorker");
@@ -570,7 +569,7 @@ public class BrokerWorker extends IntentService {
                 return;
             }
 
-            IServerConfigurationStorageHandler serverConfigurationStorageHandler = BuildConfig2.getServerConfigurationStorageHandler();
+            IServerConfigurationStorageHandler serverConfigurationStorageHandler = BrokerWorkerConfig.config().enrollConfig().getServerConfigurationStorageHandler();
             serverConfigurationStorageHandler.read(serverConfiguration);
 
             fingerprintManager.authenticate(serverConfiguration.encryptedString, new FingerprintManager.IAuthenticationDecryptResult() {
@@ -774,10 +773,15 @@ public class BrokerWorker extends IntentService {
     @Subscribe(threadMode = ThreadMode.BACKGROUND)
     public void doThis(Events.GetAppConfig getAppConfig) {
         try {
-            BrokerWorker.eventBus.post(new Events.GetAppConfigResult(config.getAppConfig()));
+            BrokerWorker.eventBus.post(new Events.GetAppConfigResult(BrokerWorkerConfig.config().getAppConfig()));
         } catch (Exception e) {
             // edit these exceptions since we are doing this asyncronously to the user.
         }
+    }
+
+    @Subscribe(threadMode = ThreadMode.BACKGROUND)
+    public void doThis(Events.UpdateAppConfig updateAppConfig) {
+        BrokerWorkerConfig.config().update(updateAppConfig.getAppConfig());
     }
 }
 

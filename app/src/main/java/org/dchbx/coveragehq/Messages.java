@@ -48,6 +48,7 @@ public interface Messages {
     void updateFilters(int premiumFilter, int deductibleFilter);
     void getPlan(String planId);
     void getAppConfig();
-    void updateAppConfig(BuildConfig2.AppConfig appConfig);
+    void updateAppConfig(BrokerWorkerConfig.AppConfig appConfig);
+    void updateInsuredFragment(LocalDate currentDate);
 }
 

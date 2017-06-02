@@ -12,7 +12,7 @@ import static org.hamcrest.CoreMatchers.is;
 public class EnrollCoverageUnitTest {
     @Test
     public void validateUserAndPasswordTest() throws Exception {
-        BuildConfig2 config = BuildConfig2.getConfig();
+        EnrollConfigBase config = null;
         BrokerApplication brokerApplication = new BrokerApplication();
         ServerConfiguration serverConfiguration = new ServerConfiguration();
         JsonParser jsonParser = new JsonParser();

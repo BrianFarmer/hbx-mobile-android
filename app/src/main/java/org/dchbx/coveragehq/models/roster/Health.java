@@ -62,7 +62,10 @@ public class Health {
     @SerializedName("elected_aptc_pct")
     @Expose
     public double electedAptcPct;
-    @SerializedName("plan_id")
+    @SerializedName("health_link_id")
     @Expose
-    public String planId;
+    public String healthLinkId;
+    @SerializedName("hbx_enrollment_id")
+    @Expose
+    public String hbxEnrollmentId;
 }
