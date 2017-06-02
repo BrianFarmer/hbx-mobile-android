@@ -2,9 +2,23 @@ package org.dchbx.coveragehq;
 
 class IvlBuildConfig2 extends EnrollConfigBase {
 
+    public enum DataSource {
+        GitHub,
+        EnrollServer,
+        MobileServer
+    }
+
+    public static class AppConfig{
+        public IvlBuildConfig2.DataSource DataSource;
+        public String GithubUrl;
+        public String EnrollServerUrl;
+        public String MobileServerUrl;
+    }
+
+    private static DataSource dataSource;
     private static ServerConfiguration serverConfiguration = null;
 
-    public ServerConfiguration getServerConfiguration() {
+    public static ServerConfiguration getServerConfiguration() {
         if (serverConfiguration != null){
             return serverConfiguration;
         }
@@ -35,8 +49,7 @@ class IvlBuildConfig2 extends EnrollConfigBase {
         return serverConfiguration;
     }
 
-    @Override
-    public int getTimeoutCountdownSeconds() {
+    public static int getTimeoutCountdownSeconds() {
         return 30;
     }
 
@@ -44,22 +57,17 @@ class IvlBuildConfig2 extends EnrollConfigBase {
     // This is the number of seconds the have to pass before the user gets
     // a dialog telling them that the session is about to timeout.
     //
-    @Override
-    public int getSessionTimeoutSeconds() {
+    public static int getSessionTimeoutSeconds() {
         return 14*60;
     }
 
-    @Override
-    public String getVersion() {
+    public static String getVersion() {
         return "preprod";
     }
 
-    @Override
-    public BrokerWorkerConfig.DataSource DataSource() {
-        return BrokerWorkerConfig.DataSource.MobileServer;
-    }
-
-    public String getUrl() {
-        return serverConfiguration.loginInfo.host;
+    public AppConfig getAppConfig() {
+        AppConfig appConfig = new AppConfig();
+        appConfig.DataSource = dataSource;
+        return appConfig;
     }
 }
