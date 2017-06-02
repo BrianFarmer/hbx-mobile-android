@@ -1,6 +1,6 @@
 package org.dchbx.coveragehq;
 
-class BuildConfig2 extends EnrollConfigBase {
+class IvlBuildConfig2 extends EnrollConfigBase {
 
     public enum DataSource {
         GitHub,
@@ -9,7 +9,7 @@ class BuildConfig2 extends EnrollConfigBase {
     }
 
     public static class AppConfig{
-        public BuildConfig2.DataSource DataSource;
+        public IvlBuildConfig2.DataSource DataSource;
         public String GithubUrl;
         public String EnrollServerUrl;
         public String MobileServerUrl;
