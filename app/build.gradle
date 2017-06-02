@@ -55,7 +55,6 @@ dependencies {
     // Set this dependency to build and run Espresso tests
     // Set this dependency to build and run UI Automator tests
     compile project(':MPChartLib')
-    compile project(path: ':rossdeckview')
     compile 'com.android.support:appcompat-v7:25.3.1'
     compile 'com.android.support:design:25.3.1'
     compile 'com.android.support:percent:25.3.1'
@@ -74,6 +73,7 @@ dependencies {
     compile 'com.daprlabs.aaron:swipedeck:2.0.6'
     compile 'com.android.support.test.espresso:espresso-idling-resource:2.2.2'
     compile 'javax.annotation:javax.annotation-api:1.2'
+    compile 'com.diogobernardino:rossdeckview:1.0'
 
     testCompile 'junit:junit:4.12'
     androidTestCompile 'com.android.support.test:testing-support-lib:0.1'
