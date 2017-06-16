@@ -359,7 +359,22 @@ public abstract class UrlHandler {
         for (Integer age : serverConfiguration.planShoppingParameters.ages) {
             queryParameters = queryParameters + "&ages=" + age.toString();
         }
+
+
         parameters.url = HttpUrl.parse(serverConfiguration.planEndpoint + queryParameters);
+        String pathSegments = "";
+        for (String s : parameters.url.pathSegments()) {
+            pathSegments = pathSegments + "/" + s;
+        }
+        //pathSegments += queryParameters;
+
+        parameters.url = new HttpUrl.Builder()
+                .scheme(parameters.url.scheme())
+                .host("enroll-mobile2.dchbx.org")
+                .port(parameters.url.port())
+                .addPathSegments(pathSegments.substring(1))
+                .query(queryParameters.substring(1))
+                .build();
         return parameters;
     }
 
@@ -376,11 +391,53 @@ public abstract class UrlHandler {
 
     public void processEndpoints(IConnectionHandler.GetResponse getResponse) {
         Endpoints endpoints = parser.parseEndpoionts(getResponse.body);
+        if (endpoints.enroll_server != null) {
+            HttpUrl parsedUrl = HttpUrl.parse(endpoints.enroll_server);
+            serverConfiguration.dataInfo.host = parsedUrl.host();
+            serverConfiguration.dataInfo.port = parsedUrl.port();
+            serverConfiguration.dataInfo.scheme = parsedUrl.scheme();
+        }
         serverConfiguration.planEndpoint = endpoints.plan_endpoint;
         serverConfiguration.verifyIdentityEndpoint = endpoints.verify_identity_endpoint;
     }
 
     public List<Plan> processPlans(IConnectionHandler.GetResponse getResponse) {
-        return parser.parsePlans(getResponse.body);
+        List<Plan> plans = parser.parsePlans(getResponse.body);
+        for (Plan plan : plans) {
+            if (plan.links != null){
+                if (plan.links.carrierLogo != null
+                && plan.links.carrierLogo.substring(0,1).compareTo("/") == 0) {
+                    plan.links.carrierLogo = new HttpUrl.Builder()
+                            .scheme(serverConfiguration.dataInfo.scheme)
+                            .host(serverConfiguration.dataInfo.host)
+                            .addPathSegments(plan.links.carrierLogo.substring(1))
+                            .port(serverConfiguration.dataInfo.port)
+                            .build().toString();
+                }
+            }
+        }
+
+        return plans;
     }
+
+    public GetParameters getSummaryParameters(String summaryOfBenefits) {
+
+        String[] split = summaryOfBenefits.split("\\?");
+        GetParameters getParameters = new GetParameters();
+        getParameters.url = new HttpUrl.Builder()
+                .scheme(serverConfiguration.dataInfo.scheme)
+                //.host(serverConfiguration.dataInfo.host)
+                .host("enroll-mobile2.dchbx.org")
+                .addEncodedPathSegments(split[0])
+                .query(split[1])
+                .port(serverConfiguration.dataInfo.port)
+                .build();
+        return getParameters;
+    }
+
+    public List<Service> processSummaryAndBenefits(IConnectionHandler.GetResponse response) {
+        List<Service> services = parser.parseServices(response.body);
+        return services;
+    }
+
 }

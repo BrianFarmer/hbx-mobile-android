@@ -40,8 +40,8 @@ class PlanUtilities {
         return maxDeductible;
     }
 
-    public static List<Plan> getPlansInRange(List<Plan> planList, double maxPremium, double maxDeductible) {
-        List<Plan> filtered = new ArrayList<>();
+    public static ArrayList<Plan> getPlansInRange(List<Plan> planList, double maxPremium, double maxDeductible) {
+        ArrayList<Plan> filtered = new ArrayList<>();
         for (Plan plan : planList) {
             if (plan.cost.monthlyPremium <= maxPremium
                 && plan.cost.deductible <= maxDeductible){

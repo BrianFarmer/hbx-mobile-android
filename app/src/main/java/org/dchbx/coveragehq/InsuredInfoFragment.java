@@ -398,7 +398,7 @@ public class InsuredInfoFragment extends BrokerFragment {
 
         if (currentEnrollment.dental != null
             && currentEnrollment.dental.status != null
-            && currentEnrollment.dental.status.compareTo("not enrolled") == 0) {
+            && currentEnrollment.dental.status.compareTo("Enrolled") == 0) {
             textViewDentalPlanDrawer.setVisibility(View.VISIBLE);
 
             textViewDentalPlanDrawer.setOnClickListener(new View.OnClickListener() {

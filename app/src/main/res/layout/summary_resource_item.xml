@@ -7,11 +7,11 @@
 
     <ImageView
         android:id="@+id/resourceImage"
-        android:layout_width="46dp"
-        android:layout_height="46dp"
+        android:layout_width="35dp"
+        android:layout_height="35dp"
         android:layout_marginLeft="16dp"
-        android:layout_marginTop="20dp"
-        android:layout_marginBottom="20dp"
+        android:layout_marginTop="13dp"
+        android:layout_marginBottom="13dp"
         />
 
     <TextView

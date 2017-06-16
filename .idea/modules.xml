@@ -6,9 +6,9 @@
       <module fileurl="file://$PROJECT_DIR$/MPChartLib/MPChartLib.iml" filepath="$PROJECT_DIR$/MPChartLib/MPChartLib.iml" />
       <module fileurl="file://$PROJECT_DIR$/androidswipelayout/androidswipelayout.iml" filepath="$PROJECT_DIR$/androidswipelayout/androidswipelayout.iml" />
       <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />
-      <module fileurl="file://$PROJECT_DIR$/rossdeckview/rossdeckview.iml" filepath="$PROJECT_DIR$/rossdeckview/rossdeckview.iml" />
       <module fileurl="file://$PROJECT_DIR$/swipeactionadapter/swipeactionadapter.iml" filepath="$PROJECT_DIR$/swipeactionadapter/swipeactionadapter.iml" />
       <module fileurl="file://$PROJECT_DIR$/swipeactionadapter-2.0.0/swipeactionadapter-2.0.0.iml" filepath="$PROJECT_DIR$/swipeactionadapter-2.0.0/swipeactionadapter-2.0.0.iml" />
+      <module fileurl="file://$PROJECT_DIR$/swipedeck/swipedeck.iml" filepath="$PROJECT_DIR$/swipedeck/swipedeck.iml" />
     </modules>
   </component>
 </project>

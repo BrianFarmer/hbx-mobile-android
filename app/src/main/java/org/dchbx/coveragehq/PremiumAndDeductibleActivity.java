@@ -1,7 +1,10 @@
 package org.dchbx.coveragehq;
 
+import android.graphics.Paint;
 import android.graphics.Rect;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.SeekBar;
@@ -19,7 +22,7 @@ import java.util.List;
  */
 
 public class PremiumAndDeductibleActivity extends BaseActivity {
-
+    static private String TAG = "PremiumDeductibleActvty";
     private List<Plan> planList;
     private Button plansAvailable;
     private double maxPremium;
@@ -76,10 +79,10 @@ public class PremiumAndDeductibleActivity extends BaseActivity {
         premium.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             @Override
             public void onProgressChanged(SeekBar seekBar, int value, boolean fromUser) {
-                setPlansAvailableText(value*100, deductible.getProgress()*100);
                 NumberFormat currencyInstance = NumberFormat.getCurrencyInstance();
                 String premiumString = currencyInstance.format(value * 100);
                 setHint(value * 100, premium, premiumHint);
+                setPlansAvailableText();
             }
 
             @Override
@@ -97,9 +100,9 @@ public class PremiumAndDeductibleActivity extends BaseActivity {
         deductible.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             @Override
             public void onProgressChanged(SeekBar seekBar, int value, boolean b) {
-                setPlansAvailableText(premium.getProgress()*100, value*100);
                 updateFilters();
                 setHint(value * 100, deductible, deductibleHint);
+                setPlansAvailableText();
             }
 
             @Override
@@ -114,13 +117,13 @@ public class PremiumAndDeductibleActivity extends BaseActivity {
         });
 
         plansAvailable = (Button)findViewById(R.id.plansAvailable);
-        setPlansAvailableText(maxPremium, maxDeductible);
         plansAvailable.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 Intents.launchPlanSelector(PremiumAndDeductibleActivity.this);
             }
         });
+        setPlansAvailableText();
     }
 
     private void updateFilters() {
@@ -136,14 +139,21 @@ public class PremiumAndDeductibleActivity extends BaseActivity {
         String valueString = currencyInstance.format(value);
         valueString = valueString.substring(0, valueString.length() - 3);
         hint.setText(valueString);
-        int hintWidth = deductibleHint.getWidth();
-        Rect bounds = seekBar.getThumb().getBounds();
-        int x = (int) (bounds.centerX() - hintWidth/2 + (int)seekBar.getX());// + getResources().getDimension(R.dimen.ivl_seekbar_margin));
+        int hintWidth = hint.getWidth();
+        Drawable thumb = seekBar.getThumb();
+        Rect bounds = thumb.getBounds();
+
+        Rect textBounds = new Rect();
+        Paint textPaint = hint.getPaint();
+        textPaint.getTextBounds(valueString,0,valueString.length(),textBounds);
+        int width = textBounds.width();
+        int x = (int) (bounds.centerX() - width/2 + (int)seekBar.getX());// + getResources().getDimension(R.dimen.ivl_seekbar_margin));
+        Log.d(TAG, String.format("%s l: %d center: %d r: %d width/2: %d seekbar: %d", valueString, bounds.left, bounds.centerX(), bounds.right, hintWidth/2, (int)seekBar.getX()));// + getResources().getDimension(R.dimen.ivl_seekbar_margin));
         hint.setX(x);
     }
 
-    private void setPlansAvailableText(double maxPremium, double maxDeductible) {
-        List<Plan> plansInRange = PlanUtilities.getPlansInRange(planList, maxPremium, maxDeductible);
+    private void setPlansAvailableText() {
+        List<Plan> plansInRange = PlanUtilities.getPlansInRange(planList, currentPremium, currentDeductible);
         plansAvailable.setText(String.format(getString(R.string.see_plans_available), plansInRange.size()));
     }
 }

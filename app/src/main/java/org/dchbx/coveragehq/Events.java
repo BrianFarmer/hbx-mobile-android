@@ -976,25 +976,37 @@ public class Events {
 
     public static class GetPlan {
         private final String planId;
+        private final boolean getSummaryAndBenefits;
 
-        public GetPlan(String planId) {
+        public GetPlan(String planId, boolean getSummaryAndBenefits) {
             this.planId = planId;
+            this.getSummaryAndBenefits = getSummaryAndBenefits;
         }
 
         public String getPlanId() {
             return planId;
         }
+
+        public boolean isGetSummaryAndBenefits() {
+            return getSummaryAndBenefits;
+        }
     }
 
     public static class GetPlanResult {
         private final Plan plan;
+        private final List<Service> services;
 
-        public GetPlanResult(Plan plan) {
+        public GetPlanResult(Plan plan, List<Service> services) {
             this.plan = plan;
+            this.services = services;
         }
 
         public Plan getPlan() {
             return plan;
+        }
+
+        public List<Service> getServices() {
+            return services;
         }
     }
 

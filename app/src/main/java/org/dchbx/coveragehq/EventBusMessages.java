@@ -224,7 +224,7 @@ public class EventBusMessages implements Messages {
 
     @Override
     public void getPlan(String planId) {
-        eventBus.post(new Events.GetPlan(planId));
+        eventBus.post(new Events.GetPlan(planId, false));
     }
 
     @Override
@@ -240,6 +240,11 @@ public class EventBusMessages implements Messages {
     @Override
     public void updateInsuredFragment(LocalDate currentDate) {
         eventBus.post(new Events.EmployeeFragmentUpdate(null, currentDate));
+    }
+
+    @Override
+    public void getPlan(String planId, boolean getSummaryAndBenefits) {
+        eventBus.post(new Events.GetPlan(planId, true));
     }
 }
 

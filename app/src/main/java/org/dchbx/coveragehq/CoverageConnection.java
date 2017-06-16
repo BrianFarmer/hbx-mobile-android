@@ -109,6 +109,20 @@ public abstract class CoverageConnection {
         throw new CoverageException("plan not found");
     }
 
+    public List<Service> getSummaryForPlan(Plan plan) throws IOException, CoverageException {
+        DateTime now = DateTime.now();
+        List<Service> services = dataCache.getServices(plan.id, now);
+        if (services != null){
+            return services;
+        }
+        UrlHandler.GetParameters getParameters = urlHandler.getSummaryParameters(plan.links.servicesRates.substring(1));
+        IConnectionHandler.GetResponse response = connectionHandler.get(getParameters);
+        services = urlHandler.processSummaryAndBenefits(response);
+        dataCache.store(plan.id, services, now);
+
+        return services;
+    }
+
     enum LoginResult {
         Error,
         Failure,

@@ -11,6 +11,7 @@ import org.dchbx.coveragehq.models.gitaccounts.GitAccounts;
 import org.dchbx.coveragehq.models.planshopping.Plan;
 import org.dchbx.coveragehq.models.roster.Roster;
 import org.dchbx.coveragehq.models.roster.RosterEntry;
+import org.dchbx.coveragehq.models.services.Service;
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
@@ -748,6 +749,7 @@ public class BrokerWorker extends IntentService {
             List<Plan> plans = coverageConnection.getPlans();
             BrokerWorker.eventBus.post(new Events.GetPlansResult(plans, coverageConnection.getPremiumFilter(), coverageConnection.getDeductibleFilter()));
         } catch (Exception e) {
+            Log.e(TAG, "Exception getting plans: " + e.getMessage());
         }
     }
 
@@ -764,7 +766,13 @@ public class BrokerWorker extends IntentService {
     public void doThis(Events.GetPlan getPlan) {
         try {
             Plan plan = config.getCoverageConnection().getPlan(getPlan.getPlanId());
-            BrokerWorker.eventBus.post(new Events.GetPlanResult(plan));
+
+            List<Service> services = null;
+            if (getPlan.isGetSummaryAndBenefits()){
+                services = config.getCoverageConnection().getSummaryForPlan(plan);
+            }
+
+            BrokerWorker.eventBus.post(new Events.GetPlanResult(plan, services));
         } catch (Exception e) {
             // edit these exceptions since we are doing this asyncronously to the user.
         }

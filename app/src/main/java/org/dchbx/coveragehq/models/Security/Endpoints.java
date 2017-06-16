@@ -5,6 +5,7 @@ package org.dchbx.coveragehq.models.Security;
  */
 
 public class Endpoints {
+    public String enroll_server;
     public String plan_endpoint;
     public String verify_identity_endpoint;
 }

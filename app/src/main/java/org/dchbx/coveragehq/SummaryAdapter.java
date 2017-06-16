@@ -1,5 +1,6 @@
 package org.dchbx.coveragehq;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
@@ -12,42 +13,38 @@ import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
-import org.dchbx.coveragehq.models.roster.Health;
 import org.dchbx.coveragehq.models.services.Service;
 
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * Created by plast on 4/19/2017.
- */
+/*
+    This file is part of DC.
 
-public class SummaryAdapter extends BaseAdapter {
-    private static String TAG = SummaryAdapter.class.getSimpleName();
-    private LayoutInflater inflater;
-    private SummaryOfBenefitsActivity activity;
-    private List<Service> servicesList;
-    private ArrayList<SummaryItemWrapperBase> items;
+    DC Health Link SmallBiz is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
 
-    public SummaryAdapter(SummaryOfBenefitsActivity activity, List<Service> servicesList, Health plan){
+    DC Health Link SmallBiz is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with DC Health Link SmallBiz.  If not, see <http://www.gnu.org/licenses/>.
+    This statement should go near the beginning of every source file, close to the copyright notices. When using the Lesser GPL, insert the word “Lesser” before “General” in all three places. When using the GNU AGPL, insert the word “Affero” before “General” in all three places.
+*/
+class SummaryAdapter extends BaseAdapter {
+    private static String TAG = WalletSummaryAdapter.class.getSimpleName();
+    protected LayoutInflater inflater;
+    protected Activity activity;
+    protected List<Service> servicesList;
+    protected ArrayList<AdapterItemWrapperBase> items;
+
+    SummaryAdapter(Activity activity) {
         this.activity = activity;
-        this.servicesList = servicesList;
         this.inflater = (LayoutInflater) activity.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-
-        items = new ArrayList<>();
-        items.add(new ResourcesHeaderWrapper());
-        items.add(new ResourcesItemWrapper(plan.summaryOfBenefitsUrl, this, R.drawable.pdf_document, activity.getString(R.string.terms_conditions_pdf)));
-        items.add(new ResourcesItemWrapper(plan.provider_directory_url, this, R.drawable.physicians, activity.getString(R.string.provider_directory)));
-        items.add(new ResourcesItemWrapper(plan.RxFormularyUrl, this, R.drawable.prescription_formulary, activity.getString(R.string.rx_formulary)));
-        items.add(new ContactWrapper(this, plan));
-        items.add(new SummaryHeaderWrapper());
-        for (Service service : servicesList) {
-            items.add(new SummaryItemWrapper(service, items.size(), this));
-        }
-    }
-
-    public SummaryOfBenefitsActivity getActivity(){
-        return activity;
     }
 
     @Override
@@ -66,185 +63,55 @@ public class SummaryAdapter extends BaseAdapter {
     }
 
     @Override
-    public int getViewTypeCount(){
-        return  4;
+    public int getItemViewType(int position){
+        return (int) items.get(position).getId();
     }
-
     @Override
-    public int getItemViewType(int position) {
-        return items.get(position).getType();
-    }
+    public View getView(int position, View convertView, ViewGroup parent) {
+        final AdapterItemWrapperBase item = items.get(position);
+        String  viewType = item.getViewType();
+        View view;
+        boolean createNewView = true;
 
-    View generateView(int position, ViewGroup parent){
-        SummaryItemWrapperBase item = (SummaryItemWrapperBase) getItem(position);
-        return item.generateView(inflater, parent);
-    }
-
-    public void fillValues(int position, View convertView) {
-        try {
-            ((SummaryItemWrapperBase)getItem(position)).fillValues(convertView, activity);
-        } catch (Exception e) {
-            Log.e(TAG, "Exception in fillValues", e);
-        }
-    }
-
-    @Override
-    public final View getView(int position, View convertView, ViewGroup parent) {
-        View v = convertView;
-        if(v == null){
-            v = generateView(position, parent);
-        }
-        fillValues(position, v);
-        return v;
-    }}
-
-abstract class SummaryItemWrapperBase {
-    private static long nextId = 0;
-    private final long id;
-    public abstract int getType();
-
-    protected SummaryItemWrapperBase(){
-        id = nextId ;
-        nextId = nextId + 1;
-    }
-
-
-    public long getId() {
-        return id;
-    }
-
-    //public abstract View getView(View convertView, ViewGroup parent, MainActivity mainActivity, LayoutInflater inflater);
-
-    //render a new item layout.
-    public abstract View generateView(LayoutInflater inflater, ViewGroup parent);
-
-    /*fill values to your item layout returned from `generateView`.
-      The position param here is passed from the BaseAdapter's 'getView()*/
-    public abstract void fillValues(View convertView, final SummaryOfBenefitsActivity mainActivity) throws Exception;
-}
-
-
-class ResourcesHeaderWrapper extends SummaryItemWrapperBase {
-    private static String TAG = ResourcesHeaderWrapper.class.getSimpleName();
-
-    @Override
-    public int getType() {
-        return 0;
-    }
-
-    @Override
-    public View generateView(LayoutInflater inflater, ViewGroup parent) {
-        Log.d(TAG, "in ResourcesHeaderWrapper.generateView");
-        return inflater.inflate(R.layout.summary_resources_header, parent, false);
-    }
-
-    @Override
-    public void fillValues(View convertView, SummaryOfBenefitsActivity mainActivity) throws Exception {
-        Log.d(TAG, "in ResourcesHeaderWrapper.fillValues");
-    }
-}
-
-class ContactWrapper extends SummaryItemWrapperBase {
-    private static String TAG = ContactWrapper.class.getSimpleName();
-    private final SummaryAdapter summaryAdapter;
-    private final Health plan;
-
-    public ContactWrapper(SummaryAdapter summaryAdapter, Health plan){
-        this.summaryAdapter = summaryAdapter;
-        this.plan = plan;
-    }
-
-    @Override
-    public int getType() {
-        return 1;
-    }
-
-    @Override
-    public View generateView(LayoutInflater inflater, ViewGroup parent) {
-        Log.d(TAG, "in ResourcesItemWrapper.generateView");
-        return inflater.inflate(R.layout.summary_resource_item, parent, false);
-    }
-
-    @Override
-    public void fillValues(View convertView, SummaryOfBenefitsActivity mainActivity) throws Exception {
-        Log.d(TAG, "in ResourcesItemWrapper.fillValues");
-        TextView label = (TextView) convertView.findViewById(R.id.resourceName);
-        label.setText(R.string.plan_contact_information);
-        label.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                PlanContactInfoDialog dialog = PlanContactInfoDialog.build(summaryAdapter.getActivity(), plan.carrierName);
+        if (convertView != null){
+            Object tagObject = convertView.getTag(R.id.view_type);
+            if (tagObject != null){
+                String tagString = (String) tagObject;
+                if (tagString.equals(viewType)){
+                    createNewView = false;
+                }
             }
-        });
-        ImageView resourceImage = (ImageView) convertView.findViewById(R.id.resourceImage);
-        resourceImage.setImageResource(R.drawable.phone);
+        }
+        if (createNewView) {
+            view = inflater.inflate(item.getLayout(), parent, false);
+        } else {
+            view = convertView;
+        }
+        item.populate(view);
+        return view;
+
     }
 }
 
-class ResourcesItemWrapper extends SummaryItemWrapperBase {
-    private static String TAG = ResourcesItemWrapper.class.getSimpleName();
-    private final String url;
-    private final SummaryAdapter summaryAdapter;
-    private final String expandedText;
-    private final int imageResourceId;
-
-    public ResourcesItemWrapper(String url, SummaryAdapter summaryAdapter, int imageResourceId, String expandedText){
-        this.url = url;
-        this.summaryAdapter = summaryAdapter;
-        this.expandedText = expandedText;
-        this.imageResourceId = imageResourceId;
-    }
-
-    @Override
-    public int getType() {
-        return 1;
-    }
-
-    @Override
-    public View generateView(LayoutInflater inflater, ViewGroup parent) {
-        Log.d(TAG, "in ResourcesItemWrapper.generateView");
-        return inflater.inflate(R.layout.summary_resource_item, parent, false);
-    }
-
-    @Override
-    public void fillValues(View convertView, SummaryOfBenefitsActivity mainActivity) throws Exception {
-        Log.d(TAG, "in ResourcesItemWrapper.fillValues");
-
-        ImageView resourceImage = (ImageView) convertView.findViewById(R.id.resourceImage);
-        resourceImage.setImageResource(imageResourceId);
-        TextView resourceName = (TextView) convertView.findViewById(R.id.resourceName);
-        resourceName.setText(expandedText);
-        resourceName.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Intent intent = new Intent(Intent.ACTION_VIEW);
-                intent.setData(Uri.parse(url));
-                summaryAdapter.getActivity().startActivity(intent);
-            }
-        });
-    }
-}
-
-class SummaryHeaderWrapper extends SummaryItemWrapperBase {
+class SummaryHeaderWrapper extends AdapterItemWrapperBase {
     private static String TAG = SummaryHeaderWrapper.class.getSimpleName();
     @Override
-    public int getType() {
-        return 2;
-    }
-
-    @Override
-    public View generateView(LayoutInflater inflater, ViewGroup parent) {
-        Log.d(TAG, "in SummaryHeaderWrapper.generateView");
-        return inflater.inflate(R.layout.summary_benefits_header, parent, false);
-    }
-
-    @Override
-    public void fillValues(View convertView, SummaryOfBenefitsActivity mainActivity) throws Exception {
+    public void populate(View convertView){
         Log.d(TAG, "in SummaryHeaderWrapper.fillValues");
+    }
+
+    @Override
+    public int getLayout() {
+        return R.layout.summary_benefits_header;
+    }
+
+    @Override
+    public String getViewType() {
+        return null;
     }
 }
 
-class SummaryItemWrapper extends SummaryItemWrapperBase{
+class SummaryItemWrapper extends AdapterItemWrapperBase {
     private static String TAG = SummaryItemWrapper.class.getSimpleName();
     private final Service service;
     private final int position;
@@ -259,35 +126,30 @@ class SummaryItemWrapper extends SummaryItemWrapperBase{
     }
 
     @Override
-    public int getType() {
-        return 3;
+    public int getLayout() {
+        return R.layout.summary_benefit_item;
     }
 
     @Override
-    public View generateView(LayoutInflater inflater, ViewGroup parent) {
-        Log.d(TAG, "in SummaryItemWrapper.generateView");
-        return inflater.inflate(R.layout.summary_benefit_item, parent, false);
-    }
-
-    @Override
-    public void fillValues(final View convertView, SummaryOfBenefitsActivity mainActivity) throws Exception {
+    public void populate(View convertView){
         Log.d(TAG, "in SummaryItemWrapper.fillValues");
         TextView label = (TextView) convertView.findViewById(R.id.label);
         label.setText(service.service);
+        final View convertViewFinal = convertView;
         label.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                RelativeLayout body = (RelativeLayout) convertView.findViewById(R.id.body);
-                if (bodyVisible){
-                    Log.d(TAG, "hiding body");
-                    body.setVisibility(View.GONE);
-                    bodyVisible = false;
-                } else {
-                    Log.d(TAG, "showing body");
-                    body.setVisibility(View.VISIBLE);
-                    bodyVisible = true;
-                }
-                summaryAdapter.notifyDataSetChanged();
+            RelativeLayout body = (RelativeLayout) convertViewFinal.findViewById(R.id.body);
+            if (bodyVisible){
+                Log.d(TAG, "hiding body");
+                body.setVisibility(View.GONE);
+                bodyVisible = false;
+            } else {
+                Log.d(TAG, "showing body");
+                body.setVisibility(View.VISIBLE);
+                bodyVisible = true;
+            }
+            summaryAdapter.notifyDataSetChanged();
             }
         });
 
@@ -309,5 +171,75 @@ class SummaryItemWrapper extends SummaryItemWrapperBase{
         } else {
             copay.setText("");
         }
+    }
+
+    @Override
+    public String getViewType() {
+        return null;
+    }
+}
+
+class ResourcesHeaderWrapper extends AdapterItemWrapperBase {
+    private static String TAG = ResourcesHeaderWrapper.class.getSimpleName();
+
+    @Override
+    public int getLayout() {
+        return R.layout.summary_resources_header;
+    }
+
+    @Override
+    public void populate(View view) {
+
+    }
+
+    @Override
+    public String getViewType() {
+        return null;
+    }
+}
+
+
+
+class ResourcesItemWrapper extends AdapterItemWrapperBase{
+    private static String TAG = ResourcesItemWrapper.class.getSimpleName();
+    private final String url;
+    private final String expandedText;
+    private final int imageResourceId;
+    private final Activity activity;
+
+    public ResourcesItemWrapper(String url, int imageResourceId,
+                                String expandedText, Activity activity){
+        this.url = url;
+        this.expandedText = expandedText;
+        this.imageResourceId = imageResourceId;
+        this.activity = activity;
+    }
+
+    @Override
+    public void populate(View view) {
+        Log.d(TAG, "in ResourcesItemWrapper.fillValues");
+
+        ImageView resourceImage = (ImageView) view.findViewById(R.id.resourceImage);
+        resourceImage.setImageResource(imageResourceId);
+        TextView resourceName = (TextView) view.findViewById(R.id.resourceName);
+        resourceName.setText(expandedText);
+        resourceName.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(Intent.ACTION_VIEW);
+                intent.setData(Uri.parse(url));
+                activity.startActivity(intent);
+            }
+        });
+    }
+
+    @Override
+    public int getLayout() {
+        return R.layout.summary_resource_item;
+    }
+
+    @Override
+    public String getViewType() {
+        return null;
     }
 }

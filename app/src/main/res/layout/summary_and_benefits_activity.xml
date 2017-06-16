@@ -18,6 +18,27 @@
         android:background="@color/titlebar">
     </android.support.v7.widget.Toolbar>
 
+    <ImageView
+        android:id="@+id/carrierLogo"
+        android:layout_width="match_parent"
+        android:layout_height="39dp"
+        android:layout_below="@id/toolbar"
+        />
+
+    <TextView
+        android:id="@+id/planName"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/carrierLogo"
+        android:maxLines="2"
+        android:textSize="18dp"
+        android:textColor="@color/textgray"
+        android:textStyle="bold"
+        />
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="@color/textmediumgray"/>
     <ListView
         android:id="@+id/summaryList"
         android:layout_width="match_parent"

@@ -5,6 +5,7 @@
     <color name="colorAccent">#FF4081</color>
     <color name="alertRed">#ed1c24</color>
     <color name="button_red">#e72b2d</color>
+    <color name="button_red_transparent">#99e72b2d</color>
     <color name="in_renewal">#efbf40</color>
     <color name="physician_icon">#efbf40</color>
     <color name="green">#69a30d</color>
@@ -46,6 +47,8 @@
     <color name="coverage_year">#E0FFFF</color>
     <color name="linkcolor">@color/mainblue</color>
     <color name="monthly_green">#69a30d</color>
+    <color name="keep_green">#69a30d</color>
+    <color name="keep_green_transparent">#9969a30d</color>
     <color name="aptc_purple">#92278f</color>
     <color name="annual_blue">#007bc4</color>
     <color name="yearly_deductble_blue">#044972</color>

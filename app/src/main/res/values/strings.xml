@@ -234,7 +234,7 @@
     <string name="monthly_premium_maximum">Monthly Premium (Maximum)</string>
     <string name="plan_deductible_maximum">Plan Deductible (Maximum)</string>
     <string name="resources_links_header_text"><![CDATA[Resources & Links]]></string>
-    <string name="summary_of_benefits_coverage_header_text"><![CDATA[Summary of benefits & Coverage]]></string>
+    <string name="summary_of_benefits_coverage_header_text"><![CDATA[Summary of Benefits & Coverage]]></string>
     <string name="co_pay_label">Co-Pay</string>
     <string name="co_insurance_label">Co-Insurance</string>
     <string name="terms_and_conditions">Terms and Conditions</string>
@@ -332,4 +332,22 @@
     <string name="nationwide">Nationwide</string>
     <string name="enroll_in_this_plan">Enroll In This Plan</string>
     <string name="title_activity_app_config">AppConfigActivity</string>
+    <string name="keep_swiping">KEEP SWIPING</string>
+    <string name="see_them_again_to_choose_the_right_one_for_you">See them again to choose the right one for you.</string>
+    <string name="you_favorited_d_plans">
+<![CDATA[
+You <font color="#69a30d">favorited %d plans</font>.
+]]>
+    </string>
+    <string name="tap_reset">
+<![CDATA[
+    Or tap <font color="#eaaa00">RESET</font> below to start over.</string>
+]]>
+    </string>
+    <string name="plans_and_favorites_counts" formatted="false">
+<![CDATA[
+%d Plans / <font color="#007bc4">%d Favorites</font>
+]]>
+    </string>
+    <string name="phyisician_directory">Phyisician Directory</string>
 </resources>

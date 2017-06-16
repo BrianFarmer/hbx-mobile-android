@@ -11,9 +11,11 @@ import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.Toolbar;
 import android.telephony.TelephonyManager;
+import android.text.Html;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.TextView;
 
 import com.daprlabs.aaron.swipedeck.SwipeDeck;
 import com.daprlabs.aaron.swipedeck.SwipeDeck.SwipeDeckCallback;
@@ -22,6 +24,7 @@ import org.dchbx.coveragehq.models.planshopping.Plan;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 
+import java.util.ArrayList;
 import java.util.List;
 
 
@@ -35,11 +38,18 @@ public class PlanSelector extends BaseActivity {
     private List<Plan> planList;
     private double currentPremium;
     private double currentDeductible;
-    private List<Plan> filteredPlans;
+    private ArrayList<Plan> filteredPlans;
     private SwipeDeck deckView;
     private DrawerLayout drawerLayout;
     private Toolbar toolbar;
     private NavigationView navigationView;
+    TextView plansAndFavorites;
+    TextView discard;
+    TextView reset;
+    TextView keep;
+
+    PlanCardAdapter planCardAdapter;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -47,8 +57,62 @@ public class PlanSelector extends BaseActivity {
 
         setContentView(R.layout.plan_selector);
         deckView = (SwipeDeck) findViewById(R.id.swipeDeck);
+        plansAndFavorites = (TextView) findViewById(R.id.plansAndFavorites);
+        discard = (TextView) findViewById(R.id.discard);
+        reset = (TextView) findViewById(R.id.reset);
+        keep = (TextView) findViewById(R.id.keep);
+
+        discard.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                discardClicked();
+            }
+        });
+
+        reset.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                resetClicked();
+                populatePlansAndFavorites();
+            }
+        });
+
+        keep.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                keepClicked();
+            }
+        });
+
         getMessages().getPlans();
         initToolbar();
+    }
+
+    private void discardClicked() {
+        if (planCardAdapter == null
+            || planCardAdapter.getCount() == 0){
+            return;
+        }
+
+        deckView.swipeTopCardLeft(1200);
+    }
+
+    private void resetClicked() {
+        if (planCardAdapter == null
+                || planCardAdapter.getCount() == 0){
+            return;
+        }
+
+        populate();
+    }
+
+    private void keepClicked() {
+        if (planCardAdapter == null
+                || planCardAdapter.getCount() == 0){
+            return;
+        }
+
+        deckView.swipeTopCardRight(1200);
     }
 
 
@@ -144,6 +208,7 @@ public class PlanSelector extends BaseActivity {
         planList = getPlansResult.getPlanList();
         currentPremium = getPlansResult.getPremiumFilter();
         currentDeductible = getPlansResult.getDeductibleFilter();
+        filteredPlans = PlanUtilities.getPlansInRange(planList, currentPremium, currentDeductible);
 
         populate();
     }
@@ -152,19 +217,30 @@ public class PlanSelector extends BaseActivity {
         deckView.setCallback(new SwipeDeckCallback() {
             @Override
             public void cardSwipedLeft(long positionInAdapter) {
-                Log.i("MainActivity", "card was swiped left, position in adapter: " + positionInAdapter);
+                planCardAdapter.cardSwipedLeft(positionInAdapter);
+                populatePlansAndFavorites();
             }
 
             @Override
-            public void cardSwipedRight(long positoinInAdapter) {
-                Log.i("MainActivity", "card was swiped right, position in adapter: " + positoinInAdapter);
+            public void cardSwipedRight(long positionInAdapter) {
+                planCardAdapter.cardSwipedRight(positionInAdapter);
+                populatePlansAndFavorites();
+            }
 
+            @Override
+            public boolean isDragEnabled(long itemId){
+                return !planCardAdapter.isLastCard(itemId);
             }
         });
 
-
-        PlanCardAdapter planCardAdapter = new PlanCardAdapter(planList, this);
+        planCardAdapter = new PlanCardAdapter(filteredPlans, this);
         deckView.setAdapter(planCardAdapter);
+        deckView.setLeftImage(R.id.discardOverlay);
+        deckView.setRightImage(R.id.keepdOverlay);
+        populatePlansAndFavorites();
+    }
 
+    private void populatePlansAndFavorites() {
+        plansAndFavorites.setText(Html.fromHtml(String.format(getString(R.string.plans_and_favorites_counts), planCardAdapter.getPlanCount(), planCardAdapter.getFavoriteCount())));
     }
 }

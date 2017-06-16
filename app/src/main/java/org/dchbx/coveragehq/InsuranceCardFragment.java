@@ -114,6 +114,7 @@ public class InsuranceCardFragment extends BrokerFragment {
             rearRemove.setVisibility(View.GONE);
             rearReplace.setVisibility(View.GONE);
         } else {
+            noImageArea.setVisibility(View.GONE);
             if (userEmployee.insuranceCardFrontFileName == null) {
                 relativeLayoutFrontCapture.setVisibility(View.VISIBLE);
                 frontCapture.setOnClickListener(new View.OnClickListener() {

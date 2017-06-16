@@ -37,7 +37,7 @@
             android:layout_below="@+id/carrierLogo"
             android:layout_marginTop="15dp"
             android:text="TextView"
-            android:textSize="18sp"
+            android:textSize="16sp"
             />
 
         <TextView
@@ -48,7 +48,7 @@
             android:layout_alignStart="@+id/planName"
             android:layout_below="@+id/planName"
             android:text="TextView"
-            android:textSize="18sp"
+            android:textSize="16sp"
             />
 
         <TextView
@@ -59,7 +59,7 @@
             android:layout_marginTop="19dp"
             android:fontFamily="roboto"
             android:text="Plan Type:"
-            android:textSize="18sp"
+            android:textSize="16sp"
             />
 
         <TextView
@@ -71,7 +71,7 @@
             android:layout_below="@+id/planTypeLabel"
             android:layout_marginTop="20dp"
             android:text="Plan Location:"
-            android:textSize="18sp"
+            android:textSize="16sp"
             />
 
         <TextView
@@ -82,7 +82,7 @@
             android:layout_alignStart="@+id/planLocationLabel"
             android:layout_centerVertical="true"
             android:text="Medal Level:"
-            android:textSize="18sp"
+            android:textSize="16sp"
             />
 
         <Button
@@ -113,7 +113,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="TextView"
-            android:textSize="18sp"
+            android:textSize="16sp"
             android:layout_alignBaseline="@+id/planTypeLabel"
             android:layout_alignBottom="@+id/planTypeLabel"
             android:layout_toRightOf="@+id/planLocationLabel"
@@ -130,7 +130,7 @@
             android:layout_toEndOf="@+id/button"
             android:layout_toRightOf="@+id/button"
             android:text="TextView"
-            android:textSize="18sp"
+            android:textSize="16sp"
             />
 
         <TextView
@@ -141,7 +141,7 @@
             android:layout_toEndOf="@+id/planLocationLabel"
             android:layout_toRightOf="@+id/planLocationLabel"
             android:text="TextView"
-            android:textSize="18sp"
+            android:textSize="16sp"
             />
 
     </RelativeLayout>

@@ -32,14 +32,14 @@ import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
-import android.widget.ImageView;
-import android.widget.TextView;
-
-import com.bumptech.glide.Glide;
+import android.widget.ListView;
 
 import org.dchbx.coveragehq.models.planshopping.Plan;
+import org.dchbx.coveragehq.models.services.Service;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
+
+import java.util.List;
 
 public class PlanDetailsActivity extends BaseActivity {
     private static String TAG = "PlanDetailsActivity";
@@ -48,6 +48,9 @@ public class PlanDetailsActivity extends BaseActivity {
     private Toolbar toolbar;
     private NavigationView navigationView;
     private Plan plan;
+    private PlanDetailsAdapter planCardAdapter;
+    private ListView detailsList;
+    private List<Service> services;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -56,8 +59,8 @@ public class PlanDetailsActivity extends BaseActivity {
         Intent intent = getIntent();
         setContentView(R.layout.plan_details);
         String planId = intent.getExtras().getCharSequence(Intents.PLAN_ID).toString();
-        getMessages().getPlan(planId);
-        initToolbar();
+        getMessages().getPlan(planId, true);
+        //initToolbar();
     }
 
     private void initToolbar(){
@@ -150,6 +153,7 @@ public class PlanDetailsActivity extends BaseActivity {
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void doThis(Events.GetPlanResult getPlanResult) throws Exception {
         plan = getPlanResult.getPlan();
+        services = getPlanResult.getServices();
 
         populate();
     }
@@ -159,43 +163,10 @@ public class PlanDetailsActivity extends BaseActivity {
             Log.d(TAG, "plan item is NULL!");
             return;
         }
-        TextView planName = (TextView) findViewById(R.id.planName);
-        planName.setText(plan.name);
-        ImageView carrierLogo = (ImageView) findViewById(R.id.carrierLogo);
-        Glide
-                .with(this)
-                .load(plan.links.carrierLogo)
-                .into(carrierLogo);
 
-        TextView planType = (TextView) findViewById(R.id.planType);
-        if (plan.planType != null){
-            planType.setText(plan.planType);
-        } else {
-            planType.setText("");
-        }
-        TextView planLocation = (TextView) findViewById(R.id.planLocation);
-        if (plan.nationwide != null
-                && plan.nationwide) {
-            planLocation.setText(R.string.nationwide);
-        } else {
-            planLocation.setText("nationwide false");
-        }
-
-        TextView metalLevel = (TextView) findViewById(R.id.metalType);
-        if (plan.metalLevel != null){
-            metalLevel.setText(PlanUtilities.getPlanMetalLevel(plan));
-            ImageView planMetalRing = (ImageView) findViewById(R.id.planMetalRing);
-            planMetalRing.setImageResource(PlanUtilities.getPlanMetalResource(plan));
-        } else {
-            metalLevel.setText("");
-        }
-
-        TextView monthlyPremium = (TextView) findViewById(R.id.monthlyPremium);
-        monthlyPremium.setText(PlanUtilities.getFormattedMonthlyPremium(plan));
-        TextView annualPremium = (TextView) findViewById(R.id.annualPremium);
-        annualPremium.setText(PlanUtilities.getFormattedYearPremium(plan));
-        TextView deductible = (TextView) findViewById(R.id.deductible);
-        deductible.setText(PlanUtilities.getFormattedDeductible(plan));
+        planCardAdapter = new PlanDetailsAdapter(this, plan, services);
+        detailsList = (ListView) findViewById(R.id.detailsList);
+        detailsList.setAdapter(planCardAdapter);
 
         Button enroll = (Button) findViewById(R.id.enroll);
         enroll.setOnClickListener(new View.OnClickListener() {
@@ -203,6 +174,5 @@ public class PlanDetailsActivity extends BaseActivity {
             public void onClick(View view) {
             }
         });
-
     }
 }
