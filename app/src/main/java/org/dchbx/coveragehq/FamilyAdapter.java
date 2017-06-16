@@ -108,5 +108,6 @@ public class FamilyAdapter extends BaseAdapter {
     private void removeFamilyMember(int i ){
         ages.remove(i);
         notifyDataSetChanged();
+        activity.saveData();
     }
 }
