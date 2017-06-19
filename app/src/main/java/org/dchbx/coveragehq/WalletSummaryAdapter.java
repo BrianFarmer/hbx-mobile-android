@@ -5,6 +5,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import org.dchbx.coveragehq.models.roster.Health;
 import org.dchbx.coveragehq.models.services.Service;
@@ -70,7 +71,14 @@ class ContactWrapper extends AdapterItemWrapperBase {
             }
         });
         ImageView resourceImage = (ImageView) activity.findViewById(R.id.resourceImage);
-        resourceImage.setImageResource(R.drawable.phone);
+        if (resourceImage == null){
+            Log.d(TAG, "view for phone icon is null");
+            Toast toast = Toast.makeText(activity, "missing imageview???", Toast.LENGTH_LONG);
+            toast.show();
+
+        } else {
+            resourceImage.setImageResource(R.drawable.phone);
+        }
     }
 
     @Override
