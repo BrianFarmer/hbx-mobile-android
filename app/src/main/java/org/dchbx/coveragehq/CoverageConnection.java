@@ -499,15 +499,22 @@ public abstract class CoverageConnection {
     }
 
     public InsuredAndServices getInsuredAndServices(LocalDate enrollmentDate) throws Exception {
+        Log.d(TAG, "in CoverageConnection.getInsuredAndServices(" + enrollmentDate.toString() + ")");
         RosterEntry insured = getEmployee(null);
 
         Enrollment enrollment = BrokerUtilities.getEnrollment(insured, enrollmentDate);
+        if (enrollment == null){
+            Log.d(TAG, "no enrollment found returning null");
+            return null;
+        }
         List<Service> services = dataCache.getServices(enrollment.health.servicesRatesUrl, DateTime.now());
         if (services == null){
+            Log.d(TAG, "no cached services found retrieving");
             UrlHandler.GetParameters servicesParameters = urlHandler.getServicesParameters(enrollment.health.servicesRatesUrl);
             IConnectionHandler.GetResponse getReponse = connectionHandler.get(servicesParameters);
             services = urlHandler.processServices(getReponse);
         }
+        Log.d(TAG, "number of services: " + services.size());
         return new InsuredAndServices(insured, services);
     }
 

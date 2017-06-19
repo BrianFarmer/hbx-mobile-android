@@ -1,5 +1,7 @@
 package org.dchbx.coveragehq;
 
+import android.util.Log;
+
 import org.dchbx.coveragehq.models.brokeragency.BrokerAgency;
 import org.dchbx.coveragehq.models.employer.Employer;
 import org.dchbx.coveragehq.models.roster.Roster;
@@ -15,6 +17,7 @@ import java.util.List;
  */
 
 public class DataCache implements IDataCache {
+    private static String TAG = "DataCache";
     private static String Default_Id = "default";
     private BrokerAgency brokerAgency;
     private DateTime brokerAgencyTime;
@@ -105,9 +108,11 @@ public class DataCache implements IDataCache {
         if (servicesCache.containsKey(Default_Id)){
             CachedData<List<Service>> cachedData = servicesCache.get(Default_Id);
             if (time.compareTo(cachedData.time.plus(BrokerWorkerConfig.config().enrollConfig().getCacheTimeout())) <= 0){
+                Log.d(TAG, "Found cached service: " + id + " size: " + cachedData.storedData.size());
                 return cachedData.storedData;
             }
         }
+        Log.d(TAG, "No cached service found: " + id);
         return null;
     }
 

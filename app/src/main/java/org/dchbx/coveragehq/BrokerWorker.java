@@ -706,9 +706,12 @@ public class BrokerWorker extends IntentService {
             }
 
             CoverageConnection.InsuredAndServices insuredAndServices = config.getCoverageConnection().getInsuredAndServices(getInsuredAndServices.getEnrollmentDate());
-
-            BrokerWorker.eventBus.post(new Events.GetInsuredAndServicesResult(insuredAndServices.getInsured(), insuredAndServices.getServices()));
-            updateSessionTimer();
+            if (insuredAndServices == null){
+                BrokerWorker.eventBus.post(new Events.GetInsuredAndServicesResult(null, null));
+            } else {
+                BrokerWorker.eventBus.post(new Events.GetInsuredAndServicesResult(insuredAndServices.getInsured(), insuredAndServices.getServices()));
+                updateSessionTimer();
+            }
         } catch (Exception e) {
             Log.e(TAG, "Exception processing GetEmployee");
             BrokerWorker.eventBus.post(new Events.Error("Error getting employee", "Events.GetEmployee"));

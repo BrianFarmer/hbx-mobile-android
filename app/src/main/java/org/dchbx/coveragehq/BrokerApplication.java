@@ -24,6 +24,9 @@ public class BrokerApplication extends Application {
     }
 
     public static BrokerApplication getBrokerApplication() {
+        if (brokerApplication == null){
+            Log.e(TAG, "BrokerApplication is not initialized yet.");
+        }
         return brokerApplication;
     }
 

@@ -9,6 +9,7 @@ import android.view.View;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import org.dchbx.coveragehq.models.roster.Enrollment;
 import org.dchbx.coveragehq.models.roster.Health;
@@ -80,11 +81,34 @@ public class SummaryOfBenefitsActivity extends BrokerActivity {
         Log.d(TAG, "In SummaryOfBenefitsActivity.populate()");
         if (insured.enrollments == null
             || insured.enrollments.size() == 0) {
+            if (insured.enrollments == null){
+                Log.d(TAG, "enrollments is null");
+            } else {
+                Log.d(TAG, "enrollments is empty");
+            }
+            Toast toast = Toast.makeText(this, insured.enrollments == null ? "Enrollments were null, is this a problem?" : "No enrollments were returned, is this a problem?", Toast.LENGTH_LONG);
+            toast.show();;
             return;
         }
 
+
         currentEnrollment = BrokerUtilities.getEnrollment(insured, currentDate);
+        if (currentEnrollment == null){
+            Log.d(TAG, "no enrollment found for currentDate");
+        }
         Health plan = showHealth ? currentEnrollment.health : currentEnrollment.dental;
+        if (plan == null){
+            Log.d(TAG, "plan is null");
+        }
+
+        if (servicesList == null){
+            Log.d(TAG, "services is null");
+        } else {
+            if (servicesList.size() == 0){
+                Log.d(TAG, "serviceslist is empty");
+            }
+        }
+
         this.summaryAdapter = new WalletSummaryAdapter(this, servicesList, plan);
         summaryList.setAdapter(summaryAdapter);
 

@@ -350,4 +350,13 @@ You <font color="#69a30d">favorited %d plans</font>.
 ]]>
     </string>
     <string name="phyisician_directory">Phyisician Directory</string>
+    <string name="lets_create">First, let’s create your account ...</string>
+    <string name="date_of_birth">date of birth?</string>
+    <string name="what_is_your">What is your</string>
+    <string name="number">number?</string>
+    <string name="social_security">social security</string>
+    <string name="associated_with_an">associated with an</string>
+    <string name="hbx_account">HBX account.</string>
+    <string name="review_your_answers">REVIEW YOUR ANSWERS</string>
+    <string name="come_back_later">COME BACK LATER</string>
 </resources>

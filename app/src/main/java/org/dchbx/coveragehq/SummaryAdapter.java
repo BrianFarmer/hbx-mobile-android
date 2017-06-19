@@ -36,7 +36,7 @@ import java.util.List;
     This statement should go near the beginning of every source file, close to the copyright notices. When using the Lesser GPL, insert the word “Lesser” before “General” in all three places. When using the GNU AGPL, insert the word “Affero” before “General” in all three places.
 */
 class SummaryAdapter extends BaseAdapter {
-    private static String TAG = WalletSummaryAdapter.class.getSimpleName();
+    private static String TAG = SummaryAdapter.class.getSimpleName();
     protected LayoutInflater inflater;
     protected Activity activity;
     protected List<Service> servicesList;

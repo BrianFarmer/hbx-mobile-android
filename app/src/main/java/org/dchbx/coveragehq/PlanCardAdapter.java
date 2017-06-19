@@ -177,7 +177,11 @@ public class PlanCardAdapter extends BaseAdapter {
             keepSwiping.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    planCardAdapter.showFavorites();
+                    ArrayList<Plan> selectedPlans = new ArrayList<Plan>();
+                    for (AdapterItemWrapperBase favorite : planCardAdapter.favorites) {
+                        selectedPlans.add(((CardWrapper)favorite).plan);
+                    }
+                    planCardAdapter.activity.showFavorites(selectedPlans);
                 }
             });
         }

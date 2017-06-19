@@ -47,6 +47,7 @@
     <color name="coverage_year">#E0FFFF</color>
     <color name="linkcolor">@color/mainblue</color>
     <color name="monthly_green">#69a30d</color>
+    <color name="continue_green">#69a30d</color>
     <color name="keep_green">#69a30d</color>
     <color name="keep_green_transparent">#9969a30d</color>
     <color name="aptc_purple">#92278f</color>

@@ -17,9 +17,16 @@ import java.util.List;
  */
 
 public class WalletSummaryAdapter extends SummaryAdapter {
+    private static String TAG = WalletSummaryAdapter.class.getSimpleName();
 
     public WalletSummaryAdapter(SummaryOfBenefitsActivity activity, List<Service> servicesList, Health plan){
         super(activity);
+
+        if (servicesList == null
+            || servicesList.size() == 0){
+            Log.d(TAG, "no services list");
+            return;
+        }
 
         items = new ArrayList<>();
         items.add(new ResourcesHeaderWrapper());

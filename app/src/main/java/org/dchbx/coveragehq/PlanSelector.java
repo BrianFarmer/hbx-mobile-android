@@ -17,6 +17,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.TextView;
 
+import com.daimajia.swipe.SwipeLayout;
 import com.daprlabs.aaron.swipedeck.SwipeDeck;
 import com.daprlabs.aaron.swipedeck.SwipeDeck.SwipeDeckCallback;
 
@@ -38,7 +39,9 @@ public class PlanSelector extends BaseActivity {
     private List<Plan> planList;
     private double currentPremium;
     private double currentDeductible;
+    private ArrayList<Plan> currentFilteredPlans;
     private ArrayList<Plan> filteredPlans;
+    private SwipeLayout deckLayout;
     private SwipeDeck deckView;
     private DrawerLayout drawerLayout;
     private Toolbar toolbar;
@@ -56,6 +59,7 @@ public class PlanSelector extends BaseActivity {
         super.onCreate(savedInstanceState);
 
         setContentView(R.layout.plan_selector);
+        deckLayout = (SwipeLayout)findViewById(R.id.swipeLayout);
         deckView = (SwipeDeck) findViewById(R.id.swipeDeck);
         plansAndFavorites = (TextView) findViewById(R.id.plansAndFavorites);
         discard = (TextView) findViewById(R.id.discard);
@@ -208,8 +212,8 @@ public class PlanSelector extends BaseActivity {
         planList = getPlansResult.getPlanList();
         currentPremium = getPlansResult.getPremiumFilter();
         currentDeductible = getPlansResult.getDeductibleFilter();
-        filteredPlans = PlanUtilities.getPlansInRange(planList, currentPremium, currentDeductible);
-
+        currentFilteredPlans = PlanUtilities.getPlansInRange(planList, currentPremium, currentDeductible);
+        filteredPlans = currentFilteredPlans;
         populate();
     }
 
@@ -233,14 +237,20 @@ public class PlanSelector extends BaseActivity {
             }
         });
 
-        planCardAdapter = new PlanCardAdapter(filteredPlans, this);
+        planCardAdapter = new PlanCardAdapter(currentFilteredPlans, this);
         deckView.setAdapter(planCardAdapter);
         deckView.setLeftImage(R.id.discardOverlay);
         deckView.setRightImage(R.id.keepdOverlay);
+        deckView.setAdapterIndex(0);
         populatePlansAndFavorites();
     }
 
     private void populatePlansAndFavorites() {
         plansAndFavorites.setText(Html.fromHtml(String.format(getString(R.string.plans_and_favorites_counts), planCardAdapter.getPlanCount(), planCardAdapter.getFavoriteCount())));
+    }
+
+    public void showFavorites(ArrayList<Plan> filteredPlans) {
+        currentFilteredPlans = filteredPlans;
+        populate();
     }
 }

@@ -619,6 +619,7 @@ public class BrokerUtilities {
                 return enrollment;
             }
         }
+        Log.e(TAG, "unable to find enrollment for date");
         return null;
     }
 
