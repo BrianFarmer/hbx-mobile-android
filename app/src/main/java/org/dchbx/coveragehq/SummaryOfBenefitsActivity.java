@@ -79,6 +79,9 @@ public class SummaryOfBenefitsActivity extends BrokerActivity {
 
     private void populate(){
         Log.d(TAG, "In SummaryOfBenefitsActivity.populate()");
+        if (insured == null){
+            Log.d(TAG, "insured is null!!!");
+        }
         if (insured.enrollments == null
             || insured.enrollments.size() == 0) {
             if (insured.enrollments == null){

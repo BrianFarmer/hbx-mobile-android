@@ -105,7 +105,7 @@
             android:layout_width="25dp"
             android:layout_height="wrap_content"
             android:id="@+id/imageButton"
-            android:src="@drawable/right_arrow"
+            android:src="@drawable/right_arrow_vector"
             android:background="@null"
             android:layout_alignTop="@+id/textViewCompanyName"
             android:layout_alignBottom="@+id/textViewCompanyName"

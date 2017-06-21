@@ -344,6 +344,11 @@ You <font color="#69a30d">favorited %d plans</font>.
     Or tap <font color="#eaaa00">RESET</font> below to start over.</string>
 ]]>
     </string>
+    <string name="tap_reset_from_zero">
+<![CDATA[
+    Tap <font color="#eaaa00">RESET</font> below to start over.</string>
+]]>
+    </string>
     <string name="plans_and_favorites_counts" formatted="false">
 <![CDATA[
 %d Plans / <font color="#007bc4">%d Favorites</font>
@@ -359,4 +364,5 @@ You <font color="#69a30d">favorited %d plans</font>.
     <string name="hbx_account">HBX account.</string>
     <string name="review_your_answers">REVIEW YOUR ANSWERS</string>
     <string name="come_back_later">COME BACK LATER</string>
+    <string name="stand_by_while_we_create_your_account">Stand by while we create your account.</string>
 </resources>

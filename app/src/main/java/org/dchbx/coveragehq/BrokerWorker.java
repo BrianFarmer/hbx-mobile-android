@@ -707,6 +707,7 @@ public class BrokerWorker extends IntentService {
 
             CoverageConnection.InsuredAndServices insuredAndServices = config.getCoverageConnection().getInsuredAndServices(getInsuredAndServices.getEnrollmentDate());
             if (insuredAndServices == null){
+                Log.d(TAG, "getInsuredAndServices returned null!");
                 BrokerWorker.eventBus.post(new Events.GetInsuredAndServicesResult(null, null));
             } else {
                 BrokerWorker.eventBus.post(new Events.GetInsuredAndServicesResult(insuredAndServices.getInsured(), insuredAndServices.getServices()));

@@ -67,6 +67,8 @@
     <color name="ivl_btn_border">@color/white</color>
     <color name="blue_button_up">@color/mainblue</color>
     <color name="blue_button_down">#044972</color>
+    <color name="red_button_up">@color/button_red</color>
+    <color name="red_button_down">#bc2325</color>
     <color name="white_button_up">@color/white</color>
     <color name="white_button_down">@color/white</color>
     <color name="login_button">@color/white</color>

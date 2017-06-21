@@ -58,6 +58,20 @@
             android:gravity="center"
             />
         <TextView
+            android:id="@+id/zeroFavoriteed"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="You've seen all the plans. You didn't favorite any plans."
+            android:textSize="20dp"
+            android:paddingLeft="50dp"
+            android:paddingRight="50dp"
+            android:gravity="center"
+            app:layout_constraintTop_toBottomOf="@+id/doingGreat"
+            android:layout_marginTop="32dp"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            />
+        <TextView
             android:id="@+id/youFavorited"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -66,8 +80,7 @@
             android:paddingLeft="50dp"
             android:paddingRight="50dp"
             android:gravity="center"
-            app:layout_constraintTop_toBottomOf="@+id/doingGreat"
-            android:layout_marginTop="32dp"
+            app:layout_constraintTop_toBottomOf="@+id/zeroFavoriteed"
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintRight_toRightOf="parent"
             />
@@ -102,6 +115,22 @@
             />
 
         <TextView
+            android:id="@+id/tapResetFromZero"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/tap_reset_from_zero"
+            android:textSize="20dp"
+            android:paddingLeft="50dp"
+            android:paddingRight="50dp"
+            android:gravity="center"
+            app:layout_constraintTop_toBottomOf="@+id/keepSwiping"
+            android:layout_marginTop="31dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            android:layout_marginBottom="39dp"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            />
+        <TextView
             android:id="@+id/tapReset"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -131,7 +160,7 @@
             android:id="@+id/right_image"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:src="@drawable/right_arrow"
+            android:src="@drawable/right_arrow_vector"
             android:layout_centerHorizontal="true"
         />
     </LinearLayout>

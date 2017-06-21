@@ -15,11 +15,12 @@ import android.text.Html;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.FrameLayout;
 import android.widget.TextView;
 
-import com.daimajia.swipe.SwipeLayout;
 import com.daprlabs.aaron.swipedeck.SwipeDeck;
 import com.daprlabs.aaron.swipedeck.SwipeDeck.SwipeDeckCallback;
+import com.daprlabs.aaron.swipedeck.layouts.SwipeFrameLayout;
 
 import org.dchbx.coveragehq.models.planshopping.Plan;
 import org.greenrobot.eventbus.Subscribe;
@@ -41,7 +42,8 @@ public class PlanSelector extends BaseActivity {
     private double currentDeductible;
     private ArrayList<Plan> currentFilteredPlans;
     private ArrayList<Plan> filteredPlans;
-    private SwipeLayout deckLayout;
+    private ArrayList<Plan> favoriteedPlans;
+    private SwipeFrameLayout deckLayout;
     private SwipeDeck deckView;
     private DrawerLayout drawerLayout;
     private Toolbar toolbar;
@@ -52,6 +54,7 @@ public class PlanSelector extends BaseActivity {
     TextView keep;
 
     PlanCardAdapter planCardAdapter;
+    private FrameLayout placeHolder;
 
 
     @Override
@@ -59,12 +62,16 @@ public class PlanSelector extends BaseActivity {
         super.onCreate(savedInstanceState);
 
         setContentView(R.layout.plan_selector);
-        deckLayout = (SwipeLayout)findViewById(R.id.swipeLayout);
+
+        inflateSwipeDeck();
+
+        deckLayout = (SwipeFrameLayout)findViewById(R.id.swipeLayout);
         deckView = (SwipeDeck) findViewById(R.id.swipeDeck);
         plansAndFavorites = (TextView) findViewById(R.id.plansAndFavorites);
         discard = (TextView) findViewById(R.id.discard);
         reset = (TextView) findViewById(R.id.reset);
         keep = (TextView) findViewById(R.id.keep);
+        favoriteedPlans = new ArrayList<>();
 
         discard.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -92,6 +99,12 @@ public class PlanSelector extends BaseActivity {
         initToolbar();
     }
 
+    private void inflateSwipeDeck() {
+        placeHolder = (FrameLayout) findViewById(R.id.swipeDeckFrameLayout);
+        View child = (FrameLayout)getLayoutInflater().inflate(R.layout.plan_selector_swipedeck, null);
+        placeHolder.addView(child);
+    }
+
     private void discardClicked() {
         if (planCardAdapter == null
             || planCardAdapter.getCount() == 0){
@@ -106,8 +119,11 @@ public class PlanSelector extends BaseActivity {
                 || planCardAdapter.getCount() == 0){
             return;
         }
-
-        populate();
+        placeHolder.removeAllViews();
+        inflateSwipeDeck();
+        deckView = (SwipeDeck) findViewById(R.id.swipeDeck);
+        populateSwipeDeck(currentFilteredPlans);
+        favoriteedPlans = new ArrayList<>();
     }
 
     private void keepClicked() {
@@ -221,12 +237,14 @@ public class PlanSelector extends BaseActivity {
         deckView.setCallback(new SwipeDeckCallback() {
             @Override
             public void cardSwipedLeft(long positionInAdapter) {
+
                 planCardAdapter.cardSwipedLeft(positionInAdapter);
                 populatePlansAndFavorites();
             }
 
             @Override
             public void cardSwipedRight(long positionInAdapter) {
+                favoriteedPlans.add(((PlanCardAdapter.CardWrapper)(planCardAdapter.getItem((int)positionInAdapter))).getPlan());
                 planCardAdapter.cardSwipedRight(positionInAdapter);
                 populatePlansAndFavorites();
             }
@@ -237,12 +255,36 @@ public class PlanSelector extends BaseActivity {
             }
         });
 
-        planCardAdapter = new PlanCardAdapter(currentFilteredPlans, this);
+        populateSwipeDeck(currentFilteredPlans);
+        populatePlansAndFavorites();
+    }
+
+    private void populateSwipeDeck(ArrayList<Plan> plans) {
+        planCardAdapter = new PlanCardAdapter(plans, this);
         deckView.setAdapter(planCardAdapter);
         deckView.setLeftImage(R.id.discardOverlay);
         deckView.setRightImage(R.id.keepdOverlay);
         deckView.setAdapterIndex(0);
-        populatePlansAndFavorites();
+        deckView.setCallback(new SwipeDeckCallback() {
+            @Override
+            public void cardSwipedLeft(long positionInAdapter) {
+
+                planCardAdapter.cardSwipedLeft(positionInAdapter);
+                populatePlansAndFavorites();
+            }
+
+            @Override
+            public void cardSwipedRight(long positionInAdapter) {
+                favoriteedPlans.add(((PlanCardAdapter.CardWrapper)(planCardAdapter.getItem((int)positionInAdapter))).getPlan());
+                planCardAdapter.cardSwipedRight(positionInAdapter);
+                populatePlansAndFavorites();
+            }
+
+            @Override
+            public boolean isDragEnabled(long itemId){
+                return !planCardAdapter.isLastCard(itemId);
+            }
+        });
     }
 
     private void populatePlansAndFavorites() {
@@ -250,7 +292,14 @@ public class PlanSelector extends BaseActivity {
     }
 
     public void showFavorites(ArrayList<Plan> filteredPlans) {
-        currentFilteredPlans = filteredPlans;
-        populate();
+        placeHolder.removeAllViews();
+        inflateSwipeDeck();
+        deckView = (SwipeDeck) findViewById(R.id.swipeDeck);
+        populateSwipeDeck(favoriteedPlans);
+        favoriteedPlans = new ArrayList<>();
+    }
+
+    public ArrayList<Plan> getFavoriteedPlans(){
+        return favoriteedPlans;
     }
 }

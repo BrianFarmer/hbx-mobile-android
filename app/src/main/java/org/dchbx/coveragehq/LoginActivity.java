@@ -89,6 +89,9 @@ public class LoginActivity extends BrokerActivity {
 
         View configButton = findViewById(R.id.configButton);
         if (BuildVariant.showLoginConfig()){
+            if (configButton == null){
+                Toast.makeText(this, "Failed to find config button", Toast.LENGTH_LONG).show();
+            }
             configButton.setVisibility(View.VISIBLE);
             configButton.setOnClickListener(new OnClickListener() {
                 @Override
@@ -97,7 +100,9 @@ public class LoginActivity extends BrokerActivity {
                 }
             });
         } else {
-            configButton.setVisibility(View.GONE);
+            if (configButton != null) {
+                configButton.setVisibility(View.GONE);
+            }
         }
         TextView textViewVersion = (TextView) findViewById(R.id.textViewVersion);
         String version = BrokerWorkerConfig.config().enrollConfig().getVersion();
@@ -447,6 +452,7 @@ public class LoginActivity extends BrokerActivity {
                 break;
             case Error:
                 pastFingerprint = false;
+                Log.e(TAG, "loginactivity received ReloginResult w/error");
                 alertDialog("An error happend, please login again.", R.string.ok);
                 break;
             case Failed:

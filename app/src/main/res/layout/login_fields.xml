@@ -155,7 +155,6 @@
         android:layout_alignParentLeft="true"
         android:layout_alignParentBottom="true"
         android:background="@color/transparent"
-        android:src="@drawable/gear"
         app:srcCompat="@drawable/gear"
         />
 

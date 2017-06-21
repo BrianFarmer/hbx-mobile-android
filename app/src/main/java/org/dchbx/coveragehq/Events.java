@@ -15,6 +15,8 @@ import org.joda.time.LocalDate;
 
 import java.util.List;
 
+import static org.dchbx.coveragehq.Events.GetLoginResult.UserType.SignUpIndividual;
+
 public class Events {
     static int lastCancelableRequestId = 0;
 
@@ -336,8 +338,9 @@ public class Events {
         }
 
         public boolean isLoggedIn() {
-            return (this.accountName != null
-                    && this.accountName.length() > 0);
+            return (getUserType() == SignUpIndividual
+                    || (this.accountName != null
+                        && this.accountName.length() > 0));
         }
 
         public CharSequence getSecurityAnswer() {

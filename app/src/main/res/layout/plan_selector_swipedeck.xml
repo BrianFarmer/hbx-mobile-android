@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<com.daprlabs.aaron.swipedeck.layouts.SwipeFrameLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:swipedeck="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:id="@+id/swipeLayout"
+    android:orientation="vertical"
+    swipedeck:layout_constraintBottom_toTopOf="@+id/reset"
+    swipedeck:layout_constraintTop_toBottomOf="@+id/plansAndFavorites"
+    android:layout_marginTop="0dp"
+    android:layout_marginBottom="18dp"
+    swipedeck:layout_constraintLeft_toLeftOf="parent"
+    swipedeck:layout_constraintRight_toRightOf="parent"
+    tools:showIn="@layout/plan_selector"
+    >
+
+    <com.daprlabs.aaron.swipedeck.SwipeDeck
+        android:id="@+id/swipeDeck"
+        android:layout_width="match_parent"
+        android:layout_height="480dp"
+        android:padding="10dp"
+        swipedeck:max_visible="3"
+        swipedeck:card_spacing="10dp"
+        swipedeck:swipe_enabled="true"
+        android:background="@color/pagebggray"
+        />
+</com.daprlabs.aaron.swipedeck.layouts.SwipeFrameLayout>
+
+        

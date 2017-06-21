@@ -2,6 +2,7 @@ package org.dchbx.coveragehq;
 
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 
 
 public class BaseActivity extends AppCompatActivity {
@@ -34,6 +35,7 @@ public class BaseActivity extends AppCompatActivity {
     protected void onDestroy(){
         super.onDestroy();
         if (messages != null) {
+            Log.d(TAG, "releasing messages in BaseActivity.onDestroy");
             messages.release();
             messages = null;
         }
@@ -43,6 +45,7 @@ public class BaseActivity extends AppCompatActivity {
     protected void onPause(){
         super.onPause();
         if (messages != null) {
+            Log.d(TAG, "releasing messages in BaseActivity.onPause");
             messages.release();
             messages = null;
         }

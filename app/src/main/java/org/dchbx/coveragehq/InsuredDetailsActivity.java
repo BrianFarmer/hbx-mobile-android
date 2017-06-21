@@ -439,6 +439,7 @@ public class InsuredDetailsActivity extends BrokerActivity {
 
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void doThis(Events.Error error) {
+        Log.d(TAG, "InsuredDetailsActivity.doThis(Error)");
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setMessage(R.string.error_login_again)
                 .setCancelable(false)
