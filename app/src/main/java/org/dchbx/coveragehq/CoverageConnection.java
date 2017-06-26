@@ -11,6 +11,7 @@ import org.dchbx.coveragehq.models.brokeragency.BrokerAgency;
 import org.dchbx.coveragehq.models.employer.Employer;
 import org.dchbx.coveragehq.models.gitaccounts.GitAccounts;
 import org.dchbx.coveragehq.models.planshopping.Plan;
+import org.dchbx.coveragehq.models.ridp.Questions;
 import org.dchbx.coveragehq.models.roster.Enrollment;
 import org.dchbx.coveragehq.models.roster.Roster;
 import org.dchbx.coveragehq.models.roster.RosterEntry;
@@ -121,6 +122,13 @@ public abstract class CoverageConnection {
         dataCache.store(plan.id, services, now);
 
         return services;
+    }
+
+    public Questions getRidpQuestions() throws IOException, CoverageException {
+        UrlHandler.GetParameters getParameters = urlHandler.getRidpQuestionsParameters();
+
+        IConnectionHandler.GetResponse response = connectionHandler.simpleGet(getParameters);
+        return urlHandler.processRidpQuestions(response);
     }
 
     enum LoginResult {

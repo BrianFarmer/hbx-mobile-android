@@ -9,6 +9,7 @@ import org.dchbx.coveragehq.models.brokeragency.BrokerClient;
 import org.dchbx.coveragehq.models.employer.Employer;
 import org.dchbx.coveragehq.models.gitaccounts.GitAccounts;
 import org.dchbx.coveragehq.models.planshopping.Plan;
+import org.dchbx.coveragehq.models.ridp.Questions;
 import org.dchbx.coveragehq.models.roster.Roster;
 import org.dchbx.coveragehq.models.roster.RosterEntry;
 import org.dchbx.coveragehq.models.services.Service;
@@ -20,6 +21,8 @@ import org.joda.time.DateTime;
 import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
+
+import static org.dchbx.coveragehq.ServerConfiguration.UserType.SignUpIndividual;
 
 
 /**
@@ -252,6 +255,14 @@ public class BrokerWorker extends IntentService {
                 }
             }
             ServerConfiguration serverConfiguration = config.getCoverageConnection().getLogin();
+
+            if (serverConfiguration.userType != null
+                && serverConfiguration.userType == SignUpIndividual){
+                StateManager stateManager = config.getStateManager();
+                BrokerWorker.eventBus.post(new Events.StateAction(stateManager.getActivityId()));
+                return;
+            }
+
             BrokerWorker.eventBus.post(new Events.GetLoginResult(serverConfiguration.accountName, serverConfiguration.password,
                     serverConfiguration.securityAnswer, serverConfiguration.rememberMe, serverConfiguration.useFingerprintSensor,
                     config.getCoverageConnection().userTypeFromAccountInfo(), timedout));
@@ -794,6 +805,22 @@ public class BrokerWorker extends IntentService {
     @Subscribe(threadMode = ThreadMode.BACKGROUND)
     public void doThis(Events.UpdateAppConfig updateAppConfig) {
         BrokerWorkerConfig.config().update(updateAppConfig.getAppConfig());
+    }
+
+    @Subscribe(threadMode = ThreadMode.BACKGROUND)
+    public void doThis(Events.GetRidpQuestions getRidpQuestions) {
+        try {
+            Questions questions = config.getCoverageConnection().getRidpQuestions();
+            BrokerWorker.eventBus.post(new Events.GetRidpQuestionsResult(questions));
+        } catch (Exception e) {
+            Log.e(TAG, "exception get ridp questions: " + e.getMessage());
+            // edit these exceptions since we are doing this asyncronously to the user.
+        }
+    }
+
+    @Subscribe(threadMode = ThreadMode.BACKGROUND)
+    public void doThis(Events.ButtonClicked buttonClicked) {
+        BrokerWorkerConfig.config().getStateManager().process(BrokerWorker.eventBus, buttonClicked.getButtonId());
     }
 }
 

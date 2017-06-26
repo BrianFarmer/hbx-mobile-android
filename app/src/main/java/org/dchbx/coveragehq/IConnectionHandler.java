@@ -42,4 +42,5 @@ public interface IConnectionHandler {
     GetResponse get(UrlHandler.GetParameters getParameters) throws IOException, CoverageException;
     GetResponse getHackedSSL(UrlHandler.GetParameters getParameters) throws IOException, CoverageException;
     String get(HttpUrl url, String cookie) throws Exception;
+    GetResponse simpleGet(UrlHandler.GetParameters getParameters) throws IOException;
 }

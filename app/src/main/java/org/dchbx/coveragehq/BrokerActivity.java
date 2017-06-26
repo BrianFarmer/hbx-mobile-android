@@ -43,6 +43,12 @@ public class BrokerActivity extends BaseActivity {
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)
+    public void doThis(Events.StateAction stateAction) {
+        stateAction.doThis(this);
+    }
+
+
+    @Subscribe(threadMode = ThreadMode.MAIN)
     public void doThis(Events.TestTimeoutResult testTimeoutResult) {
         if (testTimeoutResult.timedOut && !shuttingDown){
             shuttingDown = true;

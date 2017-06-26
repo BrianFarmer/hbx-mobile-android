@@ -51,6 +51,19 @@ public class SummaryOfBenefitsActivity extends BrokerActivity {
         configToolbar();
     }
 
+    @Override
+    public void onPause(){
+        Log.d(TAG, "In SummaryOfBenefitsActivity.onPause");
+        super.onPause();
+    }
+
+    @Override
+    public void onStop(){
+        Log.d(TAG, "In SummaryOfBenefitsActivity.onStop()");
+        super.onStop();
+    }
+
+
     private void configToolbar() {
         // Initializing Toolbar and setting it as the actionbar
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);

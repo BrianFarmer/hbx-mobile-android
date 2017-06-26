@@ -17,9 +17,12 @@ package org.dchbx.coveragehq;
     This statement should go near the beginning of every source file,close to the copyright notices.When using the Lesser GPL,insert the word “Lesser” before “General” in all three places.When using the GNU AGPL,insert the word “Affero” before “General” in all three places.
 */
 
+import org.dchbx.coveragehq.models.ridp.Questions;
+
 public class BrokerWorkerConfig {
 
     private static BrokerWorkerConfig staticBrokerWorkerConfig = new BrokerWorkerConfig();
+    private static StateManager stateManager = new StateManager();
 
     public void update(AppConfig updateAppConfig) {
         switch (updateAppConfig.DataSource){
@@ -32,6 +35,14 @@ public class BrokerWorkerConfig {
             case EnrollServer:
                 break;
         }
+    }
+
+    public Questions getRidpQuestions() {
+        return null;
+    }
+
+    public StateManager getStateManager() {
+        return stateManager;
     }
 
     public enum DataSource {

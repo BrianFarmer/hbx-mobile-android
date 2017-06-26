@@ -25,7 +25,7 @@
         />
 
     <EditText
-        android:id="@+id/firstName"
+        android:id="@+id/address1"
         android:inputType="text"
         android:hint="@string/first_name"
         android:textSize="24dp"
@@ -42,19 +42,19 @@
         android:paddingBottom="9dp"
         />
     <View
-        android:id="@+id/firstNameUnderline"
+        android:id="@+id/addressUnderline"
         android:layout_width="0dp"
         android:layout_height="1dp"
         style="@style/NormalSeparator"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/firstName"
+        app:layout_constraintTop_toBottomOf="@+id/address1"
         android:background="@color/mainblue"
         android:layout_marginLeft="45dp"
         android:layout_marginRight="45dp"
         />
     <EditText
-        android:id="@+id/lastName"
+        android:id="@+id/address2"
         android:inputType="textPersonName"
         android:hint="@string/last_name"
         android:textSize="24dp"
@@ -63,7 +63,7 @@
         android:layout_height="wrap_content"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/firstNameUnderline"
+        app:layout_constraintTop_toBottomOf="@+id/addressUnderline"
         android:layout_marginLeft="45dp"
         android:layout_marginRight="45dp"
         android:layout_marginTop="25dp"
@@ -71,20 +71,20 @@
         android:paddingBottom="9dp"
         />
     <View
-        android:id="@+id/lastNameUnderline"
+        android:id="@+id/address2Underline"
         android:layout_width="0dp"
         android:layout_height="1dp"
         style="@style/NormalSeparator"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/lastName"
+        app:layout_constraintTop_toBottomOf="@+id/address2"
         android:background="@color/mainblue"
         android:layout_marginLeft="45dp"
         android:layout_marginRight="45dp"
         />
 
     <EditText
-        android:id="@+id/emailAddress"
+        android:id="@+id/city"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:inputType="textEmailAddress"
@@ -93,7 +93,7 @@
         android:hint="@string/email_address"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/lastNameUnderline"
+        app:layout_constraintTop_toBottomOf="@+id/address2Underline"
         android:layout_marginLeft="45dp"
         android:layout_marginRight="45dp"
         android:layout_marginTop="25dp"
@@ -101,13 +101,13 @@
         android:paddingBottom="9dp"
         />
     <View
-        android:id="@+id/emailUnderline"
+        android:id="@+id/cityUnderline"
         android:layout_width="0dp"
         android:layout_height="1dp"
         style="@style/NormalSeparator"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/emailAddress"
+        app:layout_constraintTop_toBottomOf="@+id/city"
         android:background="@color/mainblue"
         android:layout_marginLeft="45dp"
         android:layout_marginRight="45dp"
@@ -123,7 +123,7 @@
         android:background="@color/transparent"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/emailUnderline"
+        app:layout_constraintTop_toBottomOf="@+id/cityUnderline"
         android:layout_marginLeft="45dp"
         android:layout_marginRight="45dp"
         android:layout_marginTop="25dp"
@@ -144,6 +144,7 @@
         />
 
     <Button
+        android:id="@+id/continueButton"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:text="@string/continue_string"

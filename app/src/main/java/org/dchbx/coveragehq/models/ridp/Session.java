@@ -1,5 +1,7 @@
 package org.dchbx.coveragehq.models.ridp;
 
+import java.util.List;
+
 /*
     This file is part of DC.
 
@@ -18,4 +20,10 @@ package org.dchbx.coveragehq.models.ridp;
     This statement should go near the beginning of every source file, close to the copyright notices. When using the Lesser GPL, insert the word “Lesser” before “General” in all three places. When using the GNU AGPL, insert the word “Affero” before “General” in all three places.
 */
 public class Session {
+
+    public String responseCode;
+    public String transactionId;
+    public String sessionId;
+    public List<Question> questions = null;
+
 }

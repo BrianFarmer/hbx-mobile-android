@@ -168,7 +168,7 @@
                     android:layout_below="@id/phoneNumber"
                     android:layout_alignParentLeft="true"
                     android:layout_alignParentStart="true"
-                    android:id="@+id/emailAddress"
+                    android:id="@+id/city"
                     android:tag="@string/details_group"
                     style="@style/employee_field"
                     />

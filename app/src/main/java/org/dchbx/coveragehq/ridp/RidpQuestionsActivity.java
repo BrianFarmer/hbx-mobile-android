@@ -1,4 +1,4 @@
-package org.dchbx.coveragehq;
+package org.dchbx.coveragehq.ridp;
 
 /*
     This file is part of DC.
@@ -18,7 +18,9 @@ package org.dchbx.coveragehq;
     This statement should go near the beginning of every source file, close to the copyright notices. When using the Lesser GPL, insert the word “Lesser” before “General” in all three places. When using the GNU AGPL, insert the word “Affero” before “General” in all three places.
 */
 
+import android.content.Context;
 import android.os.Bundle;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Button;
 import android.widget.LinearLayout;
@@ -26,13 +28,18 @@ import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.TextView;
 
+import org.dchbx.coveragehq.BrokerActivity;
+import org.dchbx.coveragehq.Events;
+import org.dchbx.coveragehq.R;
+import org.dchbx.coveragehq.StateManager;
 import org.dchbx.coveragehq.models.ridp.Question;
 import org.dchbx.coveragehq.models.ridp.Questions;
 import org.dchbx.coveragehq.models.ridp.ResponseOption;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 
-public class RidpQuestionsActivity extends BaseActivity {
+public class RidpQuestionsActivity extends BrokerActivity {
+    public static StateManager.UiActivity uiActivity = new StateManager.UiActivity(RidpQuestionsActivity.class);
     private static String TAG = "RidpQuestionsActivity";
     private Questions ridpQuestions;
 
@@ -52,19 +59,21 @@ public class RidpQuestionsActivity extends BaseActivity {
     }
 
     private void populate() {
+        LayoutInflater layoutInflater = (LayoutInflater) this.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         LinearLayout questionArea = (LinearLayout) findViewById(R.id.questionArea);
-        for (Question question : ridpQuestions.session.questions) {
-            TextView questionTextView = new TextView(this);
-            questionTextView.setText(question.questionText);
 
-            questionArea.addView(questionTextView);
-            RadioGroup radioGroup = new RadioGroup(this);
-            radioGroup.setOrientation(RadioGroup.VERTICAL);
-            questionArea.addView(radioGroup);
+        for (Question question : ridpQuestions.session.questions) {
+            View newQuestion = layoutInflater.inflate(R.layout.acct_ridp_question, questionArea, false);
+            int questionAreaCount = questionArea.getChildCount();
+            questionArea.addView(newQuestion);
+            TextView questionTextView = (TextView)newQuestion.findViewById(R.id.question);
+            RadioGroup answers = (RadioGroup)newQuestion.findViewById(R.id.answers);
+            questionTextView.setText(question.questionText);
             for (ResponseOption responseOption : question.responseOptions) {
-                RadioButton radioButton = new RadioButton(this);
-                radioButton.setText(responseOption.responseText);
-                radioGroup.addView(radioButton);
+                layoutInflater.inflate(R.layout.acct_ridp_answer, answers, true);
+                int childCount = answers.getChildCount();
+                RadioButton answer = (RadioButton)answers.getChildAt(childCount - 1);
+                answer.setText(responseOption.responseText);
             }
         }
 
@@ -76,3 +85,4 @@ public class RidpQuestionsActivity extends BaseActivity {
             }
         });
     }
+}

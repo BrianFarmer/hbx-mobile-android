@@ -14,6 +14,7 @@ import org.dchbx.coveragehq.models.employer.Employer;
 import org.dchbx.coveragehq.models.gitaccounts.AccountInfo;
 import org.dchbx.coveragehq.models.gitaccounts.GitAccounts;
 import org.dchbx.coveragehq.models.planshopping.Plan;
+import org.dchbx.coveragehq.models.ridp.Questions;
 import org.dchbx.coveragehq.models.roster.Roster;
 import org.dchbx.coveragehq.models.roster.RosterEntry;
 import org.dchbx.coveragehq.models.roster.SummaryOfBenefits;
@@ -179,5 +180,9 @@ public class JsonParser {
     public List<Plan> parsePlans(String body) {
         Type type = new TypeToken<List<Plan>>() {}.getType();
         return (List<Plan>)parse(body, type);
+    }
+
+    public Questions parseRidpQuestions(String body) {
+        return parse(body, Questions.class);
     }
 }

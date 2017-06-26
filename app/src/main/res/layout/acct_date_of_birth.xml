@@ -57,7 +57,7 @@
         <requestFocus />
     </EditText>
     <View
-        android:id="@+id/firstNameUnderline"
+        android:id="@+id/addressUnderline"
         android:layout_width="0dp"
         android:layout_height="1dp"
         style="@style/NormalSeparator"
@@ -69,6 +69,7 @@
         android:layout_marginRight="45dp"
         />
     <ImageButton
+        android:id="@+id/continueButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:background="@color/transparent"

@@ -119,6 +119,26 @@
             android:theme="@style/AppTheme"
             >
         </activity>
+        <activity
+            android:name=".ridp.AcctCreate"
+            android:configChanges="orientation|keyboardHidden|screenSize"
+            android:label=""
+            />
+        <activity
+            android:name=".ridp.AcctSsn"
+            android:configChanges="orientation|keyboardHidden|screenSize"
+            android:label=""
+            />
+        <activity
+            android:name=".ridp.AcctDateOfBirth"
+            android:configChanges="orientation|keyboardHidden|screenSize"
+            android:label=""
+            />
+        <activity
+            android:name=".ridp.RidpQuestionsActivity"
+            android:configChanges="orientation|keyboardHidden|screenSize"
+            android:label=""
+            />
 
     </application>
 

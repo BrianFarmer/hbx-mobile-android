@@ -104,4 +104,9 @@ public class Intents {
         intent.putExtra(PLAN_ID, plan.id);
         activity.startActivity(intent);
     }
+
+    public static void launchActivity(Class<?> cls, Activity activity) {
+        Intent intent = new Intent(activity, cls);
+        activity.startActivity(intent);
+    }
 }

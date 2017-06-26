@@ -267,7 +267,7 @@ public class InsuredInfoFragment extends BrokerFragment {
         TextView address2 = (TextView) view.findViewById(R.id.address2);
         TextView cityStateZip = (TextView) view.findViewById(R.id.cityStateZip);
         TextView phoneNumber = (TextView) view.findViewById(R.id.phoneNumber);
-        TextView emailAddress = (TextView) view.findViewById(R.id.emailAddress);
+        TextView emailAddress = (TextView) view.findViewById(R.id.city);
 
         Address displayAddress = BrokerUtilities.getDisplayAddress(insured);
         if (displayAddress == null){

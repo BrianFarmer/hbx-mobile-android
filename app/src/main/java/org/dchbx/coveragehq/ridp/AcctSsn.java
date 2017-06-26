@@ -1,5 +1,14 @@
 package org.dchbx.coveragehq.ridp;
 
+import android.os.Bundle;
+import android.view.View;
+import android.widget.ImageButton;
+
+import org.dchbx.coveragehq.BrokerActivity;
+import org.dchbx.coveragehq.R;
+import org.dchbx.coveragehq.StateManager;
+import org.dchbx.coveragehq.models.ridp.Questions;
+
 /*
     This file is part of DC.
 
@@ -17,5 +26,30 @@ package org.dchbx.coveragehq.ridp;
     along with DC Health Link SmallBiz.  If not, see <http://www.gnu.org/licenses/>.
     This statement should go near the beginning of every source file, close to the copyright notices. When using the Lesser GPL, insert the word “Lesser” before “General” in all three places. When using the GNU AGPL, insert the word “Affero” before “General” in all three places.
 */
-public class AcctSsn {
+public class AcctSsn extends BrokerActivity{
+    public static StateManager.UiActivity uiActivity = new StateManager.UiActivity(AcctSsn.class);
+
+    private static String TAG = "AcctSsn";
+    private Questions ridpQuestions;
+    private ImageButton continueButton;
+
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+
+        setContentView(R.layout.acct_ssn);
+
+        continueButton = (ImageButton) findViewById(R.id.continueButton);
+        populate();
+    }
+
+    private void populate() {
+        continueButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                getMessages().buttonClicked(R.id.continueButton);
+            }
+        });
+    }
 }

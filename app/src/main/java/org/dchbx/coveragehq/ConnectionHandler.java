@@ -486,6 +486,20 @@ public class ConnectionHandler implements IConnectionHandler{
         return getReponse;
     }
 
+
+    public IConnectionHandler.GetResponse simpleGet(UrlHandler.GetParameters getParameters) throws IOException {
+        OkHttpClient client = new OkHttpClient();
+        Request request = (new Request.Builder()
+                .url(getParameters.url))
+                .build();
+
+        Response response = client.newCall(request).execute();
+        GetResponse getResponse = new GetResponse();
+
+        getResponse.body = response.body().string();
+        return getResponse;
+    }
+
     @Override
     public GetResponse get(UrlHandler.GetParameters getParameters) throws IOException, CoverageException {
         if (getParameters == null){

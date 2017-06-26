@@ -246,5 +246,15 @@ public class EventBusMessages implements Messages {
     public void getPlan(String planId, boolean getSummaryAndBenefits) {
         eventBus.post(new Events.GetPlan(planId, true));
     }
+
+    @Override
+    public void getRidpQuestions() {
+        eventBus.post(new Events.GetRidpQuestions());
+    }
+
+    @Override
+    public void buttonClicked(int submit) {
+        eventBus.post(new Events.ButtonClicked(submit));
+    }
 }
 

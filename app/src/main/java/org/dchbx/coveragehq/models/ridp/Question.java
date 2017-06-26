@@ -1,5 +1,10 @@
 package org.dchbx.coveragehq.models.ridp;
 
+import com.google.gson.annotations.Expose;
+import com.google.gson.annotations.SerializedName;
+
+import java.util.List;
+
 /*
     This file is part of DC.
 
@@ -17,5 +22,16 @@ package org.dchbx.coveragehq.models.ridp;
     along with DC Health Link SmallBiz.  If not, see <http://www.gnu.org/licenses/>.
     This statement should go near the beginning of every source file, close to the copyright notices. When using the Lesser GPL, insert the word “Lesser” before “General” in all three places. When using the GNU AGPL, insert the word “Affero” before “General” in all three places.
 */
-public class question {
+public class Question {
+
+    @SerializedName("question_id")
+    @Expose
+    public String questionId;
+    @SerializedName("question_text")
+    @Expose
+    public String questionText;
+    @SerializedName("response_options")
+    @Expose
+    public List<ResponseOption> responseOptions;
+
 }

@@ -11,6 +11,7 @@ import org.dchbx.coveragehq.models.Security.SecurityAnswerResponse;
 import org.dchbx.coveragehq.models.brokeragency.BrokerAgency;
 import org.dchbx.coveragehq.models.employer.Employer;
 import org.dchbx.coveragehq.models.planshopping.Plan;
+import org.dchbx.coveragehq.models.ridp.Questions;
 import org.dchbx.coveragehq.models.roster.Enrollment;
 import org.dchbx.coveragehq.models.roster.Health;
 import org.dchbx.coveragehq.models.roster.Roster;
@@ -31,6 +32,7 @@ import okhttp3.HttpUrl;
 
 public abstract class UrlHandler {
     private static String TAG = "UrlHandler";
+
 
     public class PutParameters {
         FormBody body;
@@ -440,4 +442,12 @@ public abstract class UrlHandler {
         return services;
     }
 
-}
+    public GetParameters getRidpQuestionsParameters() {
+        GetParameters getParameters = new GetParameters();
+        getParameters.url = HttpUrl.parse("https://raw.githubusercontent.com/dchealthlink/HBX-mobile-app-APIs/master/generated/ridp_new_signup/verify_identity_questions.json");
+        return getParameters;
+    }
+
+    public Questions processRidpQuestions(IConnectionHandler.GetResponse response) {
+        return parser.parseRidpQuestions(response.body);
+    }}

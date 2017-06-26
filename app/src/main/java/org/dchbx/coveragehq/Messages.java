@@ -51,5 +51,7 @@ public interface Messages {
     void updateAppConfig(BrokerWorkerConfig.AppConfig appConfig);
     void updateInsuredFragment(LocalDate currentDate);
     void getPlan(String planId, boolean getSummaryAndBenefits);
+    void getRidpQuestions();
+    void buttonClicked(int submit);
 }
 

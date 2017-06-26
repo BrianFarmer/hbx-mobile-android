@@ -7,6 +7,7 @@ import android.widget.ImageView;
 import org.dchbx.coveragehq.models.brokeragency.BrokerAgency;
 import org.dchbx.coveragehq.models.employer.Employer;
 import org.dchbx.coveragehq.models.planshopping.Plan;
+import org.dchbx.coveragehq.models.ridp.Questions;
 import org.dchbx.coveragehq.models.roster.Roster;
 import org.dchbx.coveragehq.models.roster.RosterEntry;
 import org.dchbx.coveragehq.models.roster.SummaryOfBenefits;
@@ -1040,6 +1041,50 @@ public class Events {
 
         public BrokerWorkerConfig.AppConfig getAppConfig() {
             return appConfig;
+        }
+    }
+
+    public static class GetRidpQuestions {
+    }
+
+    public static class GetRidpQuestionsResult {
+        private final Questions ridpQuestions;
+
+        public GetRidpQuestionsResult(Questions ridpQuestions) {
+            this.ridpQuestions = ridpQuestions;
+        }
+
+        public Questions getRidpQuestions() {
+            return ridpQuestions;
+        }
+    }
+
+    public static class ButtonClicked {
+        private int buttonId;
+
+        public ButtonClicked(int buttonId){
+            this.buttonId = buttonId;
+        }
+
+        public int getButtonId() {
+            return buttonId;
+        }
+    }
+
+    public static class StateAction {
+        private int uiActivityId;
+
+        public StateAction(int uiActivityId){
+            this.uiActivityId = uiActivityId;
+        }
+
+        public int getUiActivityId() {
+            return uiActivityId;
+        }
+
+        public void doThis(BrokerActivity brokerActivity) {
+            StateManager.UiActivity.Info uiActivityType = StateManager.UiActivity.getUiActivityType(uiActivityId);
+            Intents.launchActivity(uiActivityType.cls, brokerActivity);
         }
     }
 }
