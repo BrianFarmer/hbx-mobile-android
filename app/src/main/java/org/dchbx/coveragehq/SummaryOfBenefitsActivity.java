@@ -50,7 +50,7 @@ public class SummaryOfBenefitsActivity extends BrokerActivity {
             summaryList = (ListView) findViewById(R.id.summaryList);
             Log.d(TAG, "Sending: getInsuredAndServices");
             getMessages().getInsuredAndServices(currentDate);
-
+            Log.d(TAG, "SummaryAndBenefitsAct.onCreate finished.");
             //configToolbar();
         } catch (Throwable t){
             Log.d(TAG, "Caught exception in SummaryOfBenefits ctor: " + t.getMessage());
