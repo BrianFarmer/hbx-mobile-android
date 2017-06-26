@@ -19,12 +19,15 @@ public class BaseActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
 
         if (messages == null) {
+            Log.d(TAG, "in BaseActivity.onCreate");
             messages = BrokerApplication.getBrokerApplication().getMessages(this);
         }
     }
 
     @Override
     protected void onResume() {
+        Log.d(TAG, "In BaseActivity.onResume()");
+
         super.onResume();
         if (messages == null) {
             messages = BrokerApplication.getBrokerApplication().getMessages(this);

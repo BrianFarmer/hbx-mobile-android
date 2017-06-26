@@ -8,6 +8,7 @@ import android.content.res.Configuration;
 import android.os.Bundle;
 import android.support.v4.app.DialogFragment;
 import android.support.v7.app.AlertDialog;
+import android.util.Log;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 
@@ -26,6 +27,8 @@ public class BrokerActivity extends BaseActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        Log.d(TAG, "in BrokerActivity.onCreate");
+
         super.onCreate(savedInstanceState);
 
         if (!isXLargeScreen(getApplicationContext())) { //set phones to portrait;
@@ -38,6 +41,7 @@ public class BrokerActivity extends BaseActivity {
 
     @Override
     protected void onResume(){
+        Log.d(TAG, "In BrokerActivity.onResume()");
         super.onResume();
         getMessages().testTimeOut();
     }
@@ -90,6 +94,7 @@ public class BrokerActivity extends BaseActivity {
     }
 
     public Messages getMessages() {
+        Log.d(TAG, "In BrokerActivity.getMessages()");
         return messages;
     }
 
