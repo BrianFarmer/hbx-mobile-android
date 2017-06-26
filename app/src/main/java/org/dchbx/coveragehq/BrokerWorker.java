@@ -716,12 +716,15 @@ public class BrokerWorker extends IntentService {
                 return;
             }
 
+
             CoverageConnection.InsuredAndServices insuredAndServices = config.getCoverageConnection().getInsuredAndServices(getInsuredAndServices.getEnrollmentDate());
             if (insuredAndServices == null){
                 Log.d(TAG, "getInsuredAndServices returned null!");
                 BrokerWorker.eventBus.post(new Events.GetInsuredAndServicesResult(null, null));
             } else {
+                Log.d(TAG, "sending GetInsuredAndServicesResult");
                 BrokerWorker.eventBus.post(new Events.GetInsuredAndServicesResult(insuredAndServices.getInsured(), insuredAndServices.getServices()));
+                Log.d(TAG, "sendt GetInsuredAndServicesResult");
                 updateSessionTimer();
             }
         } catch (Exception e) {

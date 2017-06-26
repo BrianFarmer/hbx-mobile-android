@@ -91,13 +91,22 @@ public class SummaryOfBenefitsActivity extends BrokerActivity {
 
     @Subscribe(threadMode = ThreadMode.MAIN)
     void doThis(Events.GetInsuredAndServicesResult getInsuredAndServicesResult){
-        insured = getInsuredAndServicesResult.getInsured();
-        servicesList = getInsuredAndServicesResult.getServicesList();
-        populate();
+        Log.d(TAG, "In SummaryOfBenefitsActivity.GetInsuredAndServicesResult");
+        try {
+            insured = getInsuredAndServicesResult.getInsured();
+            servicesList = getInsuredAndServicesResult.getServicesList();
+        } catch (Throwable t){
+            Log.e(TAG, "Caught exception in SummaryOfBenefitsActivity.GetInsuredAndServicesResult: " + t.getMessage());
+        }
+        try {
+            populate();
+        } catch (Throwable t){
+            Log.e(TAG, "Caught exception in population: " + t.getMessage());
+        }
     }
 
     private void populate(){
-        Log.d(TAG, "In SummaryOfBenefitsActivity.populate()");
+        Log.d(TAG, "In c.populate()");
         if (insured == null){
             Log.d(TAG, "insured is null!!!");
         }
