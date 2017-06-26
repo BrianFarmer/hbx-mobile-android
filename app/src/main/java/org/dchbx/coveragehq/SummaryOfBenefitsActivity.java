@@ -39,16 +39,22 @@ public class SummaryOfBenefitsActivity extends BrokerActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        Log.d(TAG, "in SummaryAndBenefitsActivity.onCreate");
-        Intent intent = getIntent();
-        currentDate = LocalDate.parse(intent.getStringExtra(Intents.ENROLLMENT_DATE_ID));
-        showHealth = intent.getBooleanExtra(Intents.SHOW_HEALTH_ID, true);
+        try {
+            Log.d(TAG, "in SummaryAndBenefitsActivity.onCreate");
+            Intent intent = getIntent();
+            currentDate = LocalDate.parse(intent.getStringExtra(Intents.ENROLLMENT_DATE_ID));
+            showHealth = intent.getBooleanExtra(Intents.SHOW_HEALTH_ID, true);
 
 
-        setContentView(R.layout.summary_and_benefits_activity);
-        summaryList = (ListView) findViewById(R.id.summaryList);
-        getMessages().getInsuredAndServices(currentDate);
-        configToolbar();
+            setContentView(R.layout.summary_and_benefits_activity);
+            summaryList = (ListView) findViewById(R.id.summaryList);
+            Log.d(TAG, "Sending: getInsuredAndServices");
+            getMessages().getInsuredAndServices(currentDate);
+
+            //configToolbar();
+        } catch (Throwable t){
+            Log.d(TAG, "Caught exception in SummaryOfBenefits ctor: " + t.getMessage());
+        }
     }
 
     @Override
