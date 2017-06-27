@@ -3,6 +3,7 @@ package org.dchbx.coveragehq;
 import android.content.Intent;
 import android.content.res.Resources;
 import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.View;
@@ -25,7 +26,7 @@ import java.util.List;
  * Created by plast on 4/13/2017.
  */
 
-public class SummaryOfBenefitsActivity extends BrokerActivity {
+public class SummaryOfBenefitsActivityHacked extends AppCompatActivity {
     static private String TAG = "SummaryAndBenefitsAct";
     private WalletSummaryAdapter summaryAdapter;
     private ListView summaryList;
@@ -35,9 +36,22 @@ public class SummaryOfBenefitsActivity extends BrokerActivity {
     private List<Service> servicesList;
     private boolean showHealth;
 
+
+    protected Messages messages = null;
+
+    public Messages getMessages() {
+        return messages;
+    }
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        if (messages == null) {
+            Log.d(TAG, "in BaseActivity.onCreate");
+            messages = BrokerApplication.getBrokerApplication().getMessages(this);
+        }
 
         try {
             Log.d(TAG, "in SummaryAndBenefitsActivity.onCreate");
@@ -61,6 +75,21 @@ public class SummaryOfBenefitsActivity extends BrokerActivity {
     public void onPause(){
         Log.d(TAG, "In SummaryOfBenefitsActivity.onPause");
         super.onPause();
+        if (messages != null) {
+            Log.d(TAG, "releasing messages in BaseActivity.onPause");
+//            messages.release();
+            messages = null;
+        }
+    }
+
+    @Override
+    protected void onDestroy(){
+        super.onDestroy();
+        if (messages != null) {
+            Log.d(TAG, "releasing messages in BaseActivity.onDestroy");
+            messages.release();
+            messages = null;
+        }
     }
 
     @Override
@@ -69,6 +98,11 @@ public class SummaryOfBenefitsActivity extends BrokerActivity {
         super.onStop();
     }
 
+
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void doThis(Events.StateAction stateAction) {
+        stateAction.doThis(this);
+    }
 
     private void configToolbar() {
         // Initializing Toolbar and setting it as the actionbar

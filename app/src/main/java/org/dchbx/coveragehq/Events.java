@@ -1,5 +1,6 @@
 package org.dchbx.coveragehq;
 
+import android.app.Activity;
 import android.net.Uri;
 import android.util.Log;
 import android.widget.ImageView;
@@ -1082,9 +1083,9 @@ public class Events {
             return uiActivityId;
         }
 
-        public void doThis(BrokerActivity brokerActivity) {
+        public void doThis(Activity activity) {
             StateManager.UiActivity.Info uiActivityType = StateManager.UiActivity.getUiActivityType(uiActivityId);
-            Intents.launchActivity(uiActivityType.cls, brokerActivity);
+            Intents.launchActivity(uiActivityType.cls, activity);
         }
     }
 }

@@ -20,6 +20,27 @@ import java.util.List;
 public class WalletSummaryAdapter extends SummaryAdapter {
     private static String TAG = WalletSummaryAdapter.class.getSimpleName();
 
+    public WalletSummaryAdapter(SummaryOfBenefitsActivityHacked activity, List<Service> servicesList, Health plan){
+        super(activity);
+
+        if (servicesList == null
+                || servicesList.size() == 0){
+            Log.d(TAG, "no services list");
+            return;
+        }
+
+        items = new ArrayList<>();
+        items.add(new ResourcesHeaderWrapper());
+        items.add(new ResourcesItemWrapper(plan.summaryOfBenefitsUrl, R.drawable.pdf_document, activity.getString(R.string.terms_conditions_pdf), activity));
+        items.add(new ResourcesItemWrapper(plan.provider_directory_url, R.drawable.physicians, activity.getString(R.string.provider_directory), activity));
+        items.add(new ResourcesItemWrapper(plan.RxFormularyUrl, R.drawable.prescription_formulary, activity.getString(R.string.rx_formulary),activity));
+        items.add(new ContactWrapper(activity, plan));
+        items.add(new SummaryHeaderWrapper());
+        for (Service service : servicesList) {
+            items.add(new SummaryItemWrapper(service, items.size(), this));
+        }
+    }
+
     public WalletSummaryAdapter(SummaryOfBenefitsActivity activity, List<Service> servicesList, Health plan){
         super(activity);
 

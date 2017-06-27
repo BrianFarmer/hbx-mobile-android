@@ -1,5 +1,6 @@
 package org.dchbx.coveragehq;
 
+import android.app.Activity;
 import android.app.Application;
 import android.util.Log;
 
@@ -57,6 +58,10 @@ public class BrokerApplication extends Application {
         if (eventBus != null){
             eventBus.unregister(activity);
         }
+    }
+
+    public Messages getMessages(Activity activity) {
+        return new EventBusMessages(activity);
     }
 
     public Messages getMessages(BaseActivity activity) {

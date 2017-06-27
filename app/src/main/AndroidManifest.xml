@@ -93,6 +93,11 @@
             android:label=""
             />
         <activity
+            android:name=".SummaryOfBenefitsActivityHacked"
+            android:configChanges="orientation|keyboardHidden|screenSize"
+            android:label=""
+            />
+        <activity
             android:name=".FamilyActivity"
             android:configChanges="orientation|keyboardHidden|screenSize"
             android:label=""

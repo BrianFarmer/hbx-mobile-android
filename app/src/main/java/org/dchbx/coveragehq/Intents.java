@@ -78,7 +78,7 @@ public class Intents {
     }
 
     public static void launchSummaryOfBenefitsActivity(Activity activity, LocalDate date, boolean showHealth) {
-        Intent intent = new Intent(activity, SummaryOfBenefitsActivity.class);
+        Intent intent = new Intent(activity, SummaryOfBenefitsActivityHacked.class);
         intent.putExtra(ENROLLMENT_DATE_ID, date.toString());
         intent.putExtra(SHOW_HEALTH_ID, showHealth);
         activity.startActivity(intent);

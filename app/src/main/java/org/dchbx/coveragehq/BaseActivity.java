@@ -49,7 +49,7 @@ public class BaseActivity extends AppCompatActivity {
         super.onPause();
         if (messages != null) {
             Log.d(TAG, "releasing messages in BaseActivity.onPause");
-//            messages.release();
+            messages.release();
             messages = null;
         }
     }
