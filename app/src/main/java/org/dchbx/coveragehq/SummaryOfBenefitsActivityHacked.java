@@ -3,6 +3,7 @@ package org.dchbx.coveragehq;
 import android.content.Intent;
 import android.content.res.Resources;
 import android.os.Bundle;
+import android.support.v4.app.DialogFragment;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
@@ -35,6 +36,7 @@ public class SummaryOfBenefitsActivityHacked extends AppCompatActivity {
     private Enrollment currentEnrollment;
     private List<Service> servicesList;
     private boolean showHealth;
+    private boolean shuttingDown = false;
 
 
     protected Messages messages = null;
@@ -98,10 +100,38 @@ public class SummaryOfBenefitsActivityHacked extends AppCompatActivity {
         super.onStop();
     }
 
+    @Override
+    protected void onResume(){
+        Log.d(TAG, "In BrokerActivity.onResume()");
+        super.onResume();
+        getMessages().testTimeOut();
+    }
+
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void doThis(Events.TestTimeoutResult testTimeoutResult) {
+        if (testTimeoutResult.timedOut && !shuttingDown){
+            shuttingDown = true;
+            Intents.restartApp(this);
+            finish();
+        }
+    }
+
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void doThis(Events.SessionAboutToTimeout sessionAboutToTimeout){
+        SessionTimeoutDialog sessionTimeoutDialog = SessionTimeoutDialog.build();
+        sessionTimeoutDialog.setStyle(DialogFragment.STYLE_NO_TITLE, R.style.DialogStyle);
+        sessionTimeoutDialog.show(this.getSupportFragmentManager(), "SecurityQuestionDialog");
+
+    }
 
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void doThis(Events.StateAction stateAction) {
         stateAction.doThis(this);
+    }
+
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void doThis(Events.Finish eventFinish){
+        finish();
     }
 
     private void configToolbar() {
