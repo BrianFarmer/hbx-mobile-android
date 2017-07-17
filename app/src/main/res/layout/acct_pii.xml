@@ -1,0 +1,198 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+
+    <TextView
+        android:id="@+id/authAndConsent"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="37dp"
+        android:maxLines="2"
+        android:text="Authorization\nand consent."
+        android:textAlignment="center"
+        android:textColor="@color/textgray"
+        android:textSize="32dp"
+        android:textStyle="bold"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        />
+
+    <ScrollView
+        android:id="@+id/scrollView"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/authAndConsent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        >
+        <android.support.constraint.ConstraintLayout
+            android:id="@+id/innerConstraintLayout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingBottom="34dp"
+            >
+
+            <TextView
+                android:id="@+id/forYourSecurity"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:text="For your security, we need to verify your identity before you can proceed. If you agree, you are providing consent to Experian to access your personal information to conduct identity verification on behalf of the Centers for Medicare and Medicaid Services (CMS) - part of the U.S. Department of Health and Human Services (HHS)."
+                android:textColor="@color/textgray"
+                android:textSize="20dp"
+                android:textStyle="normal"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintLeft_toLeftOf="parent"
+                app:layout_constraintRight_toRightOf="parent"
+                android:layout_marginTop="47dp"
+                android:layout_marginLeft="22dp"
+                android:layout_marginRight="22dp"
+                android:layout_marginStart="22dp"
+                android:layout_marginEnd="22dp"
+                />
+
+            <TextView
+                android:id="@+id/belowAreAFew"
+                android:layout_width="0dp"
+                android:layout_height="47dp"
+                android:layout_marginLeft="22dp"
+                android:layout_marginRight="22dp"
+                android:layout_marginTop="26dp"
+                android:text="Below are a few items to keep in mind."
+                android:textColor="@color/textgray"
+                android:textSize="20dp"
+                android:textStyle="bold"
+                app:layout_constraintLeft_toLeftOf="parent"
+                app:layout_constraintRight_toRightOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/forYourSecurity"
+                />
+
+            <TextView
+                android:id="@+id/makeSure"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:text="Make sure that you entered your legal name, current home address, primary phone number, date of birth and email address correctly. We will only collect personal information to verify your identity with Experian, a third party identity verification provider."
+                android:textColor="@color/textgray"
+                android:textSize="20dp"
+                android:textStyle="normal"
+                app:layout_constraintTop_toBottomOf="@+id/belowAreAFew"
+                app:layout_constraintLeft_toLeftOf="parent"
+                app:layout_constraintRight_toRightOf="parent"
+                android:layout_marginTop="26dp"
+                android:layout_marginLeft="22dp"
+                android:layout_marginRight="22dp"
+                android:layout_marginStart="22dp"
+                android:layout_marginEnd="22dp"
+                />
+
+            <TextView
+                android:id="@+id/toVerify"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:text="To verify your identity, Experian uses information from your consumer credit report profile. As a result, you may see an entry called a “soft inquiry” on your Experian consumer report. Soft inquiries are only visible to you, are never shared with third parties, and do not affect your credit score. The soft inquiry will be titled “CMS Proofing Services” and will be removed from your Experian consumer report after 25 months."
+                android:textColor="@color/textgray"
+                android:textSize="20dp"
+                android:textStyle="normal"
+                app:layout_constraintTop_toBottomOf="@+id/makeSure"
+                app:layout_constraintLeft_toLeftOf="parent"
+                app:layout_constraintRight_toRightOf="parent"
+                android:layout_marginTop="26dp"
+                android:layout_marginLeft="22dp"
+                android:layout_marginRight="22dp"
+                android:layout_marginStart="22dp"
+                android:layout_marginEnd="22dp"
+                />
+
+            <TextView
+                android:id="@+id/youMayNeed"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:text="You may need to have access to your personal and consumer report information, as the Experian application will pose questions to you based on data in their files."
+                android:textColor="@color/textgray"
+                android:textSize="20dp"
+                android:textStyle="normal"
+                app:layout_constraintTop_toBottomOf="@+id/toVerify"
+                app:layout_constraintLeft_toLeftOf="parent"
+                app:layout_constraintRight_toRightOf="parent"
+                android:layout_marginTop="26dp"
+                android:layout_marginLeft="22dp"
+                android:layout_marginRight="22dp"
+                android:layout_marginStart="22dp"
+                android:layout_marginEnd="22dp"
+                />
+
+            <TextView
+                android:id="@+id/pleaseSelect"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:text="Please select one of the following options to continue: *"
+                android:textColor="@color/textgray"
+                android:textSize="24dp"
+                android:textStyle="bold"
+                app:layout_constraintTop_toBottomOf="@+id/youMayNeed"
+                app:layout_constraintLeft_toLeftOf="parent"
+                app:layout_constraintRight_toRightOf="parent"
+                android:layout_marginTop="25dp"
+                android:layout_marginLeft="22dp"
+                android:layout_marginRight="22dp"
+                />
+            <RadioGroup
+                android:id="@+id/agreeOrDisagree"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                app:layout_constraintTop_toBottomOf="@+id/pleaseSelect"
+                app:layout_constraintLeft_toLeftOf="parent"
+                app:layout_constraintRight_toRightOf="parent"
+                android:layout_marginTop="25dp"
+                android:paddingLeft="22dp"
+                >
+                <RadioButton
+                    android:id="@+id/agree"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="I Agree"
+                    android:textColor="@color/textgray"
+                    android:textSize="24dp"
+                    android:textStyle="bold"
+                    android:button="@drawable/ivl_radio_button"
+                    android:layout_marginTop="38dp"
+                    android:drawablePadding="20dp"
+                    />
+                <RadioButton
+                    android:id="@+id/disagree"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="I Disagree"
+                    android:textColor="@color/textgray"
+                    android:textSize="24dp"
+                    android:textStyle="bold"
+                    android:button="@drawable/ivl_radio_button"
+                    android:layout_marginTop="28dp"
+                    android:drawablePadding="20dp"
+                    />
+            </RadioGroup>
+            <Button
+                android:id="@+id/continueButton"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:text="@string/continue_string"
+                android:background="@drawable/ivl_button_blue_solid"
+                app:layout_constraintLeft_toLeftOf="parent"
+                app:layout_constraintRight_toRightOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/agreeOrDisagree"
+                android:layout_marginLeft="45dp"
+                android:layout_marginRight="45dp"
+                android:layout_marginTop="57dp"
+                android:layout_marginBottom="34dp"
+                android:paddingTop="19dp"
+                android:paddingBottom="19dp"
+                />
+        </android.support.constraint.ConstraintLayout>
+    </ScrollView>
+</android.support.constraint.ConstraintLayout>
