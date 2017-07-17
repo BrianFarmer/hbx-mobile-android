@@ -18,22 +18,23 @@ import okhttp3.OkHttpClient;
 public class EnrollConnectionHandler extends ConnectionHandler {
 
     private Context context = null;
-    SharedPrefsCookiePersistor cookiePersistor = new SharedPrefsCookiePersistor(BrokerApplication.getBrokerApplication());
-    ClearableCookieJar cookieJar =
-            new PersistentCookieJar(new SetCookieCache(), cookiePersistor);
+    static SharedPrefsCookiePersistor cookiePersistor3 = new SharedPrefsCookiePersistor(BrokerApplication.getBrokerApplication());
+    static SharedPrefsCookiePersistor cookiePersistor4 = new SharedPrefsCookiePersistor(BrokerApplication.getBrokerApplication());
+    static ClearableCookieJar cookieJar3 = new PersistentCookieJar(new SetCookieCache(), cookiePersistor3);
+    static ClearableCookieJar cookieJar4 = new PersistentCookieJar(new SetCookieCache(), cookiePersistor3);
 
     static protected OkHttpClient clientHttps = new OkHttpClient()
             .newBuilder()
-            //.cookieJar(cookieJar)
-            .sslSocketFactory(getSSLContext().getSocketFactory())
+            .cookieJar(cookieJar3)
+            //.sslSocketFactory(getSSLContext().getSocketFactory())
             .readTimeout(30000, TimeUnit.MILLISECONDS)
             .followRedirects(true)
             .build();
 
-    protected OkHttpClient clientDontFollowHttps = new OkHttpClient()
+    static protected OkHttpClient clientDontFollowHttps = new OkHttpClient()
             .newBuilder()
-            //.cookieJar(cookieJar)
-            .sslSocketFactory(getSSLContext().getSocketFactory())
+            .cookieJar(cookieJar4)
+            //.sslSocketFactory(getSSLContext().getSocketFactory())
             .followRedirects(false)
             .followSslRedirects(false)
             .build();
@@ -47,7 +48,7 @@ public class EnrollConnectionHandler extends ConnectionHandler {
         if (follow){
             return clientHttps;
         } else {
-            return clientHttps;
+            return clientDontFollowHttps;
         }
     }
 }

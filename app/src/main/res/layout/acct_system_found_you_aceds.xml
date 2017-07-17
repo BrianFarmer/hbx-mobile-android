@@ -3,7 +3,7 @@
     <data>
         <variable
             name="activity"
-            type="org.dchbx.coveragehq.ridp.AcctSystemFoundYou"/>
+            type="org.dchbx.coveragehq.ridp.AcctSystemFoundYouAceds"/>
     </data>
     <android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
                                                  xmlns:app="http://schemas.android.com/apk/res-auto"
@@ -17,9 +17,9 @@
             android:id="@+id/label"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:text="This SSN is already associated with an HBX account."
+            android:text="@string/it_looks_like_you_ve_already_got_an_application_in_dc_health_link_to_make_changes_log_in_to_your_account_at_www_dchealthlinkn_com_or_call_us_at_855_532_5465"
             android:textAlignment="center"
-            android:textSize="32dp"
+            android:textSize="24dp"
             android:textStyle="bold"
             android:background="@color/transparent"
             android:layout_marginTop="45dp"
@@ -34,7 +34,8 @@
             android:id="@+id/needIndividual"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:text="PLEASE LOG IN"
+            android:text="@string/continue_string"
+            android:textAllCaps="true"
             android:textColor="@color/white"
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintRight_toRightOf="parent"
@@ -43,23 +44,7 @@
             android:layout_marginLeft="43dp"
             android:layout_marginRight="43dp"
             android:background="@drawable/ivl_button_blue_solid"
-            android:onClick="@{()->activity.pleaseLogInClicked()}"
-            />
-
-        <Button
-            android:id="@+id/reviewYourAnswers"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:text="REVIEW YOUR ANSWERS"
-            android:textColor="@color/mainblue"
-            app:layout_constraintLeft_toLeftOf="parent"
-            app:layout_constraintRight_toRightOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/needIndividual"
-            android:layout_marginTop="23dp"
-            android:layout_marginLeft="43dp"
-            android:layout_marginRight="43dp"
-            android:background="@drawable/ivl_button_blue_border"
-            android:onClick="@{()->activity.reviewYourAnswersClicked()}"
+            android:onClick="@{()->activity.continueClicked()}"
             />
 
         <Button
@@ -69,7 +54,7 @@
             android:text="COME BACK LATER"
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintRight_toRightOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/reviewYourAnswers"
+            app:layout_constraintTop_toBottomOf="@+id/needIndividual"
             android:layout_marginTop="23dp"
             android:layout_marginLeft="43dp"
             android:layout_marginRight="43dp"

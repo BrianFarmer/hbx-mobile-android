@@ -15,6 +15,7 @@ import org.dchbx.coveragehq.models.gitaccounts.AccountInfo;
 import org.dchbx.coveragehq.models.gitaccounts.GitAccounts;
 import org.dchbx.coveragehq.models.planshopping.Plan;
 import org.dchbx.coveragehq.models.ridp.Questions;
+import org.dchbx.coveragehq.models.ridp.VerifiyIdentityResponse;
 import org.dchbx.coveragehq.models.roster.Roster;
 import org.dchbx.coveragehq.models.roster.RosterEntry;
 import org.dchbx.coveragehq.models.roster.SummaryOfBenefits;
@@ -184,5 +185,9 @@ public class JsonParser {
 
     public Questions parseRidpQuestions(String body) {
         return parse(body, Questions.class);
+    }
+
+    public VerifiyIdentityResponse parseVerificationResponse(String body) {
+        return parse(body, VerifiyIdentityResponse.class);
     }
 }

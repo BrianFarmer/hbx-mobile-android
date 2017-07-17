@@ -4,6 +4,8 @@ import org.dchbx.coveragehq.models.gitaccounts.GitAccounts;
 
 public class ServerConfiguration {
 
+
+
     public enum UserType {
         Unknown,
         Broker,
@@ -23,6 +25,10 @@ public class ServerConfiguration {
     public UserType userType = UserType.Unknown;
     public String sessionId = null;
     public GitAccounts gitAccounts;
+    public String verifyIdentityAnswersEndpoint;
+    public String localSignUpEndpoint;
+    public String localLoginEndpoint;
+    public String localLogoutEndpoint;
 
     public static class HostInfo {
         public String scheme;
@@ -68,4 +74,7 @@ public class ServerConfiguration {
     public String getSessionCookies() {
         return "";
     }
+
+    public String GitAccountsUrl = "https://raw.githubusercontent.com/dchealthlink/HBX-mobile-app-APIs/master/generated/accounts.json";
+    public String currentMobileUrl;
 }

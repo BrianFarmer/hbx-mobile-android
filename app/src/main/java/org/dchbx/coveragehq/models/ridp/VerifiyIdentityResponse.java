@@ -1,5 +1,11 @@
 package org.dchbx.coveragehq.models.ridp;
 
+import com.google.gson.annotations.Expose;
+import com.google.gson.annotations.SerializedName;
+
+
+import java.util.List;
+
 /*
     This file is part of DC.
 
@@ -18,4 +24,21 @@ package org.dchbx.coveragehq.models.ridp;
     This statement should go near the beginning of every source file, close to the copyright notices. When using the Lesser GPL, insert the word “Lesser” before “General” in all three places. When using the GNU AGPL, insert the word “Affero” before “General” in all three places.
 */
 public class VerifiyIdentityResponse {
+    @Expose
+    @SerializedName("ridp_verified")
+    public boolean ridpVerified;
+    @Expose
+    @SerializedName("user_found_in_enroll")
+    public boolean userFoundInEnroll;
+
+
+    @SerializedName("primary_applicant")
+    @Expose
+    public PrimaryApplicant primaryApplicant;
+    @SerializedName("employers")
+    @Expose
+    public List<Employer> employers = null;
+    @SerializedName("token")
+    @Expose
+    public String token;
 }

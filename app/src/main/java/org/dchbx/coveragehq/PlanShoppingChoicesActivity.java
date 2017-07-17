@@ -18,13 +18,35 @@ package org.dchbx.coveragehq;
 */
 
 import android.os.Bundle;
+import android.view.View;
+import android.widget.Button;
 
 public class PlanShoppingChoicesActivity extends BrokerActivity {
+    public static StateManager.UiActivity uiActivity = new StateManager.UiActivity(PlanShoppingChoicesActivity.class);
+
     @Override
     protected void onCreate(Bundle savedInstanceState){
         super.onCreate(savedInstanceState);
 
         setContentView(R.layout.plan_shopping_choices);
+        populate();
+    }
 
+    private void populate() {
+        Button startShopping = (Button) findViewById(R.id.startShopping);
+        startShopping.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                getMessages().buttonClicked(R.layout.plan_shopping_choices, R.id.startShopping);
+            }
+        });
+
+        Button checkFinancialAssistance = (Button) findViewById(R.id.checkFinancialAssistance);
+        checkFinancialAssistance.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                getMessages().buttonClicked(R.layout.plan_shopping_choices, R.id.checkFinancialAssistance);
+            }
+        });
     }
 }

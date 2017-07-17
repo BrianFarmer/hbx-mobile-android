@@ -25,4 +25,8 @@ public class BuildVariant {
     public static EnrollConfigBase initialEnrollConfig(){
         return new IvlBuildConfig2();
     }
+
+    public static int getLoginLayout() {
+        return R.layout.activity_login;
+    }
 }

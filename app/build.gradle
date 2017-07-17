@@ -1,9 +1,12 @@
 apply plugin: 'com.android.application'
-apply plugin: 'com.neenbedankt.android-apt'
 
 android {
     compileSdkVersion 25
     buildToolsVersion '25.0.2'
+
+    dataBinding {
+        enabled = true
+    }
 
     defaultConfig {
         applicationId "org.dchbx.coveragehq"
@@ -35,6 +38,9 @@ android {
         ivlpreprod {
             applicationId 'org.dchbx.coveragehq_ivl_preprod'
         }
+        ivlgithub {
+            applicationId 'org.dchbx.coveragehq_ivl_github'
+        }
         coverage {
             applicationId 'org.dchbx.coveragehq'
         }
@@ -53,12 +59,13 @@ dependencies {
     // Set this dependency to build and run Espresso tests
 
     // Set this dependency to build and run UI Automator tests
+    compile 'com.vicmikhailau:MaskedEditText:2.0.2'
     compile project(':MPChartLib')
     compile 'com.android.support:appcompat-v7:25.3.1'
     compile 'com.android.support:design:25.3.1'
     compile 'com.android.support:percent:25.3.1'
     compile 'org.greenrobot:eventbus:3.0.0'
-    compile 'com.squareup.okhttp3:okhttp:3.4.1'
+    compile 'com.squareup.okhttp3:okhttp:3.8.1'
     compile 'com.squareup.okhttp3:okhttp-urlconnection:3.0.1'
     compile 'com.google.code.gson:gson:2.7'
     compile 'com.github.bumptech.glide:glide:3.7.0'

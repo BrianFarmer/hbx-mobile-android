@@ -76,7 +76,7 @@ public class GitUrlHandler extends UrlHandler {
 
     public GetParameters getGitAccountGetParameters(String urlRoot) {
         GetParameters getParameters = new GetParameters();
-        getParameters.url = HttpUrl.parse(urlRoot + "/accounts.json");
+        getParameters.url = HttpUrl.parse(urlRoot);
         return getParameters;
     }
 

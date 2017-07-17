@@ -35,10 +35,13 @@ public class BrokerApplication extends Application {
     public void onCreate(){
         super.onCreate();
         Log.d(TAG, "In BrokerApplicaiton.onCreate");
+
         //Intent intent = new Intent(this, LoginActivity.class);
         JodaTimeAndroid.init(this);
         // ConnectionHandler.initClients();
-        brokerWorker = new BrokerWorker();
+        ServiceManager serviceManager = ServiceManager.getServiceManager();
+        serviceManager.init();
+        brokerWorker = serviceManager.getBrokerWorker();
         brokerWorker.onHandleIntent(null); // this causes the background working to be initialized.
     }
 

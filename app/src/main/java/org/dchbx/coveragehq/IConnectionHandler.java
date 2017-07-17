@@ -10,23 +10,58 @@ import okhttp3.HttpUrl;
 
 public interface IConnectionHandler {
 
-    public static class PostResponse {
+    public abstract class HttpResponse{
+        abstract int getResponseCode();
+        abstract String getBody();
+    }
+
+    public static class PostResponse extends HttpResponse{
         public String body;
         public int responseCode;
         public HashMap<String, List<String>> cookies;
         public Map<String, List<String>> headers;
+
+        @Override
+        int getResponseCode() {
+            return responseCode;
+        }
+
+        @Override
+        String getBody() {
+            return body;
+        }
     }
 
-    public static class PutResponse {
+    public static class PutResponse  extends HttpResponse{
         public String body;
         public int responseCode;
         public HashMap<String, List<String>> cookies;
+
+        @Override
+        int getResponseCode() {
+            return responseCode;
+        }
+
+        @Override
+        String getBody() {
+            return body;
+        }
     }
 
-    public static class GetResponse {
+    public static class GetResponse  extends HttpResponse{
         public String body;
         public int responseCode;
         public HashMap<String, List<String>> cookies;
+
+        @Override
+        int getResponseCode() {
+            return responseCode;
+        }
+
+        @Override
+        String getBody() {
+            return body;
+        }
     }
 
     PutResponse put(UrlHandler.PutParameters putParameters) throws Exception;

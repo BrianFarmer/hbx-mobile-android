@@ -25,7 +25,7 @@ abstract class EnrollConfigBase {
 
     public abstract String getVersion();
 
-    public abstract BrokerWorkerConfig.DataSource DataSource();
+    public abstract ServiceManager.DataSource DataSource();
 
     public enum StorageHandlerType {
         Encrypted,
@@ -106,8 +106,4 @@ abstract class EnrollConfigBase {
     }
 
     public ArrayList<String> getUrls() { return null;  }
-
-    public ArrayList<String> getUrlLabels() {
-        return null;
-    }
 }

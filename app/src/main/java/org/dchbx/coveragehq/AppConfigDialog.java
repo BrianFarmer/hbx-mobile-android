@@ -1,30 +1,35 @@
 package org.dchbx.coveragehq;
 
 import android.content.Context;
+import android.content.DialogInterface;
+import android.databinding.DataBindingUtil;
 import android.os.Bundle;
-import android.support.annotation.IdRes;
-import android.text.Editable;
-import android.text.TextWatcher;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
 import android.widget.EditText;
 import android.widget.RadioGroup;
 
+import org.dchbx.coveragehq.databinding.AppConfigActivityBinding;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 
 public class AppConfigDialog extends BrokerAppCompatDialogFragment {
+    private static String TAG = "AppConfigDialog";
+
     private View view;
-    private BrokerWorkerConfig.AppConfig appConfig;
+    private ServiceManager.AppConfig appConfig;
     RadioGroup serverGroup;
     private EditText gitHubUrl;
     private EditText hbxMobileServerUrl;
     private Context context;
+    private AppConfigActivityBinding binding;
+    private DialogInterface.OnClickListener okButtonListener;
 
-    public static void build(LoginActivity loginActivity){
+    public static void build(LoginActivity loginActivity, DialogInterface.OnClickListener onClickListener){
         AppConfigDialog appConfigDialog = new AppConfigDialog();
+        appConfigDialog.okButtonListener = onClickListener;
         Bundle args = new Bundle();
         appConfigDialog.setArguments(args);
         appConfigDialog.show(loginActivity.getSupportFragmentManager(), "AppConfigDialog");
@@ -39,93 +44,28 @@ public class AppConfigDialog extends BrokerAppCompatDialogFragment {
         this.context = context;
     }
 
+    public void ok(){
+        Log.d(TAG, "AppConfigDialog.ok clicked");
+        getMessages().updateAppConfig(appConfig);
+        dismiss();
+        if (okButtonListener != null){
+            okButtonListener.onClick(null, 0);
+        }
+    }
+
+    public void cancel(){
+        Log.d(TAG, "AppConfigDialog.cancel clicked");
+        super.dismiss();
+    }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 
         Bundle bundle = getArguments();
 
-        view = inflater.inflate(R.layout.app_config_activity,container, false);
+        binding = DataBindingUtil.inflate(inflater, R.layout.app_config_activity, container, false);
+        view = binding.getRoot();
         getDialog().setCanceledOnTouchOutside(false);
-        Button buttonCancel = (Button) view.findViewById(R.id.buttonCancel);
-        buttonCancel.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                ((LoginActivity)getActivity()).fingerprintCanceled();
-                dismiss();
-            }
-        });
-
-
-        Button ok = (Button) view.findViewById(R.id.buttonOk);
-        ok.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                getMessages().updateAppConfig(appConfig);
-                dismiss();
-            }
-        });
-        serverGroup = (RadioGroup) view.findViewById(R.id.serverGroup);
-        gitHubUrl = (EditText)view.findViewById(R.id.gutHubUrl);
-        hbxMobileServerUrl = (EditText) view.findViewById(R.id.hbxMobileServerUrl);
-
-        serverGroup.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(RadioGroup group, @IdRes int checkedId) {
-                if (checkedId != -1
-                    && appConfig != null){
-                    switch (checkedId){
-                        case R.id.github:
-                            appConfig.DataSource = BrokerWorkerConfig.DataSource.GitHub;
-                            break;
-                        case R.id.mobileServer:
-                            appConfig.DataSource = BrokerWorkerConfig.DataSource.MobileServer;
-                            break;
-                    }
-                }
-            }
-        });
-
-        gitHubUrl.addTextChangedListener(new TextWatcher() {
-            @Override
-            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-
-            }
-
-            @Override
-            public void onTextChanged(CharSequence s, int start, int before, int count) {
-
-            }
-
-            @Override
-            public void afterTextChanged(Editable s) {
-                if (appConfig == null){
-                    return;
-                }
-                appConfig.GithubUrl = String.valueOf(gitHubUrl.getText());
-            }
-        });
-
-        hbxMobileServerUrl.addTextChangedListener(new TextWatcher() {
-            @Override
-            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-
-            }
-
-            @Override
-            public void onTextChanged(CharSequence s, int start, int before, int count) {
-
-            }
-
-            @Override
-            public void afterTextChanged(Editable s) {
-                if (appConfig == null){
-                    return;
-                }
-                appConfig.MobileServerUrl = String.valueOf(hbxMobileServerUrl.getText());
-            }
-        });
-
         getMessages().getAppConfig();
         return view;
     }
@@ -134,15 +74,11 @@ public class AppConfigDialog extends BrokerAppCompatDialogFragment {
     public void doThis(Events.GetAppConfigResult getAppConfigResult) {
         appConfig = getAppConfigResult.getAppConfig();
 
-        gitHubUrl.setText(appConfig.GithubUrl);
-        hbxMobileServerUrl.setText(appConfig.MobileServerUrl);
+        binding.setAppConfig(appConfig);
+        binding.setDialog(this);
+    }
 
-        switch (appConfig.DataSource){
-            case GitHub:
-                serverGroup.check(R.id.github);
-                break;
-            case MobileServer:
-                serverGroup.check(R.id.mobileServer);
-        }
+    public void setDataSource(ServiceManager.DataSource dataSource){
+        appConfig.DataSource = dataSource;
     }
 }

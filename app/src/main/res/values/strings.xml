@@ -365,4 +365,14 @@ You <font color="#69a30d">favorited %d plans</font>.
     <string name="review_your_answers">REVIEW YOUR ANSWERS</string>
     <string name="come_back_later">COME BACK LATER</string>
     <string name="stand_by_while_we_create_your_account">Stand by while we create your account.</string>
+    <string name="start_shopping_for_plans">Start Shopping\nfor plans</string>
+    <string name="check_if_i_qualify_for_financial_assistance">Check if I qualify for\nfinancial assistance</string>
+    <string name="your_information">Your Information.</string>
+    <string name="we_will_keep_your_information">We will keep your information private and will not share it with anyone unless you allow it or it is required by law. Your answers will only be used to decide whether you are eligible for health insurance. Information about your health will not be used to deny you insurance or determine how much you pay.</string>
+    <string name="you_can_complete">You can complete an application for health insurance for your children or other family members even if you do not qualify yourself. If you are applying for benefits for other members of your family, you will need to give us information about where you live, but you are not required to answer any questions about your citizenship or immigration status and you will not have to give us a Social Security Number.</string>
+    <string name="learn_more_about">Learn more about how we will use your information</string>
+    <string name="view_privacy_act">View Privacy Act Statement</string>
+    <string name="by_clicking_continue">By clicking CONTINUE, you are saying that you understand that information in this application, and the information we get from data sources will be used to decide the eligibility of the people who are applying for health insurance. You are also indicating that you have permission from all of the people listed on the application for their information to be retrieved and used from data sources.</string>
+    <string name="no_thanks_i_need_an_individual_plan">No thanks, I need\nan individual plan.</string>
+    <string name="it_looks_like_you_ve_already_got_an_application_in_dc_health_link_to_make_changes_log_in_to_your_account_at_www_dchealthlinkn_com_or_call_us_at_855_532_5465">It looks like you\'ve already got an application in DC Health Link. To make changes log in to your account at www.dchealthlinkn.com or call us at (855) 532-5465.</string>
 </resources>

@@ -8,7 +8,9 @@ import android.widget.ImageView;
 import org.dchbx.coveragehq.models.brokeragency.BrokerAgency;
 import org.dchbx.coveragehq.models.employer.Employer;
 import org.dchbx.coveragehq.models.planshopping.Plan;
+import org.dchbx.coveragehq.models.ridp.Answers;
 import org.dchbx.coveragehq.models.ridp.Questions;
+import org.dchbx.coveragehq.models.ridp.VerifiyIdentityResponse;
 import org.dchbx.coveragehq.models.roster.Roster;
 import org.dchbx.coveragehq.models.roster.RosterEntry;
 import org.dchbx.coveragehq.models.roster.SummaryOfBenefits;
@@ -893,6 +895,16 @@ public class Events {
     }
 
     public static class SignUp {
+        private final String planShoppingPath;
+
+        public SignUp(String planShoppingPath) {
+
+            this.planShoppingPath = planShoppingPath;
+        }
+
+        public String getEndPointUrl() {
+            return planShoppingPath;
+        }
     }
 
     public static class SignUpResult {
@@ -1021,26 +1033,26 @@ public class Events {
     }
 
     public static class UpdateAppConfig {
-        private final BrokerWorkerConfig.AppConfig appConfig;
+        private final ServiceManager.AppConfig appConfig;
 
-        public UpdateAppConfig(BrokerWorkerConfig.AppConfig appConfig) {
+        public UpdateAppConfig(ServiceManager.AppConfig appConfig) {
 
             this.appConfig = appConfig;
         }
 
-        public BrokerWorkerConfig.AppConfig getAppConfig() {
+        public ServiceManager.AppConfig getAppConfig() {
             return appConfig;
         }
     }
 
     public static class GetAppConfigResult {
-        private BrokerWorkerConfig.AppConfig appConfig;
+        private ServiceManager.AppConfig appConfig;
 
-        public GetAppConfigResult(BrokerWorkerConfig.AppConfig appConfig){
+        public GetAppConfigResult(ServiceManager.AppConfig appConfig){
             this.appConfig = appConfig;
         }
 
-        public BrokerWorkerConfig.AppConfig getAppConfig() {
+        public ServiceManager.AppConfig getAppConfig() {
             return appConfig;
         }
     }
@@ -1050,25 +1062,49 @@ public class Events {
 
     public static class GetRidpQuestionsResult {
         private final Questions ridpQuestions;
+        private Answers ridpAnswers;
 
-        public GetRidpQuestionsResult(Questions ridpQuestions) {
+        public GetRidpQuestionsResult(Questions ridpQuestions, Answers answers) {
             this.ridpQuestions = ridpQuestions;
+            this.ridpAnswers = answers;
         }
 
         public Questions getRidpQuestions() {
             return ridpQuestions;
         }
+
+        public Answers getRidpAnswers() {
+            return ridpAnswers;
+        }
     }
 
-    public static class ButtonClicked {
+    public static class AccountButtonClicked {
+        private final org.dchbx.coveragehq.models.account.Account  account;
+        private final int screenId;
         private int buttonId;
 
-        public ButtonClicked(int buttonId){
+        public AccountButtonClicked(int screenId, int buttonId){
+            this.screenId = screenId;
             this.buttonId = buttonId;
+            account = null;
+        }
+
+        public AccountButtonClicked(int screenId, int buttonId, org.dchbx.coveragehq.models.account.Account  object) {
+            this.screenId = screenId;
+            this.buttonId = buttonId;
+            this.account = object;
         }
 
         public int getButtonId() {
             return buttonId;
+        }
+
+        public org.dchbx.coveragehq.models.account.Account  getAccount() {
+            return account;
+        }
+
+        public int getScreenId() {
+            return screenId;
         }
     }
 
@@ -1086,6 +1122,62 @@ public class Events {
         public void doThis(Activity activity) {
             StateManager.UiActivity.Info uiActivityType = StateManager.UiActivity.getUiActivityType(uiActivityId);
             Intents.launchActivity(uiActivityType.cls, activity);
+        }
+    }
+
+    public static class GetCreateAccountInfo {
+    }
+
+    public static class GetCreateAccountInfoResult {
+        private final org.dchbx.coveragehq.models.account.Account account;
+
+        public GetCreateAccountInfoResult(org.dchbx.coveragehq.models.account.Account account) {
+
+            this.account = account;
+        }
+
+        public org.dchbx.coveragehq.models.account.Account getAccount() {
+            return account;
+        }
+    }
+
+    public static class UpdateCreateAccountInfo {
+        private final org.dchbx.coveragehq.models.account.Account account;
+
+        public UpdateCreateAccountInfo(org.dchbx.coveragehq.models.account.Account account) {
+            this.account = account;
+        }
+
+        public org.dchbx.coveragehq.models.account.Account getAccount() {
+            return account;
+        }
+    }
+
+    public static class UpdateAnswers {
+        private final Answers answers;
+
+        public UpdateAnswers(Answers answers) {
+            this.answers = answers;
+        }
+
+        public Answers getAnswers() {
+            return answers;
+        }
+    }
+
+    public static class GetVerificationResponse {
+    }
+
+    public static class GetVerificationResponseResponse {
+        private final VerifiyIdentityResponse verificationResponse;
+
+        public GetVerificationResponseResponse(VerifiyIdentityResponse verificationResponse) {
+
+            this.verificationResponse = verificationResponse;
+        }
+
+        public VerifiyIdentityResponse getVerificationResponse() {
+            return verificationResponse;
         }
     }
 }

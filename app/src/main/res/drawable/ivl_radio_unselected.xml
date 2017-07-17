@@ -3,13 +3,11 @@
     <item>
         <shape
             android:shape="oval">
+            <size
+                android:width="50dp"
+                android:height="50dp" />
             <stroke android:width="2dp"
                     android:color="@color/textmediumgray" />
-        </shape>
-    </item>
-    <item android:top="7dp" android:left="7dp" android:right="7dp" android:bottom="7dp">
-        <shape android:shape="oval">
-            <solid android:color="@color/keep_green" />
         </shape>
     </item>
 </layer-list>

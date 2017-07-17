@@ -1,5 +1,8 @@
 package org.dchbx.coveragehq.models.ridp;
 
+import com.google.gson.annotations.Expose;
+import com.google.gson.annotations.SerializedName;
+
 import java.util.List;
 
 /*
@@ -21,9 +24,16 @@ import java.util.List;
 */
 public class Session {
 
+    @SerializedName("response_code")
+    @Expose
     public String responseCode;
+    @SerializedName("transaction_id")
+    @Expose
     public String transactionId;
+    @SerializedName("session_id")
+    @Expose
     public String sessionId;
+    @SerializedName("questions")
+    @Expose
     public List<Question> questions = null;
-
 }

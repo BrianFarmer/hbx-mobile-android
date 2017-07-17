@@ -1,13 +1,16 @@
 package org.dchbx.coveragehq.ridp;
 
+import android.databinding.DataBindingUtil;
 import android.os.Bundle;
-import android.view.View;
-import android.widget.Button;
 
-import org.dchbx.coveragehq.BrokerActivity;
+import org.dchbx.coveragehq.AcctActivity;
+import org.dchbx.coveragehq.Events;
 import org.dchbx.coveragehq.R;
 import org.dchbx.coveragehq.StateManager;
-import org.dchbx.coveragehq.models.ridp.Questions;
+import org.dchbx.coveragehq.databinding.AcctCreateBinding;
+import org.dchbx.coveragehq.models.account.Account;
+import org.greenrobot.eventbus.Subscribe;
+import org.greenrobot.eventbus.ThreadMode;
 
 /*
     This file is part of DC.
@@ -27,31 +30,32 @@ import org.dchbx.coveragehq.models.ridp.Questions;
     This statement should go near the beginning of every source file, close to the copyright notices. When using the Lesser GPL, insert the word “Lesser” before “General” in all three places. When using the GNU AGPL, insert the word “Affero” before “General” in all three places.
 */
 
-public class AcctCreate extends BrokerActivity {
+public class AcctCreate extends AcctActivity {
     public static StateManager.UiActivity uiActivity = new StateManager.UiActivity(AcctCreate.class);
 
     private static String TAG = "AcctCreate";
-    private Questions ridpQuestions;
-    private Button continueButton;
-
+    AcctCreateBinding binding;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
-        setContentView(R.layout.acct_create);
-
-        continueButton = (Button) findViewById(R.id.continueButton);
-
-        populate();
+        binding = DataBindingUtil.setContentView(this, R.layout.acct_create);
+        getMessages().getCreateAccountInfo();
     }
 
-    private void populate() {
-        continueButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                getMessages().buttonClicked(R.id.continueButton);
-            }
-        });
+
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void doThis(Events.GetCreateAccountInfoResult getCreateAccountInfoResult){
+        populate(getCreateAccountInfoResult.getAccount());
+    }
+
+    @Override
+    protected void populate(final org.dchbx.coveragehq.models.account.Account account) {
+        binding.setAccount(account);
+        binding.setActivity(this);
+    }
+
+    public void onClick(Account account){
+        getMessages().buttonClicked(R.layout.acct_create, R.id.continueButton, account);
     }
 }

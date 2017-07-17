@@ -22,7 +22,7 @@ public class RootActivity extends BrokerActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         Log.d(TAG, "**************** onCreate");
-        BrokerWorkerConfig.config().enrollConfig().initMobileCenter();
+        ServiceManager.getServiceManager().enrollConfig().initMobileCenter();
     }
 
 

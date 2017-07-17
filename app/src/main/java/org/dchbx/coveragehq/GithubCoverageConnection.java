@@ -7,6 +7,8 @@ import android.util.Log;
 import org.dchbx.coveragehq.models.gitaccounts.GitAccounts;
 import org.dchbx.coveragehq.models.roster.RosterEntry;
 
+import java.io.IOException;
+
 import okhttp3.HttpUrl;
 
 /**
@@ -100,5 +102,4 @@ public class GithubCoverageConnection extends CoverageConnection {
     public RosterEntry processEmployeeDetails(IConnectionHandler.GetResponse getResponse) {
         return null;
     }
-
 }

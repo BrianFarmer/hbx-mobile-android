@@ -6,7 +6,7 @@ import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.graphics.Typeface;
 import android.os.Bundle;
-import android.support.test.espresso.idling.*;
+import android.support.test.espresso.idling.CountingIdlingResource;
 import android.support.v4.app.DialogFragment;
 import android.support.v7.app.AlertDialog;
 import android.text.SpannableString;
@@ -17,7 +17,6 @@ import android.util.TypedValue;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
-import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
@@ -84,19 +83,26 @@ public class LoginActivity extends BrokerActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        setContentView(BrokerWorkerConfig.config().enrollConfig().getLoginLayout());
+
+        setContentView(ServiceManager.getServiceManager().enrollConfig().getLoginLayout());
         pastFingerprint = false;
 
         View configButton = findViewById(R.id.configButton);
         if (BuildVariant.showLoginConfig()){
             if (configButton == null){
-                Toast.makeText(this, "Failed to find config button", Toast.LENGTH_LONG).show();
+                Toast.makeText(this, "Failed to find getServiceManager button", Toast.LENGTH_LONG).show();
             }
             configButton.setVisibility(View.VISIBLE);
             configButton.setOnClickListener(new OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    AppConfigDialog.build(LoginActivity.this);
+                    AppConfigDialog.build(LoginActivity.this, new DialogInterface.OnClickListener() {
+
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            finish();
+                        }
+                    });
                 }
             });
         } else {
@@ -105,7 +111,7 @@ public class LoginActivity extends BrokerActivity {
             }
         }
         TextView textViewVersion = (TextView) findViewById(R.id.textViewVersion);
-        String version = BrokerWorkerConfig.config().enrollConfig().getVersion();
+        String version = ServiceManager.getServiceManager().enrollConfig().getVersion();
         textViewVersion.setVisibility(View.GONE);
         if (version != null) {
             try {
@@ -118,29 +124,9 @@ public class LoginActivity extends BrokerActivity {
         }
 
         // Set up the login form.
-        if (BrokerWorkerConfig.config().enrollConfig().isGit()){
-            urls = BrokerWorkerConfig.config().enrollConfig().getUrls();
-            urlLabels = BrokerWorkerConfig.config().enrollConfig().getUrlLabels();
-            urlsSpinner = (Spinner)findViewById(R.id.spinnerUrlRoot);
-            ArrayAdapter<String> dataAdapter = new ArrayAdapter<>(this,
-                    android.R.layout.simple_spinner_item, urlLabels);
-            dataAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-            urlsSpinner.setAdapter(dataAdapter);
-            urlsSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-                @Override
-                public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
-                    if (i == 0){
-                        return;
-                    }
-                    getMessages().getGitAccounts(urls.get(i));
-                }
-
-                @Override
-                public void onNothingSelected(AdapterView<?> adapterView) {
-
-                }
-            });
+        if (ServiceManager.getServiceManager().enrollConfig().isGit()){
             accountsSpinner = (Spinner)findViewById(R.id.spinnerAccounts);
+            getMessages().getGitAccounts(null);
         } else {
 
             switchEnableFingerprintLogin = (Switch)findViewById(R.id.switchEnableFingerprintLogin);
@@ -173,7 +159,19 @@ public class LoginActivity extends BrokerActivity {
             signUp.setOnClickListener(new OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    getMessages().signUp();
+                    if (ServiceManager.getServiceManager().enrollConfig().isGit()){
+                        int selectedItemPosition = accountsSpinner.getSelectedItemPosition();
+                        if (selectedItemPosition == 0){
+                            return;
+                        }
+                        selectedItemPosition = selectedItemPosition - 1;
+                        GitAccounts.NamedAccountInfo namedAccountInfo = gitAccounts.accountInfoList.get(selectedItemPosition);
+                        if (namedAccountInfo.accountInfo.endpoints != null) {
+                            getMessages().signUp(namedAccountInfo.accountInfo.endpoints);
+                        }
+                    } else {
+                        getMessages().signUp();
+                    }
                 }
             });
         }
@@ -207,7 +205,7 @@ public class LoginActivity extends BrokerActivity {
     }
 
     private void attemptLogin() {
-        if (BrokerWorkerConfig.config().enrollConfig().isGit()){
+        if (ServiceManager.getServiceManager().enrollConfig().isGit()){
             if (urlsSpinner == null
                 || accountsSpinner == null){
                 return;
@@ -258,7 +256,9 @@ public class LoginActivity extends BrokerActivity {
 
         if (loginResult != null)
         {
-            if (loginResult.getErrorMessagge() != null){
+            if (loginResult.getErrorMessagge() != null
+                && getLoginErrorCount != 2
+                && !BuildVariant.showLoginConfig()){
                 getLoginErrorCount ++;
                 if (getLoginErrorCount == 1){
                     // first error just restart

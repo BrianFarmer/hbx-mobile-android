@@ -8,7 +8,7 @@ import android.widget.Toast;
 import org.dchbx.coveragehq.AcctActivity;
 import org.dchbx.coveragehq.R;
 import org.dchbx.coveragehq.StateManager;
-import org.dchbx.coveragehq.databinding.AcctSystemFoundYouBinding;
+import org.dchbx.coveragehq.databinding.AcctSystemFoundYouAcedsBinding;
 import org.dchbx.coveragehq.models.account.Account;
 
 /*
@@ -28,29 +28,24 @@ import org.dchbx.coveragehq.models.account.Account;
     along with DC Health Link SmallBiz.  If not, see <http://www.gnu.org/licenses/>.
     This statement should go near the beginning of every source file, close to the copyright notices. When using the Lesser GPL, insert the word “Lesser” before “General” in all three places. When using the GNU AGPL, insert the word “Affero” before “General” in all three places.
 */
-public class AcctSystemFoundYou extends AcctActivity {
-    public static StateManager.UiActivity uiActivity = new StateManager.UiActivity(AcctSystemFoundYou.class);
+public class AcctSystemFoundYouAceds extends AcctActivity {
+    public static StateManager.UiActivity uiActivity = new StateManager.UiActivity(AcctSystemFoundYouAceds.class);
     private ImageButton continueButton;
 
-    private AcctSystemFoundYouBinding binding;
+    private AcctSystemFoundYouAcedsBinding binding;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        binding = DataBindingUtil.setContentView(this, R.layout.acct_system_found_you);
+        binding = DataBindingUtil.setContentView(this, R.layout.acct_system_found_you_aceds);
     }
 
     @Override
     protected void populate(final Account account) {
     }
 
-    public void pleaseLogInClicked(){
-        Toast toast = Toast.makeText(this, "please sign in clicked", Toast.LENGTH_LONG);
-        toast.show();
-    }
-
-    public void reviewYourAnswersClicked(){
-        Toast toast = Toast.makeText(this,"reviewYourAnswersClicked in clicked", Toast.LENGTH_LONG);
+    public void continueClicked(){
+        Toast toast = Toast.makeText(this, "continue clicked", Toast.LENGTH_LONG);
         toast.show();
     }
 

@@ -2,9 +2,12 @@ package org.dchbx.coveragehq;
 
 import android.util.Log;
 
+import com.franmontiel.persistentcookiejar.PersistentCookieJar;
+import com.franmontiel.persistentcookiejar.cache.SetCookieCache;
+import com.franmontiel.persistentcookiejar.persistence.SharedPrefsCookiePersistor;
+
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
-import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -14,24 +17,20 @@ import java.io.UnsupportedEncodingException;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLEncoder;
-import java.security.KeyStore;
-import java.security.cert.Certificate;
-import java.security.cert.CertificateFactory;
-import java.security.cert.X509Certificate;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.regex.Pattern;
 
-import javax.net.ssl.HttpsURLConnection;
-import javax.net.ssl.SSLContext;
-import javax.net.ssl.TrustManagerFactory;
-
+import okhttp3.CookieJar;
 import okhttp3.FormBody;
+import okhttp3.Headers;
 import okhttp3.HttpUrl;
+import okhttp3.MediaType;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
+import okhttp3.RequestBody;
 import okhttp3.Response;
 
 /**
@@ -43,21 +42,66 @@ public class ConnectionHandler implements IConnectionHandler{
     private static String TAG = "ConnectionHandler";
     private final ServerConfiguration serverConfiguration;
 
+    private static OkHttpClient clientHttp;
+    private static OkHttpClient clientDontFollowHttp;
+    private static CookieJar cookieJar1;
+    private static CookieJar cookieJar2;
+
+
+    public static final MediaType JSON
+            = MediaType.parse("application/json; charset=utf-8");
+
     public ConnectionHandler(ServerConfiguration serverConfiguration){
         this.serverConfiguration = serverConfiguration;
+        init();
+    }
+
+    public void init(){
+        if (clientHttp != null) {
+            return;
+        }
+        cookieJar1 = new PersistentCookieJar(new SetCookieCache(), new SharedPrefsCookiePersistor(BrokerApplication.getBrokerApplication()));
+        cookieJar2 = new PersistentCookieJar(new SetCookieCache(), new SharedPrefsCookiePersistor(BrokerApplication.getBrokerApplication()));
+
+        clientHttp = new OkHttpClient()
+                .newBuilder()
+                .followRedirects(true)
+                .cookieJar(cookieJar1)
+                .build();
+
+        clientDontFollowHttp = new OkHttpClient()
+                .newBuilder()
+                .followRedirects(false)
+                .followSslRedirects(false)
+                .cookieJar(cookieJar2)
+                .build();
     }
 
 
-    private OkHttpClient clientHttp = new OkHttpClient()
-            .newBuilder()
-            .followRedirects(true)
-            .build();
 
-    private OkHttpClient clientDontFollowHttp = new OkHttpClient()
-            .newBuilder()
-            .followRedirects(false)
-            .followSslRedirects(false)
-            .build();
+    public PostResponse post(HttpUrl url, RequestBody body, String cookie) throws Exception {
+        Request.Builder builder = new Request.Builder()
+                .url(url);
+
+        if (cookie != null) {
+            builder = builder.header("cookie", cookie);
+        }
+        Request request = builder.post(body)
+                .build();
+        Response response = getClient(url.scheme(), true).newCall(request).execute();
+
+        int code = response.code();
+        if (code < 200
+                || code > 299) {
+            //|| response.header("location", null) == null) {
+            throw new Exception("error validing =login");
+        }
+        PostResponse postResponse = new PostResponse();
+        postResponse.responseCode = code;
+        postResponse.body =response.body().string();
+        postResponse.headers = response.headers().toMultimap();
+        return postResponse;
+    }
 
     public PostResponse post(HttpUrl url, FormBody formBody) throws Exception {
         return post(url, formBody, null);
@@ -88,52 +132,15 @@ public class ConnectionHandler implements IConnectionHandler{
 
     protected OkHttpClient getClient(String scheme, boolean follow) {
         if (follow){
-            return  new OkHttpClient()
+            return clientHttp;
+            /*return  new OkHttpClient()
                     .newBuilder()
                     .followRedirects(true)
-                    .build();
+                    .build();*/
             //return clientHttp;
         } else {
             return clientDontFollowHttp;
         }
-    }
-
-    public static SSLContext getSSLContext() {
-        try {
-            String certString = BrokerApplication.getBrokerApplication().getResources().getString(R.string.hbxroot);
-            ByteArrayInputStream is = new ByteArrayInputStream(certString.getBytes());
-
-
-// Load CAs from an InputStream
-// (could be from a resource or ByteArrayInputStream or ...)
-            CertificateFactory cf = null;
-            cf = CertificateFactory.getInstance("X.509");
-// From https://www.washington.edu/itconnect/security/ca/load-der.crt
-            Certificate ca = null;
-            ca = cf.generateCertificate(is);
-            Log.d(TAG, "ca=" + ((X509Certificate) ca).getSubjectDN());
-            is.close();
-
-// Create a KeyStore containing our trusted CAs
-            String keyStoreType = KeyStore.getDefaultType();
-            KeyStore keyStore = KeyStore.getInstance(keyStoreType);
-            keyStore.load(null, null);
-            keyStore.setCertificateEntry("ca", ca);
-
-// Create a TrustManager that trusts the CAs in our KeyStore
-            String tmfAlgorithm = TrustManagerFactory.getDefaultAlgorithm();
-            TrustManagerFactory tmf = TrustManagerFactory.getInstance(tmfAlgorithm);
-            tmf.init(keyStore);
-
-// Create an SSLContext that uses our TrustManager
-            SSLContext sslContext = SSLContext.getInstance("TLS");
-            sslContext.init(null, tmf.getTrustManagers(), null);
-
-            return sslContext;
-        } catch (Exception e){
-            Log.d(TAG, "Eating exception!!!", e);
-        }
-        return null;
     }
 
     private String getQuery(HashMap<String, String> params) throws UnsupportedEncodingException {
@@ -177,13 +184,67 @@ public class ConnectionHandler implements IConnectionHandler{
         throw new Exception("Session cookie not found");
     }
 
+    /*
+    public PostResponse simple2PostHttpURLConnection(UrlHandler.PostParameters postParameters, String accountName, String password, Boolean rememberMe) throws Exception {
+
+        MultipartBody.Builder builder = new MultipartBody.Builder()
+                .setType(MultipartBody.FORM);
+        for (Map.Entry<String, String> entry : postParameters.formParameters.entrySet()) {
+            builder.addFormDataPart(entry.getKey(), entry.getValue());
+        }
+
+        MultipartBody body = builder.build();
+
+        OkHttpClient client = new OkHttpClient().newBuilder()
+                .followSslRedirects(false)
+                .followRedirects(false)
+                .build();
+
+        Request request = new Request.Builder()
+                .url(postParameters.url)
+                .post(body)
+                .build();
+
+        Response response = client.newCall(request).execute();
+        PostResponse postResponse = new PostResponse();
+        Headers headers = response.headers();
+
+        int responseCode = response.code();
+        if (responseCode < 400) {
+
+            while (responseCode == 302) {
+                HashMap<String, List<String>> cookies = getCookies(headers);
+                serverConfiguration.sessionId = cookies.get("_session_id").get(0);
+                String newSessionId = "_session_id=" + cookies.get("_session_id").get(0);
+                String redirectUrlString = headers.get("location");
+                URL redirectUrl = new URL(redirectUrlString);
+                connection = (HttpURLConnection) redirectUrl.openConnection();
+                if (redirectUrl.getProtocol().compareToIgnoreCase("https") == 0) {
+                    HttpsURLConnection httpsURLConnection = (HttpsURLConnection) connection;
+                    httpsURLConnection.setSSLSocketFactory(getSSLContext().getSocketFactory());
+                }
+                connection.setInstanceFollowRedirects(false);
+                connection.setRequestMethod("GET");
+
+                connection.setRequestProperty("Cookie", serverConfiguration.sessionId);
+                connection.connect();
+                responseCode = connection.getResponseCode();
+            }
+
+
+
+            postResponse.body = response.body().string();
+        return postResponse;
+    }*/
+
+
     public PostResponse simplePostHttpURLConnection(UrlHandler.PostParameters postParameters, String accountName, String password, Boolean rememberMe) throws Exception {
         URL url = new URL(postParameters.url.toString());//postParameters.url.url();
         HttpURLConnection connection = (HttpURLConnection)url.openConnection();
-        if (postParameters.url.scheme().compareToIgnoreCase("https") == 0){
-            HttpsURLConnection httpsURLConnection = (HttpsURLConnection)connection;
-            httpsURLConnection.setSSLSocketFactory(getSSLContext().getSocketFactory());
-        }
+        //if (postParameters.url.scheme().compareToIgnoreCase("https") == 0){
+        //    HttpsURLConnection httpsURLConnection = (HttpsURLConnection)connection;
+        //    httpsURLConnection.setSSLSocketFactory(getSSLContext().getSocketFactory());
+        //}
         connection.setInstanceFollowRedirects(true);
         connection.setRequestMethod("POST");
 
@@ -221,10 +282,10 @@ public class ConnectionHandler implements IConnectionHandler{
                 String redirectUrlString = connection.getHeaderField("location");
                 URL redirectUrl = new URL(redirectUrlString);
                 connection = (HttpURLConnection) redirectUrl.openConnection();
-                if (redirectUrl.getProtocol().compareToIgnoreCase("https") == 0) {
-                    HttpsURLConnection httpsURLConnection = (HttpsURLConnection) connection;
-                    httpsURLConnection.setSSLSocketFactory(getSSLContext().getSocketFactory());
-                }
+                //if (redirectUrl.getProtocol().compareToIgnoreCase("https") == 0) {
+                //    HttpsURLConnection httpsURLConnection = (HttpsURLConnection) connection;
+                //    httpsURLConnection.setSSLSocketFactory(getSSLContext().getSocketFactory());
+                //}
                 connection.setInstanceFollowRedirects(false);
                 connection.setRequestMethod("GET");
 
@@ -260,10 +321,10 @@ public class ConnectionHandler implements IConnectionHandler{
     public PostResponse postHttpURLConnection(UrlHandler.PostParameters postParameters, String accountName, String password, Boolean rememberMe) throws Exception {
         URL url = new URL(postParameters.url.toString());//postParameters.url.url();
         HttpURLConnection connection = (HttpURLConnection)url.openConnection();
-        if (postParameters.url.scheme().compareToIgnoreCase("https") == 0){
-            HttpsURLConnection httpsURLConnection = (HttpsURLConnection)connection;
-            httpsURLConnection.setSSLSocketFactory(getSSLContext().getSocketFactory());
-        }
+        //if (postParameters.url.scheme().compareToIgnoreCase("https") == 0){
+        //    HttpsURLConnection httpsURLConnection = (HttpsURLConnection)connection;
+        //    httpsURLConnection.setSSLSocketFactory(getSSLContext().getSocketFactory());
+        //}
         connection.setInstanceFollowRedirects(false);
         connection.setRequestMethod("POST");
 
@@ -308,10 +369,10 @@ public class ConnectionHandler implements IConnectionHandler{
             String redirectUrlString = connection.getHeaderField("location");
             URL redirectUrl = new URL(redirectUrlString);
             connection = (HttpURLConnection)redirectUrl.openConnection();
-            if (redirectUrl.getProtocol().compareToIgnoreCase("https") == 0){
-                HttpsURLConnection httpsURLConnection = (HttpsURLConnection)connection;
-                httpsURLConnection.setSSLSocketFactory(getSSLContext().getSocketFactory());
-            }
+            //if (redirectUrl.getProtocol().compareToIgnoreCase("https") == 0){
+            //    HttpsURLConnection httpsURLConnection = (HttpsURLConnection)connection;
+            //    httpsURLConnection.setSSLSocketFactory(getSSLContext().getSocketFactory());
+            //}
             connection.setInstanceFollowRedirects(false);
             connection.setRequestMethod("GET");
 
@@ -557,6 +618,12 @@ public class ConnectionHandler implements IConnectionHandler{
         return response.body().string();
     }
 
+    private HashMap<String, List<String>> getCookies(Headers headers){
+        HashMap<String, List<String>> cookies = new HashMap<>();
+
+        return cookies;
+    }
+
     private HashMap<String, List<String>> getCookies(Map<String, List<String>> headers){
         HashMap<String, List<String>> map = new HashMap<>();
         for (Map.Entry<String, List<String>> entry: headers.entrySet()) {
@@ -580,6 +647,21 @@ public class ConnectionHandler implements IConnectionHandler{
             }
         }
         return map;
+    }
+
+    public HttpResponse process(UrlHandler.HttpRequest request) throws Exception {
+        switch (request.requestType){
+            case Get:
+
+                break;
+            case Post:
+                return post(request.postParameters.url, request.postParameters.requestBody, null);
+            case Put:
+                break;
+            case Delete:
+                break;
+        }
+        return null;
     }
 }
 

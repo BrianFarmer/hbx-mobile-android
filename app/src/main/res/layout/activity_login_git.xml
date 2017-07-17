@@ -17,35 +17,13 @@
         android:layout_marginBottom="18dp"
         android:layout_marginTop="18dp"
         app:srcCompat="@drawable/app_header_vector"
-        android:src="@drawable/app_header_vector"
         android:adjustViewBounds="true"
         />
 
-
     <Spinner
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@id/imageViewDcHealthLinkLogo"
-        android:layout_marginLeft="40dp"
-        android:layout_marginRight="40dp"
-        android:textSize="20sp"
-        android:textColor="@color/white"
-        android:id="@+id/spinnerUrlRoot"
-        />
-
-    <View
-        android:id="@+id/viewAccountSeparator"
-        style="@style/Separator"
-        android:layout_below="@+id/spinnerUrlRoot"
-        android:layout_marginLeft="40dp"
-        android:layout_marginRight="40dp"
-        android:background="@android:color/white"
-        />
-
-    <Spinner
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/viewAccountSeparator"
+        android:layout_below="@+id/imageViewDcHealthLinkLogo"
         android:layout_marginLeft="40dp"
         android:layout_marginRight="40dp"
         android:textSize="20sp"
@@ -94,34 +72,27 @@
         android:textColor="@color/mainblue"
         />
 
-    <TextView
-        android:id="@+id/textViewExistingCustomer"
+    <Button
+        android:id="@+id/signUp"
+        android:text="Sign Up"
+        android:background="@drawable/ivl_button_white_border"
+        android:textColor="@drawable/ivl_button_white_border_text_color"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="@string/existing_customers"
-        android:maxLines="3"
         android:layout_below="@+id/buttonLogIn"
-        android:layout_marginTop="40dp"
-        android:layout_marginLeft="75dp"
-        android:layout_marginRight="75dp"
-        android:textColor="@color/white"
-        android:textAlignment="center"
-        android:textSize="18sp"
+        android:layout_marginLeft="40dp"
+        android:layout_marginRight="40dp"
+        android:layout_marginTop="35dp"
         />
 
-    <TextView
-        android:id="@+id/textView2"
-        android:layout_width="match_parent"
+    <ImageButton
+        android:id="@+id/configButton"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="@string/not_existing"
-        android:maxLines="3"
-        android:layout_below="@+id/textViewExistingCustomer"
-        android:layout_marginTop="20dp"
-        android:layout_marginLeft="75dp"
-        android:layout_marginRight="75dp"
-        android:textColor="@color/white"
-        android:textAlignment="center"
-        android:textSize="18sp"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentBottom="true"
+        android:background="@color/transparent"
+        app:srcCompat="@drawable/gear"
         />
 
     <TextView

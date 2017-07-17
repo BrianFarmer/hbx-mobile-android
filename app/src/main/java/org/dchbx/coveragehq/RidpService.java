@@ -1,5 +1,24 @@
 package org.dchbx.coveragehq;
 
+import android.util.Log;
+
+import org.dchbx.coveragehq.models.ridp.Address;
+import org.dchbx.coveragehq.models.ridp.Answer;
+import org.dchbx.coveragehq.models.ridp.Answers;
+import org.dchbx.coveragehq.models.ridp.Email;
+import org.dchbx.coveragehq.models.ridp.PersonDemographics;
+import org.dchbx.coveragehq.models.ridp.PersonName;
+import org.dchbx.coveragehq.models.ridp.Question;
+import org.dchbx.coveragehq.models.ridp.QuestionResponse;
+import org.dchbx.coveragehq.models.ridp.Questions;
+import org.dchbx.coveragehq.models.ridp.VerifiyIdentityResponse;
+import org.dchbx.coveragehq.models.ridp.VerifyIdentity;
+import org.dchbx.coveragehq.models.ridp.VerifyIdentityPerson;
+import org.joda.time.format.DateTimeFormatter;
+import org.joda.time.format.ISODateTimeFormat;
+
+import java.util.ArrayList;
+
 /*
     This file is part of DC.
 
@@ -17,5 +36,142 @@ package org.dchbx.coveragehq;
     along with DC Health Link SmallBiz.  If not, see <http://www.gnu.org/licenses/>.
     This statement should go near the beginning of every source file, close to the copyright notices. When using the Lesser GPL, insert the word “Lesser” before “General” in all three places. When using the GNU AGPL, insert the word “Affero” before “General” in all three places.
 */
-public class RidpService {
+public class RidpService extends StateProcessor {
+    private static String TAG = "RidpService";
+
+    private VerifyIdentity veriftyIdentityFromAccount(org.dchbx.coveragehq.models.account.Account account){
+        VerifyIdentity identity = new VerifyIdentity();
+        identity.person = new VerifyIdentityPerson();
+        identity.person.addresses = new ArrayList<>();
+        Address address = new Address();
+        address.address = new Address.InternalAddress();
+        address.address.type = "home";
+        address.address.addressLine1 = account.address.address1;
+        address.address.addressLine2 = account.address.address2;
+        address.address.locationCityName = account.address.city;
+        address.address.locationStateCode = account.address.state;
+        address.address.postalCode = account.address.zipCode;
+        identity.person.addresses.add(address);
+        identity.person.emails = new ArrayList<>();
+        Email email = new Email();
+        email.email = new Email.InternalEmail();
+        email.email.emailAddress = account.emailAddress;
+        email.email.type = "home";
+        identity.person.emails.add(email);
+        identity.person.personName = new PersonName();
+        identity.person.personName.personGivenName = account.firstName;
+        identity.person.personName.personSurname = account.lastName;
+        identity.personDemographics = new PersonDemographics();
+        identity.personDemographics.ssn = account.ssn;
+        DateTimeFormatter dateTimeFormatter = ISODateTimeFormat.dateTime();
+        identity.personDemographics.birthDate = dateTimeFormatter.print(account.birthdate);
+        return identity;
+    }
+
+    private static RidpService ridpService = null;
+    public static RidpService getService(){
+        if (ridpService == null){
+            ridpService = new RidpService();
+        }
+        return ridpService;
+    }
+
+    public org.dchbx.coveragehq.models.account.Account getCreateAccountInfo() {
+        return ServiceManager.getServiceManager().getConfigurationStorageHandler().readAccount();
+    }
+
+    public void verificationRequest(StateManager m, StateProcessor s, int b) {
+        Log.d(TAG, "in RidpService.verificationRequest");
+
+        ServiceManager serviceManager = ServiceManager.getServiceManager();
+        UrlHandler urlHandler = serviceManager.getUrlHandler();
+        ConnectionHandler connectionHandler = serviceManager.getConnectionHandler();
+        ConfigurationStorageHandler storageHandler = serviceManager.getConfigurationStorageHandler();
+        org.dchbx.coveragehq.models.account.Account account = storageHandler.readAccount();
+        VerifyIdentity verifyIdentity = veriftyIdentityFromAccount(account);
+
+        UrlHandler.HttpRequest request = urlHandler.getRidpVerificationParameters(verifyIdentity);
+        try {
+            IConnectionHandler.HttpResponse response = connectionHandler.process(request);
+            if (response.getResponseCode() == 200){
+                JsonParser parser = ServiceManager.getServiceManager().getParser();
+                Questions questions = parser.parseRidpQuestions(response.getBody());
+                storageHandler.store(questions);
+            } else {
+                BrokerWorker.eventBus.post(new Events.Error("Bad Http response processing RidpService.verificationRequest", "Events.GetCreateAccountInfo"));
+            }
+        } catch (Exception e) {
+            Log.e(TAG, "exception processing http request");
+            BrokerWorker.eventBus.post(new Events.Error("Error processing RidpService.verificationRequest", "Events.GetCreateAccountInfo"));
+        }
+
+    }
+
+    public void updateAnswers(Answers answers) {
+        ServiceManager serviceManager = ServiceManager.getServiceManager();
+        ConfigurationStorageHandler storageHandler = serviceManager.getConfigurationStorageHandler();
+        storageHandler.store(answers);
+    }
+
+    public void sendAnswers(StateManager stateManager, RidpService service, int buttonId) {
+        Log.d(TAG, "in RidpService.verificationRequest");
+
+        ServiceManager serviceManager = ServiceManager.getServiceManager();
+        UrlHandler urlHandler = serviceManager.getUrlHandler();
+        ConnectionHandler connectionHandler = serviceManager.getConnectionHandler();
+        ConfigurationStorageHandler storageHandler = serviceManager.getConfigurationStorageHandler();
+        Answers answers = storageHandler.readAnswers();
+        UrlHandler.HttpRequest request = urlHandler.getAnswersRequest(answers);
+        try {
+            IConnectionHandler.HttpResponse response = connectionHandler.process(request);
+            if (response.getResponseCode() == 200){
+                JsonParser parser = ServiceManager.getServiceManager().getParser();
+                VerifiyIdentityResponse verifiyIdentityResponse = parser.parseVerificationResponse(response.getBody());
+                storageHandler.store(verifiyIdentityResponse);
+            } else {
+                BrokerWorker.eventBus.post(new Events.Error("Bad Http response processing RidpService.verificationRequest", "Events.GetCreateAccountInfo"));
+            }
+        } catch (Exception e) {
+            Log.e(TAG, "exception processing http request");
+            BrokerWorker.eventBus.post(new Events.Error("Error processing RidpService.verificationRequest", "Events.GetCreateAccountInfo"));
+        }
+    }
+
+    public VerifiyIdentityResponse getVerificationResponse() {
+        ConfigurationStorageHandler configurationStorageHandler = ServiceManager.getServiceManager().getConfigurationStorageHandler();
+        return configurationStorageHandler.readVerifiyIdentityResponse();
+    }
+
+    public static class QuestionsAndAnswers {
+        Questions questions;
+        Answers answers;
+    }
+
+    public QuestionsAndAnswers getRidpQuestions() {
+        ServiceManager serviceManager = ServiceManager.getServiceManager();
+        ConfigurationStorageHandler storageHandler = serviceManager.getConfigurationStorageHandler();
+        Questions questions = storageHandler.readQuestions();
+        Answers answers = storageHandler.readAnswers();
+        if (answers == null && questions != null){
+            answers = buildAnswerObject(questions);
+        }
+        QuestionsAndAnswers questionsAndAnswers = new QuestionsAndAnswers();
+        questionsAndAnswers.questions = questions;
+        questionsAndAnswers.answers = answers;
+        return questionsAndAnswers;
+    }
+
+    private Answers buildAnswerObject(Questions questions) {
+        Answers answers = new Answers();
+        answers.sessionId = questions.session.sessionId;
+        answers.transactionId = questions.session.transactionId;
+        answers.questionResponse = new ArrayList<>();
+        for (Question question : questions.session.questions) {
+            QuestionResponse questionResponse = new QuestionResponse();
+            questionResponse.questionId = question.questionId;
+            questionResponse.answer = new Answer();
+            answers.questionResponse.add(questionResponse);
+        }
+        return answers;
+    }
 }

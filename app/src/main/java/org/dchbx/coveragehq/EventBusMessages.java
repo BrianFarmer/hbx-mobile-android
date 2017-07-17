@@ -2,6 +2,7 @@ package org.dchbx.coveragehq;
 
 import android.net.Uri;
 
+import org.dchbx.coveragehq.models.ridp.Answers;
 import org.greenrobot.eventbus.EventBus;
 import org.joda.time.LocalDate;
 
@@ -194,7 +195,22 @@ public class EventBusMessages implements Messages {
 
     @Override
     public void signUp() {
-        eventBus.post(new Events.SignUp());
+        eventBus.post(new Events.SignUp(null));
+    }
+
+    @Override
+    public void signUp(String planShoppingPath) {
+        eventBus.post(new Events.SignUp(planShoppingPath));
+    }
+
+    @Override
+    public void updateAnswers(Answers answers) {
+        eventBus.post(new Events.UpdateAnswers(answers));
+    }
+
+    @Override
+    public void getVerificationResponse() {
+        eventBus.post(new Events.GetVerificationResponse());
     }
 
     @Override
@@ -233,7 +249,7 @@ public class EventBusMessages implements Messages {
     }
 
     @Override
-    public void updateAppConfig(BrokerWorkerConfig.AppConfig appConfig) {
+    public void updateAppConfig(ServiceManager.AppConfig appConfig) {
         eventBus.post(new Events.UpdateAppConfig(appConfig));
     }
 
@@ -253,8 +269,18 @@ public class EventBusMessages implements Messages {
     }
 
     @Override
-    public void buttonClicked(int submit) {
-        eventBus.post(new Events.ButtonClicked(submit));
+    public void buttonClicked(int screenId, int submit) {
+        eventBus.post(new Events.AccountButtonClicked(screenId, submit));
+    }
+
+    @Override
+    public void buttonClicked(int screenId, int submit, org.dchbx.coveragehq.models.account.Account  account) {
+        eventBus.post(new Events.AccountButtonClicked(screenId, submit, account));
+    }
+
+    @Override
+    public void getCreateAccountInfo() {
+        eventBus.post(new Events.GetCreateAccountInfo());
     }
 }
 

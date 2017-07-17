@@ -17,5 +17,21 @@ package org.dchbx.coveragehq.models.ridp;
     along with DC Health Link SmallBiz.  If not, see <http://www.gnu.org/licenses/>.
     This statement should go near the beginning of every source file, close to the copyright notices. When using the Lesser GPL, insert the word “Lesser” before “General” in all three places. When using the GNU AGPL, insert the word “Affero” before “General” in all three places.
 */
+
+import java.util.List;
+import com.google.gson.annotations.Expose;
+import com.google.gson.annotations.SerializedName;
+
 public class VerifyIdentityPerson {
+
+    @SerializedName("person_name")
+    @Expose
+    public PersonName personName;
+    @SerializedName("addresses")
+    @Expose
+    public List<Address> addresses = null;
+    @SerializedName("emails")
+    @Expose
+    public List<Email> emails = null;
+
 }

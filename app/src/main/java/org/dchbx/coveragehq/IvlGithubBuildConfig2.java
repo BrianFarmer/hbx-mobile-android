@@ -1,6 +1,6 @@
 package org.dchbx.coveragehq;
 
-class IvlBuildConfig2 extends EnrollConfigBase {
+class IvlGithubBuildConfig2 extends EnrollConfigBase {
 
     private static ServerConfiguration serverConfiguration = null;
 
@@ -55,8 +55,8 @@ class IvlBuildConfig2 extends EnrollConfigBase {
     }
 
     @Override
-    public BrokerWorkerConfig.DataSource DataSource() {
-        return BrokerWorkerConfig.DataSource.MobileServer;
+    public ServiceManager.DataSource DataSource() {
+        return ServiceManager.DataSource.MobileServer;
     }
 
     public String getUrl() {

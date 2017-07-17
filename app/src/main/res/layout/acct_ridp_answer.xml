@@ -6,6 +6,7 @@
     >
     <RadioButton
         android:id="@+id/answer"
+        android:button="@drawable/ivl_radio_button"
         style="@style/ridp_questions_radio_button"
     />
 </merge>

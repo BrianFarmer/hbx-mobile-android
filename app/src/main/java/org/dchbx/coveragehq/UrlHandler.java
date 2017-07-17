@@ -3,6 +3,8 @@ package org.dchbx.coveragehq;
 import android.net.Uri;
 import android.util.Log;
 
+import com.google.gson.Gson;
+
 import org.dchbx.coveragehq.exceptions.BrokerNotFoundException;
 import org.dchbx.coveragehq.exceptions.EmployerNotFoundException;
 import org.dchbx.coveragehq.exceptions.IndividualNotFoundException;
@@ -11,7 +13,9 @@ import org.dchbx.coveragehq.models.Security.SecurityAnswerResponse;
 import org.dchbx.coveragehq.models.brokeragency.BrokerAgency;
 import org.dchbx.coveragehq.models.employer.Employer;
 import org.dchbx.coveragehq.models.planshopping.Plan;
+import org.dchbx.coveragehq.models.ridp.Answers;
 import org.dchbx.coveragehq.models.ridp.Questions;
+import org.dchbx.coveragehq.models.ridp.VerifyIdentity;
 import org.dchbx.coveragehq.models.roster.Enrollment;
 import org.dchbx.coveragehq.models.roster.Health;
 import org.dchbx.coveragehq.models.roster.Roster;
@@ -25,6 +29,9 @@ import java.util.List;
 
 import okhttp3.FormBody;
 import okhttp3.HttpUrl;
+import okhttp3.RequestBody;
+
+import static org.dchbx.coveragehq.ConnectionHandler.JSON;
 
 /**
  * Created by plast on 12/15/2016.
@@ -33,7 +40,6 @@ import okhttp3.HttpUrl;
 public abstract class UrlHandler {
     private static String TAG = "UrlHandler";
 
-
     public class PutParameters {
         FormBody body;
         HttpUrl url;
@@ -41,15 +47,35 @@ public abstract class UrlHandler {
         public HashMap<String, String> headers;
     }
 
-    public class PostParameters {
+    public class HttpParameters {
+
+    }
+
+    public class PostParameters extends HttpParameters{
         FormBody body;
         HttpUrl url;
         public HashMap<String, String> cookies;
         public HashMap<String, String> headers;
         public HashMap<String, String> formParameters;
+        public RequestBody requestBody;
     }
 
-    public class GetParameters {
+    public static class HttpRequest {
+        public GetParameters getParameters;
+        public PostParameters postParameters;
+
+        enum RequestType {
+            Get,
+            Post,
+            Put,
+            Delete
+        }
+
+        public RequestType requestType;
+        public HttpParameters httpParameters;
+    }
+
+    public class GetParameters extends HttpParameters {
         HttpUrl url;
         public HashMap<String, String> cookies;
         public HashMap<String, String> headers;
@@ -381,6 +407,14 @@ public abstract class UrlHandler {
     }
 
     public GetParameters getEndpointsParameters(){
+        if (serverConfiguration.endpointsPath == null){
+            return null;
+        }
+        if (serverConfiguration.endpointsPath.substring(0, 4).toLowerCase().compareTo("http") == 0){
+            GetParameters getParameters = new GetParameters();
+            getParameters.url = HttpUrl.parse(serverConfiguration.endpointsPath);
+            return getParameters;
+        }
         GetParameters getParameters = new GetParameters();
         getParameters.url = new HttpUrl.Builder()
                 .scheme(serverConfiguration.loginInfo.scheme)
@@ -401,6 +435,10 @@ public abstract class UrlHandler {
         }
         serverConfiguration.planEndpoint = endpoints.plan_endpoint;
         serverConfiguration.verifyIdentityEndpoint = endpoints.verify_identity_endpoint;
+        serverConfiguration.verifyIdentityAnswersEndpoint = endpoints.verify_identity_answers_endpoint ;
+        serverConfiguration.localSignUpEndpoint = endpoints.local_sign_up_endpoint;
+        serverConfiguration.localLoginEndpoint = endpoints.local_login_endpoint;
+        serverConfiguration.localLogoutEndpoint = endpoints.local_logout_endpoint;
     }
 
     public List<Plan> processPlans(IConnectionHandler.GetResponse getResponse) {
@@ -442,12 +480,49 @@ public abstract class UrlHandler {
         return services;
     }
 
-    public GetParameters getRidpQuestionsParameters() {
-        GetParameters getParameters = new GetParameters();
-        getParameters.url = HttpUrl.parse("https://raw.githubusercontent.com/dchealthlink/HBX-mobile-app-APIs/master/generated/ridp_new_signup/verify_identity_questions.json");
-        return getParameters;
+    public HttpRequest getRidpVerificationParameters(VerifyIdentity verifyIdentity) {
+        PostParameters postParameters = new PostParameters();
+        if (serverConfiguration.verifyIdentityEndpoint.substring(0, 4).toLowerCase().compareTo("http") == 0){
+            postParameters.url = HttpUrl.parse(serverConfiguration.verifyIdentityEndpoint);
+        } else {
+            postParameters.url = new HttpUrl.Builder()
+                    .scheme(serverConfiguration.loginInfo.scheme)
+                    .host(serverConfiguration.loginInfo.host)
+                    .addPathSegments(serverConfiguration.verifyIdentityEndpoint)
+                    .port(serverConfiguration.loginInfo.port)
+                    .build();
+        }
+        String json = (new Gson()).toJson(verifyIdentity);
+        postParameters.requestBody = RequestBody.create(JSON, json );
+
+        HttpRequest request = new HttpRequest();
+        request.postParameters = postParameters;
+        request.requestType = HttpRequest.RequestType.Post;
+        return request;
     }
 
     public Questions processRidpQuestions(IConnectionHandler.GetResponse response) {
         return parser.parseRidpQuestions(response.body);
-    }}
+    }
+
+    public HttpRequest getAnswersRequest(Answers answers) {
+        PostParameters postParameters = new PostParameters();
+        if (serverConfiguration.verifyIdentityAnswersEndpoint.substring(0, 4).toLowerCase().compareTo("http") == 0){
+            postParameters.url = HttpUrl.parse(serverConfiguration.verifyIdentityAnswersEndpoint);
+        } else {
+            postParameters.url = new HttpUrl.Builder()
+                    .scheme(serverConfiguration.loginInfo.scheme)
+                    .host(serverConfiguration.loginInfo.host)
+                    .addPathSegments(serverConfiguration.verifyIdentityAnswersEndpoint)
+                    .port(serverConfiguration.loginInfo.port)
+                    .build();
+        }
+        String jsonString = (new Gson()).toJson(answers);
+        postParameters.requestBody = RequestBody.create(JSON, jsonString);
+
+        HttpRequest request = new HttpRequest();
+        request.postParameters = postParameters;
+        request.requestType = HttpRequest.RequestType.Post;
+        return request;
+    }
+}

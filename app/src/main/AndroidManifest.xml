@@ -130,6 +130,11 @@
             android:label=""
             />
         <activity
+            android:name=".ridp.AcctAddress"
+            android:configChanges="orientation|keyboardHidden|screenSize"
+            android:label=""
+            />
+        <activity
             android:name=".ridp.AcctSsn"
             android:configChanges="orientation|keyboardHidden|screenSize"
             android:label=""
@@ -144,7 +149,31 @@
             android:configChanges="orientation|keyboardHidden|screenSize"
             android:label=""
             />
-
+        <activity
+            android:name=".ridp.AcctAuthConsent"
+            android:configChanges="orientation|keyboardHidden|screenSize"
+            android:label=""
+            />
+        <activity
+            android:name=".ridp.AcctSystemFoundYou"
+            android:configChanges="orientation|keyboardHidden|screenSize"
+            android:label=""
+            />
+        <activity
+            android:name=".ridp.AcctSsnWithEmployer"
+            android:configChanges="orientation|keyboardHidden|screenSize"
+            android:label=""
+            />
+        <activity
+            android:name=".PlanShoppingChoicesActivity"
+            android:configChanges="orientation|keyboardHidden|screenSize"
+            android:label=""
+            />
+        <activity
+            android:name=".ridp.AcctPreAuthActivity"
+            android:configChanges="orientation|keyboardHidden|screenSize"
+            android:label=""
+            />
     </application>
 
 </manifest>

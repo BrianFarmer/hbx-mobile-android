@@ -1,5 +1,9 @@
 package org.dchbx.coveragehq.models.account;
 
+import com.google.gson.annotations.Expose;
+
+import java.io.Serializable;
+
 /*
     This file is part of DC.
 
@@ -17,5 +21,15 @@ package org.dchbx.coveragehq.models.account;
     along with DC Health Link SmallBiz.  If not, see <http://www.gnu.org/licenses/>.
     This statement should go near the beginning of every source file, close to the copyright notices. When using the Lesser GPL, insert the word “Lesser” before “General” in all three places. When using the GNU AGPL, insert the word “Affero” before “General” in all three places.
 */
-public class Address {
+public class Address implements Serializable{
+    @Expose
+    public String address1;
+    @Expose
+    public String address2;
+    @Expose
+    public String city;
+    @Expose
+    public String state;
+    @Expose
+    public String zipCode;
 }

@@ -2,6 +2,7 @@ package org.dchbx.coveragehq;
 
 import android.net.Uri;
 
+import org.dchbx.coveragehq.models.ridp.Answers;
 import org.joda.time.LocalDate;
 
 public interface Messages {
@@ -48,10 +49,15 @@ public interface Messages {
     void updateFilters(int premiumFilter, int deductibleFilter);
     void getPlan(String planId);
     void getAppConfig();
-    void updateAppConfig(BrokerWorkerConfig.AppConfig appConfig);
+    void updateAppConfig(ServiceManager.AppConfig appConfig);
     void updateInsuredFragment(LocalDate currentDate);
     void getPlan(String planId, boolean getSummaryAndBenefits);
     void getRidpQuestions();
-    void buttonClicked(int submit);
+    void buttonClicked(int screenId, int submit);
+    void buttonClicked(int screenId, int submit, org.dchbx.coveragehq.models.account.Account  account);
+    void getCreateAccountInfo();
+    void signUp(String planShoppingPath);
+    void updateAnswers(Answers usersAnswers);
+    void getVerificationResponse();
 }
 

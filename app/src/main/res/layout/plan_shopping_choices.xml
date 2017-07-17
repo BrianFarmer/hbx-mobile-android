@@ -18,7 +18,7 @@
         />
 
     <Button
-        android:id="@+id/button3"
+        android:id="@+id/startShopping"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="63dp"
@@ -26,16 +26,18 @@
         android:layout_marginRight="48dp"
         android:paddingTop="15dp"
         android:paddingBottom="15dp"
-        android:paddingLeft="74dp"
-        android:paddingRight="74dp"
-        android:text="Start Shopping for plans"
+        android:background="@drawable/ivl_button_blue_solid"
+        android:text="@string/start_shopping_for_plans"
         android:textSize="20dp"
+        android:textAllCaps="true"
         android:layout_below="@+id/textView8"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentRight="true"
         android:layout_centerHorizontal="true"
         />
 
     <Button
-        android:id="@+id/button4"
+        android:id="@+id/checkFinancialAssistance"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="20dp"
@@ -43,11 +45,14 @@
         android:layout_marginRight="48dp"
         android:paddingTop="15dp"
         android:paddingBottom="15dp"
-        android:paddingLeft="38dp"
-        android:paddingRight="38dp"
-        android:text="Check if I qualify for  financial assistance"
+        android:background="@drawable/ivl_button_blue_border"
+        android:text="@string/check_if_i_qualify_for_financial_assistance"
         android:textSize="20dp"
-        android:layout_below="@+id/button3"
+        android:textAllCaps="true"
+        android:textColor="@color/mainblue"
+        android:layout_below="@+id/startShopping"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentRight="true"
         android:layout_centerHorizontal="true"
         />
 </RelativeLayout>

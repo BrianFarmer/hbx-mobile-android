@@ -24,5 +24,9 @@ public class AccountInfo {
     @Expose
     public String individualEndpointPath;
 
+    @SerializedName("endpoints_path")
+    @Expose
+    public String endpoints;
+
     public String name;
 }

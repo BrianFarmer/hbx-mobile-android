@@ -2,12 +2,19 @@ package org.dchbx.coveragehq.ridp;
 
 import android.os.Bundle;
 import android.view.View;
-import android.widget.ImageButton;
+import android.widget.Button;
+import android.widget.ListView;
 
 import org.dchbx.coveragehq.AcctActivity;
+import org.dchbx.coveragehq.Events;
 import org.dchbx.coveragehq.R;
 import org.dchbx.coveragehq.StateManager;
+import org.dchbx.coveragehq.databinding.AcctSsnWithEmployerBinding;
 import org.dchbx.coveragehq.models.account.Account;
+import org.dchbx.coveragehq.models.ridp.Employer;
+import org.dchbx.coveragehq.models.ridp.VerifiyIdentityResponse;
+
+import java.util.ArrayList;
 
 /*
     This file is part of DC.
@@ -28,24 +35,36 @@ import org.dchbx.coveragehq.models.account.Account;
 */
 public class AcctSsnWithEmployer extends AcctActivity {
     public static StateManager.UiActivity uiActivity = new StateManager.UiActivity(AcctSsnWithEmployer.class);
-    private ImageButton continueButton;
+    private AcctSsnWithEmployerBinding binding;
+    private VerifiyIdentityResponse verificationResponse;
+    private FoundEmployersAdapter foundEmployersAdapter;
+    private ListView employersListView;
+    private Button needIndividual;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
         setContentView(R.layout.acct_ssn_with_employer);
+        employersListView = (ListView) findViewById(R.id.employersListView);
+        getMessages().getVerificationResponse();
+        needIndividual = (Button) findViewById(R.id.needIndividual);
+        needIndividual.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
 
-        continueButton = (ImageButton) findViewById(R.id.continueButton);
+            }
+        });
+    }
+
+    public void doThis(Events.GetVerificationResponseResponse getVerificationResponseResponse){
+        verificationResponse = getVerificationResponseResponse.getVerificationResponse();
+        ArrayList<Employer> employers = new ArrayList<>(verificationResponse.employers);
+        FoundEmployersAdapter foundEmployersAdapter = new FoundEmployersAdapter(this, employers);
+        employersListView.setAdapter(foundEmployersAdapter);
     }
 
     @Override
-    protected void populate(final Account account) {
-        continueButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                getMessages().buttonClicked(R.layout.acct_system_found_you, R.id.continueButton, account);
-            }
-        });
+    protected void populate(Account account) {
+
     }
 }

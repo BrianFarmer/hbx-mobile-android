@@ -1,8 +1,13 @@
 package org.dchbx.coveragehq;
 
+import okhttp3.HttpUrl;
+
 class IvlBuildConfig2 extends EnrollConfigBase {
 
     private static ServerConfiguration serverConfiguration = null;
+    private String defaultLoginHost = "hbx-mobile2-preprod.dchbx.org";
+    private String defaultLoginScheme = "https";
+    private int defaultLoginPort = 443;
 
     public ServerConfiguration getServerConfiguration() {
         if (serverConfiguration != null){
@@ -18,15 +23,9 @@ class IvlBuildConfig2 extends EnrollConfigBase {
 
         serverConfiguration.loginInfo = new ServerConfiguration.HostInfo();
 
-        serverConfiguration.loginInfo.host = "hbx-mobile2-preprod.dchbx.org";
-        serverConfiguration.loginInfo.scheme = "https";
-        serverConfiguration.loginInfo.port = 443;
-
-        /*
-        serverConfiguration.loginInfo.host = "mobile.dcmic.org";
-        serverConfiguration.loginInfo.scheme = "http";
-        serverConfiguration.loginInfo.port = 3003;
-        */
+        serverConfiguration.loginInfo.host = defaultLoginHost;
+        serverConfiguration.loginInfo.scheme = defaultLoginScheme;
+        serverConfiguration.loginInfo.port = defaultLoginPort;
 
 
         //serverConfiguration.employerListPath = "api/v1/mobile_api/employers_list";
@@ -55,11 +54,30 @@ class IvlBuildConfig2 extends EnrollConfigBase {
     }
 
     @Override
-    public BrokerWorkerConfig.DataSource DataSource() {
-        return BrokerWorkerConfig.DataSource.MobileServer;
+    public ServiceManager.DataSource DataSource() {
+        return ServiceManager.DataSource.MobileServer;
     }
 
     public String getUrl() {
-        return serverConfiguration.loginInfo.host;
+        if (serverConfiguration.currentMobileUrl != null){
+            return serverConfiguration.currentMobileUrl;
+        }
+
+        HttpUrl build = new HttpUrl.Builder()
+                .scheme(defaultLoginScheme)
+                .host(defaultLoginHost)
+                .addPathSegments(serverConfiguration.endpointsPath)
+                .port(defaultLoginPort)
+                .build();
+        return build.toString();
+    }
+
+    public void setUrl(String mobileServerUrl) {
+        HttpUrl httpUrl = HttpUrl.parse(mobileServerUrl);
+        serverConfiguration.loginInfo.host = httpUrl.host();
+        serverConfiguration.loginInfo.scheme = httpUrl.scheme();
+        serverConfiguration.loginInfo.port = httpUrl.port();
+        serverConfiguration.endpointsPath = httpUrl.encodedPath();
+        serverConfiguration.currentMobileUrl = mobileServerUrl;
     }
 }

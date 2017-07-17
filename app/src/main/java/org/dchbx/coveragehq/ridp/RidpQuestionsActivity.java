@@ -19,70 +19,120 @@ package org.dchbx.coveragehq.ridp;
 */
 
 import android.content.Context;
+import android.databinding.DataBindingUtil;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.TextView;
 
-import org.dchbx.coveragehq.BrokerActivity;
+import org.dchbx.coveragehq.AcctActivity;
 import org.dchbx.coveragehq.Events;
 import org.dchbx.coveragehq.R;
 import org.dchbx.coveragehq.StateManager;
+import org.dchbx.coveragehq.databinding.RidpQuestionsBinding;
+import org.dchbx.coveragehq.models.account.Account;
+import org.dchbx.coveragehq.models.ridp.Answer;
+import org.dchbx.coveragehq.models.ridp.Answers;
 import org.dchbx.coveragehq.models.ridp.Question;
+import org.dchbx.coveragehq.models.ridp.QuestionResponse;
 import org.dchbx.coveragehq.models.ridp.Questions;
 import org.dchbx.coveragehq.models.ridp.ResponseOption;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 
-public class RidpQuestionsActivity extends BrokerActivity {
+public class RidpQuestionsActivity extends AcctActivity {
     public static StateManager.UiActivity uiActivity = new StateManager.UiActivity(RidpQuestionsActivity.class);
     private static String TAG = "RidpQuestionsActivity";
     private Questions ridpQuestions;
+    private Answers usersAnswers;
+    private RidpQuestionsBinding binding;
 
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
-        setContentView(R.layout.ridp_questions);
+        binding = DataBindingUtil.setContentView(this, R.layout.ridp_questions);
         getMessages().getRidpQuestions();
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void doThis(Events.GetRidpQuestionsResult getRidpQuestionsResult) {
         ridpQuestions = getRidpQuestionsResult.getRidpQuestions();
-        populate();
+        usersAnswers = getRidpQuestionsResult.getRidpAnswers();
+        if (account != null){
+            populateQuestions();
+        }
     }
 
-    private void populate() {
+    @Override
+    protected void populate(final Account account) {
+        binding.setAccount(account);
+        binding.setActivity(this);
+        if (ridpQuestions != null){
+            populateQuestions();
+        }
+    }
+
+    private QuestionResponse getAnswer(Question question, Answers answers){
+        for (QuestionResponse questionResponse : answers.questionResponse) {
+            if (questionResponse.questionId.compareTo(question.questionId) == 0){
+                return questionResponse;
+            }
+        }
+        return null;
+    }
+
+    protected void populateQuestions() {
         LayoutInflater layoutInflater = (LayoutInflater) this.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         LinearLayout questionArea = (LinearLayout) findViewById(R.id.questionArea);
 
+
+        int i = 100;
+        int x = 0;
         for (Question question : ridpQuestions.session.questions) {
+            QuestionResponse answer1 = getAnswer(question, usersAnswers);
+
             View newQuestion = layoutInflater.inflate(R.layout.acct_ridp_question, questionArea, false);
             int questionAreaCount = questionArea.getChildCount();
             questionArea.addView(newQuestion);
             TextView questionTextView = (TextView)newQuestion.findViewById(R.id.question);
-            RadioGroup answers = (RadioGroup)newQuestion.findViewById(R.id.answers);
+            final RadioGroup answers = (RadioGroup)newQuestion.findViewById(R.id.answers);
             questionTextView.setText(question.questionText);
-            for (ResponseOption responseOption : question.responseOptions) {
+            for (final ResponseOption responseOption : question.responseOptions) {
+                final int currentQuestionIndex = x;
                 layoutInflater.inflate(R.layout.acct_ridp_answer, answers, true);
                 int childCount = answers.getChildCount();
                 RadioButton answer = (RadioButton)answers.getChildAt(childCount - 1);
+                answer.setId(i ++);
                 answer.setText(responseOption.responseText);
+                answer.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        QuestionResponse response = usersAnswers.questionResponse.get(currentQuestionIndex);
+                        if (response.answer == null){
+                            response.answer = new Answer();
+                        }
+                        response.answer = new Answer();
+                        response.answer.responseId = responseOption.responseId;
+                        response.answer.responseText = responseOption.responseText;
+                        getMessages().updateAnswers(usersAnswers);
+                    }
+                });
+                if (answer1.answer.responseId != null
+                    && answer1.answer.responseId.compareTo(responseOption.responseId) == 0){
+                    answer.setChecked(true);
+                } else {
+                    answer.setChecked(false);
+                }
             }
+            x ++;
         }
+    }
 
-        Button submit = (Button) findViewById(R.id.submit);
-        submit.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                getMessages().buttonClicked(R.id.submit);
-            }
-        });
+    public void onClick(Account account){
+        getMessages().buttonClicked(R.layout.acct_pii, R.id.continueButton, account);
     }
 }

@@ -1,5 +1,8 @@
 package org.dchbx.coveragehq.models.ridp;
 
+import com.google.gson.annotations.Expose;
+import com.google.gson.annotations.SerializedName;
+
 /*
     This file is part of DC.
 
@@ -18,4 +21,16 @@ package org.dchbx.coveragehq.models.ridp;
     This statement should go near the beginning of every source file, close to the copyright notices. When using the Lesser GPL, insert the word “Lesser” before “General” in all three places. When using the GNU AGPL, insert the word “Affero” before “General” in all three places.
 */
 class PrimaryApplicant {
+    @SerializedName("id")
+    @Expose
+    public String id;
+    @SerializedName("user_id")
+    @Expose
+    public String userId;
+    @SerializedName("first_name")
+    @Expose
+    public String firstName;
+    @SerializedName("last_name")
+    @Expose
+    public String lastName;
 }

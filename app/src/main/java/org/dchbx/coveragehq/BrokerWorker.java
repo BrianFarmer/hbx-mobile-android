@@ -9,7 +9,6 @@ import org.dchbx.coveragehq.models.brokeragency.BrokerClient;
 import org.dchbx.coveragehq.models.employer.Employer;
 import org.dchbx.coveragehq.models.gitaccounts.GitAccounts;
 import org.dchbx.coveragehq.models.planshopping.Plan;
-import org.dchbx.coveragehq.models.ridp.Questions;
 import org.dchbx.coveragehq.models.roster.Roster;
 import org.dchbx.coveragehq.models.roster.RosterEntry;
 import org.dchbx.coveragehq.models.services.Service;
@@ -33,7 +32,6 @@ public class BrokerWorker extends IntentService {
 
     static EventBus eventBus;
     private AccountInfo inProgressAccountInfo; // this member is used to store the account info while the user is trying to login.
-    private BrokerWorkerConfig config = new BrokerWorkerConfig();
 
     private EnrollConfigBase getConfig() {
         return null;
@@ -89,10 +87,10 @@ public class BrokerWorker extends IntentService {
                 return;
             }
 
-            ServerConfiguration serverConfiguration = config.getServerConfiguration();
-            UrlHandler urlHandler = BrokerWorkerConfig.config().enrollConfig().getUrlHandler();
-            String urlRoot = getGitAccounts.getUrlRoot();
-            GitAccounts gitAccounts = BrokerWorkerConfig.config().getCoverageConnection().getGitAccounts(urlRoot);
+            ServerConfiguration serverConfiguration = ServiceManager.getServiceManager().getServerConfiguration();
+            UrlHandler urlHandler = ServiceManager.getServiceManager().enrollConfig().getUrlHandler();
+            String urlRoot = serverConfiguration.GitAccountsUrl;
+            GitAccounts gitAccounts = ServiceManager.getServiceManager().getCoverageConnection().getGitAccounts(urlRoot);
                 Log.d(TAG, "got git accounts");
             BrokerWorker.eventBus.post(new Events.GitAccounts(gitAccounts));
 
@@ -119,12 +117,12 @@ public class BrokerWorker extends IntentService {
                 return;
             }
 
-            ServerConfiguration serverConfiguration = config.getServerConfiguration();
-            CoverageConnection.LoginResult result = config.getCoverageConnection().loginAfterFingerprintAuthenticated();
+            ServerConfiguration serverConfiguration = ServiceManager.getServiceManager().getServerConfiguration();
+            CoverageConnection.LoginResult result = ServiceManager.getServiceManager().getCoverageConnection().loginAfterFingerprintAuthenticated();
             Log.d(TAG, "FingerprintLogin: got sessionid");
             switch (result) {
                 case Success:
-                    ServerConfiguration.UserType userType = config.getCoverageConnection().determineUserType();
+                    ServerConfiguration.UserType userType = ServiceManager.getServiceManager().getCoverageConnection().determineUserType();
                     BrokerWorker.eventBus.post(new Events.FingerprintLoginResult(Events.LoginRequestResult.Success, userType));
                     updateSessionTimer();
                     return;
@@ -150,7 +148,7 @@ public class BrokerWorker extends IntentService {
     public void doThis(Events.LoginRequest loginRequest) {
 
         try {
-            ServerConfiguration serverConfiguration = config.getServerConfiguration();
+            ServerConfiguration serverConfiguration = ServiceManager.getServiceManager().getServerConfiguration();
             Log.d(TAG, "Received LoginRequest message");
 
             if (!SystemUtilities.detectNetwork()){
@@ -163,17 +161,17 @@ public class BrokerWorker extends IntentService {
             String password = loginRequest.getPassword().toString();
             boolean rememberMe = loginRequest.getRememberMe();
             if (!rememberMe){
-                config.getCoverageConnection().clearStorageHandler.clear();
+                ServiceManager.getServiceManager().getCoverageConnection().clearStorageHandler.clear();
             }
 
             boolean useFingerprintSensor = loginRequest.useFingerprintSensor();
             Log.d(TAG, "LoginRequest: Getting sessionid");
-            CoverageConnection.LoginResult result = config.getCoverageConnection().validateUserAndPassword(accountName, password, rememberMe, useFingerprintSensor);
+            CoverageConnection.LoginResult result = ServiceManager.getServiceManager().getCoverageConnection().validateUserAndPassword(accountName, password, rememberMe, useFingerprintSensor);
             Log.d(TAG, "LoginRequest: got sessionid");
             switch (result) {
                 case Success:
                     Log.i(TAG, "*****Successful login for: " + accountName);
-                    ServerConfiguration.UserType userType = config.getCoverageConnection().determineUserType();
+                    ServerConfiguration.UserType userType = ServiceManager.getServiceManager().getCoverageConnection().determineUserType();
                     BrokerWorker.eventBus.post(new Events.LoginRequestResult(Events.LoginRequestResult.Success, userType));
                     updateSessionTimer();
                     return;
@@ -204,7 +202,7 @@ public class BrokerWorker extends IntentService {
     public void doThis(Events.SecurityAnswer securityAnswer) {
 
         try {
-            ServerConfiguration serverConfiguration = config.getServerConfiguration();
+            ServerConfiguration serverConfiguration = ServiceManager.getServiceManager().getServerConfiguration();
 
             Log.d(TAG, "Received SecurityAnswer message");
 
@@ -216,9 +214,9 @@ public class BrokerWorker extends IntentService {
 
             String securityAnswerString = securityAnswer.getSecurityAnswer();
             Log.d(TAG, "LoginRequest: Getting sessionid");
-            config.getCoverageConnection().checkSecurityAnswer(securityAnswerString);
+            ServiceManager.getServiceManager().getCoverageConnection().checkSecurityAnswer(securityAnswerString);
             Log.d(TAG, "LoginRequest: got sessionid");
-            ServerConfiguration.UserType userType = config.getCoverageConnection().determineUserType();
+            ServerConfiguration.UserType userType = ServiceManager.getServiceManager().getCoverageConnection().determineUserType();
             if (userType == ServerConfiguration.UserType.Unknown) {
                 BrokerWorker.eventBus.post(new Events.LoginRequestResult(Events.LoginRequestResult.Failure, userType));
             } else {
@@ -254,18 +252,18 @@ public class BrokerWorker extends IntentService {
                     timedout = true;
                 }
             }
-            ServerConfiguration serverConfiguration = config.getCoverageConnection().getLogin();
+            ServerConfiguration serverConfiguration = ServiceManager.getServiceManager().getCoverageConnection().getLogin();
 
             if (serverConfiguration.userType != null
                 && serverConfiguration.userType == SignUpIndividual){
-                StateManager stateManager = config.getStateManager();
+                StateManager stateManager = ServiceManager.getServiceManager().getStateManager();
                 BrokerWorker.eventBus.post(new Events.StateAction(stateManager.getActivityId()));
                 return;
             }
 
             BrokerWorker.eventBus.post(new Events.GetLoginResult(serverConfiguration.accountName, serverConfiguration.password,
                     serverConfiguration.securityAnswer, serverConfiguration.rememberMe, serverConfiguration.useFingerprintSensor,
-                    config.getCoverageConnection().userTypeFromAccountInfo(), timedout));
+                    ServiceManager.getServiceManager().getCoverageConnection().userTypeFromAccountInfo(), timedout));
         } catch (Exception e) {
             Log.e(TAG, "Exception processing GetLogin");
             BrokerWorker.eventBus.post(new Events.GetLoginResult("Exception in Events.GetLogin", e));
@@ -282,7 +280,7 @@ public class BrokerWorker extends IntentService {
         Log.d(TAG, "Received LogoutRequest message");
 
         try {
-            config.getCoverageConnection().logout(logoutRequest.getClearAccount());
+            ServiceManager.getServiceManager().getCoverageConnection().logout(logoutRequest.getClearAccount());
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -309,7 +307,7 @@ public class BrokerWorker extends IntentService {
             }
 
             DateTime now = DateTime.now();
-            CoverageConnection coverageConnection = config.getCoverageConnection();
+            CoverageConnection coverageConnection = ServiceManager.getServiceManager().getCoverageConnection();
             String employerId = getEmployer.getEmployerId();
             BrokerClient brokerClient = null;
             Employer employer = null;
@@ -347,9 +345,9 @@ public class BrokerWorker extends IntentService {
             Roster roster;
 
             if (employerId == null) {
-                roster = config.getCoverageConnection().getRoster(now);
+                roster = ServiceManager.getServiceManager().getCoverageConnection().getRoster(now);
             } else {
-                roster = config.getCoverageConnection().getRoster(employerId, now);
+                roster = ServiceManager.getServiceManager().getCoverageConnection().getRoster(employerId, now);
             }
             BrokerWorker.eventBus.post(new Events.RosterResult(getRoster.getId(), roster));
             updateSessionTimer();
@@ -374,7 +372,7 @@ public class BrokerWorker extends IntentService {
                 return;
             }
 
-            BrokerAgency brokerAgency = config.getCoverageConnection().getBrokerAgency(DateTime.now());
+            BrokerAgency brokerAgency = ServiceManager.getServiceManager().getCoverageConnection().getBrokerAgency(DateTime.now());
             BrokerWorker.eventBus.post(new Events.GetBrokerAgencyResult(getBrokerAgency.getId(), brokerAgency));
             updateSessionTimer();
         } catch (Throwable e) {
@@ -398,7 +396,7 @@ public class BrokerWorker extends IntentService {
                 return;
             }
 
-            Carriers carriers = config.getCoverageConnection().getCarriers();
+            Carriers carriers = ServiceManager.getServiceManager().getCoverageConnection().getCarriers();
             BrokerWorker.eventBus.post(new Events.Carriers(getCarriers.getId(), carriers));
         } catch (Exception e) {
             Log.e(TAG, "Exception processing GetCarriers");
@@ -424,9 +422,9 @@ public class BrokerWorker extends IntentService {
             RosterEntry rosterEntry;
             String employerId = getEmployee.getEmployerId();
             if (employerId == null) {
-                rosterEntry = config.getCoverageConnection().getEmployee(getEmployee.getEmployeeId());
+                rosterEntry = ServiceManager.getServiceManager().getCoverageConnection().getEmployee(getEmployee.getEmployeeId());
             } else {
-                rosterEntry = config.getCoverageConnection().getEmployee(employerId, getEmployee.getEmployeeId());
+                rosterEntry = ServiceManager.getServiceManager().getCoverageConnection().getEmployee(employerId, getEmployee.getEmployeeId());
             }
             BrokerWorker.eventBus.post(new Events.Employee(getEmployee.getId(), getEmployee.getEmployeeId(), getEmployee.getEmployerId(), rosterEntry));
             updateSessionTimer();
@@ -447,7 +445,7 @@ public class BrokerWorker extends IntentService {
         if (sessionTimeoutTimer != null) {
             sessionTimeoutTimer.cancel();
         }
-        int timeoutMilliSeconds = BrokerWorkerConfig.config().enrollConfig().getSessionTimeoutSeconds() * 1000;
+        int timeoutMilliSeconds = ServiceManager.getServiceManager().enrollConfig().getSessionTimeoutSeconds() * 1000;
         timeout = DateTime.now().plusMillis(timeoutMilliSeconds);
         sessionTimeoutTimer = new Timer();;
         sessionTimeoutTimer.schedule(new TimerTask() {
@@ -464,7 +462,7 @@ public class BrokerWorker extends IntentService {
     public void doThis(Events.StartSessionTimeout startSessionTimeout) {
         Log.d(TAG, "processing Events.StartSessionTimeout");
 
-        countdownTimerTicksLeft = BrokerWorkerConfig.config().enrollConfig().getTimeoutCountdownSeconds();
+        countdownTimerTicksLeft = ServiceManager.getServiceManager().enrollConfig().getTimeoutCountdownSeconds();
         countdownTimer = new Timer();
         countdownTimer.schedule(new TimerTask() {
             @Override
@@ -498,7 +496,7 @@ public class BrokerWorker extends IntentService {
                 return;
             }
 
-            config.getCoverageConnection().stayLoggedIn();
+            ServiceManager.getServiceManager().getCoverageConnection().stayLoggedIn();
             success = true;
         } catch (Exception e) {
 
@@ -525,7 +523,7 @@ public class BrokerWorker extends IntentService {
 
     @Subscribe(threadMode = ThreadMode.BACKGROUND)
     public void doThis(Events.AuthenticateFingerprintEncrypt authenticateFingerprint) {
-        ServerConfiguration serverConfiguration = config.getServerConfiguration();
+        ServerConfiguration serverConfiguration = ServiceManager.getServiceManager().getServerConfiguration();
         try {
             Log.d(TAG, "processing AuthenticateFingerprintEncrypt");
 
@@ -549,11 +547,11 @@ public class BrokerWorker extends IntentService {
                 @Override
                 public void success(String encryptedText) {
                     try {
-                        ServerConfiguration serverConfiguration = BrokerWorkerConfig.config().enrollConfig().getServerConfiguration();
+                        ServerConfiguration serverConfiguration = ServiceManager.getServiceManager().enrollConfig().getServerConfiguration();
                         serverConfiguration.encryptedString = encryptedText;
-                        IServerConfigurationStorageHandler serverConfigurationStorageHandler = BrokerWorkerConfig.config().enrollConfig().getServerConfigurationStorageHandler();
+                        IServerConfigurationStorageHandler serverConfigurationStorageHandler = ServiceManager.getServiceManager().enrollConfig().getServerConfigurationStorageHandler();
                         serverConfigurationStorageHandler.store(serverConfiguration);
-                        config.getCoverageConnection().saveLoginInfo(true);
+                        ServiceManager.getServiceManager().getCoverageConnection().saveLoginInfo(true);
                     } catch (Exception e) {
                         e.printStackTrace();
                     }
@@ -573,7 +571,7 @@ public class BrokerWorker extends IntentService {
     @Subscribe(threadMode = ThreadMode.BACKGROUND)
     public void doThis(Events.AuthenticateFingerprintDecrypt authenticateFingerprint) {
         try {
-            final ServerConfiguration serverConfiguration = BrokerWorkerConfig.config().enrollConfig().getServerConfiguration();
+            final ServerConfiguration serverConfiguration = ServiceManager.getServiceManager().enrollConfig().getServerConfiguration();
 
             if (!SystemUtilities.detectNetwork()){
                 Log.e(TAG, "no network, returning from BrokerWorker");
@@ -581,7 +579,7 @@ public class BrokerWorker extends IntentService {
                 return;
             }
 
-            IServerConfigurationStorageHandler serverConfigurationStorageHandler = BrokerWorkerConfig.config().enrollConfig().getServerConfigurationStorageHandler();
+            IServerConfigurationStorageHandler serverConfigurationStorageHandler = ServiceManager.getServiceManager().enrollConfig().getServerConfigurationStorageHandler();
             serverConfigurationStorageHandler.read(serverConfiguration);
 
             fingerprintManager.authenticate(serverConfiguration.encryptedString, new FingerprintManager.IAuthenticationDecryptResult() {
@@ -631,8 +629,8 @@ public class BrokerWorker extends IntentService {
                 return;
             }
 
-            ServerConfiguration serverConfiguration = config.getServerConfiguration();
-            CoverageConnection.LoginResult loginResult = config.getCoverageConnection().revalidateUserAndPassword();
+            ServerConfiguration serverConfiguration = ServiceManager.getServiceManager().getServerConfiguration();
+            CoverageConnection.LoginResult loginResult = ServiceManager.getServiceManager().getCoverageConnection().revalidateUserAndPassword();
             Log.d(TAG, "login result: " + loginResult.toString());
             switch (loginResult) {
                 case NeedSecurityQuestion:
@@ -659,13 +657,13 @@ public class BrokerWorker extends IntentService {
 
     @Subscribe(threadMode = ThreadMode.BACKGROUND)
     public void doThis(Events.GetUserEmployee getUserEmployee) {
-        eventBus.post(new Events.GetUserEmployeeResults(config.getCoverageConnection().getUserEmployee()));
+        eventBus.post(new Events.GetUserEmployeeResults(ServiceManager.getServiceManager().getCoverageConnection().getUserEmployee()));
     }
 
     @Subscribe(threadMode = ThreadMode.BACKGROUND)
     public void doThis(Events.MoveImageToData moveImageToData){
         try{
-            config.getCoverageConnection().moveImageToData(moveImageToData.isFrontOfCard(), moveImageToData.getUri());
+            ServiceManager.getServiceManager().getCoverageConnection().moveImageToData(moveImageToData.isFrontOfCard(), moveImageToData.getUri());
             eventBus.post(new Events.MoveImageToDataResult(true));
         } catch (Exception e){
             eventBus.post(new Events.MoveImageToDataResult(false, e.getMessage()));
@@ -675,7 +673,7 @@ public class BrokerWorker extends IntentService {
     @Subscribe(threadMode = ThreadMode.BACKGROUND)
     public void doThis(Events.RemoveInsuraceCardImage removeInsuraceCardImage){
         try{
-            config.getCoverageConnection().removeInsuraceCardImage(removeInsuraceCardImage.isFront());
+            ServiceManager.getServiceManager().getCoverageConnection().removeInsuraceCardImage(removeInsuraceCardImage.isFront());
             eventBus.post(new Events.RemoveInsuraceCardImageResult(true));
         } catch (Exception e){
             eventBus.post(new Events.RemoveInsuraceCardImageResult(false));
@@ -694,7 +692,7 @@ public class BrokerWorker extends IntentService {
                 return;
             }
 
-            CoverageConnection.InsuredAndSummary insuredAndSummaryOfBenefits = config.getCoverageConnection().getInsuredAndSummaryOfBenefits(getInsuredAndBenefits.getCurrentDate());
+            CoverageConnection.InsuredAndSummary insuredAndSummaryOfBenefits = getServiceManager.getCoverageConnection().getInsuredAndSummaryOfBenefits(getInsuredAndBenefits.getCurrentDate());
 
             BrokerWorker.eventBus.post(new Events.GetInsuredAndSummaryOfBenefitsResult(insuredAndSummaryOfBenefits.getInsured(), insuredAndSummaryOfBenefits.getSummaries()));
             updateSessionTimer();
@@ -717,7 +715,7 @@ public class BrokerWorker extends IntentService {
             }
 
 
-            CoverageConnection.InsuredAndServices insuredAndServices = config.getCoverageConnection().getInsuredAndServices(getInsuredAndServices.getEnrollmentDate());
+            CoverageConnection.InsuredAndServices insuredAndServices = ServiceManager.getServiceManager().getCoverageConnection().getInsuredAndServices(getInsuredAndServices.getEnrollmentDate());
             if (insuredAndServices == null){
                 Log.d(TAG, "getInsuredAndServices returned null!");
                 BrokerWorker.eventBus.post(new Events.GetInsuredAndServicesResult(null, null));
@@ -735,25 +733,35 @@ public class BrokerWorker extends IntentService {
 
     @Subscribe(threadMode = ThreadMode.BACKGROUND)
     public void doThis(Events.SignUp signUp) {
-        config.getCoverageConnection().configureForSignUp();
-        BrokerWorker.eventBus.post(new Events.SignUpResult());
+        try {
+            ServiceManager.getServiceManager().getCoverageConnection().configureForSignUp(signUp.getEndPointUrl());
+            BrokerWorker.eventBus.post(new Events.SignUpResult());
+        } catch (Exception e) {
+            Log.e(TAG, "Exception processing SignUp");
+            BrokerWorker.eventBus.post(new Events.Error("Error processing SignUp", "Events.SignUp"));
+        }
     }
 
     @Subscribe(threadMode = ThreadMode.BACKGROUND)
     public void doThis(Events.GetPlanShopping getPlanShopping){
-        BrokerWorker.eventBus.post(new Events.GetPlanShoppingResult(config.getCoverageConnection().getPlanShoppingParameters()));
+        BrokerWorker.eventBus.post(new Events.GetPlanShoppingResult(ServiceManager.getServiceManager().getCoverageConnection().getPlanShoppingParameters()));
     }
 
     @Subscribe(threadMode = ThreadMode.BACKGROUND)
     public void doThis(Events.ResetPlanShopping resetPlanShopping){
-        config.getCoverageConnection().configureForSignUp();
-        BrokerWorker.eventBus.post(new Events.ResetPlanShoppingResult());
+        try {
+            ServiceManager.getServiceManager().getCoverageConnection().configureForSignUp(null);
+            BrokerWorker.eventBus.post(new Events.ResetPlanShoppingResult());
+        } catch (Exception e) {
+            Log.e(TAG, "Exception processing ResetPlanShopping");
+            BrokerWorker.eventBus.post(new Events.Error("Error processing ResetPlanShopping", "Events.ResetPlanShopping"));
+        }
     }
 
     @Subscribe(threadMode = ThreadMode.BACKGROUND)
     public void doThis(Events.UpdatePlanShopping updatePlanShopping){
         try {
-            config.getCoverageConnection().updatePlanShopping(updatePlanShopping);
+            ServiceManager.getServiceManager().getCoverageConnection().updatePlanShopping(updatePlanShopping);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -763,7 +771,7 @@ public class BrokerWorker extends IntentService {
     @Subscribe(threadMode = ThreadMode.BACKGROUND)
     public void doThis(Events.GetPlans getPlans){
         try {
-            CoverageConnection coverageConnection = config.getCoverageConnection();
+            CoverageConnection coverageConnection = ServiceManager.getServiceManager().getCoverageConnection();
             List<Plan> plans = coverageConnection.getPlans();
             BrokerWorker.eventBus.post(new Events.GetPlansResult(plans, coverageConnection.getPremiumFilter(), coverageConnection.getDeductibleFilter()));
         } catch (Exception e) {
@@ -774,7 +782,7 @@ public class BrokerWorker extends IntentService {
     @Subscribe(threadMode = ThreadMode.BACKGROUND)
     public void doThis(Events.SetPlanFilter setPlanFilter) {
         try {
-            config.getCoverageConnection().updatePlanFilters(setPlanFilter.getPremiumFilter(), setPlanFilter.getDeductibleFilter());
+            ServiceManager.getServiceManager().getCoverageConnection().updatePlanFilters(setPlanFilter.getPremiumFilter(), setPlanFilter.getDeductibleFilter());
         } catch (Exception e) {
             // edit these exceptions since we are doing this asyncronously to the user.
         }
@@ -783,11 +791,11 @@ public class BrokerWorker extends IntentService {
     @Subscribe(threadMode = ThreadMode.BACKGROUND)
     public void doThis(Events.GetPlan getPlan) {
         try {
-            Plan plan = config.getCoverageConnection().getPlan(getPlan.getPlanId());
+            Plan plan = ServiceManager.getServiceManager().getCoverageConnection().getPlan(getPlan.getPlanId());
 
             List<Service> services = null;
             if (getPlan.isGetSummaryAndBenefits()){
-                services = config.getCoverageConnection().getSummaryForPlan(plan);
+                services = ServiceManager.getServiceManager().getCoverageConnection().getSummaryForPlan(plan);
             }
 
             BrokerWorker.eventBus.post(new Events.GetPlanResult(plan, services));
@@ -799,7 +807,7 @@ public class BrokerWorker extends IntentService {
     @Subscribe(threadMode = ThreadMode.BACKGROUND)
     public void doThis(Events.GetAppConfig getAppConfig) {
         try {
-            BrokerWorker.eventBus.post(new Events.GetAppConfigResult(BrokerWorkerConfig.config().getAppConfig()));
+            BrokerWorker.eventBus.post(new Events.GetAppConfigResult(ServiceManager.getServiceManager().getAppConfig()));
         } catch (Exception e) {
             // edit these exceptions since we are doing this asyncronously to the user.
         }
@@ -807,14 +815,14 @@ public class BrokerWorker extends IntentService {
 
     @Subscribe(threadMode = ThreadMode.BACKGROUND)
     public void doThis(Events.UpdateAppConfig updateAppConfig) {
-        BrokerWorkerConfig.config().update(updateAppConfig.getAppConfig());
+        ServiceManager.getServiceManager().update(updateAppConfig.getAppConfig());
     }
 
     @Subscribe(threadMode = ThreadMode.BACKGROUND)
     public void doThis(Events.GetRidpQuestions getRidpQuestions) {
         try {
-            Questions questions = config.getCoverageConnection().getRidpQuestions();
-            BrokerWorker.eventBus.post(new Events.GetRidpQuestionsResult(questions));
+            RidpService.QuestionsAndAnswers questions = ServiceManager.getServiceManager().getRidpService().getRidpQuestions();
+            BrokerWorker.eventBus.post(new Events.GetRidpQuestionsResult(questions.questions, questions.answers));
         } catch (Exception e) {
             Log.e(TAG, "exception get ridp questions: " + e.getMessage());
             // edit these exceptions since we are doing this asyncronously to the user.
@@ -822,8 +830,34 @@ public class BrokerWorker extends IntentService {
     }
 
     @Subscribe(threadMode = ThreadMode.BACKGROUND)
-    public void doThis(Events.ButtonClicked buttonClicked) {
-        BrokerWorkerConfig.config().getStateManager().process(BrokerWorker.eventBus, buttonClicked.getButtonId());
+    public void doThis(Events.UpdateAnswers updateAnswers) {
+        try {
+            ServiceManager.getServiceManager().getRidpService().updateAnswers(updateAnswers.getAnswers());
+        } catch (Exception e) {
+            Log.e(TAG, "exception updating answers: " + e.getMessage());
+            // edit these exceptions since we are doing this asyncronously to the user.
+        }
+    }
+
+    @Subscribe(threadMode = ThreadMode.BACKGROUND)
+    public void doThis(Events.AccountButtonClicked accountButtonClicked) {
+        ServiceManager.getServiceManager().getStateManager().process(BrokerWorker.eventBus, accountButtonClicked.getScreenId(), accountButtonClicked.getButtonId(), accountButtonClicked.getAccount());
+    }
+
+    @Subscribe(threadMode = ThreadMode.BACKGROUND)
+    public void doThis(Events.GetCreateAccountInfo getCreateAccountInfo){
+        try {
+            org.dchbx.coveragehq.models.account.Account account = ServiceManager.getServiceManager().getRidpService().getCreateAccountInfo();
+            BrokerWorker.eventBus.post(new Events.GetCreateAccountInfoResult(account));
+        } catch (Exception e) {
+            Log.e(TAG, "Exception processing Events.GetCreateAccountInfo");
+            BrokerWorker.eventBus.post(new Events.Error("Error processing Events.GetCreateAccountInfo", "Events.GetCreateAccountInfo"));
+        }
+    }
+
+    @Subscribe(threadMode = ThreadMode.BACKGROUND)
+    public void doThis(Events.GetVerificationResponse getVerificationResponse){
+        BrokerWorker.eventBus.post(new Events.GetVerificationResponseResponse(ServiceManager.getServiceManager().getRidpService().getVerificationResponse()));
     }
 }
 

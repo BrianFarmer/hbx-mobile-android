@@ -11,7 +11,6 @@ import org.dchbx.coveragehq.models.brokeragency.BrokerAgency;
 import org.dchbx.coveragehq.models.employer.Employer;
 import org.dchbx.coveragehq.models.gitaccounts.GitAccounts;
 import org.dchbx.coveragehq.models.planshopping.Plan;
-import org.dchbx.coveragehq.models.ridp.Questions;
 import org.dchbx.coveragehq.models.roster.Enrollment;
 import org.dchbx.coveragehq.models.roster.Roster;
 import org.dchbx.coveragehq.models.roster.RosterEntry;
@@ -74,8 +73,12 @@ public abstract class CoverageConnection {
         clearStorageHandler.store(serverConfiguration);
     }
 
-    public void configureForSignUp() {
+    public void configureForSignUp(String endPointUrl) throws IOException, CoverageException {
         serverConfiguration.userType = ServerConfiguration.UserType.SignUpIndividual;
+        if (endPointUrl != null) {
+            serverConfiguration.endpointsPath = endPointUrl;
+            getEndPoints();
+        }
     }
 
     public PlanShoppingParameters getPlanShoppingParameters() {
@@ -122,13 +125,6 @@ public abstract class CoverageConnection {
         dataCache.store(plan.id, services, now);
 
         return services;
-    }
-
-    public Questions getRidpQuestions() throws IOException, CoverageException {
-        UrlHandler.GetParameters getParameters = urlHandler.getRidpQuestionsParameters();
-
-        IConnectionHandler.GetResponse response = connectionHandler.simpleGet(getParameters);
-        return urlHandler.processRidpQuestions(response);
     }
 
     enum LoginResult {
@@ -506,7 +502,7 @@ public abstract class CoverageConnection {
         }
     }
 
-    public InsuredAndServices getInsuredAndServices(LocalDate enrollmentDate) throws Exception {
+    public InsuredAndServices getInsuredAndServices(LocalDate enrollmentDate) throws    Exception {
         Log.d(TAG, "in CoverageConnection.getInsuredAndServices(" + enrollmentDate.toString() + ")");
         RosterEntry insured = getEmployee(null);
 
@@ -535,7 +531,11 @@ public abstract class CoverageConnection {
 
     public void getEndPoints() throws IOException, CoverageException {
         UrlHandler.GetParameters endPointParameters = urlHandler.getEndpointsParameters();
-        IConnectionHandler.GetResponse getResponse = connectionHandler.get(endPointParameters);
+        if (endPointParameters == null) {
+            return;
+        }
+        IConnectionHandler.GetResponse getResponse = connectionHandler.simpleGet(endPointParameters);
         urlHandler.processEndpoints(getResponse);
     }
+
 }
