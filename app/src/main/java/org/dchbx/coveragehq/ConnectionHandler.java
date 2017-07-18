@@ -549,15 +549,14 @@ public class ConnectionHandler implements IConnectionHandler{
 
 
     public IConnectionHandler.GetResponse simpleGet(UrlHandler.GetParameters getParameters) throws IOException {
-        OkHttpClient client = new OkHttpClient();
         Request request = (new Request.Builder()
                 .url(getParameters.url))
                 .build();
 
-        Response response = client.newCall(request).execute();
+        Response response = getClient(getParameters.url.scheme(), true).newCall(request).execute();
         GetResponse getResponse = new GetResponse();
-
         getResponse.body = response.body().string();
+        getResponse.responseCode = response.code();
         return getResponse;
     }
 

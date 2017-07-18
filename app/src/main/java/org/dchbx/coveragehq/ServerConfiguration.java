@@ -75,6 +75,6 @@ public class ServerConfiguration {
         return "";
     }
 
-    public String GitAccountsUrl = "https://raw.githubusercontent.com/dchealthlink/HBX-mobile-app-APIs/master/generated/accounts.json";
+    public String GitAccountsUrl = "https://raw.githubusercontent.com/dchealthlink/HBX-mobile-app-APIs/master/static/accounts.json";
     public String currentMobileUrl;
 }

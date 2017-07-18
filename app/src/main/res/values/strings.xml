@@ -375,4 +375,5 @@ You <font color="#69a30d">favorited %d plans</font>.
     <string name="by_clicking_continue">By clicking CONTINUE, you are saying that you understand that information in this application, and the information we get from data sources will be used to decide the eligibility of the people who are applying for health insurance. You are also indicating that you have permission from all of the people listed on the application for their information to be retrieved and used from data sources.</string>
     <string name="no_thanks_i_need_an_individual_plan">No thanks, I need\nan individual plan.</string>
     <string name="it_looks_like_you_ve_already_got_an_application_in_dc_health_link_to_make_changes_log_in_to_your_account_at_www_dchealthlinkn_com_or_call_us_at_855_532_5465">It looks like you\'ve already got an application in DC Health Link. To make changes log in to your account at www.dchealthlinkn.com or call us at (855) 532-5465.</string>
+    <string name="please_confirm_the_following">Please confirm the following...</string>
 </resources>

@@ -12,6 +12,7 @@ import org.dchbx.coveragehq.ridp.AcctSsnWithEmployer;
 import org.dchbx.coveragehq.ridp.AcctSystemFoundYou;
 import org.dchbx.coveragehq.ridp.AcctSystemFoundYouAceds;
 import org.dchbx.coveragehq.ridp.RidpQuestionsActivity;
+import org.dchbx.coveragehq.uqhp.UqhpConfirm;
 import org.greenrobot.eventbus.EventBus;
 
 import java.util.ArrayList;
@@ -423,15 +424,15 @@ class RidpTask extends Wizard<RidpService, Account> {
 
         ArrayList<SwitchPath<RidpService, Account, WizardPage<RidpService, Account>, SubmitAnswers.PossibleResults>> switchPaths = new ArrayList<>();
         switchPaths.add(new SwitchPath<RidpService, Account, WizardPage<RidpService, Account>, SubmitAnswers.PossibleResults>(SubmitAnswers.PossibleResults.InEnroll,
-                uiBuilder.wizardPage("in enroll", ridpTask, R.id.continueButton, AcctSystemFoundYou.uiActivity, null, null, ServiceManager.getServiceManager().getRidpService())));
+                uiBuilder.wizardPage("RIDP complete:in enroll", ridpTask, R.id.continueButton, AcctSystemFoundYou.uiActivity, null, null, ServiceManager.getServiceManager().getRidpService())));
         switchPaths.add(new SwitchPath<RidpService, Account, WizardPage<RidpService, Account>, SubmitAnswers.PossibleResults>(SubmitAnswers.PossibleResults.InRoster,
-                uiBuilder.wizardPage("in enroll", ridpTask, R.id.continueButton, AcctSsnWithEmployer.uiActivity, null, null, ServiceManager.getServiceManager().getRidpService())));
+                uiBuilder.wizardPage("RIDP complete:in roster", ridpTask, R.id.continueButton, AcctSsnWithEmployer.uiActivity, null, null, ServiceManager.getServiceManager().getRidpService())));
         switchPaths.add(new SwitchPath<RidpService, Account, WizardPage<RidpService, Account>, SubmitAnswers.PossibleResults>(SubmitAnswers.PossibleResults.InACEDS,
-                uiBuilder.wizardPage("in enroll", ridpTask, R.id.continueButton, AcctSystemFoundYouAceds.uiActivity, null, null, ServiceManager.getServiceManager().getRidpService())));
+                uiBuilder.wizardPage("RIDP complete:in ACEDS", ridpTask, R.id.continueButton, AcctSystemFoundYouAceds.uiActivity, null, null, ServiceManager.getServiceManager().getRidpService())));
         switchPaths.add(new SwitchPath<RidpService, Account, WizardPage<RidpService, Account>, SubmitAnswers.PossibleResults>(SubmitAnswers.PossibleResults.Ok,
-                uiBuilder.wizardPage("in enroll", ridpTask, R.id.continueButton, AcctSystemFoundYou.uiActivity, null, null, ServiceManager.getServiceManager().getRidpService())));
+                uiBuilder.wizardPage("RIDP complete:new user", ridpTask, R.id.continueButton, UqhpConfirm.uiActivity, null, null, ServiceManager.getServiceManager().getRidpService())));
         switchPaths.add(new SwitchPath<RidpService, Account, WizardPage<RidpService, Account>, SubmitAnswers.PossibleResults>(SubmitAnswers.PossibleResults.VerificationFailed,
-                uiBuilder.wizardPage("in enroll", ridpTask, R.id.continueButton, AcctSystemFoundYou.uiActivity, null, null, ServiceManager.getServiceManager().getRidpService())));
+                uiBuilder.wizardPage("RIDP complete:verification failure", ridpTask, R.id.continueButton, AcctSystemFoundYou.uiActivity, null, null, ServiceManager.getServiceManager().getRidpService())));
 
         tasks.add(new SubmitAnswers("results switch", ridpTask, R.id.continueButton, AcctSystemFoundYou.uiActivity, null, null, ServiceManager.getServiceManager().getRidpService(), switchPaths));
 

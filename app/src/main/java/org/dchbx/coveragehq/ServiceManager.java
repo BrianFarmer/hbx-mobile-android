@@ -52,7 +52,10 @@ public class ServiceManager {
             case GitHub:
                 config = gitHubBuildConfig2;
                 gitHubBuildConfig2.getCoverageConnection();
-                getServerConfiguration().GitAccountsUrl = updateAppConfig.GithubUrl;
+                ServerConfiguration serverConfiguration = getServerConfiguration();
+                serverConfiguration.GitAccountsUrl = updateAppConfig.GithubUrl;
+                serverConfiguration.endpointsPath = updateAppConfig.GithubUrl;
+
                 break;
             case MobileServer:
                 config = ivlBuildConfig2;

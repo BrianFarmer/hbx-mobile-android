@@ -1,4 +1,13 @@
-package org.dchbx.coveragehq.models.ridp;
+package org.dchbx.coveragehq.uqhp;
+
+import android.databinding.DataBindingUtil;
+import android.os.Bundle;
+
+import org.dchbx.coveragehq.BrokerActivity;
+import org.dchbx.coveragehq.R;
+import org.dchbx.coveragehq.StateManager;
+import org.dchbx.coveragehq.databinding.UqhpConfirmBinding;
+import org.dchbx.coveragehq.models.account.Account;
 
 /*
     This file is part of DC.
@@ -17,28 +26,20 @@ package org.dchbx.coveragehq.models.ridp;
     along with DC Health Link SmallBiz.  If not, see <http://www.gnu.org/licenses/>.
     This statement should go near the beginning of every source file, close to the copyright notices. When using the Lesser GPL, insert the word “Lesser” before “General” in all three places. When using the GNU AGPL, insert the word “Affero” before “General” in all three places.
 */
-import com.google.gson.annotations.Expose;
-import com.google.gson.annotations.SerializedName;
+public class UqhpConfirm extends BrokerActivity {
+    public static StateManager.UiActivity uiActivity = new StateManager.UiActivity(UqhpConfirm.class);
 
-public class PersonDemographics {
+    UqhpConfirmBinding binding;
 
-    @SerializedName("ssn")
-    @Expose
-    public String ssn;
-    @SerializedName("sex")
-    @Expose
-    public String sex = "male";
-    @SerializedName("birth_date")
-    @Expose
-    public String birthDate;
-    @SerializedName("is_incarcerated")
-    @Expose
-    public boolean isIncarcerated = false;
-    @SerializedName("created_at")
-    @Expose
-    public String createdAt;
-    @SerializedName("modified_at")
-    @Expose
-    public String modifiedAt;
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        binding = DataBindingUtil.setContentView(this, R.layout.uqhp_confirm);
+        binding.setActivity(this);
+    }
+
+
+    public void onClick(Account account){
+    }
 
 }
