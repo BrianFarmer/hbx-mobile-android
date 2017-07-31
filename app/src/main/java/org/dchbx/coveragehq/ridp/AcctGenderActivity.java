@@ -3,12 +3,12 @@ package org.dchbx.coveragehq.ridp;
 import android.databinding.DataBindingUtil;
 import android.os.Bundle;
 import android.widget.ImageButton;
-import android.widget.Toast;
 
+import org.dchbx.coveragehq.AcctActivity;
 import org.dchbx.coveragehq.R;
 import org.dchbx.coveragehq.StateManager;
-import org.dchbx.coveragehq.databinding.AcctSystemFoundYouAcedsBinding;
-import org.dchbx.coveragehq.models.ridp.VerifiyIdentityResponse;
+import org.dchbx.coveragehq.databinding.AcctGenderBinding;
+import org.dchbx.coveragehq.models.account.Account;
 
 /*
     This file is part of DC.
@@ -27,31 +27,28 @@ import org.dchbx.coveragehq.models.ridp.VerifiyIdentityResponse;
     along with DC Health Link SmallBiz.  If not, see <http://www.gnu.org/licenses/>.
     This statement should go near the beginning of every source file, close to the copyright notices. When using the Lesser GPL, insert the word “Lesser” before “General” in all three places. When using the GNU AGPL, insert the word “Affero” before “General” in all three places.
 */
-public class AcctSystemFoundYouAceds extends PostVerifiedActivity {
-    public static StateManager.UiActivity uiActivity = new StateManager.UiActivity(AcctSystemFoundYouAceds.class);
-    private ImageButton continueButton;
+public class AcctGenderActivity extends AcctActivity {
+    public static StateManager.UiActivity uiActivity = new StateManager.UiActivity(AcctGenderActivity.class);
+    private static String TAG = "AcctGenderActivity";
 
-    private AcctSystemFoundYouAcedsBinding binding;
+    private ImageButton continueButton;
+    private AcctGenderBinding binding;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        binding = DataBindingUtil.setContentView(this, R.layout.acct_system_found_you_aceds);
+        binding = DataBindingUtil.setContentView(this, R.layout.acct_gender);
         configToolbar();
     }
 
-    public void continueClicked(){
-        Toast toast = Toast.makeText(this, "continue clicked", Toast.LENGTH_LONG);
-        toast.show();
-    }
-
-    public void comeBackLaterClicked(){
-        Toast toast = Toast.makeText(this,"come back later clicke", Toast.LENGTH_LONG);
-        toast.show();
-    }
-
     @Override
-    protected void populate(VerifiyIdentityResponse verificationResponse) {
+    protected void populate(final Account account) {
+        binding.setAccount(account);
+        binding.setActivity(this);
+    }
 
+    public void onClick(Account account){
+        getMessages().accountButtonClicked(StateManager.AppEvents.Continue, account, null);
     }
 }

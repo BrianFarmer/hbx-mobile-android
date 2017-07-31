@@ -5,12 +5,9 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.ListView;
 
-import org.dchbx.coveragehq.AcctActivity;
-import org.dchbx.coveragehq.Events;
 import org.dchbx.coveragehq.R;
 import org.dchbx.coveragehq.StateManager;
 import org.dchbx.coveragehq.databinding.AcctSsnWithEmployerBinding;
-import org.dchbx.coveragehq.models.account.Account;
 import org.dchbx.coveragehq.models.ridp.Employer;
 import org.dchbx.coveragehq.models.ridp.VerifiyIdentityResponse;
 
@@ -33,7 +30,8 @@ import java.util.ArrayList;
     along with DC Health Link SmallBiz.  If not, see <http://www.gnu.org/licenses/>.
     This statement should go near the beginning of every source file, close to the copyright notices. When using the Lesser GPL, insert the word “Lesser” before “General” in all three places. When using the GNU AGPL, insert the word “Affero” before “General” in all three places.
 */
-public class AcctSsnWithEmployer extends AcctActivity {
+
+public class AcctSsnWithEmployer extends PostVerifiedActivity {
     public static StateManager.UiActivity uiActivity = new StateManager.UiActivity(AcctSsnWithEmployer.class);
     private AcctSsnWithEmployerBinding binding;
     private VerifiyIdentityResponse verificationResponse;
@@ -45,8 +43,8 @@ public class AcctSsnWithEmployer extends AcctActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.acct_ssn_with_employer);
+        configToolbar();
         employersListView = (ListView) findViewById(R.id.employersListView);
-        getMessages().getVerificationResponse();
         needIndividual = (Button) findViewById(R.id.needIndividual);
         needIndividual.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -56,15 +54,11 @@ public class AcctSsnWithEmployer extends AcctActivity {
         });
     }
 
-    public void doThis(Events.GetVerificationResponseResponse getVerificationResponseResponse){
-        verificationResponse = getVerificationResponseResponse.getVerificationResponse();
+    @Override
+    protected void populate(VerifiyIdentityResponse verificationResponse) {
         ArrayList<Employer> employers = new ArrayList<>(verificationResponse.employers);
         FoundEmployersAdapter foundEmployersAdapter = new FoundEmployersAdapter(this, employers);
         employersListView.setAdapter(foundEmployersAdapter);
-    }
-
-    @Override
-    protected void populate(Account account) {
 
     }
 }

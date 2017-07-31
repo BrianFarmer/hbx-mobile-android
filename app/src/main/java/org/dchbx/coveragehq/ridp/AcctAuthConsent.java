@@ -4,8 +4,8 @@ import android.databinding.DataBindingUtil;
 import android.os.Bundle;
 
 import org.dchbx.coveragehq.AcctActivity;
-import org.dchbx.coveragehq.R;
 import org.dchbx.coveragehq.StateManager;
+import org.dchbx.coveragehq.R;
 import org.dchbx.coveragehq.databinding.AcctAuthConsentBinding;
 import org.dchbx.coveragehq.models.account.Account;
 
@@ -35,7 +35,7 @@ public class AcctAuthConsent extends AcctActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         binding = DataBindingUtil.setContentView(this, R.layout.acct_auth_consent);
-        getMessages().getCreateAccountInfo();
+        configToolbar();
     }
 
     @Override
@@ -45,6 +45,10 @@ public class AcctAuthConsent extends AcctActivity {
     }
 
     public void onClick(Account account){
-        getMessages().buttonClicked(R.layout.acct_auth_consent, R.id.continueButton, account);
+        if (account.experianConsent) {
+            getMessages().accountButtonClicked(StateManager.AppEvents.ConsentGiven, account, null);
+        } else {
+            getMessages().buttonClicked(StateManager.AppEvents.ConsentDenied);
+        }
     }
 }

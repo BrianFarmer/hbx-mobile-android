@@ -124,7 +124,7 @@
                     android:layout_below="@id/textViewSsnField"
                     android:layout_alignParentLeft="true"
                     android:layout_alignParentStart="true"
-                    android:id="@+id/address1"
+                    android:id="@+id/firstName"
                     android:tag="@string/details_group"
                     style="@style/employee_field"
                     />
@@ -132,7 +132,7 @@
                     android:text=""
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_below="@id/address1"
+                    android:layout_below="@id/firstName"
                     android:layout_alignParentLeft="true"
                     android:layout_alignParentStart="true"
                     android:id="@+id/address2"

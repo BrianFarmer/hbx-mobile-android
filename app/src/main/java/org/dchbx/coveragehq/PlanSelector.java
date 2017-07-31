@@ -11,7 +11,6 @@ import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.Toolbar;
 import android.telephony.TelephonyManager;
-import android.text.Html;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
@@ -36,6 +35,7 @@ import java.util.List;
 
 public class PlanSelector extends BaseActivity {
     private static String TAG = "PlanSelector";
+    public static StateManager.UiActivity uiActivity;
 
     private List<Plan> planList;
     private double currentPremium;
@@ -55,6 +55,9 @@ public class PlanSelector extends BaseActivity {
 
     PlanCardAdapter planCardAdapter;
     private FrameLayout placeHolder;
+    private TextView plansAndFavoritesPlans;
+    private TextView plansAndFavoritesFavorites;
+    private TextView plansAndFavoritesSlash;
 
 
     @Override
@@ -67,7 +70,9 @@ public class PlanSelector extends BaseActivity {
 
         deckLayout = (SwipeFrameLayout)findViewById(R.id.swipeLayout);
         deckView = (SwipeDeck) findViewById(R.id.swipeDeck);
-        plansAndFavorites = (TextView) findViewById(R.id.plansAndFavorites);
+        plansAndFavoritesPlans = (TextView) findViewById(R.id.plansAndFavoritesPlans);
+        plansAndFavoritesSlash = (TextView) findViewById(R.id.plansAndFavoritesSlash);
+        plansAndFavoritesFavorites = (TextView) findViewById(R.id.plansAndFavoritesFavorites);
         discard = (TextView) findViewById(R.id.discard);
         reset = (TextView) findViewById(R.id.reset);
         keep = (TextView) findViewById(R.id.keep);
@@ -95,14 +100,25 @@ public class PlanSelector extends BaseActivity {
             }
         });
 
+        plansAndFavoritesFavorites.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                favoritesCountClicked();
+            }
+        });
+
         getMessages().getPlans();
-        initToolbar();
+        configToolbar();
     }
 
     private void inflateSwipeDeck() {
         placeHolder = (FrameLayout) findViewById(R.id.swipeDeckFrameLayout);
         View child = (FrameLayout)getLayoutInflater().inflate(R.layout.plan_selector_swipedeck, null);
         placeHolder.addView(child);
+    }
+
+    private void favoritesCountClicked(){
+        showFavorites(favoriteedPlans);
     }
 
     private void discardClicked() {
@@ -133,94 +149,6 @@ public class PlanSelector extends BaseActivity {
         }
 
         deckView.swipeTopCardRight(1200);
-    }
-
-
-    private void initToolbar(){
-        this.drawerLayout = (DrawerLayout)findViewById(R.id.drawer_layout);
-        this.navigationView = (NavigationView)findViewById(R.id.navigation);
-
-        // Initializing Toolbar and setting it as the actionbar
-        toolbar = (Toolbar) findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);
-        toolbar.setLogo(R.drawable.app_header);
-
-        ActionBarDrawerToggle actionBarDrawerToggle = new ActionBarDrawerToggle(this,drawerLayout,toolbar,R.string.drawer_open, R.string.drawer_close){
-
-            @Override
-            public void onDrawerClosed(View drawerView) {
-                // Code here will be triggered once the drawer closes as we dont want anything to happen so we leave this blank
-                super.onDrawerClosed(drawerView);
-            }
-
-            @Override
-            public void onDrawerOpened(View drawerView) {
-                // Code here will be triggered once the drawer open as we dont want anything to happen so we leave this blank
-
-                super.onDrawerOpened(drawerView);
-            }
-        };
-        final PlanSelector mainActivity = this;
-        navigationView.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
-            @Override
-            public boolean onNavigationItemSelected(MenuItem item) {
-                //Closing drawer on item click
-                drawerLayout.closeDrawers();
-
-
-                switch (item.getItemId()){
-                    case R.id.nav_call_healthlink:
-                        if (((TelephonyManager)BrokerApplication.getBrokerApplication().getSystemService(Context.TELEPHONY_SERVICE)).getPhoneType()
-                                == TelephonyManager.PHONE_TYPE_NONE) {
-                            AlertDialog.Builder builder = new AlertDialog.Builder(PlanSelector.this);
-                            builder.setMessage("DC Health Link: " + Constants.HbxPhoneNumber)
-                                    .setCancelable(false)
-                                    .setPositiveButton("OK", new DialogInterface.OnClickListener() {
-                                        public void onClick(DialogInterface dialog, int id) {
-                                            dialog.dismiss();
-                                        }
-                                    });
-                            AlertDialog alert = builder.create();
-                            alert.show();
-                        } else {
-                            Intent phoneIntent = new Intent(Intent.ACTION_DIAL);
-                            phoneIntent.setData(Uri.parse("tel:" + Constants.HbxPhoneNumber));
-                            startActivity(phoneIntent);
-                        }
-                        return true;
-                    case R.id.nav_email_healthlink:
-                        Intent emailIntent = new Intent(Intent.ACTION_SENDTO);
-                        emailIntent.setData(Uri.parse(BrokerApplication.getBrokerApplication().getString(R.string.hbx_mail_url)));
-                        startActivity(emailIntent);
-                        return true;
-                    case R.id.nav_logout:
-                        getMessages().logoutRequest();
-                        Intent i = new Intent(PlanSelector.this, RootActivity.class);
-                        i.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-                        startActivity(i);
-                        return true;
-                    case R.id.nav_carriers:
-                        Intent carrierIntent = new Intent(mainActivity, CarriersActivity.class);
-                        Log.d(TAG, "onClick: launching carriers activitiy");
-                        mainActivity.startActivity(carrierIntent);
-                        return true;
-                }
-                return false;
-            }
-        });
-
-        //Setting the actionbarToggle to drawer layout
-        drawerLayout.setDrawerListener(actionBarDrawerToggle);
-
-        //MenuItem carriersMenuItem=navigationView.getMenu().findItem(R.id.nav_call_healthlink);
-        MenuItem callMenuItem=navigationView.getMenu().findItem(R.id.nav_call_healthlink);
-        callMenuItem.setIcon(R.drawable.call_color);
-        //MenuItem logoutMenuItem=navigationView.getMenu().findItem(R.id.nav_logout);
-
-
-        //calling sync state is necessay or else your hamburger icon wont show up
-        actionBarDrawerToggle.syncState();
-
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)
@@ -288,7 +216,8 @@ public class PlanSelector extends BaseActivity {
     }
 
     private void populatePlansAndFavorites() {
-        plansAndFavorites.setText(Html.fromHtml(String.format(getString(R.string.plans_and_favorites_counts), planCardAdapter.getPlanCount(), planCardAdapter.getFavoriteCount())));
+        plansAndFavoritesPlans.setText(String.format(getString(R.string.plans_and_favorites_plans), planCardAdapter.getPlanCount()));
+        plansAndFavoritesFavorites.setText(String.format(getString(R.string.plans_and_favorites_favorites), planCardAdapter.getFavoriteCount()));
     }
 
     public void showFavorites(ArrayList<Plan> filteredPlans) {

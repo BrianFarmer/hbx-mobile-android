@@ -9,4 +9,15 @@
     <dimen name="ivl_right_margin">40dp</dimen>
     <dimen name="ivl_seekbar_margin">45dp</dimen>
     <dimen name="fab_margin">16dp</dimen>
+    <dimen name="plan_selector_card_font">16dp</dimen>
+    <dimen name="plan_selector_card_text_spacing">12dp</dimen>
+    <dimen name="plan_selector_card_icon_margin_top">11dp</dimen>
+    <dimen name="plan_selector_card_summary_font">17dp</dimen>
+    <dimen name="plan_selector_card_costs_font">20dp</dimen>
+    <dimen name="plan_selector_card_icon_height">34dp</dimen>
+    <dimen name="plan_selector_card_costs_margin_big">28dp</dimen>
+    <dimen name="plan_selector_card_button_padding">13dp</dimen>
+    <dimen name="plan_selector_button_big_padding">30dp</dimen>
+    <dimen name="plan_selector_button_small_padding">18dp</dimen>
+    <dimen name="plan_selector_plan_favorites_padding">16dp</dimen>
 </resources>

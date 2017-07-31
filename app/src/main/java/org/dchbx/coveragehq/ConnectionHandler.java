@@ -94,7 +94,7 @@ public class ConnectionHandler implements IConnectionHandler{
         if (code < 200
                 || code > 299) {
             //|| response.header("location", null) == null) {
-            throw new Exception("error validing =login");
+            throw new Exception("error code: " + response.code());
         }
         PostResponse postResponse = new PostResponse();
         postResponse.responseCode = code;

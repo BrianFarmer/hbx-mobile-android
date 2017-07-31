@@ -11,7 +11,7 @@
     />
 
     <EditText
-        android:id="@+id/address1"
+        android:id="@+id/firstName"
         android:layout_below="@+id/question"
         android:text=""
         android:hint="@string/first_name"
@@ -23,7 +23,7 @@
         android:text=""
         android:hint="@string/last_name"
         style="@style/ivl_edit"
-        android:layout_below="@+id/address1"
+        android:layout_below="@+id/firstName"
         />
 
     <EditText

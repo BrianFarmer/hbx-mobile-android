@@ -5,8 +5,8 @@ import android.os.Bundle;
 import android.widget.ImageButton;
 
 import org.dchbx.coveragehq.AcctActivity;
-import org.dchbx.coveragehq.R;
 import org.dchbx.coveragehq.StateManager;
+import org.dchbx.coveragehq.R;
 import org.dchbx.coveragehq.databinding.AcctDateOfBirthBinding;
 import org.dchbx.coveragehq.models.account.Account;
 import org.dchbx.coveragehq.models.ridp.Questions;
@@ -40,8 +40,8 @@ public class AcctDateOfBirth extends AcctActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
         binding = DataBindingUtil.setContentView(this, R.layout.acct_date_of_birth);
+        configToolbar();
     }
 
     @Override
@@ -51,6 +51,6 @@ public class AcctDateOfBirth extends AcctActivity {
     }
 
     public void onClick(Account account){
-        getMessages().buttonClicked(R.layout.acct_date_of_birth, R.id.continueButton, account);
+        getMessages().accountButtonClicked(StateManager.AppEvents.Continue, account, null);
     }
 }

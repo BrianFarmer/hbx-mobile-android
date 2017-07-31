@@ -52,7 +52,7 @@
                 />
         </provider>
 
-        <activity android:name=".RootActivity">
+        <activity android:name=".RootActivity" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN"/>
 
@@ -176,6 +176,11 @@
             />
         <activity
             android:name=".uqhp.UqhpConfirm"
+            android:configChanges="orientation|keyboardHidden|screenSize"
+            android:label=""
+            />
+        <activity
+            android:name=".ridp.AcctGenderActivity"
             android:configChanges="orientation|keyboardHidden|screenSize"
             android:label=""
             />

@@ -63,6 +63,10 @@ public class BrokerApplication extends Application {
         }
     }
 
+    public Messages getMessages(StateProcessor stateProcessor){
+        return new EventBusMessages(stateProcessor);
+    }
+
     public Messages getMessages(Activity activity) {
         return new EventBusMessages(activity);
     }

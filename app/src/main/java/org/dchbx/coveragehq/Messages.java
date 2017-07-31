@@ -53,11 +53,19 @@ public interface Messages {
     void updateInsuredFragment(LocalDate currentDate);
     void getPlan(String planId, boolean getSummaryAndBenefits);
     void getRidpQuestions();
-    void buttonClicked(int screenId, int submit);
-    void buttonClicked(int screenId, int submit, org.dchbx.coveragehq.models.account.Account  account);
+    void buttonClicked(StateManager.AppEvents appEvent);
+    void accountButtonClicked(StateManager.AppEvents appEvent, org.dchbx.coveragehq.models.account.Account account, Answers usersAnswers);
     void getCreateAccountInfo();
     void signUp(String planShoppingPath);
     void updateAnswers(Answers usersAnswers);
     void getVerificationResponse();
+    void getCurrentActivity();
+    void stateAction(Events.StateAction.Action launchActivity, int id);
+    void stateAction(Events.StateAction.Action launchActivity);
+    void error(String str1, String str2);
+    void appEvent(StateManager.AppEvents event, String s);
+    void appEvent(StateManager.AppEvents event);
+    void createAccount();
+    void verifyUser();
 }
 

@@ -3,9 +3,7 @@ package org.dchbx.coveragehq;
 import android.content.Intent;
 import android.content.res.Resources;
 import android.os.Bundle;
-import android.support.v7.widget.Toolbar;
 import android.util.Log;
-import android.view.View;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
@@ -68,24 +66,7 @@ public class SummaryOfBenefitsActivity extends BrokerActivity {
         Log.d(TAG, "In SummaryOfBenefitsActivity.onStop()");
         super.onStop();
     }
-
-
-    private void configToolbar() {
-        // Initializing Toolbar and setting it as the actionbar
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);
-        toolbar.setLogo(R.drawable.app_header_vector);
-        toolbar.setTitle("");
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        getSupportActionBar().setDisplayShowHomeEnabled(true);
-        toolbar.setNavigationOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                finish();
-            }
-        });
-    }
-
+    
     private void populateCoverageYearDependencies(Enrollment enrollment, Resources resources) {
     }
 

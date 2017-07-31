@@ -8,10 +8,12 @@ public class ServerConfiguration {
 
     public enum UserType {
         Unknown,
+        NotLoggedIn,
         Broker,
         Employer,
         Employee,
-        SignUpIndividual, Individual
+        SignUpIndividual,
+        Individual
     }
 
     public String accountName = null;

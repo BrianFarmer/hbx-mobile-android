@@ -65,6 +65,25 @@ public class Account implements Serializable {
         this.password = password;
     }
 
+    public void setGenderToMale() {
+        this.gender = "male";
+    }
+
+    public void setGenderToFemale() {
+        this.gender = "female";
+    }
+
+    public boolean isMale(){
+        if (gender == null){
+            return false;
+        }
+        return gender.compareToIgnoreCase("male") == 0;
+    }
+
+    public String getGender(){
+        return gender;
+    }
+
     public LocalDate getBirthdate() {
         return birthdate;
     }
@@ -134,6 +153,7 @@ public class Account implements Serializable {
     public Address address;
     public boolean incarcerated;
     public boolean experianConsent;
+    public String gender;
 
     public String getFirstName() {
         return this.firstName;

@@ -1,6 +1,5 @@
 package org.dchbx.coveragehq;
 
-import android.app.Activity;
 import android.net.Uri;
 import android.util.Log;
 import android.widget.ImageView;
@@ -1080,48 +1079,63 @@ public class Events {
 
     public static class AccountButtonClicked {
         private final org.dchbx.coveragehq.models.account.Account  account;
-        private final int screenId;
-        private int buttonId;
+        private final Answers answers;
+        private final StateManager.AppEvents appEvent;
 
-        public AccountButtonClicked(int screenId, int buttonId){
-            this.screenId = screenId;
-            this.buttonId = buttonId;
-            account = null;
-        }
-
-        public AccountButtonClicked(int screenId, int buttonId, org.dchbx.coveragehq.models.account.Account  object) {
-            this.screenId = screenId;
-            this.buttonId = buttonId;
-            this.account = object;
-        }
-
-        public int getButtonId() {
-            return buttonId;
+        public AccountButtonClicked(StateManager.AppEvents appEvent, org.dchbx.coveragehq.models.account.Account account,
+                                    Answers answers) {
+            this.appEvent = appEvent;
+            this.account = account;
+            this.answers = answers;
         }
 
         public org.dchbx.coveragehq.models.account.Account  getAccount() {
             return account;
         }
 
-        public int getScreenId() {
-            return screenId;
+        public StateManager.AppEvents getAppEvent() {
+            return appEvent;
+        }
+
+        public Answers getAnswers() {
+            return answers;
+        }
+    }
+
+    public static class ButtonClicked {
+        private final StateManager.AppEvents appEvent;
+
+        public ButtonClicked(StateManager.AppEvents appEvent){
+            this.appEvent = appEvent;
+        }
+
+        public StateManager.AppEvents getAppEvent() {
+            return appEvent;
         }
     }
 
     public static class StateAction {
+        public Action getAction() {
+            return action;
+        }
+
+        public enum Action {
+            Finish,
+            LaunchActivity,
+            LaunchDialog,
+            HideWait, ShowWait
+        }
+
+        private final Action action;
         private int uiActivityId;
 
-        public StateAction(int uiActivityId){
+        public StateAction(Action action, int uiActivityId){
+            this.action = action;
             this.uiActivityId = uiActivityId;
         }
 
         public int getUiActivityId() {
             return uiActivityId;
-        }
-
-        public void doThis(Activity activity) {
-            StateManager.UiActivity.Info uiActivityType = StateManager.UiActivity.getUiActivityType(uiActivityId);
-            Intents.launchActivity(uiActivityType.cls, activity);
         }
     }
 
@@ -1179,5 +1193,44 @@ public class Events {
         public VerifiyIdentityResponse getVerificationResponse() {
             return verificationResponse;
         }
+    }
+
+    public static class GetCurrentActivity {
+    }
+
+    public static class GetCurrentActivityResult {
+        private final StateManager.UiActivity uiActivity;
+
+        public GetCurrentActivityResult(StateManager.UiActivity uiActivity){
+            this.uiActivity = uiActivity;
+        }
+
+        public StateManager.UiActivity getUiActivity() {
+            return uiActivity;
+        }
+    }
+
+    public static class AppEvent {
+        private final StateManager.AppEvents event;
+        private final String s;
+
+        public AppEvent(StateManager.AppEvents event, String s) {
+            this.event = event;
+            this.s = s;
+        }
+
+        public StateManager.AppEvents getEvent() {
+            return event;
+        }
+
+        public String getString1() {
+            return s;
+        }
+    }
+
+    public static class CreateAccount {
+    }
+
+    public static class VerifyUser {
     }
 }

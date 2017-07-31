@@ -30,8 +30,8 @@ import android.widget.TextView;
 
 import org.dchbx.coveragehq.AcctActivity;
 import org.dchbx.coveragehq.Events;
-import org.dchbx.coveragehq.R;
 import org.dchbx.coveragehq.StateManager;
+import org.dchbx.coveragehq.R;
 import org.dchbx.coveragehq.databinding.RidpQuestionsBinding;
 import org.dchbx.coveragehq.models.account.Account;
 import org.dchbx.coveragehq.models.ridp.Answer;
@@ -55,6 +55,12 @@ public class RidpQuestionsActivity extends AcctActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         binding = DataBindingUtil.setContentView(this, R.layout.ridp_questions);
+        configToolbar();
+    }
+
+    @Override
+    public void onResume(){
+        super.onResume();
         getMessages().getRidpQuestions();
     }
 
@@ -118,7 +124,7 @@ public class RidpQuestionsActivity extends AcctActivity {
                         response.answer = new Answer();
                         response.answer.responseId = responseOption.responseId;
                         response.answer.responseText = responseOption.responseText;
-                        getMessages().updateAnswers(usersAnswers);
+                        //getMessages().updateAnswers(usersAnswers);
                     }
                 });
                 if (answer1.answer.responseId != null
@@ -133,6 +139,6 @@ public class RidpQuestionsActivity extends AcctActivity {
     }
 
     public void onClick(Account account){
-        getMessages().buttonClicked(R.layout.acct_pii, R.id.continueButton, account);
+        getMessages().accountButtonClicked(StateManager.AppEvents.Continue, account, usersAnswers);
     }
 }

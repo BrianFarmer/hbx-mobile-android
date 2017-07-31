@@ -15,6 +15,8 @@ import java.util.ArrayList;
  */
 
 public class FamilyActivity extends BaseActivity {
+    public static StateManager.UiActivity uiActivity = new StateManager.UiActivity(FamilyActivity.class);
+
     private PlanShoppingParameters planShoppingParameters;
     private FamilyAdapter familyAdapter;
 
@@ -23,6 +25,7 @@ public class FamilyActivity extends BaseActivity {
         super.onCreate(savedInstanceState);
 
         setContentView(R.layout.family);
+        configToolbar();
         getMessages().getPlanShopping();
     }
 

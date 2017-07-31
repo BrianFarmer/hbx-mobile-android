@@ -23,6 +23,8 @@ import java.util.List;
 
 public class PremiumAndDeductibleActivity extends BaseActivity {
     static private String TAG = "PremiumDeductibleActvty";
+    public static StateManager.UiActivity uiActivity;
+
     private List<Plan> planList;
     private Button plansAvailable;
     private double maxPremium;
@@ -39,6 +41,7 @@ public class PremiumAndDeductibleActivity extends BaseActivity {
         super.onCreate(savedInstanceState);
 
         setContentView(R.layout.premium_and_deductible);
+        configToolbar();
         getMessages().getPlans();
     }
 

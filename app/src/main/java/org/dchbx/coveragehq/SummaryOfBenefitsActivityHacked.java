@@ -126,7 +126,8 @@ public class SummaryOfBenefitsActivityHacked extends AppCompatActivity {
 
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void doThis(Events.StateAction stateAction) {
-        stateAction.doThis(this);
+        StateManager.UiActivity.Info uiActivityType = StateManager.UiActivity.getUiActivityType(stateAction.getUiActivityId());
+        Intents.launchActivity(uiActivityType.cls, this);
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)

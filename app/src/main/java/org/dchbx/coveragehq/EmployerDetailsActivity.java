@@ -215,22 +215,6 @@ public class EmployerDetailsActivity extends BrokerActivity {
         textViewEnrollmentStatus.setTextColor(ContextCompat.getColor(this, planStatus.statusColorId));
     }
 
-    private void configToolbar() {
-        // Initializing Toolbar and setting it as the actionbar
-        toolbar = (Toolbar) findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);
-        toolbar.setLogo(R.drawable.app_header);
-        toolbar.setTitle("");
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        getSupportActionBar().setDisplayShowHomeEnabled(true);
-        toolbar.setNavigationOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                finish();
-            }
-        });
-    }
-
     private void configButtons(){
         if (employer == null){
             return;

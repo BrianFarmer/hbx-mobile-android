@@ -263,7 +263,7 @@ public class InsuredInfoFragment extends BrokerFragment {
         textViewSsnField.setText(String.format(resources.getString(R.string.ssn_field_format), insured.ssnMasked));
 
 
-        TextView address1 = (TextView) view.findViewById(R.id.address1);
+        TextView address1 = (TextView) view.findViewById(R.id.firstName);
         TextView address2 = (TextView) view.findViewById(R.id.address2);
         TextView cityStateZip = (TextView) view.findViewById(R.id.cityStateZip);
         TextView phoneNumber = (TextView) view.findViewById(R.id.phoneNumber);

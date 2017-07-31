@@ -4,8 +4,8 @@ import android.databinding.DataBindingUtil;
 import android.os.Bundle;
 
 import org.dchbx.coveragehq.AcctActivity;
-import org.dchbx.coveragehq.R;
 import org.dchbx.coveragehq.StateManager;
+import org.dchbx.coveragehq.R;
 import org.dchbx.coveragehq.databinding.AcctPiiBinding;
 import org.dchbx.coveragehq.models.account.Account;
 
@@ -36,7 +36,7 @@ public class AcctPreAuthActivity extends AcctActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         binding = DataBindingUtil.setContentView(this, R.layout.acct_pii);
-        getMessages().getCreateAccountInfo();
+        configToolbar();
     }
 
     @Override
@@ -46,6 +46,6 @@ public class AcctPreAuthActivity extends AcctActivity {
     }
 
     public void onClick(Account account){
-        getMessages().buttonClicked(R.layout.acct_pii, R.id.continueButton, account);
+        getMessages().accountButtonClicked(StateManager.AppEvents.Continue, account, null);
     }
 }

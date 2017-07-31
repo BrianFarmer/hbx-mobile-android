@@ -5,11 +5,10 @@ import android.os.Bundle;
 import android.widget.ImageButton;
 import android.widget.Toast;
 
-import org.dchbx.coveragehq.AcctActivity;
 import org.dchbx.coveragehq.R;
 import org.dchbx.coveragehq.StateManager;
 import org.dchbx.coveragehq.databinding.AcctSystemFoundYouBinding;
-import org.dchbx.coveragehq.models.account.Account;
+import org.dchbx.coveragehq.models.ridp.VerifiyIdentityResponse;
 
 /*
     This file is part of DC.
@@ -28,7 +27,7 @@ import org.dchbx.coveragehq.models.account.Account;
     along with DC Health Link SmallBiz.  If not, see <http://www.gnu.org/licenses/>.
     This statement should go near the beginning of every source file, close to the copyright notices. When using the Lesser GPL, insert the word “Lesser” before “General” in all three places. When using the GNU AGPL, insert the word “Affero” before “General” in all three places.
 */
-public class AcctSystemFoundYou extends AcctActivity {
+public class AcctSystemFoundYou extends PostVerifiedActivity {
     public static StateManager.UiActivity uiActivity = new StateManager.UiActivity(AcctSystemFoundYou.class);
     private ImageButton continueButton;
 
@@ -38,10 +37,7 @@ public class AcctSystemFoundYou extends AcctActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         binding = DataBindingUtil.setContentView(this, R.layout.acct_system_found_you);
-    }
-
-    @Override
-    protected void populate(final Account account) {
+        configToolbar();
     }
 
     public void pleaseLogInClicked(){
@@ -57,5 +53,10 @@ public class AcctSystemFoundYou extends AcctActivity {
     public void comeBackLaterClicked(){
         Toast toast = Toast.makeText(this,"come back later clicke", Toast.LENGTH_LONG);
         toast.show();
+    }
+
+    @Override
+    protected void populate(VerifiyIdentityResponse verificationResponse) {
+
     }
 }

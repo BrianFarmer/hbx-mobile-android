@@ -454,6 +454,15 @@ public abstract class UrlHandler {
                             .port(serverConfiguration.dataInfo.port)
                             .build().toString();
                 }
+                if (plan.links.summaryOfBenefits != null
+                    && plan.links.summaryOfBenefits.substring(0,1).compareTo("/") == 0){
+                    plan.links.summaryOfBenefits = new HttpUrl.Builder()
+                            .scheme(serverConfiguration.dataInfo.scheme)
+                            .host(serverConfiguration.dataInfo.host)
+                            .addPathSegments(plan.links.summaryOfBenefits.substring(1))
+                            .port(serverConfiguration.dataInfo.port)
+                            .build().toString();
+                }
             }
         }
 

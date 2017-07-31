@@ -1,14 +1,30 @@
 package org.dchbx.coveragehq;
 
 import android.net.Uri;
+import android.util.Log;
 
+import org.dchbx.coveragehq.models.account.Account;
 import org.dchbx.coveragehq.models.ridp.Answers;
 import org.greenrobot.eventbus.EventBus;
 import org.joda.time.LocalDate;
 
-/**
- * Created by plast on 10/27/2016.
- */
+/*
+    This file is part of DC.
+
+    DC Health Link SmallBiz is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    DC Health Link SmallBiz is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with DC Health Link SmallBiz.  If not, see <http://www.gnu.org/licenses/>.
+    This statement should go near the beginning of every source file, close to the copyright notices. When using the Lesser GPL, insert the word “Lesser” before “General” in all three places. When using the GNU AGPL, insert the word “Affero” before “General” in all three places.
+*/
 
 public class EventBusMessages implements Messages {
     private Object object;
@@ -17,7 +33,11 @@ public class EventBusMessages implements Messages {
     public EventBusMessages(Object object){
         this.object = object;
         eventBus = EventBus.getDefault();
-        eventBus.register(object);
+        try {
+            eventBus.register(object);
+        } catch (Throwable e){
+            Log.d("EventBusMessages", "exception initializing: " + e.getMessage());
+        }
     }
 
     @Override
@@ -214,6 +234,46 @@ public class EventBusMessages implements Messages {
     }
 
     @Override
+    public void getCurrentActivity() {
+        eventBus.post(new Events.GetCurrentActivity());
+    }
+
+    @Override
+    public void stateAction(Events.StateAction.Action action, int id) {
+        eventBus.post(new Events.StateAction(action, id));
+    }
+
+    @Override
+    public void stateAction(Events.StateAction.Action action) {
+        stateAction(action, 0);
+    }
+
+    @Override
+    public void error(String str1, String str2) {
+        BrokerWorker.eventBus.post(new Events.Error(str1, str2));
+    }
+
+    @Override
+    public void appEvent(StateManager.AppEvents event, String s) {
+        eventBus.post(new Events.AppEvent(event, s));
+    }
+
+    @Override
+    public void appEvent(StateManager.AppEvents event) {
+        eventBus.post(new Events.AppEvent(event, null));
+    }
+
+    @Override
+    public void createAccount() {
+        eventBus.post(new Events.CreateAccount());
+    }
+
+    @Override
+    public void verifyUser() {
+        eventBus.post(new Events.VerifyUser());
+    }
+
+    @Override
     public void getPlanShopping() {
         eventBus.post(new Events.GetPlanShopping());
     }
@@ -269,13 +329,13 @@ public class EventBusMessages implements Messages {
     }
 
     @Override
-    public void buttonClicked(int screenId, int submit) {
-        eventBus.post(new Events.AccountButtonClicked(screenId, submit));
+    public void buttonClicked(StateManager.AppEvents appEvent) {
+        eventBus.post(new Events.ButtonClicked(appEvent));
     }
 
     @Override
-    public void buttonClicked(int screenId, int submit, org.dchbx.coveragehq.models.account.Account  account) {
-        eventBus.post(new Events.AccountButtonClicked(screenId, submit, account));
+    public void accountButtonClicked(StateManager.AppEvents appEvent, Account account, Answers usersAnswers) {
+        eventBus.post(new Events.AccountButtonClicked(appEvent, account, usersAnswers));
     }
 
     @Override

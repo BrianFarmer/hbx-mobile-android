@@ -75,13 +75,13 @@
             />
 
         <TextView
-            android:id="@+id/medalLevelLabel"
+            android:id="@+id/metalLevelLabel"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignLeft="@+id/planLocationLabel"
             android:layout_alignStart="@+id/planLocationLabel"
             android:layout_centerVertical="true"
-            android:text="Medal Level:"
+            android:text="@string/metal_level"
             android:textSize="16sp"
             />
 
@@ -89,9 +89,9 @@
             android:id="@+id/button"
             android:layout_width="105dp"
             android:layout_height="wrap_content"
-            android:layout_alignLeft="@+id/medalLevelLabel"
+            android:layout_alignLeft="@+id/metalLevelLabel"
             android:layout_alignParentBottom="true"
-            android:layout_alignStart="@+id/medalLevelLabel"
+            android:layout_alignStart="@+id/metalLevelLabel"
             android:layout_marginBottom="17dp"
             android:text="Details"
             android:textSize="16dp"
@@ -137,7 +137,7 @@
             android:id="@+id/metalType"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_alignBottom="@+id/medalLevelLabel"
+            android:layout_alignBottom="@+id/metalLevelLabel"
             android:layout_toEndOf="@+id/planLocationLabel"
             android:layout_toRightOf="@+id/planLocationLabel"
             android:text="TextView"

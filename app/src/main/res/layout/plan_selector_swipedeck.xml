@@ -14,14 +14,13 @@
     android:layout_marginBottom="18dp"
     swipedeck:layout_constraintLeft_toLeftOf="parent"
     swipedeck:layout_constraintRight_toRightOf="parent"
-    tools:showIn="@layout/plan_selector"
     >
 
     <com.daprlabs.aaron.swipedeck.SwipeDeck
         android:id="@+id/swipeDeck"
         android:layout_width="match_parent"
-        android:layout_height="480dp"
-        android:padding="10dp"
+        android:layout_height="match_parent"
+        android:padding="3dp"
         swipedeck:max_visible="3"
         swipedeck:card_spacing="10dp"
         swipedeck:swipe_enabled="true"

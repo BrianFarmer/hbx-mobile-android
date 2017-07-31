@@ -1,0 +1,14 @@
+<resources>
+    <!-- Default screen margins, per the Android Design guidelines. -->
+    <dimen name="plan_selector_card_font">14dp</dimen>
+    <dimen name="plan_selector_card_text_spacing">10dp</dimen>
+    <dimen name="plan_selector_card_summary_font">17dp</dimen>
+    <dimen name="plan_selector_card_costs_font">17dp</dimen>
+    <dimen name="plan_selector_card_icon_margin_top">8dp</dimen>
+    <dimen name="plan_selector_card_icon_height">29dp</dimen>
+    <dimen name="plan_selector_card_costs_margin_big">22dp</dimen>
+    <dimen name="plan_selector_card_button_padding">12dp</dimen>
+    <dimen name="plan_selector_button_big_padding">26dp</dimen>
+    <dimen name="plan_selector_button_small_padding">15dp</dimen>
+    <dimen name="plan_selector_plan_favorites_padding">14dp</dimen>
+</resources>

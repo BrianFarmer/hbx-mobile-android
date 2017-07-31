@@ -4,8 +4,8 @@ import android.databinding.DataBindingUtil;
 import android.os.Bundle;
 
 import org.dchbx.coveragehq.AcctActivity;
-import org.dchbx.coveragehq.R;
 import org.dchbx.coveragehq.StateManager;
+import org.dchbx.coveragehq.R;
 import org.dchbx.coveragehq.databinding.AcctSsnBinding;
 import org.dchbx.coveragehq.models.account.Account;
 
@@ -36,6 +36,7 @@ public class AcctSsn extends AcctActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         binding = DataBindingUtil.setContentView(this, R.layout.acct_ssn);
+        configToolbar();
     }
 
     @Override
@@ -45,6 +46,6 @@ public class AcctSsn extends AcctActivity {
     }
 
     public void onClick(Account account){
-        getMessages().buttonClicked(R.layout.acct_ssn, R.id.continueButton, account);
+        getMessages().accountButtonClicked(StateManager.AppEvents.Continue, account, null);
     }
 }

@@ -326,7 +326,7 @@
     <string name="discard">Discard</string>
     <string name="plan_type">Plan Type:</string>
     <string name="plan_location">Plan Location:</string>
-    <string name="medal_level">Medal Level:</string>
+    <string name="metal_level">Metal Level:</string>
     <string name="monthly">Monthly</string>
     <string name="deductible">Deductible</string>
     <string name="nationwide">Nationwide</string>
@@ -346,17 +346,17 @@ You <font color="#69a30d">favorited %d plans</font>.
     </string>
     <string name="tap_reset_from_zero">
 <![CDATA[
-    Tap <font color="#eaaa00">RESET</font> below to start over.</string>
+    Tap <font color="#eaaa00">RESET</font> below to see them again.</string>
 ]]>
     </string>
-    <string name="plans_and_favorites_counts" formatted="false">
-<![CDATA[
-%d Plans / <font color="#007bc4">%d Favorites</font>
-]]>
-    </string>
+
+    <string name="plans_and_favorites_plans" formatted="false">%d Plans</string>
+    <string name="plans_and_favorites_slash" formatted="false">/</string>
+    <string name="plans_and_favorites_favorites" formatted="false">%d Favorites</string>
     <string name="phyisician_directory">Phyisician Directory</string>
-    <string name="lets_create">First, let’s create your account ...</string>
+    <string name="lets_create">First, let’s create\nyour account ...</string>
     <string name="date_of_birth">date of birth?</string>
+    <string name="what_is_your_gender">What is your gender?</string>
     <string name="what_is_your">What is your</string>
     <string name="number">number?</string>
     <string name="social_security">social security</string>
@@ -376,4 +376,10 @@ You <font color="#69a30d">favorited %d plans</font>.
     <string name="no_thanks_i_need_an_individual_plan">No thanks, I need\nan individual plan.</string>
     <string name="it_looks_like_you_ve_already_got_an_application_in_dc_health_link_to_make_changes_log_in_to_your_account_at_www_dchealthlinkn_com_or_call_us_at_855_532_5465">It looks like you\'ve already got an application in DC Health Link. To make changes log in to your account at www.dchealthlinkn.com or call us at (855) 532-5465.</string>
     <string name="please_confirm_the_following">Please confirm the following...</string>
+    <string name="skip">Skip</string>
+    <string name="buy">Buy</string>
+    <string name="what_is_your_nhome_address">What is your\nhome address?</string>
+    <string name="waiting">Waiting</string>
+    <string name="male">Male</string>
+    <string name="female">Female</string>
 </resources>

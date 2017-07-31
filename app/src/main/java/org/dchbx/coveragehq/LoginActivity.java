@@ -35,6 +35,7 @@ import java.util.ArrayList;
  * A login screen that offers login via email/password.
  */
 public class LoginActivity extends BrokerActivity {
+    public static StateManager.UiActivity uiActivity = new StateManager.UiActivity(LoginActivity.class);
 
     private static String TAG = "LoginActivity";
     private static final int FINGERPRINT_PERMISSION_REQUEST_CODE = 15;
@@ -58,7 +59,6 @@ public class LoginActivity extends BrokerActivity {
     Switch switchEnableFingerprintLogin;
     private ArrayList<String> urls;
 
-    private ProgressDialog progressDialog;
 
     private boolean waitingForFingerprint = false;
     private FingerprintHardwareState fingerprintHardwareState = FingerprintHardwareState.NotChecked;
@@ -236,7 +236,8 @@ public class LoginActivity extends BrokerActivity {
         getMessages().loginRequest(new Events.LoginRequest(emailAddress.getText(), password.getText(), rememberMe.isChecked(), switchEnableFingerprintLogin.isChecked()));
     }
 
-    private void showProgress() {
+    @Override
+    protected void showProgress() {
         if (progressDialog == null){
             progressDialog = new ProgressDialog(this);
             progressDialog.setIndeterminate(true);
@@ -393,12 +394,6 @@ public class LoginActivity extends BrokerActivity {
     public void doThis(Events.Error error) {
         hideProgress();
         NetworkErrorDialog.build(this, R.string.app_title, R.string.network_access_error, null);
-    }
-
-    private void hideProgress() {
-        if (progressDialog != null){
-            progressDialog.dismiss();
-        }
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)

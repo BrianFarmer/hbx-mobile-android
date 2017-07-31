@@ -43,6 +43,7 @@ import java.util.List;
 
 public class PlanDetailsActivity extends BaseActivity {
     private static String TAG = "PlanDetailsActivity";
+    public static StateManager.UiActivity uiActivity;
 
     private DrawerLayout drawerLayout;
     private Toolbar toolbar;
@@ -59,8 +60,8 @@ public class PlanDetailsActivity extends BaseActivity {
         Intent intent = getIntent();
         setContentView(R.layout.plan_details);
         String planId = intent.getExtras().getCharSequence(Intents.PLAN_ID).toString();
+        configToolbar();
         getMessages().getPlan(planId, true);
-        //initToolbar();
     }
 
     private void initToolbar(){

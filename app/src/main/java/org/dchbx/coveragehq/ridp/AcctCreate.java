@@ -4,13 +4,10 @@ import android.databinding.DataBindingUtil;
 import android.os.Bundle;
 
 import org.dchbx.coveragehq.AcctActivity;
-import org.dchbx.coveragehq.Events;
 import org.dchbx.coveragehq.R;
 import org.dchbx.coveragehq.StateManager;
 import org.dchbx.coveragehq.databinding.AcctCreateBinding;
 import org.dchbx.coveragehq.models.account.Account;
-import org.greenrobot.eventbus.Subscribe;
-import org.greenrobot.eventbus.ThreadMode;
 
 /*
     This file is part of DC.
@@ -40,13 +37,7 @@ public class AcctCreate extends AcctActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         binding = DataBindingUtil.setContentView(this, R.layout.acct_create);
-        getMessages().getCreateAccountInfo();
-    }
-
-
-    @Subscribe(threadMode = ThreadMode.MAIN)
-    public void doThis(Events.GetCreateAccountInfoResult getCreateAccountInfoResult){
-        populate(getCreateAccountInfoResult.getAccount());
+        configToolbar();
     }
 
     @Override
@@ -56,6 +47,10 @@ public class AcctCreate extends AcctActivity {
     }
 
     public void onClick(Account account){
-        getMessages().buttonClicked(R.layout.acct_create, R.id.continueButton, account);
+        getMessages().accountButtonClicked(StateManager.AppEvents.Continue, account, null);
+    }
+
+    public void onSkip(){
+        getMessages().buttonClicked(StateManager.AppEvents.Skip);
     }
 }

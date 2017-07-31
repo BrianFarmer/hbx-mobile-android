@@ -37,7 +37,7 @@ public class PlanShoppingChoicesActivity extends BrokerActivity {
         startShopping.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                getMessages().buttonClicked(R.layout.plan_shopping_choices, R.id.startShopping);
+                getMessages().buttonClicked(StateManager.AppEvents.StartShopping);
             }
         });
 
@@ -45,7 +45,7 @@ public class PlanShoppingChoicesActivity extends BrokerActivity {
         checkFinancialAssistance.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                getMessages().buttonClicked(R.layout.plan_shopping_choices, R.id.checkFinancialAssistance);
+                getMessages().buttonClicked(StateManager.AppEvents.CheckFinancialAssitance);
             }
         });
     }

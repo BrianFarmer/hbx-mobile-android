@@ -80,7 +80,7 @@ public class InsuredDetailsActivity extends BrokerActivity {
 
         setContentView(R.layout.insured_user_details_activity);
         getMessages().getInsured();
-        configToolbar();
+        configHamburgerToolbar();
         configTabs();
     }
 
@@ -156,7 +156,7 @@ public class InsuredDetailsActivity extends BrokerActivity {
         }
     }
 
-    private void configToolbar() {
+    private void configHamburgerToolbar() {
         this.drawerLayout = (DrawerLayout)findViewById(R.id.drawer_layout);
         this.navigationView = (NavigationView)findViewById(R.id.navigation);
 

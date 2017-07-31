@@ -32,6 +32,7 @@ public class ServiceManager {
     private BrokerWorker brokerWorker;
     private StateManager stateManager;
     private ConfigurationStorageHandler configurationStorageHandler;
+    private AppStatusService appStatusService;
 
     public AppConfig getAppConfig(){
         AppConfig appConfig = new AppConfig();
@@ -75,10 +76,11 @@ public class ServiceManager {
         // Initialize all of the services
 
         signUpService = new SignUpService();
-        ridpService = new RidpService();
-        brokerWorker = new BrokerWorker();
-        stateManager = new StateManager();
+        ridpService = new RidpService(this);
+        brokerWorker = new BrokerWorker(this);
+        stateManager = new StateManager(this);
         configurationStorageHandler = new ConfigurationStorageHandler();
+        appStatusService = new AppStatusService(this);
 
         AppConfig appConfig = getAppConfig();
         if (configurationStorageHandler.read(appConfig)) {
@@ -100,6 +102,10 @@ public class ServiceManager {
 
     public JsonParser getParser() {
         return new JsonParser();
+    }
+
+    public AppStatusService getAppStatusService() {
+        return appStatusService;
     }
 
     public enum DataSource {

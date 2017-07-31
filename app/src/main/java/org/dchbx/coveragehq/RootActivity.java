@@ -31,6 +31,7 @@ public class RootActivity extends BrokerActivity {
         super.onResume();
         Log.d(TAG, "**************** onResume");
         getMessages().getLogin();
+        getMessages().getCurrentActivity();
     }
 
     @Override
@@ -57,6 +58,12 @@ public class RootActivity extends BrokerActivity {
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)
+    public void doThis(Events.GetCurrentActivityResult getCurrentActivityResult) {
+        StateManager.UiActivity.Info uiActivityType = StateManager.UiActivity.getUiActivityType(getCurrentActivityResult.getUiActivity());
+        Intents.launchActivity(uiActivityType.cls, this);
+    }
+
+    @Subscribe(threadMode = ThreadMode.MAIN)
     public void doThis(Events.GetLoginResult getLoginResult){
         if (getLoginResult.getErrorMessagge() != null
             && !getLoginResult.isTimedout()){
@@ -66,38 +73,6 @@ public class RootActivity extends BrokerActivity {
                 restartApp(this);
             }
             return;
-        }
-
-        if (getLoginResult.isLoggedIn()) {
-            switch (getLoginResult.getUserType()) {
-                case Broker:
-                    Log.d(TAG, "requesting employer list");
-                    Intents.launchBrokerDetailsActivity(this);
-                    finish();
-                    break;
-                case Employer:
-                    Intents.launchEmployerDetailsActivity(this);
-                    finish();
-                    break;
-                case Employee:
-                    Intents.launchInsuredUserDetailsActivity(this);
-                    finish();
-                    break;
-                case IndividualEmployee:
-                    Intents.launchInsuredUserDetailsActivity(this);
-                    finish();
-                    break;
-                case SignUpIndividual:
-                    Intents.launchChoosePlan(this);
-                    finish();
-                    break;
-                default:
-                    if (!loginRunning) {
-                        showLogin();
-                    }
-            }
-        } else {
-            showLogin();
         }
     }
 
