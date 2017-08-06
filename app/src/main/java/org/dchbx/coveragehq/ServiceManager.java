@@ -19,6 +19,8 @@ package org.dchbx.coveragehq;
 
 import com.google.gson.annotations.Expose;
 
+import org.dchbx.coveragehq.statemachine.StateManager;
+
 import java.io.Serializable;
 
 public class ServiceManager {
@@ -81,6 +83,8 @@ public class ServiceManager {
         stateManager = new StateManager(this);
         configurationStorageHandler = new ConfigurationStorageHandler();
         appStatusService = new AppStatusService(this);
+
+        stateManager.init();
 
         AppConfig appConfig = getAppConfig();
         if (configurationStorageHandler.read(appConfig)) {

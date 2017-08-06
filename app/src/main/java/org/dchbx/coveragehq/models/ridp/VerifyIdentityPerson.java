@@ -18,9 +18,10 @@ package org.dchbx.coveragehq.models.ridp;
     This statement should go near the beginning of every source file, close to the copyright notices. When using the Lesser GPL, insert the word “Lesser” before “General” in all three places. When using the GNU AGPL, insert the word “Affero” before “General” in all three places.
 */
 
-import java.util.List;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
+
+import java.util.List;
 
 public class VerifyIdentityPerson {
 
@@ -33,5 +34,7 @@ public class VerifyIdentityPerson {
     @SerializedName("emails")
     @Expose
     public List<Email> emails = null;
-
+    @SerializedName("phones")
+    @Expose
+    public List<Phone> phones = null;
 }

@@ -5,7 +5,8 @@ import okhttp3.HttpUrl;
 class IvlBuildConfig2 extends EnrollConfigBase {
 
     private static ServerConfiguration serverConfiguration = null;
-    private String defaultLoginHost = "hbx-mobile2-preprod.dchbx.org";
+    //private String defaultLoginHost = "hbx-mobile2-preprod.dchbx.org";
+    private String defaultLoginHost = "hbx-mobile-preprod.dchbx.org";
     private String defaultLoginScheme = "https";
     private int defaultLoginPort = 443;
 

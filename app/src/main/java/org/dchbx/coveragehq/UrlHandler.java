@@ -15,6 +15,7 @@ import org.dchbx.coveragehq.models.employer.Employer;
 import org.dchbx.coveragehq.models.planshopping.Plan;
 import org.dchbx.coveragehq.models.ridp.Answers;
 import org.dchbx.coveragehq.models.ridp.Questions;
+import org.dchbx.coveragehq.models.ridp.SignUp.SignUp;
 import org.dchbx.coveragehq.models.ridp.VerifyIdentity;
 import org.dchbx.coveragehq.models.roster.Enrollment;
 import org.dchbx.coveragehq.models.roster.Health;
@@ -90,6 +91,32 @@ public abstract class UrlHandler {
     }
 
     public abstract HttpUrl getLoginUrl();
+
+
+    public HttpRequest getCreateAccount(SignUp signUp) {
+        PostParameters postParameters = new PostParameters();
+        if (serverConfiguration.verifyIdentityEndpoint.substring(0, 4).toLowerCase().compareTo("http") == 0){
+            postParameters.url = HttpUrl.parse(serverConfiguration.localSignUpEndpoint);
+        } else {
+            postParameters.url = new HttpUrl.Builder()
+                    .scheme(serverConfiguration.loginInfo.scheme)
+                    .host(serverConfiguration.loginInfo.host)
+                    .addPathSegments(serverConfiguration.localSignUpEndpoint)
+                    .port(serverConfiguration.loginInfo.port)
+                    .build();
+        }
+        String json = (new Gson()).toJson(signUp);
+        postParameters.requestBody = RequestBody.create(JSON, json );
+        postParameters.headers = new HashMap<>();
+        postParameters.headers.put("Content-Type", "application/json");
+
+        HttpRequest request = new HttpRequest();
+        request.postParameters = postParameters;
+        request.requestType = HttpRequest.RequestType.Post;
+        return request;
+
+    }
+
 
 
     public GetParameters getBrokerAgencyParameters() {
@@ -503,6 +530,8 @@ public abstract class UrlHandler {
         }
         String json = (new Gson()).toJson(verifyIdentity);
         postParameters.requestBody = RequestBody.create(JSON, json );
+        postParameters.headers = new HashMap<>();
+        postParameters.headers.put("Content-Type", "application/json");
 
         HttpRequest request = new HttpRequest();
         request.postParameters = postParameters;

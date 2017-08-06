@@ -3,6 +3,7 @@ package org.dchbx.coveragehq;
 import android.net.Uri;
 
 import org.dchbx.coveragehq.models.ridp.Answers;
+import org.dchbx.coveragehq.statemachine.StateManager;
 import org.joda.time.LocalDate;
 
 public interface Messages {

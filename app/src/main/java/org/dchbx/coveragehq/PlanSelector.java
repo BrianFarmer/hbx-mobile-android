@@ -1,18 +1,9 @@
 package org.dchbx.coveragehq;
 
-import android.content.Context;
-import android.content.DialogInterface;
-import android.content.Intent;
-import android.net.Uri;
 import android.os.Bundle;
 import android.support.design.widget.NavigationView;
 import android.support.v4.widget.DrawerLayout;
-import android.support.v7.app.ActionBarDrawerToggle;
-import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.Toolbar;
-import android.telephony.TelephonyManager;
-import android.util.Log;
-import android.view.MenuItem;
 import android.view.View;
 import android.widget.FrameLayout;
 import android.widget.TextView;
@@ -22,6 +13,7 @@ import com.daprlabs.aaron.swipedeck.SwipeDeck.SwipeDeckCallback;
 import com.daprlabs.aaron.swipedeck.layouts.SwipeFrameLayout;
 
 import org.dchbx.coveragehq.models.planshopping.Plan;
+import org.dchbx.coveragehq.statemachine.StateManager;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 

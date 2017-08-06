@@ -4,7 +4,7 @@ import android.databinding.DataBindingUtil;
 import android.os.Bundle;
 
 import org.dchbx.coveragehq.AcctActivity;
-import org.dchbx.coveragehq.StateManager;
+import org.dchbx.coveragehq.statemachine.StateManager;
 import org.dchbx.coveragehq.R;
 import org.dchbx.coveragehq.databinding.AcctPiiBinding;
 import org.dchbx.coveragehq.models.account.Account;

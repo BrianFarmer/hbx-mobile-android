@@ -184,6 +184,26 @@
             android:configChanges="orientation|keyboardHidden|screenSize"
             android:label=""
             />
+        <activity
+            android:name=".HelloActivity"
+            android:configChanges="orientation|keyboardHidden|screenSize"
+            android:label=""
+            />
+        <activity
+            android:name=".WelcomeBackActivity"
+            android:configChanges="orientation|keyboardHidden|screenSize"
+            android:label=""
+            />
+        <activity
+            android:name=".ChooseFinancialAssistanceActivity"
+            android:configChanges="orientation|keyboardHidden|screenSize"
+            android:label=""
+            />
+        <activity
+            android:name=".YourMobilePasswordActivity"
+            android:configChanges="orientation|keyboardHidden|screenSize"
+            android:label=""
+            />
     </application>
 
 </manifest>

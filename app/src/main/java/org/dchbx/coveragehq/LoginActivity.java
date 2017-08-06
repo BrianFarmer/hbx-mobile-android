@@ -26,6 +26,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import org.dchbx.coveragehq.models.gitaccounts.GitAccounts;
+import org.dchbx.coveragehq.statemachine.StateManager;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 
@@ -176,7 +177,7 @@ public class LoginActivity extends BrokerActivity {
             });
         }
 
-        Button logInButton = (Button) findViewById(R.id.buttonLogIn);
+        Button logInButton = (Button) findViewById(R.id.buttonResume);
         logInButton.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View view) {

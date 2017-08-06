@@ -2,6 +2,7 @@ package org.dchbx.coveragehq;
 
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.util.Log;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -187,4 +188,22 @@ public class ConfigurationStorageHandler extends IServerConfigurationStorageHand
         Gson gson = getGson();
         return gson.fromJson(responseJson, VerifiyIdentityResponse.class);
     }
+
+    @Override
+    public String readStateString() {
+        SharedPreferences sharedPreferences = getSharedPreferences();
+        String responseJson = sharedPreferences.getString("StateString", null);
+        return responseJson;
+    }
+
+    public void storeStateString(String stateString) {
+        Log.d(TAG, "StateString: ->" + stateString + "<-");
+        if (stateString.compareTo("[]") == 0){
+            Log.d(TAG, "HEY!!!");
+        }
+        SharedPreferences.Editor editor = getSharedPreferences().edit();
+        editor.putString("StateString", stateString);
+        editor.commit();
+    }
+
 }

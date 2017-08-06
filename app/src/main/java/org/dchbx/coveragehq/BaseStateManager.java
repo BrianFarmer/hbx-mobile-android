@@ -1,5 +1,7 @@
 package org.dchbx.coveragehq;
 
+import org.dchbx.coveragehq.statemachine.StateManager;
+
 /*
     This file is part of DC.
 

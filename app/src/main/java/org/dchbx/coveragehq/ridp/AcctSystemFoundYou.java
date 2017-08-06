@@ -6,7 +6,7 @@ import android.widget.ImageButton;
 import android.widget.Toast;
 
 import org.dchbx.coveragehq.R;
-import org.dchbx.coveragehq.StateManager;
+import org.dchbx.coveragehq.statemachine.StateManager;
 import org.dchbx.coveragehq.databinding.AcctSystemFoundYouBinding;
 import org.dchbx.coveragehq.models.ridp.VerifiyIdentityResponse;
 

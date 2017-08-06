@@ -67,6 +67,10 @@
     <color name="ivl_btn_border">@color/white</color>
     <color name="blue_button_up">@color/mainblue</color>
     <color name="blue_button_down">#044972</color>
+    <color name="dark_blue">#044972</color>
+    <color name="darker_blue">#003260</color>
+    <color name="dark_blue_button_up">@color/dark_blue</color>
+    <color name="dark_blue_button_down">@color/darker_blue</color>
     <color name="green_button_up">@color/keep_green</color>
     <color name="green_button_down">#5c8f0b</color>
     <color name="red_button_up">@color/button_red</color>

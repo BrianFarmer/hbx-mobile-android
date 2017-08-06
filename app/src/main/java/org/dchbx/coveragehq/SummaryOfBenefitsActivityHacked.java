@@ -17,6 +17,7 @@ import org.dchbx.coveragehq.models.roster.Enrollment;
 import org.dchbx.coveragehq.models.roster.Health;
 import org.dchbx.coveragehq.models.roster.RosterEntry;
 import org.dchbx.coveragehq.models.services.Service;
+import org.dchbx.coveragehq.statemachine.StateManager;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 import org.joda.time.LocalDate;

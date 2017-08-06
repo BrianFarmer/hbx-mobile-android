@@ -31,9 +31,6 @@ public class PersonDemographics {
     @SerializedName("birth_date")
     @Expose
     public String birthDate;
-    @SerializedName("is_incarcerated")
-    @Expose
-    public boolean isIncarcerated = false;
     @SerializedName("created_at")
     @Expose
     public String createdAt;

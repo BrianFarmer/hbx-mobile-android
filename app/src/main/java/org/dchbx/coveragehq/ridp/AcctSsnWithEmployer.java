@@ -6,7 +6,7 @@ import android.widget.Button;
 import android.widget.ListView;
 
 import org.dchbx.coveragehq.R;
-import org.dchbx.coveragehq.StateManager;
+import org.dchbx.coveragehq.statemachine.StateManager;
 import org.dchbx.coveragehq.databinding.AcctSsnWithEmployerBinding;
 import org.dchbx.coveragehq.models.ridp.Employer;
 import org.dchbx.coveragehq.models.ridp.VerifiyIdentityResponse;

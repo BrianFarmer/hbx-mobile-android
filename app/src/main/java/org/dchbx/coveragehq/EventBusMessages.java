@@ -5,6 +5,7 @@ import android.util.Log;
 
 import org.dchbx.coveragehq.models.account.Account;
 import org.dchbx.coveragehq.models.ridp.Answers;
+import org.dchbx.coveragehq.statemachine.StateManager;
 import org.greenrobot.eventbus.EventBus;
 import org.joda.time.LocalDate;
 
@@ -330,7 +331,7 @@ public class EventBusMessages implements Messages {
 
     @Override
     public void buttonClicked(StateManager.AppEvents appEvent) {
-        eventBus.post(new Events.ButtonClicked(appEvent));
+        eventBus.post(new Events.AppEvent(appEvent, null));
     }
 
     @Override

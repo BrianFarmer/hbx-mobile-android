@@ -2,20 +2,27 @@ package org.dchbx.coveragehq;
 
 import android.util.Log;
 
+import org.dchbx.coveragehq.models.account.Account;
 import org.dchbx.coveragehq.models.ridp.Address;
 import org.dchbx.coveragehq.models.ridp.Answer;
 import org.dchbx.coveragehq.models.ridp.Answers;
 import org.dchbx.coveragehq.models.ridp.Email;
 import org.dchbx.coveragehq.models.ridp.PersonDemographics;
 import org.dchbx.coveragehq.models.ridp.PersonName;
+import org.dchbx.coveragehq.models.ridp.Phone;
 import org.dchbx.coveragehq.models.ridp.Question;
 import org.dchbx.coveragehq.models.ridp.QuestionResponse;
 import org.dchbx.coveragehq.models.ridp.Questions;
+import org.dchbx.coveragehq.models.ridp.SignUp.Person;
+import org.dchbx.coveragehq.models.ridp.SignUp.SignUp;
+import org.dchbx.coveragehq.models.ridp.SignUp.SignUpResponse;
 import org.dchbx.coveragehq.models.ridp.VerifiyIdentityResponse;
 import org.dchbx.coveragehq.models.ridp.VerifyIdentity;
 import org.dchbx.coveragehq.models.ridp.VerifyIdentityPerson;
+import org.dchbx.coveragehq.statemachine.StateManager;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
+import org.joda.time.LocalDate;
 import org.joda.time.format.DateTimeFormatter;
 import org.joda.time.format.ISODateTimeFormat;
 
@@ -67,14 +74,25 @@ public class RidpService extends StateProcessor {
         email.email.emailAddress = account.emailAddress;
         email.email.type = "home";
         identity.person.emails.add(email);
+        identity.person.phones = new ArrayList<>();
+        Phone phone = new Phone();
+        phone.phone = new Phone.InternalPhone();
+        phone.phone.phoneNumber = "2025551212";
+        phone.phone.type = "home";
+        identity.person.phones.add(phone);
         identity.person.personName = new PersonName();
         identity.person.personName.personGivenName = account.firstName;
         identity.person.personName.personSurname = account.lastName;
+
         identity.personDemographics = new PersonDemographics();
         identity.personDemographics.sex = account.gender;
         identity.personDemographics.ssn = account.ssn;
         DateTimeFormatter dateTimeFormatter = ISODateTimeFormat.basicDate();
-        identity.personDemographics.birthDate = dateTimeFormatter.print(account.birthdate);
+        if (account.birthdate != null){
+            identity.personDemographics.birthDate = dateTimeFormatter.print(account.birthdate);
+        }
+        identity.personDemographics.createdAt = dateTimeFormatter.print(LocalDate.now());
+        identity.personDemographics.modifiedAt = dateTimeFormatter.print(LocalDate.now());
         return identity;
     }
 
@@ -84,39 +102,80 @@ public class RidpService extends StateProcessor {
 
     @Subscribe(threadMode = ThreadMode.BACKGROUND)
     public void doThis(Events.CreateAccount createAccount){
-        /*{
-            "username": "testuser",
-                "password": "mypassword",
-                "token": "[token]",
-                "ssn": "000000088",
-                "first_name": "Donald",
-                "last_name": "Trump",
-                "date_of_birth": "1900-01-01"
-        }*/
+        Log.d(TAG, "in RidpService.verificationRequest");
+
+        try {
+            UrlHandler urlHandler = serviceManager.getUrlHandler();
+            ConnectionHandler connectionHandler = serviceManager.getConnectionHandler();
+            ConfigurationStorageHandler storageHandler = serviceManager.getConfigurationStorageHandler();
+            VerifiyIdentityResponse verifiyIdentityResponse = storageHandler.readVerifiyIdentityResponse();
+            org.dchbx.coveragehq.models.account.Account account = storageHandler.readAccount();
+            SignUp signUp = buildSignUp(verifiyIdentityResponse, account);
+
+            UrlHandler.HttpRequest request = urlHandler.getCreateAccount(signUp);
+            IConnectionHandler.HttpResponse response = connectionHandler.process(request);
+            if (response.getResponseCode() == 201){
+                JsonParser parser = serviceManager.getParser();
+                SignUpResponse signUpResponse = parser.parseSignUpResponse(response.getBody());
+                storageHandler.store(signUpResponse);
+                if (signUpResponse.error != null){
+                    if (signUpResponse.error.type.compareTo("userHasActiveMedicaid") == 0){
+                        BrokerWorker.eventBus.post(new Events.AppEvent(StateManager.AppEvents.SignUpUserInAceds, signUpResponse.error.message));
+                    } else {
+                        BrokerWorker.eventBus.post(new Events.AppEvent(StateManager.AppEvents.Error, signUpResponse.error.message));
+                    }
+                } else {
+                    BrokerWorker.eventBus.post(new Events.AppEvent(StateManager.AppEvents.SignUpSuccessful, null));
+                }
+            } else {
+                BrokerWorker.eventBus.post(new Events.Error("Bad Http response processing RidpService.signUp", "Events.GetCreateAccountInfo"));
+            }
+        } catch (Exception e) {
+            Log.e(TAG, "exception processing http request");
+            BrokerWorker.eventBus.post(new Events.Error("Error processing RidpService.signUp", e.getMessage()));
+        }
+    }
+
+    private SignUp buildSignUp(VerifiyIdentityResponse verifiyIdentityResponse, Account account) {
+        SignUp signUp = new SignUp();
+        signUp.person = new Person();
+        signUp.person.firstName = account.firstName;
+        signUp.person.lastName = account.lastName;
+        signUp.person.ssn = account.ssn;
+        DateTimeFormatter dateTimeFormatter = ISODateTimeFormat.basicDate();
+        signUp.person.dob = dateTimeFormatter.print(account.birthdate);
+        signUp.username = account.emailAddress;
+        signUp.password = account.password;
+        signUp.token = verifiyIdentityResponse.token;
+        return signUp;
     }
 
     @Subscribe(threadMode = ThreadMode.BACKGROUND)
     public void doThis(Events.GetVerificationResponse verificationResponse){
-        Log.d(TAG, "in RidpService.doThis(Events(GetVerificationResponse)");
-
-        UrlHandler urlHandler = serviceManager.getUrlHandler();
-        ConnectionHandler connectionHandler = serviceManager.getConnectionHandler();
-        ConfigurationStorageHandler storageHandler = serviceManager.getConfigurationStorageHandler();
-        org.dchbx.coveragehq.models.account.Account account = storageHandler.readAccount();
-        VerifyIdentity verifyIdentity = veriftyIdentityFromAccount(account);
-
-        UrlHandler.HttpRequest request = urlHandler.getRidpVerificationParameters(verifyIdentity);
         try {
-            IConnectionHandler.HttpResponse response = connectionHandler.process(request);
-            if (response.getResponseCode() == 200){
-                JsonParser parser = serviceManager.getParser();
-                Questions questions = parser.parseRidpQuestions(response.getBody());
-                storageHandler.store(questions);
-                messages.appEvent(StateManager.AppEvents.GetQuestionsOperationComplete);
+            Log.d(TAG, "in RidpService.doThis(Events(GetVerificationResponse)");
+
+            UrlHandler urlHandler = serviceManager.getUrlHandler();
+            ConnectionHandler connectionHandler = serviceManager.getConnectionHandler();
+            ConfigurationStorageHandler storageHandler = serviceManager.getConfigurationStorageHandler();
+            org.dchbx.coveragehq.models.account.Account account = storageHandler.readAccount();
+            VerifyIdentity verifyIdentity = veriftyIdentityFromAccount(account);
+
+            UrlHandler.HttpRequest request = urlHandler.getRidpVerificationParameters(verifyIdentity);
+            try {
+                IConnectionHandler.HttpResponse response = connectionHandler.process(request);
+                if (response.getResponseCode() == 200) {
+                    JsonParser parser = serviceManager.getParser();
+                    Questions questions = parser.parseRidpQuestions(response.getBody());
+                    storageHandler.store(questions);
+                    messages.appEvent(StateManager.AppEvents.GetQuestionsOperationComplete);
+                }
+            } catch (Exception e) {
+                Log.e(TAG, "exception processing http request");
+                messages.appEvent(StateManager.AppEvents.ServiceErrorHappened, "Error getting RIDP questions");
             }
-        } catch (Exception e) {
-            Log.e(TAG, "exception processing http request");
-            messages.appEvent(StateManager.AppEvents.ServiceErrorHappened, "Error getting RIDP questions");
+        } catch (Exception e){
+            messages.error("Exception getting Experian questions.", e.getMessage());
         }
     }
 

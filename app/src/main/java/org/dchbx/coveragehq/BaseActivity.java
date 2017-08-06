@@ -7,6 +7,7 @@ import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.View;
 
+import org.dchbx.coveragehq.statemachine.StateManager;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 
@@ -107,7 +108,7 @@ public class BaseActivity extends AppCompatActivity {
         toolbar.setNavigationOnClickListener( new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                getMessages().buttonClicked(StateManager.AppEvents.Back);
+                getMessages().appEvent(StateManager.AppEvents.Back);
             }
         });
     }

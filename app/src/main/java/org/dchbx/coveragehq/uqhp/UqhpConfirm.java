@@ -5,7 +5,7 @@ import android.os.Bundle;
 
 import org.dchbx.coveragehq.BrokerActivity;
 import org.dchbx.coveragehq.R;
-import org.dchbx.coveragehq.StateManager;
+import org.dchbx.coveragehq.statemachine.StateManager;
 import org.dchbx.coveragehq.databinding.UqhpConfirmBinding;
 import org.dchbx.coveragehq.models.account.Account;
 

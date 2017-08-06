@@ -21,6 +21,8 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 
+import org.dchbx.coveragehq.statemachine.StateManager;
+
 public class PlanShoppingChoicesActivity extends BrokerActivity {
     public static StateManager.UiActivity uiActivity = new StateManager.UiActivity(PlanShoppingChoicesActivity.class);
 

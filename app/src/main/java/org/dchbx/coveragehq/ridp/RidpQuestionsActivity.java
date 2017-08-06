@@ -30,7 +30,7 @@ import android.widget.TextView;
 
 import org.dchbx.coveragehq.AcctActivity;
 import org.dchbx.coveragehq.Events;
-import org.dchbx.coveragehq.StateManager;
+import org.dchbx.coveragehq.statemachine.StateManager;
 import org.dchbx.coveragehq.R;
 import org.dchbx.coveragehq.databinding.RidpQuestionsBinding;
 import org.dchbx.coveragehq.models.account.Account;

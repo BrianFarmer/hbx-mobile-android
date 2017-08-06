@@ -122,7 +122,7 @@
         android:track="@drawable/trackselector"
         />
     <Button
-        android:id="@+id/buttonLogIn"
+        android:id="@+id/buttonResume"
         android:text="@string/log_in"
         android:background="@drawable/ivl_button_white_border"
         android:textColor="@drawable/ivl_button_white_border_text_color"
@@ -141,7 +141,7 @@
         android:textColor="@drawable/ivl_button_white_border_text_color"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/buttonLogIn"
+        android:layout_below="@+id/buttonResume"
         android:layout_marginLeft="20dp"
         android:layout_marginRight="20dp"
         android:layout_marginTop="35dp"
