@@ -4,8 +4,8 @@ public class ActivityInfo extends StateInfoBase {
     private int uiActivityId;
     private transient StateManager.UiActivity uiActivity;
 
-    public ActivityInfo(StateManager.AppStates state, StateManager.UiActivity uiActivity) {
-        super(state);
+        public ActivityInfo(StateManager.AppStates state, StateManager.AppEvents event, StateManager.UiActivity uiActivity) {
+        super(state,event);
         this.uiActivity = uiActivity;
         if (uiActivity != null) {
             uiActivityId = uiActivity.getId();
@@ -21,5 +21,10 @@ public class ActivityInfo extends StateInfoBase {
     @Override
     public void reconstitute(){
         uiActivity = StateManager.UiActivity.getUiActivityType(uiActivityId).uiActivity;
+    }
+
+    @Override
+    public void onPop(StateMachine stateMachine, StateManager stateManager){
+        stateManager.back();
     }
 }

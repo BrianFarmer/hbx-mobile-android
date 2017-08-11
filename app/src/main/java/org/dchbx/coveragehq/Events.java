@@ -4,16 +4,18 @@ import android.net.Uri;
 import android.util.Log;
 import android.widget.ImageView;
 
+import org.dchbx.coveragehq.models.Glossary;
 import org.dchbx.coveragehq.models.brokeragency.BrokerAgency;
 import org.dchbx.coveragehq.models.employer.Employer;
 import org.dchbx.coveragehq.models.planshopping.Plan;
 import org.dchbx.coveragehq.models.ridp.Answers;
 import org.dchbx.coveragehq.models.ridp.Questions;
-import org.dchbx.coveragehq.models.ridp.VerifiyIdentityResponse;
+import org.dchbx.coveragehq.models.ridp.VerifyIdentityResponse;
 import org.dchbx.coveragehq.models.roster.Roster;
 import org.dchbx.coveragehq.models.roster.RosterEntry;
 import org.dchbx.coveragehq.models.roster.SummaryOfBenefits;
 import org.dchbx.coveragehq.models.services.Service;
+import org.dchbx.coveragehq.statemachine.EventParameters;
 import org.dchbx.coveragehq.statemachine.StateManager;
 import org.joda.time.LocalDate;
 
@@ -1120,19 +1122,27 @@ public class Events {
             return action;
         }
 
+        public EventParameters getEventParameters() {
+            return eventParameters;
+        }
+
         public enum Action {
             Finish,
             LaunchActivity,
             LaunchDialog,
-            HideWait, ShowWait
+            HideWait,
+            ShowWait,
+            Dismiss
         }
 
         private final Action action;
         private int uiActivityId;
+        private final EventParameters eventParameters;
 
-        public StateAction(Action action, int uiActivityId){
+        public StateAction(Action action, int uiActivityId, EventParameters eventParameters){
             this.action = action;
             this.uiActivityId = uiActivityId;
+            this.eventParameters = eventParameters;
         }
 
         public int getUiActivityId() {
@@ -1184,14 +1194,14 @@ public class Events {
     }
 
     public static class GetVerificationResponseResponse {
-        private final VerifiyIdentityResponse verificationResponse;
+        private final VerifyIdentityResponse verificationResponse;
 
-        public GetVerificationResponseResponse(VerifiyIdentityResponse verificationResponse) {
+        public GetVerificationResponseResponse(VerifyIdentityResponse verificationResponse) {
 
             this.verificationResponse = verificationResponse;
         }
 
-        public VerifiyIdentityResponse getVerificationResponse() {
+        public VerifyIdentityResponse getVerificationResponse() {
             return verificationResponse;
         }
     }
@@ -1213,11 +1223,19 @@ public class Events {
 
     public static class AppEvent {
         private final StateManager.AppEvents event;
+        private final EventParameters intentParameters;
         private final String s;
 
-        public AppEvent(StateManager.AppEvents event, String s) {
+        public AppEvent(StateManager.AppEvents event) {
             this.event = event;
-            this.s = s;
+            this.s = null;
+            intentParameters = null;
+        }
+
+        public AppEvent(StateManager.AppEvents event, EventParameters intentParameters) {
+            this.event = event;
+            this.intentParameters = intentParameters;
+            s = null;
         }
 
         public StateManager.AppEvents getEvent() {
@@ -1227,11 +1245,54 @@ public class Events {
         public String getString1() {
             return s;
         }
+
+        public EventParameters getIntentParameters() {
+            return intentParameters;
+        }
     }
 
     public static class CreateAccount {
     }
 
     public static class VerifyUser {
+    }
+
+    public static class GetGlossary {
+    }
+
+    public static class GetGlossaryResponse {
+        private final Glossary glossary;
+
+        public GetGlossaryResponse(Glossary glossary) {
+            this.glossary = glossary;
+        }
+
+        public Glossary getGlossary() {
+            return glossary;
+        }
+    }
+
+    public static class GetGlossaryItemResponse {
+        private final Glossary.GlossaryItem glossaryItem;
+
+        public GetGlossaryItemResponse(Glossary.GlossaryItem glossaryItem) {
+            this.glossaryItem = glossaryItem;
+        }
+
+        public Glossary.GlossaryItem getGlossaryItem() {
+            return glossaryItem;
+        }
+    }
+
+    public static class GetGlossaryItem {
+        private final String term;
+
+        public GetGlossaryItem(String term) {
+            this.term = term;
+        }
+
+        public String getTerm() {
+            return term;
+        }
     }
 }

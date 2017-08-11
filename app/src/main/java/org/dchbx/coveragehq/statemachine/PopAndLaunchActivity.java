@@ -29,10 +29,12 @@ public class PopAndLaunchActivity implements StateMachineAction {
     }
 
     @Override
-    public void call(StateMachine stateMachine, StateManager stateManager, StateManager.AppEvents event, StateManager.AppStates leavingState, StateManager.AppStates enterState) throws IOException, CoverageException {
-        stateMachine.back();
-        stateMachine.push(new ActivityInfo(enterState, uiActivity));
-        stateManager.launchActivity(uiActivity);
+    public void call(StateMachine stateMachine, StateManager stateManager, StateManager.AppEvents event,
+                     StateManager.AppStates leavingState, StateManager.AppStates enterState,
+                     EventParameters eventParameters) throws IOException, CoverageException {
+        stateMachine.getStatesStack().pop();
+        stateMachine.push(new ActivityInfo(enterState, event, uiActivity));
+        stateManager.launchActivity(uiActivity, eventParameters);
     }
 }
 

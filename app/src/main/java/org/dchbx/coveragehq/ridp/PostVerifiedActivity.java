@@ -2,7 +2,7 @@ package org.dchbx.coveragehq.ridp;
 
 import org.dchbx.coveragehq.BrokerActivity;
 import org.dchbx.coveragehq.Events;
-import org.dchbx.coveragehq.models.ridp.VerifiyIdentityResponse;
+import org.dchbx.coveragehq.models.ridp.VerifyIdentityResponse;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 
@@ -25,7 +25,7 @@ import org.greenrobot.eventbus.ThreadMode;
 */
 public abstract class PostVerifiedActivity extends BrokerActivity {
 
-    protected VerifiyIdentityResponse verificationResponse;
+    protected VerifyIdentityResponse verificationResponse;
 
     @Override
     protected void onResume() {
@@ -39,5 +39,5 @@ public abstract class PostVerifiedActivity extends BrokerActivity {
         populate(verificationResponse);
     }
 
-    protected abstract void populate(VerifiyIdentityResponse verificationResponse);
+    protected abstract void populate(VerifyIdentityResponse verificationResponse);
 }

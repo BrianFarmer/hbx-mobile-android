@@ -34,7 +34,7 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="37dp"
             android:maxLines="2"
-            android:text="Your information."
+            android:text="@string/your_information"
             android:textAlignment="center"
             android:textColor="@color/textgray"
             android:textSize="32dp"

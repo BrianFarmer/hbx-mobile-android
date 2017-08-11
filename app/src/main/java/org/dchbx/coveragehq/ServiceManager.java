@@ -20,6 +20,7 @@ package org.dchbx.coveragehq;
 import com.google.gson.annotations.Expose;
 
 import org.dchbx.coveragehq.statemachine.StateManager;
+import org.dchbx.coveragehq.uqhp.UQHPService;
 
 import java.io.Serializable;
 
@@ -31,10 +32,12 @@ public class ServiceManager {
     // Services
     private SignUpService signUpService;
     private RidpService ridpService;
+    private UQHPService uqhpService;
     private BrokerWorker brokerWorker;
     private StateManager stateManager;
     private ConfigurationStorageHandler configurationStorageHandler;
     private AppStatusService appStatusService;
+    private DebugStateService debugStateService;
 
     public AppConfig getAppConfig(){
         AppConfig appConfig = new AppConfig();
@@ -58,7 +61,6 @@ public class ServiceManager {
                 ServerConfiguration serverConfiguration = getServerConfiguration();
                 serverConfiguration.GitAccountsUrl = updateAppConfig.GithubUrl;
                 serverConfiguration.endpointsPath = updateAppConfig.GithubUrl;
-
                 break;
             case MobileServer:
                 config = ivlBuildConfig2;
@@ -79,11 +81,14 @@ public class ServiceManager {
 
         signUpService = new SignUpService();
         ridpService = new RidpService(this);
+        uqhpService = new UQHPService(this);
         brokerWorker = new BrokerWorker(this);
         stateManager = new StateManager(this);
         configurationStorageHandler = new ConfigurationStorageHandler();
         appStatusService = new AppStatusService(this);
+        debugStateService = new DebugStateService();
 
+        debugStateService.init();
         stateManager.init();
 
         AppConfig appConfig = getAppConfig();

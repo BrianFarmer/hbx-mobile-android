@@ -7,6 +7,7 @@ import android.util.Log;
 import org.dchbx.coveragehq.exceptions.BrokerNotFoundException;
 import org.dchbx.coveragehq.exceptions.EmployerNotFoundException;
 import org.dchbx.coveragehq.exceptions.IndividualNotFoundException;
+import org.dchbx.coveragehq.models.Glossary;
 import org.dchbx.coveragehq.models.brokeragency.BrokerAgency;
 import org.dchbx.coveragehq.models.employer.Employer;
 import org.dchbx.coveragehq.models.gitaccounts.GitAccounts;
@@ -31,6 +32,7 @@ import java.security.NoSuchProviderException;
 import java.security.UnrecoverableKeyException;
 import java.security.cert.CertificateException;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
 
 import javax.crypto.BadPaddingException;
@@ -50,6 +52,7 @@ public abstract class CoverageConnection {
     protected final JsonParser parser;
     private final IDataCache dataCache;
     protected final IServerConfigurationStorageHandler clearStorageHandler;
+    private static Glossary glossary;
 
     public CoverageConnection(UrlHandler urlHandler, IConnectionHandler connectionHandler,
                               ServerConfiguration serverConfiguration,
@@ -538,4 +541,23 @@ public abstract class CoverageConnection {
         urlHandler.processEndpoints(getResponse);
     }
 
+    public Glossary getGlossary() throws Exception {
+        if (glossary == null) {
+            UrlHandler.HttpRequest httpRequest = urlHandler.getGlossaryParameters();
+            JsonParser jsonParser = new JsonParser();
+            List<Glossary.GlossaryItem> glossaryItems = jsonParser.parseGlossary(connectionHandler.process(httpRequest).getBody());
+            HashMap<String, Glossary.GlossaryItem> glossaryItemHashMap = new HashMap<>();
+            glossary = new Glossary(glossaryItems, glossaryItemHashMap);
+            for (Glossary.GlossaryItem glossaryItem : glossaryItems) {
+                glossaryItemHashMap.put(glossaryItem.term.toLowerCase(), glossaryItem);
+            }
+        }
+        return glossary;
+    }
+
+    public Glossary.GlossaryItem getGlossaryItem(String term) throws Exception {
+        Glossary glossary = getGlossary();
+        Glossary.GlossaryItem item = glossary.getItem(term.toLowerCase());
+        return item;
+    }
 }

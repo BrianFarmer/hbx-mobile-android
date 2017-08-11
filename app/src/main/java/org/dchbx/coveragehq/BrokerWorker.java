@@ -4,6 +4,7 @@ import android.app.IntentService;
 import android.content.Intent;
 import android.util.Log;
 
+import org.dchbx.coveragehq.models.Glossary;
 import org.dchbx.coveragehq.models.brokeragency.BrokerAgency;
 import org.dchbx.coveragehq.models.brokeragency.BrokerClient;
 import org.dchbx.coveragehq.models.employer.Employer;
@@ -706,7 +707,7 @@ public class BrokerWorker extends IntentService {
     @Subscribe(threadMode = ThreadMode.BACKGROUND)
     public void doThis(Events.SignUp signUp) {
         try {
-            serviceManager.getStateManager().process(StateManager.AppEvents.SignUpIndividual);
+            serviceManager.getStateManager().process(StateManager.AppEvents.SignUpIndividual, null);
             serviceManager.getCoverageConnection().configureForSignUp(signUp.getEndPointUrl());
             BrokerWorker.eventBus.post(new Events.SignUpResult());
         } catch (Exception e) {
@@ -823,7 +824,7 @@ public class BrokerWorker extends IntentService {
             if (accountButtonClicked.getAnswers() != null) {
                 serviceManager.getConfigurationStorageHandler().store(accountButtonClicked.getAnswers());
             }
-            serviceManager.getStateManager().process(accountButtonClicked.getAppEvent());
+            serviceManager.getStateManager().process(accountButtonClicked.getAppEvent(), null);
         } catch (IOException e) {
             e.printStackTrace();
         } catch (CoverageException e) {
@@ -834,7 +835,7 @@ public class BrokerWorker extends IntentService {
     @Subscribe(threadMode = ThreadMode.BACKGROUND)
     public void doThis(Events.ButtonClicked buttonClicked) {
         try {
-            serviceManager.getStateManager().process(buttonClicked.getAppEvent());
+            serviceManager.getStateManager().process(buttonClicked.getAppEvent(), null);
         } catch (IOException e) {
             e.printStackTrace();
         } catch (CoverageException e) {
@@ -854,8 +855,14 @@ public class BrokerWorker extends IntentService {
     }
 
     @Subscribe(threadMode = ThreadMode.BACKGROUND)
-    public void doThis(Events.GetVerificationResponse getVerificationResponse){
-        BrokerWorker.eventBus.post(new Events.GetVerificationResponseResponse(serviceManager.getRidpService().getVerificationResponse()));
+    public void doThis(Events.GetGlossary getGlossary) throws Exception {
+        BrokerWorker.eventBus.post(new Events.GetGlossaryResponse(serviceManager.getCoverageConnection().getGlossary()));
+    }
+
+    @Subscribe(threadMode = ThreadMode.BACKGROUND)
+    public void doThis(Events.GetGlossaryItem getGlossary) throws Exception {
+        Glossary.GlossaryItem glossaryItem = serviceManager.getCoverageConnection().getGlossaryItem(getGlossary.getTerm());
+        BrokerWorker.eventBus.post(new Events.GetGlossaryItemResponse(glossaryItem));
     }
 }
 

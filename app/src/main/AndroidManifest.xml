@@ -14,11 +14,17 @@
         android:required="false"
         />
 
+    <uses-feature
+        android:name="android.hardware.sensor.accelerometer"
+        android:required="false"
+        />
+
     <uses-permission android:name="android.permission.INTERNET"/>
     <uses-permission android:name="android.permission.CALL_PHONE"/>
     <uses-permission android:name="android.permission.SEND_SMS"/>
     <uses-permission android:name="android.permission.VIBRATE"/>
     <uses-permission android:name="android.permission.USE_FINGERPRINT"/>
+    <uses-permission android:name="android.permission.acc"/>
 
     <supports-screens
         android:anyDensity="true"
@@ -201,6 +207,11 @@
             />
         <activity
             android:name=".YourMobilePasswordActivity"
+            android:configChanges="orientation|keyboardHidden|screenSize"
+            android:label=""
+            />
+        <activity
+            android:name=".StateInfo"
             android:configChanges="orientation|keyboardHidden|screenSize"
             android:label=""
             />

@@ -117,19 +117,4 @@ public class SessionTimeoutDialog extends BrokerAppCompatDialogFragment {
         String text = String.format(res.getString(R.string.timeout_message), secondsLeft);
         textViewSessionTimeout.setText(text);
     }
-
-    private void showProgress() {
-        if (progressDialog == null){
-            progressDialog = new ProgressDialog(this.getActivity());
-            progressDialog.setIndeterminate(true);
-            progressDialog.setMessage(getString(R.string.logging_in));
-        }
-        progressDialog.show();
-    }
-
-    private void hideProgress() {
-        if (progressDialog != null){
-            progressDialog.dismiss();
-        }
-    }
 }

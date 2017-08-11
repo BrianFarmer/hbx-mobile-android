@@ -12,8 +12,10 @@ public class ShowWait implements StateMachineAction {
     }
 
     @Override
-    public void call(StateMachine stateMachine, StateManager stateManager, StateManager.AppEvents event, StateManager.AppStates leavingState, StateManager.AppStates enterState) throws IOException, CoverageException {
-        stateMachine.push(new ActivityInfo((StateManager.AppStates) enterState, uiActivity));
+    public void call(StateMachine stateMachine, StateManager stateManager, StateManager.AppEvents event,
+                     StateManager.AppStates leavingState, StateManager.AppStates enterState,
+                     EventParameters eventParameters) throws IOException, CoverageException {
+        stateMachine.push(new ActivityInfo((StateManager.AppStates) enterState, event, uiActivity));
         stateManager.showWait();
     }
 }

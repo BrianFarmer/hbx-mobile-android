@@ -9,7 +9,7 @@ import org.dchbx.coveragehq.R;
 import org.dchbx.coveragehq.statemachine.StateManager;
 import org.dchbx.coveragehq.databinding.AcctSsnWithEmployerBinding;
 import org.dchbx.coveragehq.models.ridp.Employer;
-import org.dchbx.coveragehq.models.ridp.VerifiyIdentityResponse;
+import org.dchbx.coveragehq.models.ridp.VerifyIdentityResponse;
 
 import java.util.ArrayList;
 
@@ -34,7 +34,7 @@ import java.util.ArrayList;
 public class AcctSsnWithEmployer extends PostVerifiedActivity {
     public static StateManager.UiActivity uiActivity = new StateManager.UiActivity(AcctSsnWithEmployer.class);
     private AcctSsnWithEmployerBinding binding;
-    private VerifiyIdentityResponse verificationResponse;
+    private VerifyIdentityResponse verificationResponse;
     private FoundEmployersAdapter foundEmployersAdapter;
     private ListView employersListView;
     private Button needIndividual;
@@ -55,7 +55,7 @@ public class AcctSsnWithEmployer extends PostVerifiedActivity {
     }
 
     @Override
-    protected void populate(VerifiyIdentityResponse verificationResponse) {
+    protected void populate(VerifyIdentityResponse verificationResponse) {
         ArrayList<Employer> employers = new ArrayList<>(verificationResponse.employers);
         FoundEmployersAdapter foundEmployersAdapter = new FoundEmployersAdapter(this, employers);
         employersListView.setAdapter(foundEmployersAdapter);

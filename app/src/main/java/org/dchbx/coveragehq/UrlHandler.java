@@ -304,10 +304,13 @@ public abstract class UrlHandler {
         return hostInfo;
     }
 
-    public GetParameters getGlossaryParameters() {
+    public HttpRequest getGlossaryParameters() {
         GetParameters getParameters = new GetParameters();
         getParameters.url = HttpUrl.parse("https://dchealthlink.com/glossary/json");
-        return getParameters;
+        HttpRequest httpRequest = new HttpRequest();
+        httpRequest.getParameters = getParameters;
+        httpRequest.requestType = HttpRequest.RequestType.Get;
+        return httpRequest;
     }
 
     public RosterEntry processEmployeeDetails(IConnectionHandler.GetResponse getResponse) throws IndividualNotFoundException, CoverageException {

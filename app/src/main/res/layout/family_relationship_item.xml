@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    >
+
+    <TextView
+        android:id="@+id/personText"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="37dp"
+        android:maxLines="2"
+        android:text="\%s is \%s..."
+        android:textAlignment="center"
+        android:textColor="@color/textgray"
+        android:textSize="32dp"
+        android:textStyle="bold"
+        android:layout_alignParentLeft="true"
+        android:layout_toLeftOf="@+id/relationshipDetails"
+        />
+
+    <ImageButton
+        android:id="@+id/relationshipDetails"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:layout_alignParentRight="true"
+        android:src="@drawable/right_arrow_no_circle"
+        />
+
+</RelativeLayout>

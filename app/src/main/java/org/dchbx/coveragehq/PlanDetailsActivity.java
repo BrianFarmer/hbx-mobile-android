@@ -43,8 +43,9 @@ import org.greenrobot.eventbus.ThreadMode;
 import java.util.List;
 
 public class PlanDetailsActivity extends BaseActivity {
+    public static StateManager.UiActivity uiActivity = new StateManager.UiActivity(PlanDetailsActivity.class);
+
     private static String TAG = "PlanDetailsActivity";
-    public static StateManager.UiActivity uiActivity;
 
     private DrawerLayout drawerLayout;
     private Toolbar toolbar;

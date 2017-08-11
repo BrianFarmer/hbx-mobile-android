@@ -79,13 +79,24 @@
         android:layout_marginRight="20dp"
         android:background="#ffffff"
         />
+    <TextView
+        android:id="@+id/forgot_password"
+        android:text="@string/forgot_your_password"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="20dp"
+        android:layout_marginRight="20dp"
+        android:layout_below="@+id/viewPasswordSeparator"
+        android:textSize="12dp"
+        android:textColor="@color/white"
+        />
 
     <Switch
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="@string/enable_fingerprint_login"
         android:id="@+id/switchEnableFingerprintLogin"
-        android:layout_below="@+id/viewPasswordSeparator"
+        android:layout_below="@+id/forgot_password"
         android:checked="false"
         android:layout_marginLeft="20dp"
         android:layout_marginRight="20dp"
@@ -124,8 +135,9 @@
     <Button
         android:id="@+id/buttonResume"
         android:text="@string/log_in"
-        android:background="@drawable/ivl_button_white_border"
-        android:textColor="@drawable/ivl_button_white_border_text_color"
+        android:textAllCaps="true"
+        android:background="@drawable/ivl_button_white_solid"
+        android:textColor="@color/mainblue"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_below="@+id/switchRememberMe"
@@ -135,10 +147,11 @@
         />
 
     <Button
-        android:id="@+id/signUp"
-        android:text="Sign Up"
+        android:id="@+id/cancel"
+        android:text="@string/cancel"
         android:background="@drawable/ivl_button_white_border"
-        android:textColor="@drawable/ivl_button_white_border_text_color"
+        android:textColor="@color/white"
+        android:textAllCaps="true"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_below="@+id/buttonResume"

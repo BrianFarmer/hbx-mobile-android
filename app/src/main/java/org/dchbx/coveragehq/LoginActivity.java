@@ -155,24 +155,12 @@ public class LoginActivity extends BrokerActivity {
             getMessages().getFingerprintStatus();
         }
 
-        Button signUp = (Button)findViewById(R.id.signUp);
-        if (signUp != null){
-            signUp.setOnClickListener(new OnClickListener() {
+        final Button cancel = (Button)findViewById(R.id.cancel);
+        if (cancel != null){
+            cancel.setOnClickListener(new OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    if (ServiceManager.getServiceManager().enrollConfig().isGit()){
-                        int selectedItemPosition = accountsSpinner.getSelectedItemPosition();
-                        if (selectedItemPosition == 0){
-                            return;
-                        }
-                        selectedItemPosition = selectedItemPosition - 1;
-                        GitAccounts.NamedAccountInfo namedAccountInfo = gitAccounts.accountInfoList.get(selectedItemPosition);
-                        if (namedAccountInfo.accountInfo.endpoints != null) {
-                            getMessages().signUp(namedAccountInfo.accountInfo.endpoints);
-                        }
-                    } else {
-                        getMessages().signUp();
-                    }
+                    getMessages().appEvent(StateManager.AppEvents.Cancel);
                 }
             });
         }

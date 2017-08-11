@@ -1,7 +1,7 @@
 package org.dchbx.coveragehq;
 
 import org.dchbx.coveragehq.models.ridp.Questions;
-import org.dchbx.coveragehq.models.ridp.VerifiyIdentityResponse;
+import org.dchbx.coveragehq.models.ridp.VerifyIdentityResponse;
 
 import java.io.IOException;
 import java.security.InvalidAlgorithmParameterException;
@@ -29,7 +29,7 @@ public abstract class IServerConfigurationStorageHandler {
     public abstract org.dchbx.coveragehq.models.account.Account readAccount();
     public abstract void store(Questions questions);
     public abstract Questions readQuestions();
-    public abstract VerifiyIdentityResponse readVerifiyIdentityResponse();
+    public abstract VerifyIdentityResponse readVerifiyIdentityResponse();
     public abstract String readStateString();
 }
 

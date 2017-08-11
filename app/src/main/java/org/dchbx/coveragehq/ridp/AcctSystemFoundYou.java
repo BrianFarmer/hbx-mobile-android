@@ -8,7 +8,7 @@ import android.widget.Toast;
 import org.dchbx.coveragehq.R;
 import org.dchbx.coveragehq.statemachine.StateManager;
 import org.dchbx.coveragehq.databinding.AcctSystemFoundYouBinding;
-import org.dchbx.coveragehq.models.ridp.VerifiyIdentityResponse;
+import org.dchbx.coveragehq.models.ridp.VerifyIdentityResponse;
 
 /*
     This file is part of DC.
@@ -56,7 +56,7 @@ public class AcctSystemFoundYou extends PostVerifiedActivity {
     }
 
     @Override
-    protected void populate(VerifiyIdentityResponse verificationResponse) {
+    protected void populate(VerifyIdentityResponse verificationResponse) {
 
     }
 }

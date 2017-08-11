@@ -24,5 +24,5 @@ import java.io.IOException;
 public interface StateMachineAction {
     void call(StateMachine stateMachine, StateManager stateManager,
               StateManager.AppEvents event, StateManager.AppStates leavingState,
-              StateManager.AppStates enterState) throws IOException, CoverageException;
+              StateManager.AppStates enterState, EventParameters intentParameters) throws IOException, CoverageException;
 }

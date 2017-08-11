@@ -11,10 +11,14 @@ import android.widget.Button;
 import android.widget.TextView;
 
 import org.dchbx.coveragehq.models.planshopping.Plan;
+import org.dchbx.coveragehq.statemachine.EventParameters;
+import org.dchbx.coveragehq.statemachine.StateManager;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
+
+import static org.dchbx.coveragehq.Intents.PLAN_ID;
 
 /**
  * Created by plast on 5/18/2017.
@@ -148,7 +152,7 @@ public class PlanCardAdapter extends BaseAdapter {
             details.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                Intents.launchPlanDetails(PlanCardAdapter.this.activity, plan);
+                activity.getMessages().appEvent(StateManager.AppEvents.ShowPlanDetails, EventParameters.build().add(PLAN_ID, plan.id));
                 }
             });
 

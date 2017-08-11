@@ -7,6 +7,7 @@ import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.View;
 
+import org.dchbx.coveragehq.models.Glossary;
 import org.dchbx.coveragehq.statemachine.StateManager;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
@@ -17,6 +18,9 @@ public class BaseActivity extends AppCompatActivity {
 
     protected ProgressDialog progressDialog;
     protected Messages messages = null;
+    private Glossary.GlossaryItem glossaryItem;
+    private String glossaryItemName;
+    private static BaseActivity currentActivity;
 
     public Messages getMessages() {
         return messages;
@@ -25,6 +29,7 @@ public class BaseActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        currentActivity = this;
         if (messages == null) {
             Log.d(TAG, "in BaseActivity.onCreate");
             messages = BrokerApplication.getBrokerApplication().getMessages(this);
@@ -72,6 +77,7 @@ public class BaseActivity extends AppCompatActivity {
                 Intents.launchActivity(uiActivityType.cls, this);
                 break;
             case LaunchDialog:
+                StateManager.UiDialog.getUiDialogType(stateAction.getUiActivityId()).dialogBuilder.build(stateAction.getEventParameters(), this);
                 break;
             case ShowWait:
                 showProgress();
@@ -112,4 +118,26 @@ public class BaseActivity extends AppCompatActivity {
             }
         });
     }
+
+    protected void showGlossaryItem(String itemName){
+        glossaryItemName = itemName;
+        getMessages().getGlossary();
+    }
+
+    @Override
+    public void onBackPressed(){
+        messages.appEvent(StateManager.AppEvents.Back);
+    }
+
+    static public BaseActivity getCurrentActivity() {
+        return currentActivity;
+    }
+
+    /*@Override
+    public boolean onKeyDown(int keyCode, KeyEvent event) {
+        if (keyCode == KeyEvent.KEYCODE_BACK){
+            messages.appEvent(StateManager.AppEvents.Back);
+        }
+        return super.onKeyDown(keyCode, event);
+    }*/
 }

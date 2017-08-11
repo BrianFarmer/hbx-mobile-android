@@ -10,7 +10,7 @@ import com.google.gson.GsonBuilder;
 import org.dchbx.coveragehq.models.account.Account;
 import org.dchbx.coveragehq.models.ridp.Answers;
 import org.dchbx.coveragehq.models.ridp.Questions;
-import org.dchbx.coveragehq.models.ridp.VerifiyIdentityResponse;
+import org.dchbx.coveragehq.models.ridp.VerifyIdentityResponse;
 import org.joda.time.LocalDate;
 import org.joda.time.LocalTime;
 
@@ -178,15 +178,15 @@ public class ConfigurationStorageHandler extends IServerConfigurationStorageHand
     }
 
     @Override
-    public VerifiyIdentityResponse readVerifiyIdentityResponse() {
+    public VerifyIdentityResponse readVerifiyIdentityResponse() {
         SharedPreferences sharedPreferences = getSharedPreferences();
-        String responseJson = sharedPreferences.getString(VerifiyIdentityResponse.class.getName(), null);
+        String responseJson = sharedPreferences.getString(VerifyIdentityResponse.class.getName(), null);
         if (responseJson == null
                 || responseJson.length() == 0){
             return null;
         }
         Gson gson = getGson();
-        return gson.fromJson(responseJson, VerifiyIdentityResponse.class);
+        return gson.fromJson(responseJson, VerifyIdentityResponse.class);
     }
 
     @Override

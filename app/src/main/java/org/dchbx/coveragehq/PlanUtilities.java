@@ -20,9 +20,7 @@ class PlanUtilities {
         double maxPremium = 0;
         for (Plan plan : planList) {
             if (plan.cost != null){
-                if (plan.cost.monthlyPremium > maxPremium){
-                    maxPremium = plan.cost.monthlyPremium;
-                }
+                maxPremium = Math.max(maxPremium, plan.cost.monthlyPremium);
             }
         }
         return maxPremium;
@@ -32,9 +30,7 @@ class PlanUtilities {
         double maxDeductible = 0;
         for (Plan plan : planList) {
             if (plan.cost != null){
-                if (plan.cost.deductible > maxDeductible){
-                    maxDeductible = plan.cost.deductible;
-                }
+                maxDeductible = Math.max(maxDeductible, plan.cost.deductible);
             }
         }
         return maxDeductible;

@@ -54,6 +54,7 @@
             android:text="Who should I include in my family?"
             />
         <ImageView
+            android:id="@+id/shouldIncludeImage"
             android:layout_toRightOf="@+id/shouldInclude"
             android:layout_marginLeft="8dp"
             style="@style/ivl_link_image"

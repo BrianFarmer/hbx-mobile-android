@@ -12,8 +12,10 @@ public class LaunchActivity implements StateMachineAction {
     }
 
     @Override
-    public void call(StateMachine stateMachine, StateManager stateManager, StateManager.AppEvents event, StateManager.AppStates leavingState, StateManager.AppStates enterState) throws IOException, CoverageException {
-        stateMachine.push(new ActivityInfo(enterState, uiActivity));
-        stateManager.launchActivity(uiActivity);
+    public void call(StateMachine stateMachine, StateManager stateManager, StateManager.AppEvents event,
+                     StateManager.AppStates leavingState, StateManager.AppStates enterState,
+                     EventParameters eventParameters) throws IOException, CoverageException {
+        stateMachine.push(new ActivityInfo(enterState, event, uiActivity));
+        stateManager.launchActivity(uiActivity, eventParameters);
     }
 }

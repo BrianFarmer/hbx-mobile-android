@@ -6,6 +6,7 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.reflect.TypeToken;
 
+import org.dchbx.coveragehq.models.Glossary;
 import org.dchbx.coveragehq.models.Security.Endpoints;
 import org.dchbx.coveragehq.models.Security.LoginResponse;
 import org.dchbx.coveragehq.models.Security.SecurityAnswerResponse;
@@ -16,7 +17,7 @@ import org.dchbx.coveragehq.models.gitaccounts.GitAccounts;
 import org.dchbx.coveragehq.models.planshopping.Plan;
 import org.dchbx.coveragehq.models.ridp.Questions;
 import org.dchbx.coveragehq.models.ridp.SignUp.SignUpResponse;
-import org.dchbx.coveragehq.models.ridp.VerifiyIdentityResponse;
+import org.dchbx.coveragehq.models.ridp.VerifyIdentityResponse;
 import org.dchbx.coveragehq.models.roster.Roster;
 import org.dchbx.coveragehq.models.roster.RosterEntry;
 import org.dchbx.coveragehq.models.roster.SummaryOfBenefits;
@@ -188,11 +189,16 @@ public class JsonParser {
         return parse(body, Questions.class);
     }
 
-    public VerifiyIdentityResponse parseVerificationResponse(String body) {
-        return parse(body, VerifiyIdentityResponse.class);
+    public VerifyIdentityResponse parseVerificationResponse(String body) {
+        return parse(body, VerifyIdentityResponse.class);
     }
 
     public SignUpResponse parseSignUpResponse(String body) {
         return parse(body, SignUpResponse.class);
+    }
+
+    public List<Glossary.GlossaryItem> parseGlossary(String json) {
+        Type type = new TypeToken<List<Glossary.GlossaryItem>>() {}.getType();
+        return (List<Glossary.GlossaryItem>)parse(json, type);
     }
 }

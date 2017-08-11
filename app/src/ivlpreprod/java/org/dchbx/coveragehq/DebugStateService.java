@@ -1,10 +1,11 @@
-package org.dchbx.coveragehq.models.ridp;
+package org.dchbx.coveragehq;
 
-import com.google.gson.annotations.Expose;
-import com.google.gson.annotations.SerializedName;
+import android.hardware.SensorManager;
+import android.util.Log;
 
+import com.squareup.seismic.ShakeDetector;
 
-import java.util.List;
+import static android.content.Context.SENSOR_SERVICE;
 
 /*
     This file is part of DC.
@@ -23,22 +24,23 @@ import java.util.List;
     along with DC Health Link SmallBiz.  If not, see <http://www.gnu.org/licenses/>.
     This statement should go near the beginning of every source file, close to the copyright notices. When using the Lesser GPL, insert the word “Lesser” before “General” in all three places. When using the GNU AGPL, insert the word “Affero” before “General” in all three places.
 */
-public class VerifiyIdentityResponse {
-    @Expose
-    @SerializedName("ridp_verified")
-    public boolean ridpVerified;
-    @Expose
-    @SerializedName("user_found_in_enroll")
-    public boolean userFoundInEnroll;
+class DebugStateService implements ShakeDetector.Listener {
+    private static final String TAG = "DebugStateService";
 
+    public DebugStateService(){
+        Log.d(TAG, "in DebugStateService ctor");
+    }
 
-    @SerializedName("primary_applicant")
-    @Expose
-    public PrimaryApplicant primaryApplicant;
-    @SerializedName("employers")
-    @Expose
-    public List<Employer> employers = null;
-    @SerializedName("token")
-    @Expose
-    public String token;
+    public void init(){
+        SensorManager sensorManager = (SensorManager) BrokerApplication.getBrokerApplication().getSystemService(SENSOR_SERVICE);
+        ShakeDetector sd = new ShakeDetector(this);
+        sd.start(sensorManager);
+    }
+
+    @Override
+    public void hearShake() {
+        if (!StateInfo.getShown()) {
+            Intents.launchStateInfo(BaseActivity.getCurrentActivity());
+        }
+    }
 }

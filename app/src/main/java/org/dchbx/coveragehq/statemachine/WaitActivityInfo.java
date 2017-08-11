@@ -4,8 +4,8 @@ public class WaitActivityInfo<E,S> extends ActivityInfo {
 
     private StateManager.UiActivity uiActivity;
 
-    public WaitActivityInfo(StateManager.AppStates state, StateManager.UiActivity uiActivity) {
-        super(state, uiActivity);
+    public WaitActivityInfo(StateManager.AppStates state, StateManager.AppEvents event, StateManager.UiActivity uiActivity) {
+        super(state, event, uiActivity);
         this.uiActivity = uiActivity;
     }
 

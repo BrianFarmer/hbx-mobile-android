@@ -23,8 +23,8 @@ import java.util.List;
  */
 
 public class PremiumAndDeductibleActivity extends BaseActivity {
+    public static StateManager.UiActivity uiActivity = new StateManager.UiActivity(PremiumAndDeductibleActivity.class);
     static private String TAG = "PremiumDeductibleActvty";
-    public static StateManager.UiActivity uiActivity;
 
     private List<Plan> planList;
     private Button plansAvailable;
@@ -67,6 +67,7 @@ public class PremiumAndDeductibleActivity extends BaseActivity {
             setHint(currentPremium, premium, premiumHint);
         } else {
             premium.setProgress((int)(maxPremium/100));
+            currentPremium = maxPremium;
             setHint(maxPremium, premium, premiumHint);
         }
 
@@ -77,6 +78,7 @@ public class PremiumAndDeductibleActivity extends BaseActivity {
             setHint(currentDeductible, deductible, deductibleHint);
         } else {
             deductible.setProgress((int)(maxDeductible/100));
+            currentDeductible = maxDeductible;
             setHint(maxDeductible, deductible, deductibleHint);
         }
 
@@ -124,10 +126,11 @@ public class PremiumAndDeductibleActivity extends BaseActivity {
         plansAvailable.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intents.launchPlanSelector(PremiumAndDeductibleActivity.this);
+                getMessages().appEvent(StateManager.AppEvents.SeePlans);
             }
         });
         setPlansAvailableText();
+        updateFilters();
     }
 
     private void updateFilters() {

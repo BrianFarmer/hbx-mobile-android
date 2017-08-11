@@ -7,9 +7,12 @@ import static org.dchbx.coveragehq.statemachine.StateManager.ResumeActions.Conti
 public abstract class StateInfoBase  implements Serializable{
 
     private final StateManager.AppStates state;
+    private StateManager.AppEvents event;
 
-    public StateInfoBase(StateManager.AppStates state){
+    public StateInfoBase(StateManager.AppStates state, StateManager.AppEvents event){
         this.state = state;
+        this.event = event;
+
     }
 
     public void onPop(StateMachine stateMachine, StateManager stateManager){
@@ -30,5 +33,9 @@ public abstract class StateInfoBase  implements Serializable{
 
     public StateManager.ResumeActions onResume(){
         return Continue;
+    }
+
+    public StateManager.AppEvents getEvent() {
+        return event;
     }
 }

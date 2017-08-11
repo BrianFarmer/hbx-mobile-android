@@ -29,6 +29,7 @@
     <color name="mainbackgroundcolor">@color/white</color>
     <color name="black">#000000</color>
     <color name="transparent">#80ffffff</color>
+    <color name="transparent2">#ff000000</color>
     <color name="unselected_tab_color">@color/mainbackgroundcolor</color>
     <color name="selected_tab_color">@color/mainblue</color>
     <color name="titlebar">@color/mainblue</color>

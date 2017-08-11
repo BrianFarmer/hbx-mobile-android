@@ -80,8 +80,8 @@
     <string name="open_enrollment_ends_label_future">Open Enrollment Closes</string>
     <string name="open_enrollment_ends_label_past">Open Enrollment Ended</string>
     <string name="days_left_label">Days Left</string>
-    <string name="call_dc_healthlink">Call DC HealthLink</string>
-    <string name="email_dc_healthlink">Email DC HealthLink</string>
+    <string name="call_dc_healthlink">Call DC Health Link</string>
+    <string name="email_dc_healthlink">Email DC Health Link</string>
     <string name="estimated_cost_label">Monthly Estimated Costs-</string>
     <string name="employer_contribution_label">Employer Contribution</string>
     <string name="employee_contribution_label">Employee Pays</string>
@@ -374,7 +374,8 @@ You <font color="#69a30d">favorited %d plans</font>.
     <string name="view_privacy_act">View Privacy Act Statement</string>
     <string name="by_clicking_continue">By clicking CONTINUE, you are saying that you understand that information in this application, and the information we get from data sources will be used to decide the eligibility of the people who are applying for health insurance. You are also indicating that you have permission from all of the people listed on the application for their information to be retrieved and used from data sources.</string>
     <string name="no_thanks_i_need_an_individual_plan">No thanks, I need\nan individual plan.</string>
-    <string name="it_looks_like_you_ve_already_got_an_application_in_dc_health_link_to_make_changes_log_in_to_your_account_at_www_dchealthlinkn_com_or_call_us_at_855_532_5465">It looks like you\'ve already got an application in DC Health Link. To make changes log in to your account at www.dchealthlinkn.com or call us at (855) 532-5465.</string>
+    <string name="already_have_application">It looks like you already have an application in DC Health Link.</string>
+    <string name="to_make_changes"><![CDATA[To make changes<br/>log into your account at<br/><a href="http://www.dchealthlink.com">www.dchealthlink.com</a><br/> or call<a href="tel://855-532-5465">(855) 532-5465</a>.]]></string>
     <string name="please_confirm_the_following">Please confirm the following...</string>
     <string name="skip">Skip</string>
     <string name="buy">Buy</string>
@@ -393,4 +394,6 @@ You <font color="#69a30d">favorited %d plans</font>.
     <string name="once_you_start">Once you start an application you cannot change this.</string>
     <string name="yes">Yes</string>
     <string name="no">No</string>
+    <string name="please_describe_the_following_relationships">Please describe the following relationships.</string>
+    <string name="lorem_ipsum">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</string>
 </resources>

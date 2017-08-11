@@ -23,6 +23,7 @@ public class Intents {
 
     static final int REQUEST_IMAGE_CAPTURE = 1;
 
+
     static public void launchEmployeeDetails(BrokerActivity activity, String employeeId, String brokerClientId, LocalDate coverageYear) {
         Intent intent = new Intent(activity, EmployeeDetailsActivity .class);
         intent.putExtra(EMPLOYEE_ID, employeeId);
@@ -107,6 +108,11 @@ public class Intents {
 
     public static void launchActivity(Class<?> cls, Activity activity) {
         Intent intent = new Intent(activity, cls);
+        activity.startActivity(intent);
+    }
+
+    public static void launchStateInfo(Activity activity) {
+        Intent intent = new Intent(activity, StateInfo.class);
         activity.startActivity(intent);
     }
 }

@@ -3,8 +3,11 @@ package org.dchbx.coveragehq;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.ListView;
+import android.widget.TextView;
 
+import org.dchbx.coveragehq.statemachine.EventParameters;
 import org.dchbx.coveragehq.statemachine.StateManager;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
@@ -49,6 +52,20 @@ public class FamilyActivity extends BaseActivity {
         ListView memberListView = (ListView) findViewById(R.id.memberList);
         memberListView.setAdapter(familyAdapter);
 
+        TextView shouldInclude = (TextView)findViewById(R.id.shouldInclude);
+        shouldInclude.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                getMessages().appEvent(StateManager.AppEvents.ShowGlossaryItem, EventParameters.build().add("term", "family"));
+            }
+        });
+        ImageView shouldIncludeImage = (ImageView) findViewById(R.id.shouldIncludeImage);
+        shouldIncludeImage.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                getMessages().appEvent(StateManager.AppEvents.ShowGlossaryItem, EventParameters.build().add("term", "family"));
+            }
+        });
         Button addFamilyMember = (Button) findViewById(R.id.addFamilyMember);
         addFamilyMember.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -61,7 +78,7 @@ public class FamilyActivity extends BaseActivity {
         continueButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intents.launchPremiumAndDeductible(FamilyActivity.this);
+                getMessages().appEvent(StateManager.AppEvents.Continue);
             }
         });
     }

@@ -648,11 +648,11 @@ public class ConnectionHandler implements IConnectionHandler{
         return map;
     }
 
+    @Override
     public HttpResponse process(UrlHandler.HttpRequest request) throws Exception {
         switch (request.requestType){
             case Get:
-
-                break;
+                return get(request.getParameters);
             case Post:
                 return post(request.postParameters.url, request.postParameters.requestBody, null);
             case Put:

@@ -56,10 +56,10 @@ public class StateMachine {
         return statesStack;
     }
 
-    public void process(StateManager.AppEvents appEvent) throws IOException, CoverageException {
+    public void process(StateManager.AppEvents appEvent, EventParameters intentParameters) throws IOException, CoverageException {
         StateInfoBase curState = statesStack.peek();
 
-        if (appEvent == StateManager.AppEvents.Yes){
+        if (appEvent == StateManager.AppEvents.Back){
             Log.d(TAG, "the button you asked for has been clicked.");
         }
 
@@ -75,11 +75,11 @@ public class StateMachine {
                         Transition transition = transitionHashMap.get(processedEvent);
                         StateMachineAction exitAction = transition.getExitAction();
                         if (exitAction != null) {
-                            exitAction.call(this, stateManager, appEvent, curState.getState(), transition.getToState());
+                            exitAction.call(this, stateManager, appEvent, curState.getState(), transition.getToState(), intentParameters);
                         }
                         StateMachineAction enterAction = transition.getEnterAction();
                         if (enterAction != null) {
-                            enterAction.call(this, stateManager, appEvent, curState.getState(), transition.getToState());
+                            enterAction.call(this, stateManager, appEvent, curState.getState(), transition.getToState(), intentParameters);
                         }
                     }
                 } catch (Exception e) {
@@ -96,11 +96,11 @@ public class StateMachine {
         if (transition != null){
             StateMachineAction exitAction = transition.getExitAction();
             if (exitAction != null){
-                exitAction.call(this, stateManager, appEvent, curState.getState(), transition.getToState());
+                exitAction.call(this, stateManager, appEvent, curState.getState(), transition.getToState(), intentParameters);
             }
             StateMachineAction enterAction = transition.getEnterAction();
             if (enterAction != null){
-                enterAction.call(this, stateManager, appEvent, curState.getState(), transition.getToState());
+                enterAction.call(this, stateManager, appEvent, curState.getState(), transition.getToState(), intentParameters);
             }
             return;
         }
@@ -112,19 +112,14 @@ public class StateMachine {
             if (transition != null){
                 StateMachineAction exitAction = transition.getExitAction();
                 if (exitAction != null){
-                    exitAction.call(this, stateManager, appEvent, curState.getState(), transition.getToState());
+                    exitAction.call(this, stateManager, appEvent, curState.getState(), transition.getToState(), intentParameters);
                 }
                 StateMachineAction enterAction = transition.getEnterAction();
                 if (enterAction != null){
-                    enterAction.call(this, stateManager, appEvent, curState.getState(), transition.getToState());
+                    enterAction.call(this, stateManager, appEvent, curState.getState(), transition.getToState(), intentParameters);
                 }
             }
         }
-    }
-
-    public void back() {
-        StateInfoBase pop = statesStack.pop();
-        pop.onPop(this, stateManager);
     }
 
     public void backAndPushj() {

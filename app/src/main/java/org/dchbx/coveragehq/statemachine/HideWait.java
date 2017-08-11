@@ -11,7 +11,7 @@ public class HideWait implements StateMachineAction {
 
 
     @Override
-    public void call(StateMachine stateMachine, StateManager stateManager, StateManager.AppEvents event, StateManager.AppStates leavingState, StateManager.AppStates enterState) throws IOException, CoverageException {
-
+    public void call(StateMachine stateMachine, StateManager stateManager, StateManager.AppEvents event, StateManager.AppStates leavingState, StateManager.AppStates enterState, EventParameters intentParameters) throws IOException, CoverageException {
+        stateManager.hideWait();
     }
 }

@@ -16,9 +16,10 @@ import org.dchbx.coveragehq.models.ridp.Questions;
 import org.dchbx.coveragehq.models.ridp.SignUp.Person;
 import org.dchbx.coveragehq.models.ridp.SignUp.SignUp;
 import org.dchbx.coveragehq.models.ridp.SignUp.SignUpResponse;
-import org.dchbx.coveragehq.models.ridp.VerifiyIdentityResponse;
+import org.dchbx.coveragehq.models.ridp.VerifyIdentityResponse;
 import org.dchbx.coveragehq.models.ridp.VerifyIdentity;
 import org.dchbx.coveragehq.models.ridp.VerifyIdentityPerson;
+import org.dchbx.coveragehq.statemachine.EventParameters;
 import org.dchbx.coveragehq.statemachine.StateManager;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
@@ -27,6 +28,9 @@ import org.joda.time.format.DateTimeFormatter;
 import org.joda.time.format.ISODateTimeFormat;
 
 import java.util.ArrayList;
+
+import static org.dchbx.coveragehq.statemachine.StateManager.AppEvents.Error;
+import static org.dchbx.coveragehq.statemachine.StateManager.AppEvents.GetQuestionsOperationComplete;
 
 /*
     This file is part of DC.
@@ -108,7 +112,7 @@ public class RidpService extends StateProcessor {
             UrlHandler urlHandler = serviceManager.getUrlHandler();
             ConnectionHandler connectionHandler = serviceManager.getConnectionHandler();
             ConfigurationStorageHandler storageHandler = serviceManager.getConfigurationStorageHandler();
-            VerifiyIdentityResponse verifiyIdentityResponse = storageHandler.readVerifiyIdentityResponse();
+            VerifyIdentityResponse verifiyIdentityResponse = storageHandler.readVerifiyIdentityResponse();
             org.dchbx.coveragehq.models.account.Account account = storageHandler.readAccount();
             SignUp signUp = buildSignUp(verifiyIdentityResponse, account);
 
@@ -120,12 +124,12 @@ public class RidpService extends StateProcessor {
                 storageHandler.store(signUpResponse);
                 if (signUpResponse.error != null){
                     if (signUpResponse.error.type.compareTo("userHasActiveMedicaid") == 0){
-                        BrokerWorker.eventBus.post(new Events.AppEvent(StateManager.AppEvents.SignUpUserInAceds, signUpResponse.error.message));
+                        BrokerWorker.eventBus.post(new Events.AppEvent(StateManager.AppEvents.SignUpUserInAceds, EventParameters.build().add("error_msg", signUpResponse.error.message)));
                     } else {
-                        BrokerWorker.eventBus.post(new Events.AppEvent(StateManager.AppEvents.Error, signUpResponse.error.message));
+                        BrokerWorker.eventBus.post(new Events.AppEvent(StateManager.AppEvents.Error, EventParameters.build().add("error_msg", signUpResponse.error.message)));
                     }
                 } else {
-                    BrokerWorker.eventBus.post(new Events.AppEvent(StateManager.AppEvents.SignUpSuccessful, null));
+                    BrokerWorker.eventBus.post(new Events.AppEvent(StateManager.AppEvents.SignUpSuccessful));
                 }
             } else {
                 BrokerWorker.eventBus.post(new Events.Error("Bad Http response processing RidpService.signUp", "Events.GetCreateAccountInfo"));
@@ -136,7 +140,7 @@ public class RidpService extends StateProcessor {
         }
     }
 
-    private SignUp buildSignUp(VerifiyIdentityResponse verifiyIdentityResponse, Account account) {
+    private SignUp buildSignUp(VerifyIdentityResponse verifiyIdentityResponse, Account account) {
         SignUp signUp = new SignUp();
         signUp.person = new Person();
         signUp.person.firstName = account.firstName;
@@ -151,31 +155,25 @@ public class RidpService extends StateProcessor {
     }
 
     @Subscribe(threadMode = ThreadMode.BACKGROUND)
-    public void doThis(Events.GetVerificationResponse verificationResponse){
-        try {
-            Log.d(TAG, "in RidpService.doThis(Events(GetVerificationResponse)");
+    public void doThis(Events.GetVerificationResponse verificationResponse) throws Exception {
+        Log.d(TAG, "in RidpService.doThis(Events(GetVerificationResponse)");
 
-            UrlHandler urlHandler = serviceManager.getUrlHandler();
-            ConnectionHandler connectionHandler = serviceManager.getConnectionHandler();
-            ConfigurationStorageHandler storageHandler = serviceManager.getConfigurationStorageHandler();
-            org.dchbx.coveragehq.models.account.Account account = storageHandler.readAccount();
-            VerifyIdentity verifyIdentity = veriftyIdentityFromAccount(account);
+        UrlHandler urlHandler = serviceManager.getUrlHandler();
+        ConnectionHandler connectionHandler = serviceManager.getConnectionHandler();
+        ConfigurationStorageHandler storageHandler = serviceManager.getConfigurationStorageHandler();
+        org.dchbx.coveragehq.models.account.Account account = storageHandler.readAccount();
+        VerifyIdentity verifyIdentity = veriftyIdentityFromAccount(account);
 
-            UrlHandler.HttpRequest request = urlHandler.getRidpVerificationParameters(verifyIdentity);
-            try {
-                IConnectionHandler.HttpResponse response = connectionHandler.process(request);
-                if (response.getResponseCode() == 200) {
-                    JsonParser parser = serviceManager.getParser();
-                    Questions questions = parser.parseRidpQuestions(response.getBody());
-                    storageHandler.store(questions);
-                    messages.appEvent(StateManager.AppEvents.GetQuestionsOperationComplete);
-                }
-            } catch (Exception e) {
-                Log.e(TAG, "exception processing http request");
-                messages.appEvent(StateManager.AppEvents.ServiceErrorHappened, "Error getting RIDP questions");
-            }
-        } catch (Exception e){
-            messages.error("Exception getting Experian questions.", e.getMessage());
+        UrlHandler.HttpRequest request = urlHandler.getRidpVerificationParameters(verifyIdentity);
+        IConnectionHandler.HttpResponse process = connectionHandler.process(request);
+        if (process.getResponseCode() == 200){
+            Log.d(TAG, "verification request successful");
+            JsonParser parser = new JsonParser();
+            Questions questions = parser.parseRidpQuestions(process.getBody());
+            storageHandler.store(questions);
+            messages.appEvent(GetQuestionsOperationComplete);
+        } else {
+            messages.appEvent(Error, EventParameters.build().add("error_msg", "An error happended getting the verificaiton questions"));
         }
     }
 
@@ -185,7 +183,7 @@ public class RidpService extends StateProcessor {
     }
 
     @Subscribe(threadMode = ThreadMode.BACKGROUND)
-    public void doThis(Events.VerifyUser verificationResponse){
+    public void doThis(Events.VerifyUser verificationResponse) throws Exception {
         Log.d(TAG, "in RidpService.verificationRequest");
 
         UrlHandler urlHandler = serviceManager.getUrlHandler();
@@ -194,33 +192,28 @@ public class RidpService extends StateProcessor {
         Answers answers = storageHandler.readAnswers();
 
         UrlHandler.HttpRequest request = urlHandler.getAnswersRequest(answers);
-        try {
-            IConnectionHandler.HttpResponse response = connectionHandler.process(request);
-            if (response.getResponseCode() == 200){
-                JsonParser parser = serviceManager.getParser();
-                VerifiyIdentityResponse verifiyIdentityResponse = parser.parseVerificationResponse(response.getBody());
-                storageHandler.store(verifiyIdentityResponse);
-                switch (determineState(verifiyIdentityResponse)){
-                    case InRoster:
-                        messages.appEvent(StateManager.AppEvents.UserVerifiedSsnWithEmployer);
-                        break;
-                    case InEnroll:
-                        messages.appEvent(StateManager.AppEvents.UserVerifiedFoundYou);
-                        break;
-                    case OkToCreateAccount:
-                        messages.appEvent(StateManager.AppEvents.UserVerifiedOkToCreate);
-                        break;
-                }
-            } else {
-                BrokerWorker.eventBus.post(new Events.Error("Bad Http response processing RidpService.verificationRequest", "Events.GetCreateAccountInfo"));
+        IConnectionHandler.HttpResponse response = connectionHandler.process(request);
+        if (response.getResponseCode() == 200){
+            JsonParser parser = serviceManager.getParser();
+            VerifyIdentityResponse verifiyIdentityResponse = parser.parseVerificationResponse(response.getBody());
+            storageHandler.store(verifiyIdentityResponse);
+            switch (determineState(verifiyIdentityResponse)){
+                case InRoster:
+                    messages.appEvent(StateManager.AppEvents.UserVerifiedSsnWithEmployer);
+                    break;
+                case InEnroll:
+                    messages.appEvent(StateManager.AppEvents.UserVerifiedFoundYou);
+                    break;
+                case OkToCreateAccount:
+                    messages.appEvent(StateManager.AppEvents.UserVerifiedOkToCreate);
+                    break;
             }
-        } catch (Exception e) {
-            Log.e(TAG, "exception processing http request");
-            BrokerWorker.eventBus.post(new Events.Error("Error processing RidpService.verificationRequest", "Events.GetCreateAccountInfo"));
+        } else {
+            messages.appEvent(StateManager.AppEvents.Error, EventParameters.build().add("error_msg", "Bad Http response processing RidpService.verificationRequest"));
         }
     }
 
-    private VerifiyIdentityResponseStates determineState(VerifiyIdentityResponse verifiyIdentityResponse) {
+    private VerifiyIdentityResponseStates determineState(VerifyIdentityResponse verifiyIdentityResponse) {
         if (verifiyIdentityResponse.ridpVerified && verifiyIdentityResponse.userFoundInEnroll){
             return VerifiyIdentityResponseStates.InEnroll;
         }
@@ -232,7 +225,7 @@ public class RidpService extends StateProcessor {
         return VerifiyIdentityResponseStates.OkToCreateAccount;
     }
 
-    public VerifiyIdentityResponse getVerificationResponse() {
+    public VerifyIdentityResponse getVerificationResponse() {
         ConfigurationStorageHandler configurationStorageHandler = serviceManager.getConfigurationStorageHandler();
         return configurationStorageHandler.readVerifiyIdentityResponse();
     }

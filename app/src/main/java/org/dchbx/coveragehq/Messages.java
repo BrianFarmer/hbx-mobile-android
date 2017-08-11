@@ -3,6 +3,7 @@ package org.dchbx.coveragehq;
 import android.net.Uri;
 
 import org.dchbx.coveragehq.models.ridp.Answers;
+import org.dchbx.coveragehq.statemachine.EventParameters;
 import org.dchbx.coveragehq.statemachine.StateManager;
 import org.joda.time.LocalDate;
 
@@ -61,12 +62,15 @@ public interface Messages {
     void updateAnswers(Answers usersAnswers);
     void getVerificationResponse();
     void getCurrentActivity();
-    void stateAction(Events.StateAction.Action launchActivity, int id);
-    void stateAction(Events.StateAction.Action launchActivity);
+    void stateAction(Events.StateAction.Action action, int id, EventParameters eventParameters);
+    void stateAction(Events.StateAction.Action action, int id);
+    void stateAction(Events.StateAction.Action action);
     void error(String str1, String str2);
-    void appEvent(StateManager.AppEvents event, String s);
+    void appEvent(StateManager.AppEvents event, EventParameters intentParameters);
     void appEvent(StateManager.AppEvents event);
     void createAccount();
     void verifyUser();
+    void getGlossary();
+    void getGlossaryItem(String name);
 }
 

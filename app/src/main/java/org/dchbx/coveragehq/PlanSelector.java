@@ -26,8 +26,8 @@ import java.util.List;
  */
 
 public class PlanSelector extends BaseActivity {
+    public static StateManager.UiActivity uiActivity = new StateManager.UiActivity(PlanSelector.class);
     private static String TAG = "PlanSelector";
-    public static StateManager.UiActivity uiActivity;
 
     private List<Plan> planList;
     private double currentPremium;

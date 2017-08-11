@@ -5,6 +5,7 @@ import android.util.Log;
 
 import org.dchbx.coveragehq.models.account.Account;
 import org.dchbx.coveragehq.models.ridp.Answers;
+import org.dchbx.coveragehq.statemachine.EventParameters;
 import org.dchbx.coveragehq.statemachine.StateManager;
 import org.greenrobot.eventbus.EventBus;
 import org.joda.time.LocalDate;
@@ -240,8 +241,13 @@ public class EventBusMessages implements Messages {
     }
 
     @Override
+    public void stateAction(Events.StateAction.Action action, int id, EventParameters eventParameters) {
+        eventBus.post(new Events.StateAction(action, id, eventParameters));
+    }
+
+    @Override
     public void stateAction(Events.StateAction.Action action, int id) {
-        eventBus.post(new Events.StateAction(action, id));
+        eventBus.post(new Events.StateAction(action, id, null));
     }
 
     @Override
@@ -255,8 +261,8 @@ public class EventBusMessages implements Messages {
     }
 
     @Override
-    public void appEvent(StateManager.AppEvents event, String s) {
-        eventBus.post(new Events.AppEvent(event, s));
+    public void appEvent(StateManager.AppEvents event, EventParameters intentParameters){
+        eventBus.post(new Events.AppEvent(event, intentParameters));
     }
 
     @Override
@@ -343,5 +349,14 @@ public class EventBusMessages implements Messages {
     public void getCreateAccountInfo() {
         eventBus.post(new Events.GetCreateAccountInfo());
     }
-}
+
+    @Override
+    public void getGlossary(){
+        eventBus.post(new Events.GetGlossary());
+    }
+
+    @Override
+    public void getGlossaryItem(String name){
+        eventBus.post(new Events.GetGlossaryItem(name));
+    }}
 

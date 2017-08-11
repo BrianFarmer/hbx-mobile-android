@@ -2,13 +2,15 @@ package org.dchbx.coveragehq.ridp;
 
 import android.databinding.DataBindingUtil;
 import android.os.Bundle;
+import android.text.Html;
 import android.widget.ImageButton;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import org.dchbx.coveragehq.R;
-import org.dchbx.coveragehq.statemachine.StateManager;
 import org.dchbx.coveragehq.databinding.AcctSystemFoundYouAcedsBinding;
-import org.dchbx.coveragehq.models.ridp.VerifiyIdentityResponse;
+import org.dchbx.coveragehq.models.ridp.VerifyIdentityResponse;
+import org.dchbx.coveragehq.statemachine.StateManager;
 
 /*
     This file is part of DC.
@@ -37,6 +39,8 @@ public class AcctSystemFoundYouAceds extends PostVerifiedActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         binding = DataBindingUtil.setContentView(this, R.layout.acct_system_found_you_aceds);
+        TextView toMakeChanges = (TextView) findViewById(R.id.toMakeChanges);
+        toMakeChanges.setText(Html.fromHtml(getString(R.string.to_make_changes)));
         configToolbar();
     }
 
@@ -51,7 +55,7 @@ public class AcctSystemFoundYouAceds extends PostVerifiedActivity {
     }
 
     @Override
-    protected void populate(VerifiyIdentityResponse verificationResponse) {
+    protected void populate(VerifyIdentityResponse verificationResponse) {
 
     }
 }
