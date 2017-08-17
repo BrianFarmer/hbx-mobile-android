@@ -22,6 +22,11 @@ public class EventParameters {
         return new EventParameters();
     }
 
+    public EventParameters add(String name, StateManager.AppStates value){
+        eventParameters.add(new EventStateParameter(name, value));
+        return this;
+    }
+
     public EventParameters add(String name, int value){
         eventParameters.add(new IntegerParameter(name, value));
         return this;
@@ -42,6 +47,27 @@ public class EventParameters {
     public static abstract class EventParameter {
         public abstract void initIntent(Intent intent);
         public abstract void initBundle(Bundle bundle);
+    }
+
+    public static class EventStateParameter extends EventParameter {
+
+        private String name;
+        private StateManager.AppStates value;
+
+        public EventStateParameter(String name, StateManager.AppStates value){
+            this.name = name;
+            this.value = value;
+        }
+
+        @Override
+        public void initIntent(Intent intent) {
+            intent.putExtra(name, value.ordinal());
+        }
+
+        @Override
+        public void initBundle(Bundle bundle) {
+            bundle.putInt(name, value.ordinal());
+        }
     }
 
     public static class StringParameter extends EventParameter {

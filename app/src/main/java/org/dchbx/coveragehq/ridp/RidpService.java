@@ -1,7 +1,17 @@
-package org.dchbx.coveragehq;
+package org.dchbx.coveragehq.ridp;
 
 import android.util.Log;
 
+import org.dchbx.coveragehq.BrokerApplication;
+import org.dchbx.coveragehq.ConfigurationStorageHandler;
+import org.dchbx.coveragehq.ConnectionHandler;
+import org.dchbx.coveragehq.Events;
+import org.dchbx.coveragehq.IConnectionHandler;
+import org.dchbx.coveragehq.JsonParser;
+import org.dchbx.coveragehq.Messages;
+import org.dchbx.coveragehq.ServiceManager;
+import org.dchbx.coveragehq.StateProcessor;
+import org.dchbx.coveragehq.UrlHandler;
 import org.dchbx.coveragehq.models.account.Account;
 import org.dchbx.coveragehq.models.ridp.Address;
 import org.dchbx.coveragehq.models.ridp.Answer;
@@ -16,9 +26,9 @@ import org.dchbx.coveragehq.models.ridp.Questions;
 import org.dchbx.coveragehq.models.ridp.SignUp.Person;
 import org.dchbx.coveragehq.models.ridp.SignUp.SignUp;
 import org.dchbx.coveragehq.models.ridp.SignUp.SignUpResponse;
-import org.dchbx.coveragehq.models.ridp.VerifyIdentityResponse;
 import org.dchbx.coveragehq.models.ridp.VerifyIdentity;
 import org.dchbx.coveragehq.models.ridp.VerifyIdentityPerson;
+import org.dchbx.coveragehq.models.ridp.VerifyIdentityResponse;
 import org.dchbx.coveragehq.statemachine.EventParameters;
 import org.dchbx.coveragehq.statemachine.StateManager;
 import org.greenrobot.eventbus.Subscribe;
@@ -124,19 +134,19 @@ public class RidpService extends StateProcessor {
                 storageHandler.store(signUpResponse);
                 if (signUpResponse.error != null){
                     if (signUpResponse.error.type.compareTo("userHasActiveMedicaid") == 0){
-                        BrokerWorker.eventBus.post(new Events.AppEvent(StateManager.AppEvents.SignUpUserInAceds, EventParameters.build().add("error_msg", signUpResponse.error.message)));
+                        messages.getEventBus().post(new Events.AppEvent(StateManager.AppEvents.SignUpUserInAceds, EventParameters.build().add("error_msg", signUpResponse.error.message)));
                     } else {
-                        BrokerWorker.eventBus.post(new Events.AppEvent(StateManager.AppEvents.Error, EventParameters.build().add("error_msg", signUpResponse.error.message)));
+                        messages.getEventBus().post(new Events.AppEvent(StateManager.AppEvents.Error, EventParameters.build().add("error_msg", signUpResponse.error.message)));
                     }
                 } else {
-                    BrokerWorker.eventBus.post(new Events.AppEvent(StateManager.AppEvents.SignUpSuccessful));
+                    messages.getEventBus().post(new Events.AppEvent(StateManager.AppEvents.SignUpSuccessful));
                 }
             } else {
-                BrokerWorker.eventBus.post(new Events.Error("Bad Http response processing RidpService.signUp", "Events.GetCreateAccountInfo"));
+                messages.getEventBus().post(new Events.Error("Bad Http response processing RidpService.signUp", "Events.GetCreateAccountInfo"));
             }
         } catch (Exception e) {
             Log.e(TAG, "exception processing http request");
-            BrokerWorker.eventBus.post(new Events.Error("Error processing RidpService.signUp", e.getMessage()));
+            messages.getEventBus().post(new Events.Error("Error processing RidpService.signUp", e.getMessage()));
         }
     }
 
@@ -231,8 +241,8 @@ public class RidpService extends StateProcessor {
     }
 
     public static class QuestionsAndAnswers {
-        Questions questions;
-        Answers answers;
+        public Questions questions;
+        public Answers answers;
     }
 
     public QuestionsAndAnswers getRidpQuestions() {

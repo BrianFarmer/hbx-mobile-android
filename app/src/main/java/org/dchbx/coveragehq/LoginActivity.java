@@ -333,8 +333,7 @@ public class LoginActivity extends BrokerActivity {
                 if (switchEnableFingerprintLogin != null && switchEnableFingerprintLogin.isChecked()){
                     FingerprintDialog.build(false, this);
                 } else {
-                    RootActivity.loginDone();
-                    finish();
+                    getMessages().appEvent(StateManager.AppEvents.Login);
                 }
                 return;
             case Events.LoginRequestResult.Error:
@@ -361,6 +360,7 @@ public class LoginActivity extends BrokerActivity {
                 if (switchEnableFingerprintLogin != null && switchEnableFingerprintLogin.isChecked()){
                     FingerprintDialog.build(false, this);
                 } else {
+                    getMessages().appEvent(StateManager.AppEvents.Login);
                     RootActivity.loginDone();
                     finish();
                 }

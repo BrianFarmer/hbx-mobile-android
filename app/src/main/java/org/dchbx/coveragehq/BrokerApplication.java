@@ -1,6 +1,5 @@
 package org.dchbx.coveragehq;
 
-import android.app.Activity;
 import android.app.Application;
 import android.util.Log;
 
@@ -63,23 +62,7 @@ public class BrokerApplication extends Application {
         }
     }
 
-    public Messages getMessages(StateProcessor stateProcessor){
-        return new EventBusMessages(stateProcessor);
-    }
-
-    public Messages getMessages(Activity activity) {
-        return new EventBusMessages(activity);
-    }
-
-    public Messages getMessages(BaseActivity activity) {
-        return new EventBusMessages(activity);
-    }
-
-    public Messages getMessages(BrokerFragment fragment) {
-        return new EventBusMessages(fragment);
-    }
-
-    public Messages getMessages(BrokerAppCompatDialogFragment brokerAppCompatDialogFragment) {
-            return new EventBusMessages(brokerAppCompatDialogFragment);
+    public <T> Messages getMessages(T t){
+        return new EventBusMessages(t);
     }
 }

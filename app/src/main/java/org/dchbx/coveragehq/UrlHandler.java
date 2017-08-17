@@ -41,6 +41,7 @@ import static org.dchbx.coveragehq.ConnectionHandler.JSON;
 public abstract class UrlHandler {
     private static String TAG = "UrlHandler";
 
+
     public class PutParameters {
         FormBody body;
         HttpUrl url;
@@ -59,6 +60,7 @@ public abstract class UrlHandler {
         public HashMap<String, String> headers;
         public HashMap<String, String> formParameters;
         public RequestBody requestBody;
+        public String requestString;
     }
 
     public static class HttpRequest {
@@ -145,9 +147,9 @@ public abstract class UrlHandler {
         GetParameters getParameters = new GetParameters();
         if (serverConfiguration.sessionId != null) {
             getParameters.cookies = new HashMap<>();
-            getParameters.cookies.put("_session_id", serverConfiguration.sessionId);
+            getParameters.cookies.put(serverConfiguration.sessionKey, serverConfiguration.sessionId);
         }
-        getParameters.url = HttpUrl.parse(serverConfiguration.individualPath);
+        getParameters.url = HttpUrl.parse(serverConfiguration.individualEndpoint);
         return getParameters;
     }
 
@@ -355,7 +357,7 @@ public abstract class UrlHandler {
             return url;
         }
 
-        HttpUrl rootUrl = HttpUrl.parse(serverConfiguration.individualPath);
+        HttpUrl rootUrl = HttpUrl.parse(serverConfiguration.individualEndpoint);
         Uri.Builder builder = new Uri.Builder();
         Uri qualifiedUrl = builder.scheme(rootUrl.scheme())
                 .authority(rootUrl.host())
@@ -365,11 +367,11 @@ public abstract class UrlHandler {
 
     public GetParameters getEmployeeDetailsParameters() {
         GetParameters getParameters = new GetParameters();
-        if (serverConfiguration.sessionId != null) {
+        if (serverConfiguration.sessionKey != null) {
             getParameters.cookies = new HashMap<>();
-            getParameters.cookies.put("_session_id", serverConfiguration.sessionId);
+            getParameters.cookies.put(serverConfiguration.sessionKey, serverConfiguration.sessionValue);
         }
-        getParameters.url = HttpUrl.parse(serverConfiguration.individualPath);
+        getParameters.url = HttpUrl.parse(serverConfiguration.individualEndpoint);
         return getParameters;
     }
 
@@ -380,7 +382,7 @@ public abstract class UrlHandler {
     public abstract String getSessionCookie(HashMap<String, ArrayList<String>> cookieMap);
     public abstract HashMap<String,ArrayList<String>> getNeededLoginCookes();
     public abstract PostParameters getLoginPostParameters(String accountName, String password);
-    public abstract CoverageConnection.LoginResult processLoginReponse(String accountName, String password, Boolean rememberMe, IConnectionHandler.PostResponse loginPostResponse, boolean useFingerprintSensor) throws CoverageException;
+    public abstract CoverageConnection.LoginResult processLoginReponse(String accountName, String password, Boolean rememberMe, IConnectionHandler.PostResponse loginPostResponse, boolean useFingerprintSensor) throws Exception;
 
     public GetParameters getSummaryOfBenefitsParameters(String summaryOfBenefitsUrl){
         GetParameters getParameters = new GetParameters();
@@ -469,6 +471,9 @@ public abstract class UrlHandler {
         serverConfiguration.localSignUpEndpoint = endpoints.local_sign_up_endpoint;
         serverConfiguration.localLoginEndpoint = endpoints.local_login_endpoint;
         serverConfiguration.localLogoutEndpoint = endpoints.local_logout_endpoint;
+        serverConfiguration.uqhpApplicationSchemaEndpoint = endpoints.uqhp_application_schema_endpoint;
+        serverConfiguration.faaApplicationSchemaEndpoint = endpoints.faa_application_schema_endpoint;
+
     }
 
     public List<Plan> processPlans(IConnectionHandler.GetResponse getResponse) {
@@ -560,10 +565,42 @@ public abstract class UrlHandler {
         }
         String jsonString = (new Gson()).toJson(answers);
         postParameters.requestBody = RequestBody.create(JSON, jsonString);
+        postParameters.requestString = jsonString;
 
         HttpRequest request = new HttpRequest();
         request.postParameters = postParameters;
         request.requestType = HttpRequest.RequestType.Post;
+        return request;
+    }
+
+    public HttpRequest getFinancialEligibilityJson(){
+        GetParameters getParameters = new GetParameters();
+        if (serverConfiguration.faaApplicationSchemaEndpoint.substring(0, 4).toLowerCase().compareTo("http") == 0){
+            getParameters.url = HttpUrl.parse(serverConfiguration.faaApplicationSchemaEndpoint);
+        }
+
+        HttpRequest request = new HttpRequest();
+        request.getParameters = getParameters;
+        request.requestType = HttpRequest.RequestType.Get;
+        return request;
+    }
+
+    public HttpRequest getUqhpApplicationJson(){
+        GetParameters getParameters = new GetParameters();
+        if (serverConfiguration.verifyIdentityAnswersEndpoint.substring(0, 4).toLowerCase().compareTo("http") == 0){
+            getParameters.url = HttpUrl.parse(serverConfiguration.verifyIdentityAnswersEndpoint);
+        } else {
+            getParameters.url = new HttpUrl.Builder()
+                    .scheme(serverConfiguration.loginInfo.scheme)
+                    .host(serverConfiguration.loginInfo.host)
+                    .addPathSegments(serverConfiguration.uqhpApplicationSchemaEndpoint)
+                    .port(serverConfiguration.loginInfo.port)
+                    .build();
+        }
+
+        HttpRequest request = new HttpRequest();
+        request.getParameters = getParameters;
+        request.requestType = HttpRequest.RequestType.Get;
         return request;
     }
 }

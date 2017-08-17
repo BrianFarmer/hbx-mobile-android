@@ -19,6 +19,8 @@ package org.dchbx.coveragehq;
 
 import com.google.gson.annotations.Expose;
 
+import org.dchbx.coveragehq.financialeligibility.FinancialEligibilityService;
+import org.dchbx.coveragehq.ridp.RidpService;
 import org.dchbx.coveragehq.statemachine.StateManager;
 import org.dchbx.coveragehq.uqhp.UQHPService;
 
@@ -38,6 +40,7 @@ public class ServiceManager {
     private ConfigurationStorageHandler configurationStorageHandler;
     private AppStatusService appStatusService;
     private DebugStateService debugStateService;
+    private FinancialEligibilityService financialEligibilityService;
 
     public AppConfig getAppConfig(){
         AppConfig appConfig = new AppConfig();
@@ -87,6 +90,7 @@ public class ServiceManager {
         configurationStorageHandler = new ConfigurationStorageHandler();
         appStatusService = new AppStatusService(this);
         debugStateService = new DebugStateService();
+        financialEligibilityService = new FinancialEligibilityService(this);
 
         debugStateService.init();
         stateManager.init();

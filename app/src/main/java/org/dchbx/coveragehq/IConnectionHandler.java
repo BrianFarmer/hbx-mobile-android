@@ -10,9 +10,10 @@ import okhttp3.HttpUrl;
 
 public interface IConnectionHandler {
 
-    public abstract class HttpResponse{
-        abstract int getResponseCode();
-        abstract String getBody();
+
+    public static abstract class HttpResponse{
+        public abstract int getResponseCode();
+        public abstract String getBody();
     }
 
     public static class PostResponse extends HttpResponse{
@@ -22,12 +23,12 @@ public interface IConnectionHandler {
         public Map<String, List<String>> headers;
 
         @Override
-        int getResponseCode() {
+        public int getResponseCode() {
             return responseCode;
         }
 
         @Override
-        String getBody() {
+        public String getBody() {
             return body;
         }
     }
@@ -38,12 +39,12 @@ public interface IConnectionHandler {
         public HashMap<String, List<String>> cookies;
 
         @Override
-        int getResponseCode() {
+        public int getResponseCode() {
             return responseCode;
         }
 
         @Override
-        String getBody() {
+        public String getBody() {
             return body;
         }
     }
@@ -54,12 +55,12 @@ public interface IConnectionHandler {
         public HashMap<String, List<String>> cookies;
 
         @Override
-        int getResponseCode() {
+        public int getResponseCode() {
             return responseCode;
         }
 
         @Override
-        String getBody() {
+        public String getBody() {
             return body;
         }
     }
@@ -79,4 +80,9 @@ public interface IConnectionHandler {
     String get(HttpUrl url, String cookie) throws Exception;
     GetResponse simpleGet(UrlHandler.GetParameters getParameters) throws IOException;
     HttpResponse process(UrlHandler.HttpRequest request) throws Exception;
+    void process(UrlHandler.HttpRequest request, ConnectionHandler.OnCompletion onCompletion) throws Exception;
+
+    public static interface OnCompletion {
+        void onCompletion(IConnectionHandler.HttpResponse response);
+    }
 }

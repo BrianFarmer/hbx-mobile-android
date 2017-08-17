@@ -36,9 +36,6 @@ public class AppStatusService {
         this.serviceManager = serviceManager;
     }
 
-    public ServerConfiguration.UserType getUserStatus() {
-        return serviceManager.getServerConfiguration().userType;
-    }
 
     public void startSessionTimeout() {
 
@@ -97,7 +94,13 @@ public class AppStatusService {
         return result;
     }
 
+
+    public ServerConfiguration.UserType getUserStatus() {
+        return serviceManager.getServerConfiguration().userType;
+    }
+
     public void setUserStatus(ServerConfiguration.UserType userStatus) {
+        serviceManager.getServerConfiguration().userType = userStatus;
         this.userStatus = userStatus;
     }
 }

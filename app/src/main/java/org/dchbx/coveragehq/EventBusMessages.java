@@ -4,11 +4,15 @@ import android.net.Uri;
 import android.util.Log;
 
 import org.dchbx.coveragehq.models.account.Account;
+import org.dchbx.coveragehq.models.fe.FinancialAssistanceApplication;
+import org.dchbx.coveragehq.models.fe.Schema;
 import org.dchbx.coveragehq.models.ridp.Answers;
 import org.dchbx.coveragehq.statemachine.EventParameters;
 import org.dchbx.coveragehq.statemachine.StateManager;
 import org.greenrobot.eventbus.EventBus;
 import org.joda.time.LocalDate;
+
+import java.util.HashMap;
 
 /*
     This file is part of DC.
@@ -40,6 +44,11 @@ public class EventBusMessages implements Messages {
         } catch (Throwable e){
             Log.d("EventBusMessages", "exception initializing: " + e.getMessage());
         }
+    }
+
+    @Override
+    public EventBus getEventBus(){
+        return eventBus;
     }
 
     @Override
@@ -358,5 +367,37 @@ public class EventBusMessages implements Messages {
     @Override
     public void getGlossaryItem(String name){
         eventBus.post(new Events.GetGlossaryItem(name));
-    }}
+    }
+
+    @Override
+    public void getFinancialEligibilityJson() {
+        eventBus.post(new Events.GetFinancialEligibilityJson());
+
+    }
+
+    @Override
+    public void getFinancialEligibilityJsonResponse(Schema schema) {
+        eventBus.post(new Events.GetFinancialEligibilityJsonResponse(schema));
+    }
+
+    @Override
+    public void getFinancialAssistanceApplication() {
+        eventBus.post(new Events.GetFinancialAssistanceApplication());
+    }
+
+    @Override
+    public void getFinancialAssistanceApplicationResponse(FinancialAssistanceApplication financialAssistanceApplication) {
+        eventBus.post(new Events.GetFinancialAssistanceApplicationResponse(financialAssistanceApplication));
+    }
+
+    @Override
+    public void getFinancialApplicationPerson(String eapersonid) {
+        eventBus.post(new Events.GetApplicationPerson(eapersonid));
+    }
+
+    @Override
+    public void getFinancialApplicationPersonResponse(HashMap<String, Object> person) {
+        eventBus.post(new Events.GetApplicationPersonResponse(person));
+    }
+}
 

@@ -197,7 +197,7 @@ public abstract class CoverageConnection {
         }
         try {
             RosterEntry individual = getIndividual(urlHandler, serverConfiguration);
-            dataCache.store(serverConfiguration.individualPath, individual, DateTime.now());
+            dataCache.store(serverConfiguration.individualEndpoint, individual, DateTime.now());
             serverConfiguration.userType = ServerConfiguration.UserType.Individual;
             return serverConfiguration.userType;
         } catch (IndividualNotFoundException e){

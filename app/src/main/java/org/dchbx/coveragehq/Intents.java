@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.net.Uri;
 
 import org.dchbx.coveragehq.models.planshopping.Plan;
+import org.dchbx.coveragehq.statemachine.EventParameters;
 import org.joda.time.LocalDate;
 
 /**
@@ -106,13 +107,15 @@ public class Intents {
         activity.startActivity(intent);
     }
 
-    public static void launchActivity(Class<?> cls, Activity activity) {
+    public static void launchActivity(Class<?> cls, Activity activity, EventParameters eventParameters) {
         Intent intent = new Intent(activity, cls);
+        eventParameters.initIntent(intent);
         activity.startActivity(intent);
     }
 
     public static void launchStateInfo(Activity activity) {
         Intent intent = new Intent(activity, StateInfo.class);
+        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
         activity.startActivity(intent);
     }
 }

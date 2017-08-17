@@ -5,7 +5,6 @@ import org.dchbx.coveragehq.models.gitaccounts.GitAccounts;
 public class ServerConfiguration {
 
 
-
     public enum UserType {
         Unknown,
         NotLoggedIn,
@@ -31,6 +30,15 @@ public class ServerConfiguration {
     public String localSignUpEndpoint;
     public String localLoginEndpoint;
     public String localLogoutEndpoint;
+    public String uqhpApplicationSchemaEndpoint;
+    public String faaApplicationSchemaEndpoint;
+    public String sessionKey;
+    public String sessionValue;
+    public String enrollUrl;
+    public String brokerEndpoint;
+    public String employerDetailsEndpoint;
+    public String employeeRosterEndpoint;
+    public String individualEndpoint;
 
     public static class HostInfo {
         public String scheme;
@@ -45,7 +53,6 @@ public class ServerConfiguration {
     public String employerDetailPath;
     public String brokerDetailPath;
     public String employerRosterPathForBroker;
-    public String individualPath;
     public String planEndpoint;
     public String verifyIdentityEndpoint;
     public String loginPath;

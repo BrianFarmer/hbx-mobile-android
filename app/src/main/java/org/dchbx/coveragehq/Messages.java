@@ -2,13 +2,20 @@ package org.dchbx.coveragehq;
 
 import android.net.Uri;
 
+import org.dchbx.coveragehq.models.fe.FinancialAssistanceApplication;
+import org.dchbx.coveragehq.models.fe.Schema;
 import org.dchbx.coveragehq.models.ridp.Answers;
 import org.dchbx.coveragehq.statemachine.EventParameters;
 import org.dchbx.coveragehq.statemachine.StateManager;
+import org.greenrobot.eventbus.EventBus;
 import org.joda.time.LocalDate;
+
+import java.util.HashMap;
 
 public interface Messages {
     void release();
+
+    EventBus getEventBus();
 
     void getEmployer();
     int getEmployer(String employerId);
@@ -72,5 +79,11 @@ public interface Messages {
     void verifyUser();
     void getGlossary();
     void getGlossaryItem(String name);
+    void getFinancialEligibilityJson();
+    void getFinancialEligibilityJsonResponse(Schema schema);
+    void getFinancialAssistanceApplication();
+    void getFinancialAssistanceApplicationResponse(FinancialAssistanceApplication financialAssistanceApplication);
+    void getFinancialApplicationPerson(String eapersonid);
+    void getFinancialApplicationPersonResponse(HashMap<String, Object> personHashMap);
 }
 

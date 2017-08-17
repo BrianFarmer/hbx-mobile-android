@@ -7,6 +7,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 
+import org.dchbx.coveragehq.statemachine.EventParameters;
 import org.dchbx.coveragehq.statemachine.StateManager;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
@@ -61,7 +62,7 @@ public class RootActivity extends BrokerActivity {
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void doThis(Events.GetCurrentActivityResult getCurrentActivityResult) {
         StateManager.UiActivity.Info uiActivityType = StateManager.UiActivity.getUiActivityType(getCurrentActivityResult.getUiActivity());
-        Intents.launchActivity(uiActivityType.cls, this);
+        Intents.launchActivity(uiActivityType.cls, this, new EventParameters());
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)

@@ -14,6 +14,7 @@ import org.dchbx.coveragehq.Events;
 import org.dchbx.coveragehq.FamilyActivity;
 import org.dchbx.coveragehq.GlossaryDialog;
 import org.dchbx.coveragehq.HelloActivity;
+import org.dchbx.coveragehq.InsuredDetailsActivity;
 import org.dchbx.coveragehq.Intents;
 import org.dchbx.coveragehq.LoginActivity;
 import org.dchbx.coveragehq.Messages;
@@ -162,6 +163,10 @@ public class StateManager extends StateProcessor {
     }
 
 
+    public void popAndLaunchActivity(StateManager.UiActivity uiActivity, EventParameters eventParameters) {
+        messages.stateAction(Events.StateAction.Action.PopAndLaunchActivity, uiActivity.getId(), eventParameters);
+    }
+
     public void launchActivity(StateManager.UiActivity uiActivity, EventParameters eventParameters) {
         messages.stateAction(Events.StateAction.Action.LaunchActivity, uiActivity.getId(), eventParameters);
     }
@@ -247,7 +252,7 @@ public class StateManager extends StateProcessor {
         ChooseFinancialAssistance,
         FamilyRelationships,
         GlossaryDialog,
-        CreatingAccountFe, VerifyingUserFe, RidpQuestionsFe, GetQuestionsFe, AcctSystemFoundYouInCuramAcedsFe, AcctSsnWithEmployerFe, AcctSystemFoundYouFe, Wallet
+        CreatingAccountFe, VerifyingUserFe, RidpQuestionsFe, GetQuestionsFe, AcctSystemFoundYouInCuramAcedsFe, AcctSsnWithEmployerFe, AcctSystemFoundYouFe, FamilyMembersFe, FinancialAssitanceQuestions, Wallet
     }
 
     // You are discouraged from removing or reordring this enum. It is used in serialized objects.
@@ -283,7 +288,15 @@ public class StateManager extends StateProcessor {
         UserVerifiedOkToCreate,
         SignUpSuccessful,
         SignUpUserInAceds,
-        ViewMyAccount, StartApplication, ResumeApplication, Yes, No, ShowGlossaryItem, ShowStateInfo, Init, ErrorHappened
+        ViewMyAccount,
+        StartApplication,
+        ResumeApplication,
+        Yes, No,
+        ShowGlossaryItem,
+        ShowStateInfo,
+        Init,
+        AddFamilyMember,
+        ErrorHappened
     }
 
     public void configStates() {
@@ -316,7 +329,7 @@ public class StateManager extends StateProcessor {
         stateMachine.from(AppStates.Login)
             .processEvent(AppEvents.Login, new UserStatusProcessor())
                 .on(AppEvents.BrokerLoggedIn).to(AppStates.Broker, null)
-                .on(AppEvents.IndividualLoggedIn).to(AppStates.Broker, null)
+                .on(AppEvents.IndividualLoggedIn).to(AppStates.Wallet, new PopAndLaunchActivity(InsuredDetailsActivity.uiActivity))
                 .on(AppEvents.ReturningSignUpIndividual).to(AppStates.PlanShoppingChoices, new StateMachineAction() {
             @Override
             public void call(StateMachine stateMachine, StateManager stateManager, AppEvents appEvents, AppStates leavingState, AppStates enterState, EventParameters intentParameters) throws IOException, CoverageException {
@@ -394,7 +407,8 @@ public class StateManager extends StateProcessor {
         stateMachine.from(AppStates.VerifyingUserFe).on(AppEvents.UserVerifiedSsnWithEmployer).to(AppStates.AcctSsnWithEmployerFe, new LaunchActivity(AcctSsnWithEmployer.uiActivity));
         stateMachine.from(AppStates.VerifyingUserFe).on(AppEvents.UserVerifiedOkToCreate).to(AppStates.CreatingAccountFe, new CreateAccount());
         stateMachine.from(AppStates.CreatingAccountFe).on(AppEvents.SignUpUserInAceds).to(AppStates.AcctSystemFoundYouInCuramAcedsFe, new LaunchActivity(AcctSystemFoundYouAceds.uiActivity));
-        stateMachine.from(AppStates.CreatingAccountFe).on(AppEvents.SignUpSuccessful).to(AppStates.Login, new PopAndLaunchActivity(LoginActivity.uiActivity));
+        stateMachine.from(AppStates.CreatingAccountFe).on(AppEvents.SignUpSuccessful).to(AppStates.FamilyMembersFe, new PopAndLaunchActivity(org.dchbx.coveragehq.financialeligibility.FamilyActivity.uiActivity));
+        stateMachine.from(AppStates.FamilyMembersFe).on(AppEvents.AddFamilyMember).to(AppStates.FinancialAssitanceQuestions, new LaunchActivity(org.dchbx.coveragehq.financialeligibility.ApplicationQuestionsActivity.uiActivity));
     }
 
 
@@ -465,7 +479,7 @@ public class StateManager extends StateProcessor {
         @Override
         void doThis(BrokerActivity brokerActivity) {
             Info info = uiActivityMap.get(getId());
-            Intents.launchActivity(info.cls, brokerActivity);
+            Intents.launchActivity(info.cls, brokerActivity, new EventParameters());
         }
     }
 
@@ -515,7 +529,7 @@ public class StateManager extends StateProcessor {
         public void call(StateMachine stateMachine, StateManager stateManager, AppEvents event,
                          AppStates leavingState, AppStates enterState,
                          EventParameters intentParameters) throws IOException, CoverageException {
-            stateMachine.push(new WaitActivityInfo<AppEvents, AppStates>(AppStates.GetQuestions, event, null));
+            stateMachine.push(new WaitActivityInfo<AppEvents, AppStates>(enterState, event, null));
             stateManager.showWait();
             stateManager.messages.getVerificationResponse();
         }

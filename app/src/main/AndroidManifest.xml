@@ -215,6 +215,16 @@
             android:configChanges="orientation|keyboardHidden|screenSize"
             android:label=""
             />
+        <activity
+            android:name=".financialeligibility.FamilyActivity"
+            android:configChanges="orientation|keyboardHidden|screenSize"
+            android:label=""
+            />
+        <activity
+            android:name=".financialeligibility.ApplicationQuestionsActivity"
+            android:configChanges="orientation|keyboardHidden|screenSize"
+            android:label=""
+            />
     </application>
 
 </manifest>

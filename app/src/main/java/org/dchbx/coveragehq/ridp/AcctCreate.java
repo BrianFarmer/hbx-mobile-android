@@ -1,13 +1,15 @@
 package org.dchbx.coveragehq.ridp;
 
+import android.content.Intent;
 import android.databinding.DataBindingUtil;
 import android.os.Bundle;
+import android.view.View;
 
 import org.dchbx.coveragehq.AcctActivity;
 import org.dchbx.coveragehq.R;
-import org.dchbx.coveragehq.statemachine.StateManager;
 import org.dchbx.coveragehq.databinding.AcctCreateBinding;
 import org.dchbx.coveragehq.models.account.Account;
+import org.dchbx.coveragehq.statemachine.StateManager;
 
 /*
     This file is part of DC.
@@ -38,6 +40,13 @@ public class AcctCreate extends AcctActivity {
         super.onCreate(savedInstanceState);
         binding = DataBindingUtil.setContentView(this, R.layout.acct_create);
         configToolbar();
+
+        Intent intent = getIntent();
+        int newStateInt = intent.getExtras().getInt("NewState");
+        StateManager.AppStates state = StateManager.AppStates.values()[newStateInt];
+        if (state == StateManager.AppStates.AcctCreateFe){
+            findViewById(R.id.skipButton).setVisibility(View.GONE);
+        }
     }
 
     @Override

@@ -21,7 +21,7 @@ public class FamilyAdapter extends BaseAdapter {
     private final List<Integer> ages;
     private View currentlyFocusedRow;
 
-    public FamilyAdapter(FamilyActivity activity, PlanShoppingParameters planShoppingParameters) {
+    public FamilyAdapter(FamilyActivity activity, PlanShoppingParameters planShoppingParameters){
 
         this.activity = activity;
         this.planShoppingParameters = planShoppingParameters;

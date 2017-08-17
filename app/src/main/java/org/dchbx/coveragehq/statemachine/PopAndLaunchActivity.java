@@ -32,9 +32,10 @@ public class PopAndLaunchActivity implements StateMachineAction {
     public void call(StateMachine stateMachine, StateManager stateManager, StateManager.AppEvents event,
                      StateManager.AppStates leavingState, StateManager.AppStates enterState,
                      EventParameters eventParameters) throws IOException, CoverageException {
-        stateMachine.getStatesStack().pop();
+        StateInfoBase pop = stateMachine.getStatesStack().pop();
+//        pop.onPop(stateMachine, stateManager);
         stateMachine.push(new ActivityInfo(enterState, event, uiActivity));
-        stateManager.launchActivity(uiActivity, eventParameters);
+        stateManager.popAndLaunchActivity(uiActivity, eventParameters);
     }
 }
 

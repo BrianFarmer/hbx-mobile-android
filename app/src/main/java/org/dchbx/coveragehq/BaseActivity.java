@@ -72,9 +72,14 @@ public class BaseActivity extends AppCompatActivity {
             case Finish:
                 finish();
                 break;
-            case LaunchActivity:
+            case PopAndLaunchActivity:
                 StateManager.UiActivity.Info uiActivityType = StateManager.UiActivity.getUiActivityType(stateAction.getUiActivityId());
-                Intents.launchActivity(uiActivityType.cls, this);
+                Intents.launchActivity(uiActivityType.cls, this, stateAction.getEventParameters());
+                finish();
+                break;
+            case LaunchActivity:
+                StateManager.UiActivity.Info uiActivityType2 = StateManager.UiActivity.getUiActivityType(stateAction.getUiActivityId());
+                Intents.launchActivity(uiActivityType2.cls, this, stateAction.getEventParameters());
                 break;
             case LaunchDialog:
                 StateManager.UiDialog.getUiDialogType(stateAction.getUiActivityId()).dialogBuilder.build(stateAction.getEventParameters(), this);

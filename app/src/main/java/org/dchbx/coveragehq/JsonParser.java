@@ -12,6 +12,7 @@ import org.dchbx.coveragehq.models.Security.LoginResponse;
 import org.dchbx.coveragehq.models.Security.SecurityAnswerResponse;
 import org.dchbx.coveragehq.models.brokeragency.BrokerAgency;
 import org.dchbx.coveragehq.models.employer.Employer;
+import org.dchbx.coveragehq.models.fe.Schema;
 import org.dchbx.coveragehq.models.gitaccounts.AccountInfo;
 import org.dchbx.coveragehq.models.gitaccounts.GitAccounts;
 import org.dchbx.coveragehq.models.planshopping.Plan;
@@ -200,5 +201,9 @@ public class JsonParser {
     public List<Glossary.GlossaryItem> parseGlossary(String json) {
         Type type = new TypeToken<List<Glossary.GlossaryItem>>() {}.getType();
         return (List<Glossary.GlossaryItem>)parse(json, type);
+    }
+
+    public Schema parseSchema(String json) {
+        return parse(json, Schema.class);
     }
 }

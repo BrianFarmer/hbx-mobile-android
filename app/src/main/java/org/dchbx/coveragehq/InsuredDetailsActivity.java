@@ -37,7 +37,6 @@ import org.dchbx.coveragehq.models.roster.Dependent;
 import org.dchbx.coveragehq.models.roster.Enrollment;
 import org.dchbx.coveragehq.models.roster.Health;
 import org.dchbx.coveragehq.models.roster.RosterEntry;
-import org.dchbx.coveragehq.ridp.AcctPreAuthActivity;
 import org.dchbx.coveragehq.statemachine.StateManager;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
@@ -50,7 +49,7 @@ import java.util.List;
 import java.util.Map;
 
 public class InsuredDetailsActivity extends BrokerActivity {
-    public static StateManager.UiActivity uiActivity = new StateManager.UiActivity(AcctPreAuthActivity.class);
+    public static StateManager.UiActivity uiActivity = new StateManager.UiActivity(InsuredDetailsActivity.class);
 
     private static final String INFO_TAB = "InfoTab";
     private static final String GLOSSARY_TAB = "GlossaryTab";

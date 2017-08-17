@@ -83,22 +83,17 @@ public class ConnectionHandler implements IConnectionHandler{
         Request.Builder builder = new Request.Builder()
                 .url(url);
 
-        if (cookie != null) {
-            builder = builder.header("cookie", cookie);
-        }
         Request request = builder.post(body)
                 .build();
         Response response = getClient(url.scheme(), true).newCall(request).execute();
 
         int code = response.code();
-        if (code < 200
-                || code > 299) {
-            //|| response.header("location", null) == null) {
-            throw new Exception("error code: " + response.code());
-        }
         PostResponse postResponse = new PostResponse();
         postResponse.responseCode = code;
-        postResponse.body =response.body().string();
+        if (code >= 200
+            && code <= 299) {
+            postResponse.body =response.body().string();
+        }
         postResponse.headers = response.headers().toMultimap();
         return postResponse;
     }
@@ -661,6 +656,11 @@ public class ConnectionHandler implements IConnectionHandler{
                 break;
         }
         return null;
+    }
+
+    @Override
+    public void process(UrlHandler.HttpRequest request, OnCompletion onCompletion) throws Exception {
+        onCompletion.onCompletion(process(request));
     }
 }
 

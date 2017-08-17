@@ -13,6 +13,7 @@ import org.dchbx.coveragehq.models.planshopping.Plan;
 import org.dchbx.coveragehq.models.roster.Roster;
 import org.dchbx.coveragehq.models.roster.RosterEntry;
 import org.dchbx.coveragehq.models.services.Service;
+import org.dchbx.coveragehq.ridp.RidpService;
 import org.dchbx.coveragehq.statemachine.StateManager;
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
@@ -121,7 +122,9 @@ public class BrokerWorker extends IntentService {
                 case Success:
                     ServerConfiguration.UserType userType = serviceManager.getCoverageConnection().determineUserType();
                     BrokerWorker.eventBus.post(new Events.FingerprintLoginResult(Events.LoginRequestResult.Success, userType));
-                    serviceManager.getAppStatusService().updateSessionTimer();
+                    AppStatusService appStatusService = serviceManager.getAppStatusService();
+                    appStatusService.setUserStatus(ServerConfiguration.UserType.Individual);
+                    appStatusService.updateSessionTimer();
                     return;
                 case Failure:
                     BrokerWorker.eventBus.post(new Events.FingerprintLoginResult(Events.LoginRequestResult.Failure));
@@ -168,9 +171,11 @@ public class BrokerWorker extends IntentService {
             switch (result) {
                 case Success:
                     Log.i(TAG, "*****Successful login for: " + accountName);
-                    ServerConfiguration.UserType userType = serviceManager.getCoverageConnection().determineUserType();
-                    BrokerWorker.eventBus.post(new Events.LoginRequestResult(Events.LoginRequestResult.Success, userType));
-                    serviceManager.getAppStatusService().updateSessionTimer();
+                    //ServerConfiguration.UserType userType = serviceManager.getCoverageConnection().determineUserType();
+                    BrokerWorker.eventBus.post(new Events.LoginRequestResult(Events.LoginRequestResult.Success));
+                    AppStatusService appStatusService = serviceManager.getAppStatusService();
+                    appStatusService.setUserStatus(ServerConfiguration.UserType.Individual);
+                    appStatusService.updateSessionTimer();
                     return;
                 case Failure:
                     Log.i(TAG, "*****Failure to  login for (bad account or pswd): " + accountName);

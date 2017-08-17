@@ -56,10 +56,15 @@ public class StateMachine {
         return statesStack;
     }
 
-    public void process(StateManager.AppEvents appEvent, EventParameters intentParameters) throws IOException, CoverageException {
+    public void process(StateManager.AppEvents appEvent, EventParameters eventParameters) throws IOException, CoverageException {
         StateInfoBase curState = statesStack.peek();
+        if (eventParameters == null){
+            eventParameters = new EventParameters();
+        }
+        eventParameters.add("OldState", curState.getState());
 
-        if (appEvent == StateManager.AppEvents.Back){
+        if (curState.getState() == StateManager.AppStates.AcctAuthConsentFe
+            && appEvent == StateManager.AppEvents.ConsentGiven){
             Log.d(TAG, "the button you asked for has been clicked.");
         }
 
@@ -73,13 +78,14 @@ public class StateMachine {
                     HashMap<StateManager.AppEvents, Transition> transitionHashMap = statesMap.get(curState.getState());
                     if (transitionHashMap.containsKey(processedEvent)) {
                         Transition transition = transitionHashMap.get(processedEvent);
+                        eventParameters.add("NewState", transition.getToState());
                         StateMachineAction exitAction = transition.getExitAction();
                         if (exitAction != null) {
-                            exitAction.call(this, stateManager, appEvent, curState.getState(), transition.getToState(), intentParameters);
+                            exitAction.call(this, stateManager, appEvent, curState.getState(), transition.getToState(), eventParameters);
                         }
                         StateMachineAction enterAction = transition.getEnterAction();
                         if (enterAction != null) {
-                            enterAction.call(this, stateManager, appEvent, curState.getState(), transition.getToState(), intentParameters);
+                            enterAction.call(this, stateManager, appEvent, curState.getState(), transition.getToState(), eventParameters);
                         }
                     }
                 } catch (Exception e) {
@@ -94,13 +100,14 @@ public class StateMachine {
         HashMap<StateManager.AppEvents, Transition> transitionHashMap = statesMap.get(curState.getState());
         Transition transition = transitionHashMap.get(appEvent);
         if (transition != null){
+            eventParameters.add("NewState", transition.getToState());
             StateMachineAction exitAction = transition.getExitAction();
             if (exitAction != null){
-                exitAction.call(this, stateManager, appEvent, curState.getState(), transition.getToState(), intentParameters);
+                exitAction.call(this, stateManager, appEvent, curState.getState(), transition.getToState(), eventParameters);
             }
             StateMachineAction enterAction = transition.getEnterAction();
             if (enterAction != null){
-                enterAction.call(this, stateManager, appEvent, curState.getState(), transition.getToState(), intentParameters);
+                enterAction.call(this, stateManager, appEvent, curState.getState(), transition.getToState(), eventParameters);
             }
             return;
         }
@@ -109,14 +116,15 @@ public class StateMachine {
         transitionHashMap = statesMap.get(StateManager.AppStates.Any);
         if (transitionHashMap != null){
             transition = transitionHashMap.get(appEvent);
+            eventParameters.add("NewState", transition.getToState());
             if (transition != null){
                 StateMachineAction exitAction = transition.getExitAction();
                 if (exitAction != null){
-                    exitAction.call(this, stateManager, appEvent, curState.getState(), transition.getToState(), intentParameters);
+                    exitAction.call(this, stateManager, appEvent, curState.getState(), transition.getToState(), eventParameters);
                 }
                 StateMachineAction enterAction = transition.getEnterAction();
                 if (enterAction != null){
-                    enterAction.call(this, stateManager, appEvent, curState.getState(), transition.getToState(), intentParameters);
+                    enterAction.call(this, stateManager, appEvent, curState.getState(), transition.getToState(), eventParameters);
                 }
             }
         }

@@ -37,19 +37,9 @@ public class EnrollUrlHandler extends UrlHandler {
                 .port(serverConfiguration.loginInfo.port)
                 .build();
 
-
-        new HttpUrl.Builder()
-                .scheme(serverConfiguration.loginInfo.scheme)
-                .host(serverConfiguration.loginInfo.host)
-                .addPathSegments(serverConfiguration.securityAnswerPath)
-                .port(serverConfiguration.loginInfo.port)
-                .build();
-
-
         postParameters.body = new FormBody.Builder()
                 .add("security_answer", securityAnswer)
                 .build();
-
 
         return postParameters;
     }
@@ -65,7 +55,7 @@ public class EnrollUrlHandler extends UrlHandler {
         serverConfiguration.employerDetailPath = securityAnswerResponse.employer_details_endpoint;
         serverConfiguration.brokerDetailPath = securityAnswerResponse.broker_endpoint;
         serverConfiguration.employerRosterPathForBroker = securityAnswerResponse.employee_roster_endpoint;
-        serverConfiguration.individualPath = securityAnswerResponse.individual_endpoint;
+        serverConfiguration.individualEndpoint = securityAnswerResponse.individual_endpoint;
     }
 
     @Override
@@ -116,7 +106,7 @@ public class EnrollUrlHandler extends UrlHandler {
     }
 
     @Override
-    public CoverageConnection.LoginResult processLoginReponse(String accountName, String password, Boolean rememberMe, IConnectionHandler.PostResponse loginPostResponse, boolean useFingerprintSensor) throws CoverageException {
+    public CoverageConnection.LoginResult processLoginReponse(String accountName, String password, Boolean rememberMe, IConnectionHandler.PostResponse loginPostResponse, boolean useFingerprintSensor) throws Exception {
 
         if (loginPostResponse.responseCode == 401){
             return CoverageConnection.LoginResult.Failure;
@@ -131,9 +121,19 @@ public class EnrollUrlHandler extends UrlHandler {
         serverConfiguration.rememberMe = rememberMe;
         serverConfiguration.useFingerprintSensor = useFingerprintSensor;
         LoginResponse loginResponse = parser.parseLogin(loginPostResponse.body);
-        serverConfiguration.securityQuestion = loginResponse.security_question;
-        serverConfiguration.securityAnswerPath = loginPostResponse.headers.get("location").get(0);
-        return CoverageConnection.LoginResult.NeedSecurityQuestion;
+        if (loginResponse.securityQuestion != null){
+            throw new Exception("Wrong type of account");
+        }
+
+        serverConfiguration.sessionKey = loginResponse.sessionKey;
+        serverConfiguration.sessionValue = loginResponse.sessionValue;
+        serverConfiguration.enrollUrl =  loginResponse.enrollUrl;
+        serverConfiguration.brokerEndpoint = loginResponse.brokerEndpoint;
+        serverConfiguration.employerDetailsEndpoint = loginResponse.employerDetailsEndpoint;
+        serverConfiguration.employeeRosterEndpoint = loginResponse.employeeRosterEndpoint;
+        serverConfiguration.individualEndpoint = loginResponse.individualEndpoint;
+
+        return CoverageConnection.LoginResult.Success;
     }
 
     public GetParameters getLoginFormParameters() {

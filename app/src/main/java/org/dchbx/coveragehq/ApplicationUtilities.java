@@ -1,6 +1,10 @@
-package org.dchbx.coveragehq.models.fe;
+package org.dchbx.coveragehq;
+
+import org.joda.time.LocalDate;
+import org.joda.time.Period;
 
 import java.util.HashMap;
+import java.util.UUID;
 
 /*
     This file is part of DC.
@@ -19,5 +23,25 @@ import java.util.HashMap;
     along with DC Health Link SmallBiz.  If not, see <http://www.gnu.org/licenses/>.
     This statement should go near the beginning of every source file, close to the copyright notices. When using the Lesser GPL, insert the word “Lesser” before “General” in all three places. When using the GNU AGPL, insert the word “Affero” before “General” in all three places.
 */
-public class Person extends HashMap<String, Object> {
+public class ApplicationUtilities {
+    public static String Id = "eapersonid";
+    public static String DateOfBirth = "persondob";
+    public static String FirstName = "personfirstname";
+    public static String LastName = "personlastname";
+
+    public static int getAge(HashMap<String, Object> person){
+        return Period.fieldDifference(new LocalDate((String)person.get(DateOfBirth)), LocalDate.now()).getYears();
+    }
+
+    public static String getFullName(HashMap<String, Object> person){
+        return person.get(FirstName) + " " + person.get(LastName);
+    }
+
+    public static HashMap<String, Object> getNewPerson() {
+        UUID uuid = UUID.randomUUID();
+        String eaPersonId = uuid.toString();
+        HashMap<String, Object> person = new HashMap<>();
+        person.put(Id, eaPersonId);
+        return person;
+    }
 }

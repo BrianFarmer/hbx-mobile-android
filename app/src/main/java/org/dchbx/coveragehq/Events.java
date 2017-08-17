@@ -7,6 +7,8 @@ import android.widget.ImageView;
 import org.dchbx.coveragehq.models.Glossary;
 import org.dchbx.coveragehq.models.brokeragency.BrokerAgency;
 import org.dchbx.coveragehq.models.employer.Employer;
+import org.dchbx.coveragehq.models.fe.FinancialAssistanceApplication;
+import org.dchbx.coveragehq.models.fe.Schema;
 import org.dchbx.coveragehq.models.planshopping.Plan;
 import org.dchbx.coveragehq.models.ridp.Answers;
 import org.dchbx.coveragehq.models.ridp.Questions;
@@ -19,6 +21,7 @@ import org.dchbx.coveragehq.statemachine.EventParameters;
 import org.dchbx.coveragehq.statemachine.StateManager;
 import org.joda.time.LocalDate;
 
+import java.util.HashMap;
 import java.util.List;
 
 import static org.dchbx.coveragehq.Events.GetLoginResult.UserType.SignUpIndividual;
@@ -274,11 +277,15 @@ public class Events {
         static final int Error = 2;
 
         private final int loginResult;
-        private final ServerConfiguration.UserType userType;
+        private ServerConfiguration.UserType userType;
 
         public LoginRequestResult(int loginResult, ServerConfiguration.UserType userType) {
             this.loginResult = loginResult;
             this.userType = userType;
+        }
+
+        public LoginRequestResult(int loginResult) {
+            this.loginResult = loginResult;
         }
 
         public int getLoginResult() {
@@ -1132,7 +1139,7 @@ public class Events {
             LaunchDialog,
             HideWait,
             ShowWait,
-            Dismiss
+            PopAndLaunchActivity, Dismiss
         }
 
         private final Action action;
@@ -1293,6 +1300,61 @@ public class Events {
 
         public String getTerm() {
             return term;
+        }
+    }
+
+    public static class GetFinancialEligibilityJson {
+    }
+
+    public static class GetFinancialEligibilityJsonResponse {
+        private final Schema schema;
+
+        public GetFinancialEligibilityJsonResponse(Schema schema){
+            this.schema = schema;
+        }
+
+        public Schema getSchema() {
+            return schema;
+        }
+    }
+
+    public static class GetFinancialAssistanceApplication {
+    }
+
+    public static class GetFinancialAssistanceApplicationResponse {
+
+        private final FinancialAssistanceApplication financialAssistanceApplication;
+
+        public GetFinancialAssistanceApplicationResponse(FinancialAssistanceApplication financialAssistanceApplication){
+            this.financialAssistanceApplication = financialAssistanceApplication;
+        }
+
+        public FinancialAssistanceApplication getFinancialAssistanceApplication() {
+            return financialAssistanceApplication;
+        }
+    }
+
+    public static class GetApplicationPerson {
+        private final String eapersonid;
+
+        public GetApplicationPerson(String eapersonid) {
+            this.eapersonid = eapersonid;
+        }
+
+        public String getEaPersonId() {
+            return eapersonid;
+        }
+    }
+
+    public static class GetApplicationPersonResponse {
+        private final HashMap<String, Object> person;
+
+        public GetApplicationPersonResponse(HashMap<String, Object> person){
+            this.person = person;
+        }
+
+        public HashMap<String, Object> getPerson() {
+            return person;
         }
     }
 }
