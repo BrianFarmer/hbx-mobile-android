@@ -53,4 +53,8 @@ public class HelloActivity extends BrokerActivity {
     public void onResumeClicked(){
         getMessages().appEvent(StateManager.AppEvents.ResumeApplication);
     }
+
+    public void onGotoClicked(){
+        getMessages().appEvent(StateManager.AppEvents.Goto);
+    }
 }

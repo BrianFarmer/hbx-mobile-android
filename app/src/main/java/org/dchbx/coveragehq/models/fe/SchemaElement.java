@@ -1,5 +1,9 @@
 package org.dchbx.coveragehq.models.fe;
 
+import org.dchbx.coveragehq.financialeligibility.ApplicationQuestionsActivity;
+
+import java.util.ArrayList;
+
 /*
     This file is part of DC.
 

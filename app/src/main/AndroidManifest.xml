@@ -221,7 +221,11 @@
             android:label=""
             />
         <activity
-            android:name=".financialeligibility.ApplicationQuestionsActivity"
+            android:name=".financialeligibility.AddPersonActivity"
+            android:configChanges="orientation|keyboardHidden|screenSize"
+            android:label=""
+            />
+        <activity android:name=".financialeligibility.SectionActivity"
             android:configChanges="orientation|keyboardHidden|screenSize"
             android:label=""
             />

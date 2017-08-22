@@ -296,6 +296,8 @@ public class StateManager extends StateProcessor {
         ShowStateInfo,
         Init,
         AddFamilyMember,
+        OpenSection,
+        Goto, // Special case for dev to goto specific state.
         ErrorHappened
     }
 
@@ -309,6 +311,7 @@ public class StateManager extends StateProcessor {
 
         stateMachine.from(AppStates.Any).on(AppEvents.Back).doThis(new Back());
         stateMachine.from(AppStates.Any).on(AppEvents.ShowGlossaryItem).to(AppStates.GlossaryDialog, new LaunchDialog(GlossaryDialog.uiDialog));
+        stateMachine.from(AppStates.Any).on(AppEvents.Goto).to(AppStates.FamilyMembersFe, new LaunchActivity(org.dchbx.coveragehq.financialeligibility.FamilyActivity.uiActivity));
 
 
         // Initial states not associated with any major section of the app.
@@ -408,7 +411,7 @@ public class StateManager extends StateProcessor {
         stateMachine.from(AppStates.VerifyingUserFe).on(AppEvents.UserVerifiedOkToCreate).to(AppStates.CreatingAccountFe, new CreateAccount());
         stateMachine.from(AppStates.CreatingAccountFe).on(AppEvents.SignUpUserInAceds).to(AppStates.AcctSystemFoundYouInCuramAcedsFe, new LaunchActivity(AcctSystemFoundYouAceds.uiActivity));
         stateMachine.from(AppStates.CreatingAccountFe).on(AppEvents.SignUpSuccessful).to(AppStates.FamilyMembersFe, new PopAndLaunchActivity(org.dchbx.coveragehq.financialeligibility.FamilyActivity.uiActivity));
-        stateMachine.from(AppStates.FamilyMembersFe).on(AppEvents.AddFamilyMember).to(AppStates.FinancialAssitanceQuestions, new LaunchActivity(org.dchbx.coveragehq.financialeligibility.ApplicationQuestionsActivity.uiActivity));
+        stateMachine.from(AppStates.FamilyMembersFe).on(AppEvents.AddFamilyMember).to(AppStates.FinancialAssitanceQuestions, new LaunchActivity(org.dchbx.coveragehq.financialeligibility.AddPersonActivity.uiActivity));
     }
 
 

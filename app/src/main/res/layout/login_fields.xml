@@ -36,7 +36,6 @@
         android:textColor="@color/white"
         android:textColorHint="@color/white"
         android:inputType="text"
-        android:singleLine="true"
         >
         <requestFocus/>
     </EditText>
@@ -66,7 +65,6 @@
         android:drawableTint="#ffffff"
         android:textColorHint="@color/white"
         android:textColor="@color/white"
-        android:singleLine="true"
         tools:imeOptions="actionNext"
         android:maxLines="1"
         />

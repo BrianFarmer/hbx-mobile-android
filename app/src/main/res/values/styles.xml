@@ -897,6 +897,7 @@
     <style name="ridp_questions_radio_group" >
         <item name="android:layout_width">match_parent</item>
         <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_marginTop">18dp</item>
     </style>
     <style name="ridp_questions_radio_button" >
         <item name="android:layout_width">match_parent</item>
@@ -907,5 +908,54 @@
         <item name="android:layout_marginRight">35dp</item>
         <item name="android:layout_marginTop">18dp</item>
     </style>
-
+    <style name="fe_label">
+        <item name="android:textSize">20dp</item>
+        <item name="android:fontFamily">sans-serif</item>
+        <item name="android:textColor">@color/black</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:background">@color/transparent</item>
+        <item name="android:layout_marginTop">36dp</item>
+        <item name="android:layout_marginLeft">17dp</item>
+        <item name="android:layout_marginRight">17dp</item>
+    </style>
+    <style name="fe_text">
+        <item name="android:textSize">20dp</item>
+        <item name="android:fontFamily">sans-serif</item>
+        <item name="android:textColor">@color/textdarkgray</item>
+        <item name="android:background">@drawable/fe_round_corner</item>
+        <item name="android:layout_marginTop">18dp</item>
+        <item name="android:layout_marginLeft">17dp</item>
+        <item name="android:layout_marginRight">17dp</item>
+        <item name="android:padding">8dp</item>
+        <item name="android:textCursorDrawable">@null</item>
+        <item name="android:textStyle">bold</item>
+    </style>
+    <style name="fe_radio_group">
+        <item name="android:textSize">20dp</item>
+        <item name="android:fontFamily">sans-serif</item>
+        <item name="android:textColor">@color/textdarkgray</item>
+        <item name="android:background">@color/transparent</item>
+        <item name="android:layout_marginTop">18dp</item>
+        <item name="android:layout_marginLeft">17dp</item>
+        <item name="android:layout_marginRight">17dp</item>
+    </style>
+    <style name="fe_radio_button">
+        <item name="android:textSize">20dp</item>
+        <item name="android:fontFamily">sans-serif</item>
+        <item name="android:textColor">@color/textdarkgray</item>
+        <item name="android:background">@color/transparent</item>
+        <item name="android:button">@null</item>
+        <item name="android:drawableLeft">@drawable/ivl_radio_button</item>
+        <item name="android:drawablePadding">10dp</item>
+        <item name="android:paddingRight">44dp</item>
+    </style>
+    <style name="fe_dropdown">
+        <item name="android:textSize">20dp</item>
+        <item name="android:fontFamily">sans-serif</item>
+        <item name="android:textColor">@color/textdarkgray</item>
+        <item name="android:background">@color/transparent</item>
+        <item name="android:layout_marginTop">18dp</item>
+        <item name="android:layout_marginLeft">17dp</item>
+        <item name="android:layout_marginRight">17dp</item>
+    </style>
 </resources>

@@ -41,7 +41,7 @@ public class Field extends SchemaElement {
     public String prereqField;
     @SerializedName("prereq_values")
     @Expose
-    public Object prereqValues;
+    public ArrayList<Object> prereqValues;
     @SerializedName("summary_element_order")
     @Expose
     public Object summaryElementOrder;
@@ -50,10 +50,10 @@ public class Field extends SchemaElement {
     public Object mobileOnly;
     @SerializedName("maxlength")
     @Expose
-    public Object maxlength;
+    public Integer maxlength;
     @SerializedName("default_value")
     @Expose
-    public Object defaultValue;
+    public String defaultValue;
     @SerializedName("readonly")
     @Expose
     public String readonly;

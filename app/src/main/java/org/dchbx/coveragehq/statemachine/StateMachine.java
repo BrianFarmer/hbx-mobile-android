@@ -116,6 +116,9 @@ public class StateMachine {
         transitionHashMap = statesMap.get(StateManager.AppStates.Any);
         if (transitionHashMap != null){
             transition = transitionHashMap.get(appEvent);
+            if (eventParameters == null || transition == null){
+                Log.d(TAG, "eek!");
+            }
             eventParameters.add("NewState", transition.getToState());
             if (transition != null){
                 StateMachineAction exitAction = transition.getExitAction();

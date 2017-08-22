@@ -164,6 +164,7 @@ public class RidpService extends StateProcessor {
         return signUp;
     }
 
+
     @Subscribe(threadMode = ThreadMode.BACKGROUND)
     public void doThis(Events.GetVerificationResponse verificationResponse) throws Exception {
         Log.d(TAG, "in RidpService.doThis(Events(GetVerificationResponse)");

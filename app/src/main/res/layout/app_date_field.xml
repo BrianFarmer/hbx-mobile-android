@@ -14,13 +14,20 @@
         app:layout_constraintRight_toRightOf="parent"
         style="@style/fe_label"
         />
-    <EditText
+
+    <com.vicmikhailau.maskededittext.MaskedEditText
         android:id="@+id/value"
+        android:inputType="date"
+        app:mask="##/##/####"
+        android:gravity="left"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         app:layout_constraintTop_toBottomOf="@+id/label"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
         style="@style/fe_text"
-        />
+        >
+        <requestFocus />
+    </com.vicmikhailau.maskededittext.MaskedEditText>
+
 </android.support.constraint.ConstraintLayout>

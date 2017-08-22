@@ -14,13 +14,25 @@
         app:layout_constraintRight_toRightOf="parent"
         style="@style/fe_label"
         />
-    <EditText
-        android:id="@+id/value"
+    <RadioGroup
         android:layout_width="0dp"
         android:layout_height="wrap_content"
+        android:orientation="vertical"
         app:layout_constraintTop_toBottomOf="@+id/label"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
-        style="@style/fe_text"
-        />
+        >
+        <RadioButton
+            android:id="@+id/yesButton"
+            android:text="@string/yes"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            />
+        <RadioButton
+            android:id="@+id/noButton"
+            android:text="@string/no"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            />
+    </RadioGroup>
 </android.support.constraint.ConstraintLayout>
