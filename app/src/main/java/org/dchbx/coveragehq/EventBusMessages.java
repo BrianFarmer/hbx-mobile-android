@@ -4,6 +4,7 @@ import android.net.Uri;
 import android.util.Log;
 
 import org.dchbx.coveragehq.models.account.Account;
+import org.dchbx.coveragehq.models.fe.Family;
 import org.dchbx.coveragehq.models.fe.FinancialAssistanceApplication;
 import org.dchbx.coveragehq.models.fe.Schema;
 import org.dchbx.coveragehq.models.ridp.Answers;
@@ -11,8 +12,6 @@ import org.dchbx.coveragehq.statemachine.EventParameters;
 import org.dchbx.coveragehq.statemachine.StateManager;
 import org.greenrobot.eventbus.EventBus;
 import org.joda.time.LocalDate;
-
-import java.util.HashMap;
 
 /*
     This file is part of DC.
@@ -265,6 +264,11 @@ public class EventBusMessages implements Messages {
     }
 
     @Override
+    public void stateAction(Events.StateAction.Action action, EventParameters eventParameters) {
+        eventBus.post(new Events.StateAction(action, eventParameters));
+    }
+
+    @Override
     public void error(String str1, String str2) {
         BrokerWorker.eventBus.post(new Events.Error(str1, str2));
     }
@@ -391,13 +395,28 @@ public class EventBusMessages implements Messages {
     }
 
     @Override
-    public void getFinancialApplicationPerson(String eapersonid) {
-        eventBus.post(new Events.GetApplicationPerson(eapersonid));
+    public void getUqhpSchema() {
+        eventBus.post(new Events.GetUqhpSchema());
     }
 
     @Override
-    public void getFinancialApplicationPersonResponse(HashMap<String, Object> person) {
-        eventBus.post(new Events.GetApplicationPersonResponse(person));
+    public void getUqhpFamily() {
+        eventBus.post(new Events.GetUqhpFamily());
+    }
+
+    @Override
+    public void getUqhpFamilyResponse(Family family) {
+        eventBus.post(new Events.GetUqhpFamilyResponse(family));
+    }
+
+    @Override
+    public void saveUqhpFamily(Family family) {
+        eventBus.post(new Events.SaveUqhpFamily(family));
+    }
+
+    @Override
+    public void saveUqhpFamilyResponse() {
+        eventBus.post(new Events.SaveUqhpFamilyResponse());
     }
 }
 

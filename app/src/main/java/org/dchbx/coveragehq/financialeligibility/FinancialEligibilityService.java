@@ -2,8 +2,10 @@ package org.dchbx.coveragehq.financialeligibility;
 
 import android.util.Log;
 
-import org.dchbx.coveragehq.ApplicationUtilities;
+import com.google.gson.JsonObject;
+
 import org.dchbx.coveragehq.BrokerApplication;
+import org.dchbx.coveragehq.ConfigurationStorageHandler;
 import org.dchbx.coveragehq.ConnectionHandler;
 import org.dchbx.coveragehq.Events;
 import org.dchbx.coveragehq.IConnectionHandler;
@@ -11,12 +13,18 @@ import org.dchbx.coveragehq.JsonParser;
 import org.dchbx.coveragehq.Messages;
 import org.dchbx.coveragehq.ServiceManager;
 import org.dchbx.coveragehq.UrlHandler;
+import org.dchbx.coveragehq.models.fe.Family;
+import org.dchbx.coveragehq.models.fe.Field;
 import org.dchbx.coveragehq.models.fe.FinancialAssistanceApplication;
+import org.dchbx.coveragehq.models.fe.Option;
+import org.dchbx.coveragehq.models.fe.Person;
 import org.dchbx.coveragehq.models.fe.Schema;
 import org.dchbx.coveragehq.statemachine.EventParameters;
 import org.dchbx.coveragehq.statemachine.StateManager;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
+
+import java.util.ArrayList;
 
 /*
     This file is part of DC.
@@ -38,6 +46,8 @@ import org.greenrobot.eventbus.ThreadMode;
 public class FinancialEligibilityService {
     private static String TAG = "FinancialEligibility";
 
+
+
     private final Messages messages;
     private final ServiceManager serviceManager;
     private Schema schema;
@@ -48,11 +58,19 @@ public class FinancialEligibilityService {
     }
 
     @Subscribe(threadMode = ThreadMode.BACKGROUND)
-    public void doThis(Events.GetApplicationPerson getApplicationPerson){
-        String eaPersonId = getApplicationPerson.getEaPersonId();
-        if (eaPersonId == null){
-            messages.getFinancialApplicationPersonResponse(ApplicationUtilities.getNewPerson());
-        }
+    public void doThis(Events.GetUqhpFamily getUqhpFamily){
+        ConfigurationStorageHandler configurationStorageHandler = serviceManager.getConfigurationStorageHandler();
+
+        Family family = configurationStorageHandler.readUqhpFamily();
+        messages.getUqhpFamilyResponse(family);
+    }
+
+    @Subscribe(threadMode = ThreadMode.BACKGROUND)
+    public void doThis(Events.SaveUqhpFamily saveUqhpFamily){
+        ConfigurationStorageHandler configurationStorageHandler = serviceManager.getConfigurationStorageHandler();
+
+        configurationStorageHandler.storeUqhpFamily(saveUqhpFamily.getFamily());
+        messages.saveUqhpFamilyResponse();
     }
 
     @Subscribe(threadMode = ThreadMode.BACKGROUND)
@@ -81,5 +99,106 @@ public class FinancialEligibilityService {
             });
         }
         messages.getFinancialEligibilityJsonResponse(schema);
+    }
+
+    @Subscribe(threadMode = ThreadMode.BACKGROUND)
+    public void doThis(Events.GetUqhpSchema getUqhpSchema) throws Exception {
+        Log.d(TAG, "in FinancialEligibilityService.doThis(Events.GetFinancialEligibilityJson)");
+        if (schema == null){
+            UrlHandler urlHandler = serviceManager.getUrlHandler();
+            ConnectionHandler connectionHandler = serviceManager.getConnectionHandler();
+
+            UrlHandler.HttpRequest request = urlHandler.getUqhpSchema();
+            IConnectionHandler.HttpResponse response = connectionHandler.process(request);
+            connectionHandler.process(request, new IConnectionHandler.OnCompletion(){
+                public void onCompletion(IConnectionHandler.HttpResponse response){
+                    if (response.getResponseCode() == 200){
+                        JsonParser parser = serviceManager.getParser();
+                        schema = parser.parseSchema(response.getBody());
+                    } else {
+                        messages.appEvent(StateManager.AppEvents.Error, EventParameters.build().add("error_msg", "Error getting Schema"));
+                    }
+                }
+            });
+        }
+        messages.getFinancialEligibilityJsonResponse(schema);
+    }
+
+    public Person getNewPerson() {
+        return new Person();
+    }
+
+    public JsonObject build(ArrayList<Field> dependentFields) {
+        JsonObject result = new JsonObject();
+        for (Field dependentField : dependentFields) {
+            if (dependentField.defaultValue != null){
+                result.addProperty(dependentField.field, dependentField.defaultValue);
+            }
+        }
+        return result;
+    }
+
+
+
+    public static boolean checkObject(JsonObject object, ArrayList<Field> objectSchema) {
+        for (Field field : objectSchema) {
+            if (field.optional.equals("N")) {
+                switch (Schema.fieldTypes.get(field.type.toLowerCase())) {
+                    case text:
+                    case numeric:
+                        if (!object.has(field.field)
+                            || object.get(field.field).getAsString().length() == 0){
+                            return false;
+                        }
+                        break;
+                    case date:
+                        if (!object.has(field.field)
+                            || object.get(field.field).getAsString().length() < 8){
+                            return false;
+                        }
+                        break;
+                    case dropdown:
+                        if (object.has(field.field)){
+                            boolean found = false;
+                            for (Option option : field.options) {
+                                if (option.value.equals(object.get(field.field).getAsString())){
+                                    found = true;
+                                    break;
+                                }
+                            }
+                            if (!found){
+                                return false;
+                            }
+                        } else {
+                            return false;
+                        }
+                        break;
+                    case multidropdown:
+                        if (!object.has(field.field)
+                            || !field.options.contains(object.get(field.field).getAsString())){
+                            return false;
+                        }
+                        break;
+                    case section:
+                        if (!object.has(field.field)){
+                            return false;
+                        }
+                        break;
+                    case ssn:
+                        if (!object.has(field.field)
+                                || object.get(field.field).getAsString().length() < 8){
+                            return false;
+                        }
+                        break;
+                    case yesnoradio:
+                        break;
+                    case zip:
+                        break;
+
+                }
+            }
+        }
+
+        return true;
     }
 }

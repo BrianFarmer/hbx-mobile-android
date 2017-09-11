@@ -1,25 +1,18 @@
 package org.dchbx.coveragehq.financialeligibility;
 
 import android.content.Intent;
-import android.os.Bundle;
-import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.widget.LinearLayout;
-
-import com.google.gson.Gson;
-import com.google.gson.JsonObject;
-import com.google.gson.reflect.TypeToken;
+import android.widget.BaseAdapter;
+import android.widget.ListView;
+import android.widget.TextView;
 
 import org.dchbx.coveragehq.R;
 import org.dchbx.coveragehq.models.fe.Field;
 import org.dchbx.coveragehq.statemachine.EventParameters;
 import org.dchbx.coveragehq.statemachine.StateManager;
 
-import java.lang.reflect.Type;
 import java.util.ArrayList;
-import java.util.HashMap;
 
 /*
     This file is part of DC.
@@ -38,37 +31,30 @@ import java.util.HashMap;
     along with DC Health Link SmallBiz.  If not, see <http://www.gnu.org/licenses/>.
     This statement should go near the beginning of every source file, close to the copyright notices. When using the Lesser GPL, insert the word “Lesser” before “General” in all three places. When using the GNU AGPL, insert the word “Affero” before “General” in all three places.
 */
-public class SectionActivity extends ApplicationQuestionsActivity {
-    private static String TAG = "SectionActivity";
-    public static StateManager.UiActivity uiActivity = new StateManager.UiActivity(SectionActivity.class);
+public class MultiCheckedListDialog extends CheckedListDialog {
+    public static StateManager.UiActivity uiActivity = new StateManager.UiActivity(MultiCheckedListDialog.class);
 
-    public void onCreate(Bundle bundle){
-        super.onCreate(bundle);
+    public static int Saved = 1;
 
-        setContentView(R.layout.financial_eligibility_questions);
-        Toolbar toolbar = configToolbar();
-        Menu menu = toolbar.getMenu();
+    private Field field;
+    private ListView listView;
+    private MultiCheckedListAdapter multiCheckedListAdapter;
+    private TextView label;
+    private ArrayList<Integer> values;
 
-        linearLayout = (LinearLayout) findViewById(R.id.linearLayout);
-        showProgress();
-        Gson gson = new Gson();
-        Intent intent = getIntent();
-        String schemaExtra = intent.getStringExtra("Schema");
-        Type schemaType = new TypeToken<ArrayList<Field>>(){}.getType();
-        try{
-            schemaFields = gson.fromJson(schemaExtra, schemaType);
-        }catch (Throwable t){
-            Log.e(TAG, "Exception getting json; " + t);
-        }
-        String stringExtra = intent.getStringExtra("Section");
-        jsonObject = gson.fromJson(stringExtra, JsonObject.class);
-
-        try {
-            populate();
-        } catch (Exception e) {
-            Log.e(TAG, "exception in populate(): " + e);
-        }
+    public MultiCheckedListDialog(){
     }
+
+    private void getValues(Intent intent) {
+        values = intent.getExtras().getIntegerArrayList("Value");
+    }
+
+    @Override
+    protected BaseAdapter getListAdapter() {
+        multiCheckedListAdapter = new MultiCheckedListAdapter(field.options, this, values);
+        return multiCheckedListAdapter;
+    }
+
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -82,10 +68,9 @@ public class SectionActivity extends ApplicationQuestionsActivity {
         // Handle item selection
         switch (item.getItemId()) {
             case R.id.save:
-                HashMap<String, Object> values = getValues();
-                getMessages().appEvent(StateManager.AppEvents.UserSaved, EventParameters.build()
-                        .add("Result", values)
-                        .add("ResultCode", StateManager.ActivityResultCodes.Saved));
+                getMessages().appEvent(StateManager.AppEvents.DropdownSaved, EventParameters.build()
+                                                                                .add("Result", multiCheckedListAdapter.getCurrentIndexes())
+                                                                                .add("ResultCode", Saved));
                 return true;
             default:
                 return super.onOptionsItemSelected(item);

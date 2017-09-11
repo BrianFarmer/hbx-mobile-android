@@ -14,7 +14,7 @@ public class WaitActivityInfo<E,S> extends ActivityInfo {
     }
 
     @Override
-    public void onPop(StateMachine stateMachine, StateManager stateManager){
+    public void onPop(StateMachine stateMachine, StateManager stateManager, EventParameters eventParameters){
         stateManager.hideWait();
     }
 

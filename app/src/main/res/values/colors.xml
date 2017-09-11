@@ -53,6 +53,7 @@
     <color name="keep_green_transparent">#9969a30d</color>
     <color name="aptc_purple">#92278f</color>
     <color name="annual_blue">#007bc4</color>
+    <color name="fe_blue">#007bc4</color>
     <color name="yearly_deductble_blue">#044972</color>
     <color name="metal_silver">#c0c0c0</color>
     <color name="metal_gold">#FABB18</color>
@@ -84,4 +85,5 @@
     <color name="ivl_hint_color">@color/textmediumgray</color>
     <color name="white_border_text_down">@color/mainblue</color>
     <color name="white_border_text_up">@color/white</color>
+
 </resources>

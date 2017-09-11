@@ -5,6 +5,13 @@
                                              android:layout_width="match_parent"
                                              android:layout_height="wrap_content"
     >
+    <View
+        android:id="@+id/indicator"
+        android:layout_width="3dp"
+        android:layout_height="match_parent"
+        android:background="@color/alertRed"
+        app:layout_constraintLeft_toLeftOf="parent"
+        />
     <TextView
         android:id="@+id/label"
         android:layout_width="0dp"
@@ -15,12 +22,13 @@
         style="@style/fe_label"
         />
     <EditText
-        android:id="@+id/value"
+           android:id="@+id/value"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         app:layout_constraintTop_toBottomOf="@+id/label"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
+        android:maxLines="1"
         style="@style/fe_text"
         />
 </android.support.constraint.ConstraintLayout>

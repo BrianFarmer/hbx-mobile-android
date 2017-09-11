@@ -6,8 +6,11 @@ import android.util.Log;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import com.google.gson.JsonArray;
+import com.google.gson.JsonObject;
 
 import org.dchbx.coveragehq.models.account.Account;
+import org.dchbx.coveragehq.models.fe.Family;
 import org.dchbx.coveragehq.models.ridp.Answers;
 import org.dchbx.coveragehq.models.ridp.Questions;
 import org.dchbx.coveragehq.models.ridp.VerifyIdentityResponse;
@@ -177,6 +180,14 @@ public class ConfigurationStorageHandler extends IServerConfigurationStorageHand
         editor.commit();
     }
 
+    public <T> void store(String name, T t) {
+        SharedPreferences.Editor editor = getSharedPreferences().edit();
+        Gson gson = getGson();
+        String jsonString = gson.toJson(t);
+        editor.putString(name, jsonString);
+        editor.commit();
+    }
+
     @Override
     public VerifyIdentityResponse readVerifiyIdentityResponse() {
         SharedPreferences sharedPreferences = getSharedPreferences();
@@ -194,6 +205,27 @@ public class ConfigurationStorageHandler extends IServerConfigurationStorageHand
         SharedPreferences sharedPreferences = getSharedPreferences();
         String responseJson = sharedPreferences.getString("StateString", null);
         return responseJson;
+    }
+
+    @Override
+    public Family readUqhpFamily() {
+        SharedPreferences sharedPreferences = getSharedPreferences();
+        String responseJson = sharedPreferences.getString("UqhpFamily", null);
+        if (responseJson == null
+                || responseJson.length() == 0){
+            Family family = new Family();
+            family.Person = new JsonArray();
+            family.Relationship = new JsonArray();
+            family.Attestation = new JsonObject();
+            return family;
+        }
+        Gson gson = getGson();
+        return gson.fromJson(responseJson, Family.class);
+    }
+
+    @Override
+    public void storeUqhpFamily(Family family){
+        store("UqhpFamily", family);
     }
 
     public void storeStateString(String stateString) {

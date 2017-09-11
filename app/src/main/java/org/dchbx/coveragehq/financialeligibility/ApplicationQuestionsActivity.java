@@ -1,32 +1,38 @@
 package org.dchbx.coveragehq.financialeligibility;
 
-import android.databinding.DataBindingUtil;
-import android.os.Bundle;
+import android.content.Intent;
 import android.support.annotation.IdRes;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
 import android.widget.EditText;
-import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
-import android.widget.Spinner;
 import android.widget.TextView;
 
+import com.google.gson.Gson;
+import com.google.gson.JsonObject;
+
+import org.dchbx.coveragehq.BaseActivity;
 import org.dchbx.coveragehq.BrokerActivity;
 import org.dchbx.coveragehq.R;
+import org.dchbx.coveragehq.ServiceManager;
+import org.dchbx.coveragehq.Utilities;
 import org.dchbx.coveragehq.models.fe.Field;
 import org.dchbx.coveragehq.models.fe.Option;
 import org.dchbx.coveragehq.models.fe.Schema;
+import org.dchbx.coveragehq.statemachine.EventParameters;
+import org.dchbx.coveragehq.statemachine.OnActivityResultListener;
 import org.dchbx.coveragehq.statemachine.StateManager;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.UUID;
+
+import static android.text.InputType.TYPE_CLASS_NUMBER;
 
 /*
     This file is part of DC.
@@ -48,127 +54,190 @@ import java.util.HashMap;
 public class ApplicationQuestionsActivity extends BrokerActivity {
     private static String TAG = "ApplicationQuestions";
 
-    protected Schema schema;
-    protected HashMap<String, Object> person;
+    protected ArrayList<Field> schemaFields;
+    protected JsonObject jsonObject;
     protected LinearLayout linearLayout;
+    private ArrayList<FieldType> fields;
 
     public ApplicationQuestionsActivity(){
-        schema = null;
-        person = null;
+        schemaFields = null;
+        jsonObject = null;
+    }
+
+    @Override
+    protected void onResume(){
+        super.onResume();
+        Log.d(TAG, "resuming");
     }
 
     protected void populate() throws Exception {
-        if (schema == null
-            || person == null){
+        if (schemaFields == null
+            || jsonObject == null){
             return;
         }
         hideProgress();
 
         LayoutInflater inflater = LayoutInflater.from(this);
-        ArrayList<FieldType> fields = new ArrayList<>();
-        HashMap<String, Object> values = new HashMap<>();
-        populateSchemeFields(schema.Person, inflater);
+        fields = populateSchemaFields(schemaFields, jsonObject, inflater, true);
 
     }
 
-    protected ArrayList<FieldType> populateSchemeFields(ArrayList<Field> schemaFields, LayoutInflater inflater) throws Exception {
+    protected ArrayList<FieldType> populateSchemaFields(ArrayList<Field> schemaFields, JsonObject values, LayoutInflater inflater, boolean first) throws Exception {
 
         ArrayList<FieldType> fields = new ArrayList<>();
-        HashMap<String, Object> values = new HashMap<>();
         for (Field field : schemaFields) {
             Log.d(TAG, "field name: " + field.field + " type: " + field.type);
             FieldType newField;
-            if (field.type.toLowerCase().compareTo("text") == 0){
+            TextField textField;
+            switch (Schema.fieldTypes.get(field.type.toLowerCase())){
+            case text:
                 Log.d(TAG, "found text field");
-                TextField textField = new TextField(field, values);
+                textField = new TextField(field, values, false, linearLayout);
                 newField = textField;
                 fields.add(textField);
-                textField.fillField(inflater);
-            } else if (field.type.toLowerCase().compareTo("date") == 0){
+                textField.fillField(inflater, first);
+                break;
+            case numeric:
+                Log.d(TAG, "found numeric field");
+                textField = new TextField(field, values, true, linearLayout);
+                newField = textField;
+                fields.add(textField);
+                textField.fillField(inflater, first);
+                break;
+            case date:
                 Log.d(TAG, "found date field");
-                DateField dateField = new DateField(field, values);
+                DateField dateField = new DateField(field, values, linearLayout);
                 newField = dateField;
                 fields.add(dateField);
-                dateField.fillField(inflater);
-            } else if (field.type.toLowerCase().compareTo("dropdown") == 0){
+                dateField.fillField(inflater, first);
+                break;
+            case dropdown:
                 Log.d(TAG, "found dropdown field");
-                DropDownField dropDownField = new DropDownField(this, field, values);
+                DropDownField dropDownField = new DropDownField(this, field, values, linearLayout);
                 newField = dropDownField;
                 fields.add(dropDownField);
-                dropDownField.fillField(inflater);
-            } else if (field.type.toLowerCase().compareTo("id") == 0){
+                dropDownField.fillField(inflater, first);
+                break;
+            case id:
                 Log.d(TAG, "found id field");
-                Idfield idfield = new Idfield(field, values);
+                Idfield idfield = new Idfield(field, values, linearLayout);
                 newField = idfield;
                 fields.add(idfield);
-                idfield.fillField(inflater);
-            } else if (field.type.toLowerCase().compareTo("multidropdown") == 0){
+                idfield.fillField(inflater, first);
+                break;
+            case multidropdown:
                 Log.d(TAG, "found multidropdown field");
-                MultiDropDownField multiDropDownField = new MultiDropDownField(field, values);
+                MultiDropDownField multiDropDownField = new MultiDropDownField(field, values, linearLayout);
                 newField = multiDropDownField;
                 fields.add(multiDropDownField);
-                multiDropDownField.fillField(inflater);
-            } else if (field.type.toLowerCase().compareTo("section") == 0){
+                multiDropDownField.fillField(inflater, first);
+                break;
+            case section:
                 Log.d(TAG, "found section field");
-                SectionField sectionField = new SectionField(field, values);
+                SectionField sectionField = new SectionField(field, values, linearLayout);
                 newField = sectionField;
                 fields.add(sectionField);
-                sectionField.fillField(inflater);
-            } else if (field.type.toLowerCase().compareTo("ssn") == 0){
+                sectionField.fillField(inflater, first);
+                break;
+            case ssn:
                 Log.d(TAG, "found ssn field");
-                SsnField ssnField = new SsnField(field, values);
+                SsnField ssnField = new SsnField(field, values, linearLayout);
                 newField = ssnField;
                 fields.add(ssnField);
-                ssnField.fillField(inflater);
-            } else if (field.type.toLowerCase().compareTo("yesnoradio") == 0){
+                ssnField.fillField(inflater, first);
+                break;
+            case yesnoradio:
                 Log.d(TAG, "found yesnoradio field");
-                YesNoRadioField yesNoRadioField = new YesNoRadioField(field, values);
+                YesNoRadioField yesNoRadioField = new YesNoRadioField(field, values, linearLayout);
                 newField = yesNoRadioField;
                 fields.add(yesNoRadioField);
-                yesNoRadioField.fillField(inflater);
-            } else if (field.type.toLowerCase().compareTo("zip") == 0){
+                yesNoRadioField.fillField(inflater, first);
+                break;
+            case zip:
                 Log.d(TAG, "found zip field");
-                ZipField zipField = new ZipField(field, values);
+                ZipField zipField = new ZipField(field, values, linearLayout);
                 newField = zipField;
                 fields.add(zipField);
-                zipField.fillField(inflater);
-            } else if (field.type.toLowerCase().compareTo("hardwired") == 0){
+                zipField.fillField(inflater, first);
+                break;
+            case hardwired:
                 Log.d(TAG, "found hardwired field");
                 HardwiredField hardwiredField = new HardwiredField(field, values);
                 newField = hardwiredField;
                 fields.add(hardwiredField);
-                hardwiredField.fillField(inflater);
-            } else if (field.type.toLowerCase().compareTo("idgen") == 0){
+                hardwiredField.fillField(inflater, first);
+            case idgen:
                 Log.d(TAG, "found eapersonid field");
-                HardwiredField hardwiredField = new HardwiredField(field, values);
-                newField = hardwiredField;
-                fields.add(hardwiredField);
-                hardwiredField.fillField(inflater);
-            } else {
-                throw new Exception("Unknown field type");
+                EaPersonIdField eaPersonIdField = new EaPersonIdField(field, values);
+                newField = eaPersonIdField;
+                fields.add(newField);
+                eaPersonIdField.fillField(inflater, first);
+                break;
+            default:
+                throw new Exception("Unknown field type: " + field.type);
             }
-            if (field.dependentFields != null){
-                ArrayList<FieldType> fieldTypes = populateSchemeFields(field.dependentFields, inflater);
-                newField.setDependentFields(fieldTypes);
+            first = false;
+            if (field.dependentFields != null
+                && field.dependentFields.size() > 0){
+                try {
+                    newField.dependentFields = populateSchemaFields(field.dependentFields, values, inflater, false);
+                    newField.configureDependentFieldsVisibility(newField.dependentFields);
+                } catch (Throwable t){
+                    Log.e(TAG, "field name: " + field.field);
+                }
             }
         }
         return fields;
     }
 
-
-    private void fillTextField(LayoutInflater inflater, Field field) {
+    protected HashMap<String, Object> getValues() {
+        HashMap<String, Object> values = new HashMap<>();
+        getValues(values, fields);
+        return values;
+    }
+    protected void getValues(HashMap<String, Object> values, ArrayList<FieldType> fields){
+        for (FieldType field : fields) {
+            if (field.field.prereqValues == null
+                || field.field.prereqValues.size() == 0
+                || field.field.prereqValues.contains(values.get(field.field.prereqField))) {
+                Object value = field.getValue();
+                if (value != null) {
+                    values.put(field.field.field, value);
+                }
+                if (field.dependentFields != null) {
+                    try {
+                        getValues(values, field.dependentFields);
+                    } catch (Throwable t) {
+                        Log.e(TAG, "exception: " + t);
+                        Log.e(TAG, "field name: " + field.field.field);
+                    }
+                }
+            }
+        }
     }
 
-
-    abstract class FieldType{
+    public static abstract class FieldType{
         protected Field field;
-        protected HashMap<String, Object> values;
-        protected ArrayList<FieldType> fields;
+        protected final LinearLayout linearLayout;
+        protected JsonObject values;
+        protected ArrayList<FieldType> dependentFields;
         protected View view;
 
-        abstract public void save();
-        abstract public void fillField(LayoutInflater inflater);
-        public abstract void setDependentFields(ArrayList<FieldType> fields);
+        public FieldType(Field field, LinearLayout linearLayout, JsonObject values){
+            this.field = field;
+            this.linearLayout = linearLayout;
+            this.values = values;
+        }
+
+        public FieldType(Field field, JsonObject values) {
+            this.field = field;
+            this.values = values;
+            linearLayout = null;
+        }
+
+        public abstract Object getValue();
+        abstract public void fillField(LayoutInflater inflater, boolean first);
+        public abstract void configureDependentFieldsVisibility(ArrayList<FieldType> fields);
 
         public void showView(int visibility){
             if (view != null){
@@ -177,43 +246,80 @@ public class ApplicationQuestionsActivity extends BrokerActivity {
         }
     }
 
-    class TextField extends FieldType {
+    public static class TextField extends FieldType {
+        private final boolean numericOnly;
         private EditText value;
+        protected View indicator;
 
-        public TextField(Field field, HashMap<String, Object> values) {
-
-            this.field = field;
-            this.values = values;
+        public TextField(Field field, JsonObject values, boolean numericOnly, LinearLayout linearLayout) {
+            super(field, linearLayout, values);
+            this.numericOnly = numericOnly;
         }
 
         @Override
-        public void save() {
-
+        public Object getValue() {
+            return value.getText().toString();
         }
 
-        public void fillField(LayoutInflater inflater) {
+        public void fillField(LayoutInflater inflater, boolean first) {
             view = inflater.inflate(R.layout.app_text_field, linearLayout, false);
             linearLayout.addView(view);
             TextView label = (TextView) view.findViewById(R.id.label);
             label.setText(field.label);
             value = (EditText) view.findViewById(R.id.value);
-            if (person.containsKey(field.field)){
-                String str = (String)person.get(field.field);
-                value.setText(str);
+            if (numericOnly){
+                value.setInputType(TYPE_CLASS_NUMBER);
+            }
+            if (values.has(field.field)){
+                String logstr = values.get(field.field).getAsString();
+                Log.d(TAG, logstr);
+                value.setText(values.get(field.field).getAsString());
             } else {
                 if (field.defaultValue != null){
-                    value.setText((String)field.defaultValue);
+                    value.setText(field.defaultValue);
                 }
+            }
+            if (first){
+                value.requestFocus();
+            }
+            indicator = view.findViewById(R.id.indicator);
+            if (field.optional.equals("N")){
+                value.addTextChangedListener(new TextWatcher() {
+                    @Override
+                    public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+                    }
+
+                    @Override
+                    public void onTextChanged(CharSequence s, int start, int before, int count) {
+                        checkIndicator();
+                    }
+
+                    @Override
+                    public void afterTextChanged(Editable s) {
+
+                    }
+                });
+                checkIndicator();
+            } else {
+                indicator.setVisibility(View.GONE);
             }
         }
 
+        private void checkIndicator() {
+            indicator.setVisibility(value.getText().length() > 0?View.GONE:View.VISIBLE);
+        }
+
         public void testDependentFields(String value){
-            for (FieldType fieldType : fields) {
+            for (FieldType fieldType : dependentFields) {
                 boolean assigned = false;
                 for (Object prereqValue : fieldType.field.prereqValues) {
                     if (prereqValue.toString().equals(value)){
                         fieldType.showView(View.VISIBLE);
                         assigned = true;
+                        if (fieldType.dependentFields != null) {
+                            fieldType.configureDependentFieldsVisibility(fieldType.dependentFields);
+                        }
                     }
                 }
                 if (!assigned){
@@ -223,9 +329,9 @@ public class ApplicationQuestionsActivity extends BrokerActivity {
         }
 
         @Override
-        public void setDependentFields(final ArrayList<FieldType> fields) {
+        public void configureDependentFieldsVisibility(final ArrayList<FieldType> fields) {
 
-            this.fields = fields;
+            this.dependentFields = fields;
             value.addTextChangedListener(new TextWatcher() {
                 @Override
                 public void beforeTextChanged(CharSequence s, int start, int count, int after) {
@@ -245,64 +351,128 @@ public class ApplicationQuestionsActivity extends BrokerActivity {
         }
     }
 
-    class DropDownField extends FieldType {
+    public static class DropDownField extends FieldType {
         private final ApplicationQuestionsActivity activity;
-        private Spinner value;
+        private TextView value;
+        private String savedValue;
 
-        public DropDownField(ApplicationQuestionsActivity activity, Field field, HashMap<String, Object> values) {
+        public DropDownField(ApplicationQuestionsActivity activity, Field field, JsonObject values,
+                             LinearLayout linearLayout) {
+            super(field, linearLayout, values);
             this.activity = activity;
-
-            this.field = field;
-            this.values = values;
+            if (values.has(field.field)) {
+                savedValue = values.get(field.field).getAsString();
+            }
         }
 
         @Override
-        public void save() {
-
+        public Object getValue() {
+            return savedValue;
         }
 
         @Override
-        public void fillField(LayoutInflater inflater) {
-            View view = inflater.inflate(R.layout.app_dropdown_field, linearLayout, false);
+        public void fillField(LayoutInflater inflater, boolean first) {
+            view = inflater.inflate(R.layout.app_dropdown_field, linearLayout, false);
             linearLayout.addView(view);
             TextView label = (TextView) view.findViewById(R.id.label);
             label.setText(field.label);
+            value = (TextView) view.findViewById(R.id.value);
 
-            ArrayList<String> values = new ArrayList<>();
-            for (Option option : field.options) {
-                values.add(option.name);
+            if (values.has(field.field)){
+                value.setText(getStringForDropDownValue(field, values));
+            } else {
+                if (field.defaultValue != null) {
+                    value.setText(field.defaultValue);
+                }
             }
+            view.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    ApplicationQuestionsActivity.setOnActivityResultListener(new OnActivityResultListener() {
+                        @Override
+                        public void onActivityResult(Intent intent) {
+                            if (intent != null) {
+                                int result = intent.getIntExtra("Result", -1);
+                                Option option = field.options.get(result);
+                                savedValue = option.value;
+                                values.addProperty(field.field, option.value);
+                                value.setText(getStringForDropDownValue(field, values));
+                                if (dependentFields != null) {
+                                    configureDependentFieldsVisibility(dependentFields);
+                                }
+                                checkIndicator();
+                            }
+                        }
+                    });
+                    activity.getMessages().appEvent(StateManager.AppEvents.ShowDropDown,
+                            EventParameters.build().add("Field", field)
+                                    .add("Value", getStringForDropDownValue(field, values)));
+                }
+            });
+            checkIndicator();
+        }
 
-            value = (Spinner) view.findViewById(R.id.value);
-            ArrayAdapter<String> spinnerAdapter = new ArrayAdapter<>(activity, android.R.layout.simple_spinner_item, values);
-            value.setAdapter(spinnerAdapter);
+        private void checkIndicator() {
+            if (values.has(field.field)){
+                String valueAsString = values.get(field.field).getAsString();
+                if (valueAsString != null
+                    && valueAsString.length() > 0){
+                    view.findViewById(R.id.indicator).setVisibility(View.GONE);
+                    return;
+                }
+            }
+            view.findViewById(R.id.indicator).setVisibility(View.VISIBLE);
+        }
 
+        private String getStringForDropDownValue(Field field, JsonObject values) {
+            if (values.has(field.field)){
+                String value = values.get(field.field).getAsString();
+                for (Option option : field.options) {
+                    if (option.value.equals(value)){
+                        return option.name;
+                    }
+                }
+            }
+            return field.defaultValue;
         }
 
         @Override
-        public void setDependentFields(final ArrayList<FieldType> fields) {
-            value.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-                @Override
-                public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                    testDependentValue(position, fields);
-                }
-
-                @Override
-                public void onNothingSelected(AdapterView<?> parent) {
-
-                }
-            });
-            testDependentValue(value.getSelectedItemPosition(), fields);
+        public void configureDependentFieldsVisibility(final ArrayList<FieldType> fields) {
+            testDependentValue(fields);
         }
 
-        private void testDependentValue(int position, ArrayList<FieldType> fields) {
-            String optionValue = field.options.get(position).value;
+        private void testDependentValue(ArrayList<FieldType> fields) {
+            if (!values.has(field.field)){
+                for (FieldType fieldType : fields) {
+                    if (fieldType.view != null) {
+                        fieldType.view.setVisibility(View.GONE);
+                    }
+                }
+            }
+            String curValue;
+            if (values.has(field.field)) {
+                curValue = values.get(field.field).getAsString();
+            } else {
+                curValue = field.defaultValue;
+                if (curValue == null){
+                    for (FieldType fieldType : fields) {
+                        fieldType.showView(View.GONE);
+                    }
+                }
+            }
             for (FieldType fieldType : fields) {
                 boolean assigned = false;
-                for (Object prereqValue : fieldType.field.prereqValues) {
-                    if (optionValue.compareTo(prereqValue.toString()) == 0){
-                        fieldType.showView(View.VISIBLE);
-                        assigned = true;
+                if (fieldType.field.prereqValues != null
+                    && fieldType.field.prereqValues.size() > 0){
+                    for (Object prereqValue : fieldType.field.prereqValues) {
+                        if (curValue != null
+                            && curValue.equals(prereqValue.toString())){
+                            fieldType.showView(View.VISIBLE);
+                            assigned = true;
+                            if (fieldType.dependentFields != null){
+                                fieldType.configureDependentFieldsVisibility(fieldType.dependentFields);
+                            }
+                        }
                     }
                 }
                 if (!assigned){
@@ -312,82 +482,127 @@ public class ApplicationQuestionsActivity extends BrokerActivity {
         }
     }
 
-    class Idfield extends FieldType {
-
-        public Idfield (Field field, HashMap<String, Object> values) {
-
-            this.field = field;
-            this.values = values;
-        }
-
-        @Override
-        public void save() {
-
-        }
-
-        @Override
-        public void fillField(LayoutInflater inflater) {
-            View view = inflater.inflate(R.layout.app_id_field, linearLayout, false);
-            linearLayout.addView(view);
-            TextView label = (TextView) view.findViewById(R.id.label);
-            label.setText(field.label);
-            EditText value = (EditText) view.findViewById(R.id.value);
-            if (person.containsKey(field.field)){
-                String str = (String)person.get(field.field);
-                value.setText(str);
-            } else {
-                if (field.defaultValue != null){
-                    value.setText((String)field.defaultValue);
-                }
-            }
-
-        }
-
-        @Override
-        public void setDependentFields(ArrayList<FieldType> fields) {
-
-        }
-    }
-
-    class DateField extends FieldType {
-
+    public static class Idfield extends FieldType {
         private EditText value;
 
-        public DateField(Field field, HashMap<String, Object> values) {
-
+        public Idfield (Field field, JsonObject values, LinearLayout linearLayout) {
+            super(field, linearLayout, values);
             this.field = field;
             this.values = values;
         }
 
         @Override
-        public void save() {
-
+        public Object getValue() {
+            return ((TextView)value).getText();
         }
 
         @Override
-        public void fillField(LayoutInflater inflater) {
-            View view = inflater.inflate(R.layout.app_date_field, linearLayout, false);
+        public void fillField(LayoutInflater inflater, boolean first) {
+            view = inflater.inflate(R.layout.app_id_field, linearLayout, false);
             linearLayout.addView(view);
             TextView label = (TextView) view.findViewById(R.id.label);
             label.setText(field.label);
             value = (EditText) view.findViewById(R.id.value);
-            if (person.containsKey(field.field)){
-                String str = (String)person.get(field.field);
+            if (values.has(field.field)){
+                String str = (String) values.get(field.field).getAsString();
                 value.setText(str);
             } else {
                 if (field.defaultValue != null){
                     value.setText((String)field.defaultValue);
                 }
             }
+            if (first){
+                value.requestFocus();
+            }
+        }
+
+        @Override
+        public void configureDependentFieldsVisibility(ArrayList<FieldType> fields) {
+
+        }
+    }
+
+    public static class DateField extends FieldType {
+
+        private EditText value;
+        protected View indicator;
+
+        public DateField(Field field, JsonObject values, LinearLayout linearLayout) {
+            super(field, linearLayout, values);
+            this.field = field;
+            this.values = values;
+        }
+
+        @Override
+        public Object getValue() {
+            CharSequence text = value.getText();
+            if (text == null){
+                return null;
+            }
+            String s = text.toString();
+            try {
+                return Utilities.DateAsString(Utilities.parseDate(s.toString()));
+            } catch (Exception e){
+                return null;
+            }
+        }
+
+        @Override
+        public void fillField(LayoutInflater inflater, boolean first) {
+            view = inflater.inflate(R.layout.app_date_field, linearLayout, false);
+            linearLayout.addView(view);
+            TextView label = (TextView) view.findViewById(R.id.label);
+            label.setText(field.label);
+            value = (EditText) view.findViewById(R.id.value);
+            if (values.has(field.field)){
+                String str = (String) values.get(field.field).getAsString();
+                value.setText(str);
+            } else {
+                if (field.defaultValue != null){
+                    value.setText((String)field.defaultValue);
+                }
+            }
+            if (first){
+                value.requestFocus();
+            }
+            indicator = view.findViewById(R.id.indicator);
+            if (field.optional.equals("N")){
+                value.addTextChangedListener(new TextWatcher() {
+                    @Override
+                    public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+                    }
+
+                    @Override
+                    public void onTextChanged(CharSequence s, int start, int before, int count) {
+                        checkIndicator();
+                    }
+
+                    @Override
+                    public void afterTextChanged(Editable s) {
+
+                    }
+                });
+                checkIndicator();
+            } else {
+                indicator.setVisibility(View.GONE);
+            }
+        }
+
+        private void checkIndicator() {
+            indicator.setVisibility(value.getText().length() < 10?View.VISIBLE:View.GONE);
         }
 
         public void testDependentFields(String value){
-            for (FieldType fieldType : fields) {
+            for (FieldType fieldType : dependentFields) {
                 boolean assigned = false;
                 for (Object prereqValue : fieldType.field.prereqValues) {
                     if (prereqValue.toString().equals(value)){
                         fieldType.showView(View.VISIBLE);
                         assigned = true;
+                        if (fieldType.dependentFields != null){
+                            fieldType.configureDependentFieldsVisibility(fieldType.dependentFields);
+                        }
                     }
                 }
                 if (!assigned){
@@ -397,9 +612,9 @@ public class ApplicationQuestionsActivity extends BrokerActivity {
         }
 
         @Override
-        public void setDependentFields(final ArrayList<FieldType> fields) {
+        public void configureDependentFieldsVisibility(final ArrayList<FieldType> fields) {
 
-            this.fields = fields;
+            this.dependentFields = fields;
             value.addTextChangedListener(new TextWatcher() {
                 @Override
                 public void beforeTextChanged(CharSequence s, int start, int count, int after) {
@@ -421,27 +636,25 @@ public class ApplicationQuestionsActivity extends BrokerActivity {
 
     class MultiDropDownField extends FieldType {
 
-        public MultiDropDownField(Field field, HashMap<String, Object> values) {
-
-            this.field = field;
-            this.values = values;
+        public MultiDropDownField(Field field, JsonObject values, LinearLayout linearLayout) {
+            super(field, linearLayout, values);
         }
 
         @Override
-        public void save() {
-
+        public Object getValue() {
+            return null;
         }
 
         @Override
-        public void fillField(LayoutInflater inflater) {
+        public void fillField(LayoutInflater inflater, boolean first) {
             /*
             View view = inflater.inflate(R.layout.app_text_field, linearLayout, false);
             linearLayout.addView(view);
             TextView label = (TextView) view.findViewById(R.id.label);
             label.setText(field.label);
             EditText value = (EditText) view.findViewById(value);
-            if (person.containsKey(field.field)){
-                String str = (String)person.get(field.field);
+            if (jsonObject.containsKey(field.field)){
+                String str = (String)jsonObject.get(field.field);
                 value.setText(str);
             } else {
                 if (field.defaultValue != null){
@@ -451,79 +664,153 @@ public class ApplicationQuestionsActivity extends BrokerActivity {
         }
 
         @Override
-        public void setDependentFields(ArrayList<FieldType> fields) {
+        public void configureDependentFieldsVisibility(ArrayList<FieldType> fields) {
 
         }
     }
 
     class SectionField extends FieldType {
 
-        public SectionField(Field field, HashMap<String, Object> values) {
+        private JsonObject savedValues;
+        private View indicator;
 
-            this.field = field;
-            this.values = values;
+        public SectionField(Field field, JsonObject values, LinearLayout linearLayout) {
+            super(field, linearLayout, values);
+            if (values.has(field.field)){
+                try {
+
+                    Object object = values.get(field.field);
+                    Log.d(TAG, "object: " + object);
+                    savedValues = values.get(field.field).getAsJsonObject();
+                } catch (Throwable t){
+                    Log.e(TAG, "Exception: " + t);
+                }
+            } else {
+                savedValues = null;
+            }
         }
 
         @Override
-        public void save() {
-
+        public Object getValue() {
+            return savedValues;
         }
 
         @Override
-        public void fillField(LayoutInflater inflater) {
-            View view = inflater.inflate(R.layout.app_section_field, linearLayout, false);
+        public void fillField(LayoutInflater inflater, boolean first) {
+            view = inflater.inflate(R.layout.app_section_field, linearLayout, false);
+            indicator = view.findViewById(R.id.indicator);
             linearLayout.addView(view);
             TextView label = (TextView) view.findViewById(R.id.label);
             label.setText(field.label);
-            ImageButton openSectionButton = (ImageButton)findViewById(R.id.sectionButton);
-            getMessages().appEvent(StateManager.AppEvents.OpenSection);
+            view.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    BaseActivity.setOnActivityResultListener(new OnActivityResultListener() {
+                        @Override
+                        public void onActivityResult(Intent intent) {
+                            if (intent != null) {
+                                String jsonString = intent.getStringExtra("Result");
+                                Gson gson = new Gson();
+                                JsonObject sectionValues = gson.fromJson(jsonString, JsonObject.class);
+                                savedValues = sectionValues;
+                                configureDependentFieldsVisibility(dependentFields);
+                                checkIndicator();
+                            }
+                        }
+                    });
+
+                    String json;
+                    if (savedValues == null){
+                        savedValues = ServiceManager.getServiceManager().getFinancialEligibilityService().build(field.dependentFields);
+                    }
+                    getMessages().appEvent(StateManager.AppEvents.OpenSection, EventParameters.build()
+                            .add("Section", new Gson().toJson(savedValues))
+                            .add("Schema", field.subFields));
+                }
+            });
+            checkIndicator();
+        }
+
+        private void checkIndicator() {
+            indicator.setVisibility(FinancialEligibilityService.checkObject(savedValues, field.dependentFields)?View.GONE:View.VISIBLE);
         }
 
         @Override
-        public void setDependentFields(ArrayList<FieldType> fields) {
+        public void configureDependentFieldsVisibility(ArrayList<FieldType> fields) {
 
         }
     }
 
-    class SsnField extends FieldType {
+    public static class SsnField extends FieldType {
 
         private EditText value;
+        protected View indicator;
 
-        public SsnField(Field field, HashMap<String, Object> values) {
-
-            this.field = field;
-            this.values = values;
+        public SsnField(Field field, JsonObject values, LinearLayout linearLayout) {
+            super(field, linearLayout, values);
         }
 
         @Override
-        public void save() {
-
+        public Object getValue() {
+            return value.getText().toString();
         }
 
         @Override
-        public void fillField(LayoutInflater inflater) {
-            View view = inflater.inflate(R.layout.app_ssn_field, linearLayout, false);
+        public void fillField(LayoutInflater inflater, boolean first) {
+            view = inflater.inflate(R.layout.app_ssn_field, linearLayout, false);
             linearLayout.addView(view);
             TextView label = (TextView) view.findViewById(R.id.label);
             label.setText(field.label);
             value = (EditText) view.findViewById(R.id.value);
-            if (person.containsKey(field.field)){
-                String str = (String)person.get(field.field);
+            if (values.has(field.field)){
+                String str = values.get(field.field).getAsString();
                 value.setText(str);
             } else {
                 if (field.defaultValue != null){
                     value.setText((String)field.defaultValue);
                 }
             }
+            if (first){
+                value.requestFocus();
+            }
+            indicator = view.findViewById(R.id.indicator);
+            if (field.optional.equals("N")){
+                value.addTextChangedListener(new TextWatcher() {
+                    @Override
+                    public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+                    }
+
+                    @Override
+                    public void onTextChanged(CharSequence s, int start, int before, int count) {
+                        checkIndicator();
+                    }
+
+                    @Override
+                    public void afterTextChanged(Editable s) {
+
+                    }
+                });
+                checkIndicator();
+            } else {
+                indicator.setVisibility(View.GONE);
+            }
+        }
+
+        private void checkIndicator() {
+            indicator.setVisibility(value.getText().length() == 11?View.GONE:View.VISIBLE);
         }
 
         public void testDependentFields(String value){
-            for (FieldType fieldType : fields) {
+            for (FieldType fieldType : dependentFields) {
                 boolean assigned = false;
                 for (Object prereqValue : fieldType.field.prereqValues) {
                     if (prereqValue.toString().equals(value)){
                         fieldType.showView(View.VISIBLE);
                         assigned = true;
+                        if (fieldType.dependentFields != null){
+                            fieldType.configureDependentFieldsVisibility(fieldType.dependentFields);
+                        }
                     }
                 }
                 if (!assigned){
@@ -533,9 +820,9 @@ public class ApplicationQuestionsActivity extends BrokerActivity {
         }
 
         @Override
-        public void setDependentFields(final ArrayList<FieldType> fields) {
+        public void configureDependentFieldsVisibility(final ArrayList<FieldType> fields) {
 
-            this.fields = fields;
+            this.dependentFields = fields;
             value.addTextChangedListener(new TextWatcher() {
                 @Override
                 public void beforeTextChanged(CharSequence s, int start, int count, int after) {
@@ -558,43 +845,78 @@ public class ApplicationQuestionsActivity extends BrokerActivity {
     class YesNoRadioField extends FieldType {
 
         private RadioGroup radioGroup;
+        private String savedValue;
+        private View indicator;
 
-        public YesNoRadioField(Field field, HashMap<String, Object> values) {
-
-            this.field = field;
-            this.values = values;
+        public YesNoRadioField(Field field, JsonObject values, LinearLayout linearLayout) {
+            super(field, linearLayout, values);
         }
 
         @Override
-        public void save() {
-
+        public Object getValue() {
+            return savedValue;
         }
 
         @Override
-        public void fillField(LayoutInflater inflater) {
-            View view = inflater.inflate(R.layout.app_yesnoradio_field, linearLayout, false);
+        public void fillField(LayoutInflater inflater, boolean first) {
+            view = inflater.inflate(R.layout.app_yesnoradio_field, linearLayout, false);
             linearLayout.addView(view);
             TextView label = (TextView) view.findViewById(R.id.label);
             label.setText(field.label);
             radioGroup = (RadioGroup)view.findViewById(R.id.radioGroup);
-            if (field.defaultValue != null
-                && field.defaultValue.toLowerCase().compareTo("Y") == 0){
-                RadioButton yesButton = (RadioButton) findViewById(R.id.yesButton);
-                yesButton.setChecked(true);
-            } else if (field.defaultValue != null
-                       && field.defaultValue.toLowerCase().compareTo("N") == 0){
-                RadioButton noButton = (RadioButton) findViewById(R.id.noButton);
-                noButton.setChecked(true);
+            RadioButton yesButton = (RadioButton) view.findViewById(R.id.yesButton);
+            RadioButton noButton = (RadioButton) view.findViewById(R.id.noButton);
+            if (values.has(field.field)){
+                savedValue = values.get(field.field).getAsString();
+                if (savedValue.equals("Y")){
+                    yesButton.setChecked(true);
+                    if (first) {
+                        yesButton.requestFocus();
+                    }
+                } else {
+                    if (savedValue.equals("N")){
+                        noButton.setChecked(true);
+                        if (first) {
+                            noButton.requestFocus();
+                        }
+                    }
+                }
+            } else {
+                if (field.defaultValue != null
+                        && field.defaultValue.toLowerCase().compareTo("Y") == 0) {
+                    yesButton.setChecked(true);
+                    if (first) {
+                        yesButton.requestFocus();
+                    }
+                } else if (field.defaultValue != null
+                        && field.defaultValue.toLowerCase().compareTo("N") == 0) {
+                    noButton.setChecked(true);
+                    if (first) {
+                        noButton.requestFocus();
+                    }
+                }
             }
+            indicator = view.findViewById(R.id.indicator);
+            checkIndicator();
+        }
+
+        private void checkIndicator() {
+            indicator.setVisibility(radioGroup.getCheckedRadioButtonId() == -1?View.VISIBLE:View.GONE);
         }
 
         @Override
-        public void setDependentFields(ArrayList<FieldType> fields) {
-            this.fields = fields;
+        public void configureDependentFieldsVisibility(ArrayList<FieldType> fields) {
+            this.dependentFields = fields;
             radioGroup.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
                 @Override
                 public void onCheckedChanged(RadioGroup group, @IdRes int checkedId) {
+                    if (checkedId == R.id.yesButton){
+                        savedValue = "Y";
+                    } else if (checkedId == R.id.noButton){
+                        savedValue = "N";
+                    }
                     testDependentFields(checkedId);
+                    checkIndicator();
                 }
             });
             testDependentFields(radioGroup.getCheckedRadioButtonId());
@@ -602,108 +924,161 @@ public class ApplicationQuestionsActivity extends BrokerActivity {
 
         private void testDependentFields(int checkedId) {
             if (checkedId == R.id.yesButton){
-                for (FieldType fieldType : fields) {
-                    if (field.prereqValues.get(0).equals("Y")){
-                        fieldType.view.setVisibility(View.VISIBLE);
-                    } else {
-                        fieldType.view.setVisibility(View.GONE);
+                for (FieldType dependentFieldType : dependentFields) {
+                    boolean foundPrereqValue = false;
+                    for (Object prereqValue : dependentFieldType.field.prereqValues) {
+                        if (prereqValue.equals("Y")) {
+                            dependentFieldType.view.setVisibility(View.VISIBLE);
+                            foundPrereqValue = true;
+                            if (dependentFieldType.dependentFields != null){
+                                dependentFieldType.configureDependentFieldsVisibility(dependentFieldType.dependentFields);
+                            }
+                            break;
+                        }
+                    }
+                    if (!foundPrereqValue
+                        && dependentFieldType.view != null){
+                        dependentFieldType.view.setVisibility(View.GONE);
                     }
                 }
 
             } else if (checkedId == R.id.noButton){
-                for (FieldType fieldType : fields) {
-                    if (field.prereqValues.get(0).equals("N")){
-                        fieldType.view.setVisibility(View.VISIBLE);
-                    } else {
-                        fieldType.view.setVisibility(View.GONE);
+                for (FieldType dependentFieldType : dependentFields) {
+                    boolean foundPrereqValue = false;
+                    for (Object prereqValue : dependentFieldType.field.prereqValues) {
+                        if (prereqValue.equals("N")) {
+                            if (dependentFieldType.view != null){
+                                dependentFieldType.view.setVisibility(View.VISIBLE);
+                            }
+                            foundPrereqValue = true;
+                        }
+                    }
+                    if (!foundPrereqValue
+                        && dependentFieldType.view != null) {
+                        dependentFieldType.view.setVisibility(View.GONE);
                     }
                 }
             } else {
-                for (FieldType fieldType : fields) {
-                    fieldType.view.setVisibility(View.GONE);
+                for (FieldType dependentFieldType : dependentFields) {
+                    if (dependentFieldType.view != null) {
+                        dependentFieldType.view.setVisibility(View.GONE);
+                    }
                 }
             }
         }
     }
 
     class ZipField extends FieldType {
+        private EditText value;
+        protected View indicator;
 
-        public ZipField(Field field, HashMap<String, Object> values) {
-
-            this.field = field;
-            this.values = values;
+        public ZipField(Field field, JsonObject values, LinearLayout linearLayout) {
+            super(field, linearLayout, values);
         }
 
         @Override
-        public void save() {
-
+        public Object getValue() {
+            return value.getText().toString();
         }
 
         @Override
-        public void fillField(LayoutInflater inflater) {
-            View view = inflater.inflate(R.layout.app_zip_field, linearLayout, false);
+        public void fillField(LayoutInflater inflater, boolean first) {
+            view = inflater.inflate(R.layout.app_zip_field, linearLayout, false);
             linearLayout.addView(view);
             TextView label = (TextView) view.findViewById(R.id.label);
             label.setText(field.label);
-            EditText value = (EditText) view.findViewById(R.id.value);
-            if (person.containsKey(field.field)){
-                String str = (String)person.get(field.field);
+            value = (EditText) view.findViewById(R.id.value);
+            if (jsonObject.has(field.field)){
+                String str = jsonObject.get(field.field).getAsString();
                 value.setText(str);
             } else {
                 if (field.defaultValue != null){
                     value.setText((String)field.defaultValue);
                 }
             }
+            if (first){
+                value.requestFocus();
+            }
+            indicator = view.findViewById(R.id.indicator);
+            if (field.optional.equals("N")){
+                value.addTextChangedListener(new TextWatcher() {
+                    @Override
+                    public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+                    }
+
+                    @Override
+                    public void onTextChanged(CharSequence s, int start, int before, int count) {
+                        checkIndicator();
+                    }
+
+                    @Override
+                    public void afterTextChanged(Editable s) {
+
+                    }
+                });
+                checkIndicator();
+            } else {
+                indicator.setVisibility(View.GONE);
+            }
+        }
+
+        private void checkIndicator() {
+            indicator.setVisibility(value.getText().length() < 5?View.VISIBLE:View.GONE);
         }
 
         @Override
-        public void setDependentFields(ArrayList<FieldType> fields) {
+        public void configureDependentFieldsVisibility(ArrayList<FieldType> fields) {
 
         }
     }
 
     class HardwiredField extends FieldType {
 
-        public HardwiredField(Field field, HashMap<String, Object> values) {
-
-            this.field = field;
-            this.values = values;
+        public HardwiredField(Field field, JsonObject values) {
+            super(field, values);
         }
 
         @Override
-        public void save() {
-
+        public Object getValue() {
+            try {
+                return field.options.get(0).value;
+            } catch (Throwable t){
+                Log.e(TAG, "exception getting hardwired field value: " + field.field);
+            }
+            return null;
         }
 
         @Override
-        public void fillField(LayoutInflater inflater) {
+        public void fillField(LayoutInflater inflater, boolean first) {
         }
 
         @Override
-        public void setDependentFields(ArrayList<FieldType> fields) {
+        public void configureDependentFieldsVisibility(ArrayList<FieldType> fields) {
 
         }
     }
 
     class EaPersonIdField extends FieldType {
 
-        public EaPersonIdField(Field field, HashMap<String, Object> values) {
-
-            this.field = field;
-            this.values = values;
+        public EaPersonIdField(Field field, JsonObject values) {
+            super(field, values);
         }
 
         @Override
-        public void save() {
-
+        public Object getValue() {
+            if (values.has(field.field)){
+                return values.get(field.field);
+            }
+            return UUID.randomUUID().toString();
         }
 
         @Override
-        public void fillField(LayoutInflater inflater) {
+        public void fillField(LayoutInflater inflater, boolean first) {
         }
 
         @Override
-        public void setDependentFields(ArrayList<FieldType> fields) {
+        public void configureDependentFieldsVisibility(ArrayList<FieldType> fields) {
 
         }
     }

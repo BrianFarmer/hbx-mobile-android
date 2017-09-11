@@ -1,4 +1,4 @@
-package org.dchbx.coveragehq;
+package org.dchbx.coveragehq.financialeligibility;
 
 import android.content.Context;
 import android.content.Intent;
@@ -14,7 +14,7 @@ import com.google.gson.Gson;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 
-import org.dchbx.coveragehq.financialeligibility.ApplicationQuestionsActivity;
+import org.dchbx.coveragehq.R;
 import org.dchbx.coveragehq.models.fe.Family;
 import org.dchbx.coveragehq.statemachine.EventParameters;
 import org.dchbx.coveragehq.statemachine.OnActivityResultListener;
@@ -24,13 +24,13 @@ import org.dchbx.coveragehq.statemachine.StateManager;
  * Created by plast on 5/5/2017.
  */
 
-public class FamilyAdapter extends BaseAdapter {
-    private final FamilyActivity activity;
+public class RelationshipsAdapter extends BaseAdapter {
     private final Family family;
     private final JsonArray person;
+    private final RelationshipsActivity activity;
     private View currentlyFocusedRow;
 
-    public FamilyAdapter(FamilyActivity activity, Family family){
+    public RelationshipsAdapter(RelationshipsActivity activity, Family family){
 
         this.activity = activity;
         this.family = family;
@@ -94,6 +94,7 @@ public class FamilyAdapter extends BaseAdapter {
                             Gson gson = new Gson();
                             JsonObject person = gson.fromJson(jsonString, JsonObject.class);
                             family.Person.set(i, person);
+                            activity.saveData();
                         }
                     }
                 });
@@ -104,6 +105,7 @@ public class FamilyAdapter extends BaseAdapter {
     }
 
     private void removeFamilyMember(int i ){
+        family.Person.remove(i);
         notifyDataSetChanged();
         activity.saveData();
     }

@@ -24,7 +24,7 @@ public class ActivityInfo extends StateInfoBase {
     }
 
     @Override
-    public void onPop(StateMachine stateMachine, StateManager stateManager){
-        stateManager.back();
+    public void onPop(StateMachine stateMachine, StateManager stateManager, EventParameters eventParameters){
+        stateManager.back(eventParameters);
     }
 }

@@ -15,8 +15,8 @@ public abstract class StateInfoBase  implements Serializable{
 
     }
 
-    public void onPop(StateMachine stateMachine, StateManager stateManager){
-        stateManager.back();
+    public void onPop(StateMachine stateMachine, StateManager stateManager, EventParameters eventParameters){
+        stateManager.back(eventParameters);
     }
 
     public void onError(StateMachine stateMachine, StateManager stateManager){

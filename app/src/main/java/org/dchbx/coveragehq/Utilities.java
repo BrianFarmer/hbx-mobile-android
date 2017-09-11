@@ -22,6 +22,10 @@ public class Utilities {
         return oneYearOut.minusDays(1);
     }
 
+    public static LocalDate parseDate(String date){
+        return DateTimeFormat.forPattern("MM/dd/yyyy").parseLocalDate(date);
+    }
+
     public static String DateAsString(DateTime date){
         return DateTimeFormat.forPattern("MM/dd/yyyy").print(date);
     }

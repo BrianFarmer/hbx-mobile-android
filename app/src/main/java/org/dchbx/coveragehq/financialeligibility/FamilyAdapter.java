@@ -1,36 +1,43 @@
 package org.dchbx.coveragehq.financialeligibility;
 
 import android.content.Context;
+import android.content.Intent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
-import android.widget.EditText;
+import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.TextView;
 
-import org.dchbx.coveragehq.ApplicationUtilities;
-import org.dchbx.coveragehq.R;
-import org.dchbx.coveragehq.models.fe.FinancialAssistanceApplication;
+import com.google.gson.Gson;
+import com.google.gson.JsonArray;
+import com.google.gson.JsonObject;
 
-import java.util.ArrayList;
-import java.util.HashMap;
+import org.dchbx.coveragehq.R;
+import org.dchbx.coveragehq.models.fe.Family;
+import org.dchbx.coveragehq.models.fe.Schema;
+import org.dchbx.coveragehq.statemachine.EventParameters;
+import org.dchbx.coveragehq.statemachine.OnActivityResultListener;
+import org.dchbx.coveragehq.statemachine.StateManager;
 
 /**
  * Created by plast on 5/5/2017.
  */
 
 public class FamilyAdapter extends BaseAdapter {
+    private final Schema schema;
+    private final Family family;
+    private final JsonArray person;
     private final FamilyActivity activity;
-    private final FinancialAssistanceApplication financialAssistanceApplication;
-    private final ArrayList<HashMap<String, Object>> people;
-    private View currentlyFocusedRow;
 
-    public FamilyAdapter(FamilyActivity activity, FinancialAssistanceApplication financialAssistanceApplication) {
+    public FamilyAdapter(org.dchbx.coveragehq.financialeligibility.FamilyActivity activity,
+                         Family family, Schema schema){
 
         this.activity = activity;
-        this.financialAssistanceApplication = financialAssistanceApplication;
-        people = financialAssistanceApplication.person;
+        this.family = family;
+        this.person = family.Person;
+        this.schema = schema;
     }
 
     @Override
@@ -40,12 +47,12 @@ public class FamilyAdapter extends BaseAdapter {
 
     @Override
     public int getCount() {
-        return people.size();
+        return person.size();
     }
 
     @Override
     public Object getItem(int i) {
-        return people.get(i);
+        return person.get(i);
     }
 
     @Override
@@ -58,31 +65,54 @@ public class FamilyAdapter extends BaseAdapter {
         View v = view;
         if (v == null){
             LayoutInflater inflater = (LayoutInflater) activity.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-            v = inflater.inflate(R.layout.family_row_static_age, viewGroup, false);
+            v = inflater.inflate(R.layout.family_row, viewGroup, false);
         }
 
-        HashMap<String, Object> person = people.get(i);
 
-        TextView memberLabel = (TextView) v.findViewById(R.id.memberLabel);
-        memberLabel.setText(String.format(ApplicationUtilities.getFullName(person)));
-
-        EditText age = (EditText) v.findViewById(R.id.age);
-        age.setText(ApplicationUtilities.getAge(person));
-
+        final View indicator = v.findViewById(R.id.indicator);
         ImageButton removeMember = (ImageButton) v.findViewById(R.id.removeMember);
-        removeMember.setVisibility(View.VISIBLE);
-        removeMember.setOnClickListener(new View.OnClickListener() {
+        TextView memberLabel = (TextView) v.findViewById(R.id.memberLabel);
+        if (i == 0){
+            removeMember.setVisibility(View.INVISIBLE);
+            memberLabel.setText(R.string.you_primary);
+        } else {
+            removeMember.setVisibility(View.VISIBLE);
+            removeMember.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    removeFamilyMember(i);
+                }
+            });
+            memberLabel.setText(String.format(activity.getString(R.string.family_member), i));
+        }
+
+        Button editButton = (Button) v.findViewById(R.id.editButton);
+        editButton.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View view) {
-                removeFamilyMember(i);
+            public void onClick(View v) {
+                ApplicationQuestionsActivity.setOnActivityResultListener(new OnActivityResultListener() {
+                    @Override
+                    public void onActivityResult(Intent intent) {
+                        if (intent != null) {
+                            String jsonString = intent.getStringExtra("Result");
+                            Gson gson = new Gson();
+                            JsonObject person = gson.fromJson(jsonString, JsonObject.class);
+                            family.Person.set(i, person);
+                            activity.saveData();
+                            indicator.setVisibility(FinancialEligibilityService.checkObject(person, schema.Person)?View.GONE:View.VISIBLE);
+                        }
+                    }
+                });
+                activity.getMessages().appEvent(StateManager.AppEvents.EditFamilyMember, EventParameters.build().add("FamilyMember", new Gson().toJson(family.Person.get(i))));
             }
         });
-
+        indicator.setVisibility(FinancialEligibilityService.checkObject(family.Person.get(i).getAsJsonObject(), schema.Person)?View.GONE:View.VISIBLE);
         return v;
     }
 
     private void removeFamilyMember(int i ){
-        people.remove(i);
+        family.Person.remove(i);
         notifyDataSetChanged();
+        activity.saveData();
     }
 }

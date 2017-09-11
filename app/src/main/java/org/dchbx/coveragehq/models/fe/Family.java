@@ -1,5 +1,10 @@
 package org.dchbx.coveragehq.models.fe;
 
+import com.google.gson.JsonArray;
+import com.google.gson.JsonObject;
+
+import java.util.ArrayList;
+
 /*
     This file is part of DC.
 
@@ -18,4 +23,7 @@ package org.dchbx.coveragehq.models.fe;
     This statement should go near the beginning of every source file, close to the copyright notices. When using the Lesser GPL, insert the word “Lesser” before “General” in all three places. When using the GNU AGPL, insert the word “Affero” before “General” in all three places.
 */
 public class Family {
+    public JsonArray Person;
+    public JsonArray Relationship;
+    public JsonObject Attestation;
 }

@@ -43,7 +43,7 @@ class DialogInfo extends StateInfoBase {
     }
 
     @Override
-    public void onPop(StateMachine stateMachine, StateManager stateManager){
+    public void onPop(StateMachine stateMachine, StateManager stateManager, EventParameters eventParameters){
         stateManager.dismissDialog();
     }
 }

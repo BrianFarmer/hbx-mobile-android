@@ -27,6 +27,9 @@ import org.dchbx.coveragehq.ServiceManager;
 import org.dchbx.coveragehq.StateProcessor;
 import org.dchbx.coveragehq.WelcomeBackActivity;
 import org.dchbx.coveragehq.YourMobilePasswordActivity;
+import org.dchbx.coveragehq.financialeligibility.CheckedListDialog;
+import org.dchbx.coveragehq.financialeligibility.EditPersonActivity;
+import org.dchbx.coveragehq.financialeligibility.SectionActivity;
 import org.dchbx.coveragehq.ridp.AcctAddress;
 import org.dchbx.coveragehq.ridp.AcctAuthConsent;
 import org.dchbx.coveragehq.ridp.AcctCreate;
@@ -163,6 +166,10 @@ public class StateManager extends StateProcessor {
     }
 
 
+    public void popActivity(StateManager.UiActivity uiActivity, EventParameters eventParameters) {
+        messages.stateAction(Events.StateAction.Action.Pop, uiActivity.getId(), eventParameters);
+    }
+
     public void popAndLaunchActivity(StateManager.UiActivity uiActivity, EventParameters eventParameters) {
         messages.stateAction(Events.StateAction.Action.PopAndLaunchActivity, uiActivity.getId(), eventParameters);
     }
@@ -179,8 +186,8 @@ public class StateManager extends StateProcessor {
 
     }
 
-    public void back(){
-        messages.stateAction(Events.StateAction.Action.Finish);
+    public void back(EventParameters eventParameters){
+        messages.stateAction(Events.StateAction.Action.Finish, eventParameters);
     }
 
     public void showWait() {
@@ -210,10 +217,16 @@ public class StateManager extends StateProcessor {
         Pop
     }
 
+    public enum ActivityResultCodes {
+        Saved,
+        Canceled
+    }
+
     // You are discouraged from removing or reordring this enum. It is used in serialized objects.
 
     public enum AppStates {
         Any,
+        Previous,
         AcctAddressFe,
         AcctAuthConsentFe,
         AcctCreateFe,
@@ -252,7 +265,10 @@ public class StateManager extends StateProcessor {
         ChooseFinancialAssistance,
         FamilyRelationships,
         GlossaryDialog,
-        CreatingAccountFe, VerifyingUserFe, RidpQuestionsFe, GetQuestionsFe, AcctSystemFoundYouInCuramAcedsFe, AcctSsnWithEmployerFe, AcctSystemFoundYouFe, FamilyMembersFe, FinancialAssitanceQuestions, Wallet
+        CreatingAccountFe, VerifyingUserFe, RidpQuestionsFe, GetQuestionsFe,
+        AcctSystemFoundYouInCuramAcedsFe, AcctSsnWithEmployerFe, AcctSystemFoundYouFe,
+        FamilyMembersFe, FinancialAssitanceQuestions, FeDropDown,
+        Wallet, SectionQuestions, Saved
     }
 
     // You are discouraged from removing or reordring this enum. It is used in serialized objects.
@@ -295,10 +311,10 @@ public class StateManager extends StateProcessor {
         ShowGlossaryItem,
         ShowStateInfo,
         Init,
-        AddFamilyMember,
+        EditFamilyMember,
         OpenSection,
         Goto, // Special case for dev to goto specific state.
-        ErrorHappened
+        ShowDropDown, DropdownSaved, UserSaved, ErrorHappened
     }
 
     public void configStates() {
@@ -411,7 +427,14 @@ public class StateManager extends StateProcessor {
         stateMachine.from(AppStates.VerifyingUserFe).on(AppEvents.UserVerifiedOkToCreate).to(AppStates.CreatingAccountFe, new CreateAccount());
         stateMachine.from(AppStates.CreatingAccountFe).on(AppEvents.SignUpUserInAceds).to(AppStates.AcctSystemFoundYouInCuramAcedsFe, new LaunchActivity(AcctSystemFoundYouAceds.uiActivity));
         stateMachine.from(AppStates.CreatingAccountFe).on(AppEvents.SignUpSuccessful).to(AppStates.FamilyMembersFe, new PopAndLaunchActivity(org.dchbx.coveragehq.financialeligibility.FamilyActivity.uiActivity));
-        stateMachine.from(AppStates.FamilyMembersFe).on(AppEvents.AddFamilyMember).to(AppStates.FinancialAssitanceQuestions, new LaunchActivity(org.dchbx.coveragehq.financialeligibility.AddPersonActivity.uiActivity));
+        stateMachine.from(AppStates.FamilyMembersFe).on(AppEvents.EditFamilyMember).to(AppStates.FinancialAssitanceQuestions, new LaunchActivity(EditPersonActivity.uiActivity));
+        stateMachine.from(AppStates.FinancialAssitanceQuestions).on(AppEvents.ShowDropDown).to(AppStates.FeDropDown, new LaunchActivity(CheckedListDialog.uiActivity));
+        stateMachine.from(AppStates.FinancialAssitanceQuestions).on(AppEvents.UserSaved).doThis(new Back());
+        stateMachine.from(AppStates.FinancialAssitanceQuestions).on(AppEvents.OpenSection).to(AppStates.SectionQuestions, new LaunchActivity(SectionActivity.uiActivity));
+        stateMachine.from(AppStates.SectionQuestions).on(AppEvents.ShowDropDown).to(AppStates.FeDropDown, new LaunchActivity(CheckedListDialog.uiActivity));
+        stateMachine.from(AppStates.SectionQuestions).on(AppEvents.UserSaved).doThis(new Back());
+        stateMachine.from(AppStates.SectionQuestions).on(AppEvents.OpenSection).to(AppStates.SectionQuestions, new LaunchActivity(SectionActivity.uiActivity));
+        stateMachine.from(AppStates.FeDropDown).on(AppEvents.DropdownSaved).doThis(new Back());
     }
 
 

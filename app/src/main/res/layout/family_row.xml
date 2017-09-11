@@ -1,45 +1,59 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.percent.PercentRelativeLayout
+<android.support.constraint.ConstraintLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content">
 
+    <View
+        android:id="@+id/indicator"
+        android:layout_width="3dp"
+        android:layout_height="0dp"
+        android:background="@color/alertRed"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        />
     <ImageButton
         android:id="@+id/removeMember"
-        app:layout_widthPercent="20%"
         android:layout_height="0dp"
-        android:layout_alignTop="@+id/memberLabel"
-        android:layout_alignBottom="@+id/memberLabel"
-        android:scaleType="center"
-        android:src="@drawable/red_x"
+        android:layout_width="wrap_content"
+        app:layout_constraintLeft_toRightOf="@id/indicator"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:srcCompat="@drawable/red_x"
         android:background="@color/transparent"
         />
 
     <TextView
         android:id="@+id/memberLabel"
         style="@style/ivl_member_label"
-        android:layout_width="wrap_content"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginRight="20dp"
-        android:layout_toRightOf="@+id/removeMember"
-        android:layout_alignBaseline="@+id/age"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintRight_toLeftOf="@+id/editButton"
+        app:layout_constraintLeft_toRightOf="@+id/removeMember"
         android:text="Family Member"
         />
+    <Button
+        android:id="@+id/editButton"
+        android:text="edit"
+        android:layout_height="0dp"
+        android:layout_width="wrap_content"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintRight_toLeftOf="@+id/personStatus"
+        style="edit_button"
+        />
 
-    <EditText
-        android:id="@+id/age"
-        style="@style/ivl_number"
-        android:layout_width="60dp"
-        android:layout_height="wrap_content"
-        android:layout_alignParentRight="true"
-        android:layout_alignParentTop="true"
-        android:hint="@string/age"
-        android:inputType="number"
-        android:textAlignment="center"
-        app:layout_marginRightPercent="20%"
-        android:layout_marginTop="12dp"
-        android:layout_marginBottom="12dp"
-    />
-
-</android.support.percent.PercentRelativeLayout>
+    <ImageView
+        android:id="@+id/personStatus"
+        android:layout_width="wrap_content"
+        android:layout_height="32dp"
+        app:layout_constraintRight_toRightOf="parent"
+        app:srcCompat="@drawable/exclamation"
+        tools:layout_editor_absoluteY="8dp"
+        />
+</android.support.constraint.ConstraintLayout>

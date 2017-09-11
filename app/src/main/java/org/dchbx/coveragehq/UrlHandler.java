@@ -585,17 +585,10 @@ public abstract class UrlHandler {
         return request;
     }
 
-    public HttpRequest getUqhpApplicationJson(){
+    public HttpRequest getUqhpSchema(){
         GetParameters getParameters = new GetParameters();
-        if (serverConfiguration.verifyIdentityAnswersEndpoint.substring(0, 4).toLowerCase().compareTo("http") == 0){
-            getParameters.url = HttpUrl.parse(serverConfiguration.verifyIdentityAnswersEndpoint);
-        } else {
-            getParameters.url = new HttpUrl.Builder()
-                    .scheme(serverConfiguration.loginInfo.scheme)
-                    .host(serverConfiguration.loginInfo.host)
-                    .addPathSegments(serverConfiguration.uqhpApplicationSchemaEndpoint)
-                    .port(serverConfiguration.loginInfo.port)
-                    .build();
+        if (serverConfiguration.uqhpApplicationSchemaEndpoint.substring(0, 4).toLowerCase().compareTo("http") == 0){
+            getParameters.url = HttpUrl.parse(serverConfiguration.uqhpApplicationSchemaEndpoint);
         }
 
         HttpRequest request = new HttpRequest();

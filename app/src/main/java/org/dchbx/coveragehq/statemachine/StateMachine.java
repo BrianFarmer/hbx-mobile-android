@@ -133,12 +133,6 @@ public class StateMachine {
         }
     }
 
-    public void backAndPushj() {
-        StateInfoBase pop = statesStack.pop();
-        pop.onPop(this, stateManager);
-    }
-
-
     //private void launchDialog(DialogInfo<E,S> dialogInfo) {
     //    statesStack.push(dialogInfo);
     //    stateManager.launchDialog(dialogInfo.uiDialog);

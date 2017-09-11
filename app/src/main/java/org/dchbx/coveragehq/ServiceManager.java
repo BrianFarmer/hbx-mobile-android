@@ -121,6 +121,10 @@ public class ServiceManager {
         return appStatusService;
     }
 
+    public FinancialEligibilityService getFinancialEligibilityService() {
+        return financialEligibilityService;
+    }
+
     public enum DataSource {
         GitHub,
         EnrollServer,

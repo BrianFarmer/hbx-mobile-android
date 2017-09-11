@@ -2,6 +2,9 @@ package org.dchbx.coveragehq;
 
 import android.net.Uri;
 
+import com.google.gson.JsonObject;
+
+import org.dchbx.coveragehq.models.fe.Family;
 import org.dchbx.coveragehq.models.fe.FinancialAssistanceApplication;
 import org.dchbx.coveragehq.models.fe.Schema;
 import org.dchbx.coveragehq.models.ridp.Answers;
@@ -9,8 +12,6 @@ import org.dchbx.coveragehq.statemachine.EventParameters;
 import org.dchbx.coveragehq.statemachine.StateManager;
 import org.greenrobot.eventbus.EventBus;
 import org.joda.time.LocalDate;
-
-import java.util.HashMap;
 
 public interface Messages {
     void release();
@@ -72,6 +73,7 @@ public interface Messages {
     void stateAction(Events.StateAction.Action action, int id, EventParameters eventParameters);
     void stateAction(Events.StateAction.Action action, int id);
     void stateAction(Events.StateAction.Action action);
+    void stateAction(Events.StateAction.Action action, EventParameters eventParameters);
     void error(String str1, String str2);
     void appEvent(StateManager.AppEvents event, EventParameters intentParameters);
     void appEvent(StateManager.AppEvents event);
@@ -83,7 +85,10 @@ public interface Messages {
     void getFinancialEligibilityJsonResponse(Schema schema);
     void getFinancialAssistanceApplication();
     void getFinancialAssistanceApplicationResponse(FinancialAssistanceApplication financialAssistanceApplication);
-    void getFinancialApplicationPerson(String eapersonid);
-    void getFinancialApplicationPersonResponse(HashMap<String, Object> personHashMap);
+    void getUqhpSchema();
+    void getUqhpFamily();
+    void getUqhpFamilyResponse(Family family);
+    void saveUqhpFamily(Family family);
+    void saveUqhpFamilyResponse();
 }
 

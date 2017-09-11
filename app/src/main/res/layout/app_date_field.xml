@@ -5,6 +5,13 @@
                                              android:layout_width="match_parent"
                                              android:layout_height="wrap_content"
     >
+    <View
+        android:id="@+id/indicator"
+        android:layout_width="3dp"
+        android:layout_height="match_parent"
+        android:background="@color/alertRed"
+        app:layout_constraintLeft_toLeftOf="parent"
+        />
     <TextView
         android:id="@+id/label"
         android:layout_width="0dp"
@@ -19,6 +26,7 @@
         android:id="@+id/value"
         android:inputType="date"
         app:mask="##/##/####"
+        android:hint="@string/date_hint"
         android:gravity="left"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
@@ -27,7 +35,6 @@
         app:layout_constraintRight_toRightOf="parent"
         style="@style/fe_text"
         >
-        <requestFocus />
     </com.vicmikhailau.maskededittext.MaskedEditText>
 
 </android.support.constraint.ConstraintLayout>

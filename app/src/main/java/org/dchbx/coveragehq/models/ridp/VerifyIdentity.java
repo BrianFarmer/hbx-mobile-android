@@ -23,7 +23,7 @@ import com.google.gson.annotations.SerializedName;
 
 public class VerifyIdentity {
 
-    @SerializedName("person")
+    @SerializedName("jsonObject")
     @Expose
     public VerifyIdentityPerson person;
     @SerializedName("person_demographics")

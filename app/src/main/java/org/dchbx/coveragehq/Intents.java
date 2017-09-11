@@ -6,7 +6,10 @@ import android.net.Uri;
 
 import org.dchbx.coveragehq.models.planshopping.Plan;
 import org.dchbx.coveragehq.statemachine.EventParameters;
+import org.dchbx.coveragehq.statemachine.OnActivityResultListener;
 import org.joda.time.LocalDate;
+
+import java.util.HashMap;
 
 /**
  * Created by plast on 10/27/2016.
@@ -23,7 +26,12 @@ public class Intents {
     public static final String SHOW_HEALTH_ID = "ShowHealth";
 
     static final int REQUEST_IMAGE_CAPTURE = 1;
+    static HashMap<Integer, OnActivityResultListener> resultListeners = new HashMap<>();
+    static int nextListenerId = 0;
 
+    static public HashMap<Integer, OnActivityResultListener> getResultListeners(){
+        return resultListeners;
+    }
 
     static public void launchEmployeeDetails(BrokerActivity activity, String employeeId, String brokerClientId, LocalDate coverageYear) {
         Intent intent = new Intent(activity, EmployeeDetailsActivity .class);
@@ -111,6 +119,15 @@ public class Intents {
         Intent intent = new Intent(activity, cls);
         eventParameters.initIntent(intent);
         activity.startActivity(intent);
+    }
+
+    public static void launchActivity(Class<?> cls, Activity activity, EventParameters eventParameters, OnActivityResultListener onActivityResultListener) {
+        Intent intent = new Intent(activity, cls);
+        eventParameters.initIntent(intent);
+        int currectListenerId = nextListenerId ++;
+        resultListeners.put(currectListenerId, onActivityResultListener);
+        eventParameters.add("RequestCode", currectListenerId);
+        activity.startActivityForResult(intent, currectListenerId);
     }
 
     public static void launchStateInfo(Activity activity) {

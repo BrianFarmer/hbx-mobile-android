@@ -5,6 +5,15 @@
                                              android:layout_width="match_parent"
                                              android:layout_height="wrap_content"
     >
+    <View
+        android:id="@+id/indicator"
+        android:layout_width="3dp"
+        android:layout_height="0dp"
+        android:background="@color/alertRed"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/label"
+        app:layout_constraintBottom_toBottomOf="@+id/value"
+        />
     <TextView
         android:id="@+id/label"
         android:layout_width="0dp"
@@ -14,15 +23,21 @@
         app:layout_constraintRight_toRightOf="parent"
         style="@style/fe_label"
         />
-    <EditText
+
+
+    <com.vicmikhailau.maskededittext.MaskedEditText
         android:id="@+id/value"
-        android:inputType="number"
-        android:maxLength="11"
+        android:text=""
+        app:mask="###-##-####"
+        android:textSize="24dp"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
+        android:hint="@string/ssn_hint"
         app:layout_constraintTop_toBottomOf="@+id/label"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
         style="@style/fe_text"
-        />
+        >
+    </com.vicmikhailau.maskededittext.MaskedEditText>
+
 </android.support.constraint.ConstraintLayout>

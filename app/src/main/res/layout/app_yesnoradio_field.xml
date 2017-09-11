@@ -4,7 +4,15 @@
                                              android:orientation="vertical"
                                              android:layout_width="match_parent"
                                              android:layout_height="wrap_content"
+                                             android:background="@color/white"
     >
+    <View
+        android:id="@+id/indicator"
+        android:layout_width="3dp"
+        android:layout_height="match_parent"
+        android:background="@color/alertRed"
+        app:layout_constraintLeft_toLeftOf="parent"
+        />
     <TextView
         android:id="@+id/label"
         android:layout_width="0dp"

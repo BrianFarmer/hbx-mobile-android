@@ -4,6 +4,7 @@ import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 
 /*
     This file is part of DC.
@@ -33,5 +34,39 @@ public class Schema extends SchemaElement {
     @Expose
     @SerializedName("Person")
     public ArrayList<Field> Person;
+
+    public enum FieldTypes {
+        text,
+        id,
+        numeric,
+        date,
+        dropdown,
+        multidropdown,
+        section,
+        ssn,
+        yesnoradio,
+        zip,
+        hardwired,
+        idgen
+    }
+
+    public static HashMap<String, FieldTypes> fieldTypes = initFieldStypes();
+
+    private static HashMap<String, FieldTypes> initFieldStypes(){
+        HashMap<String, FieldTypes> hashMap = new HashMap<>();
+        hashMap.put("text", FieldTypes.text);
+        hashMap.put("id", FieldTypes.id);
+        hashMap.put("numeric", FieldTypes.numeric);
+        hashMap.put("date", FieldTypes.date);
+        hashMap.put("dropdown", FieldTypes.dropdown);
+        hashMap.put("multidropdown", FieldTypes.multidropdown);
+        hashMap.put("section", FieldTypes.section);
+        hashMap.put("ssn", FieldTypes.ssn);
+        hashMap.put("yesnoradio", FieldTypes.yesnoradio);
+        hashMap.put("zip", FieldTypes.zip);
+        hashMap.put("hardwired", FieldTypes.hardwired);
+        hashMap.put("idgen", FieldTypes.idgen);
+        return hashMap;
+    }
 
 }

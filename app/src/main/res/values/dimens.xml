@@ -19,5 +19,12 @@
     <dimen name="plan_selector_card_button_padding">13dp</dimen>
     <dimen name="plan_selector_button_big_padding">30dp</dimen>
     <dimen name="plan_selector_button_small_padding">18dp</dimen>
-    <dimen name="plan_selector_plan_favorites_padding">16dp</dimen>
+    <dimen name="plan_selector_plan_favorites_padding">17dp</dimen>
+    <dimen name="app_list_item_padding_top">12dp</dimen>
+    <dimen name="app_list_item_padding_bottom">16dp</dimen>
+    <dimen name="app_list_left_margin">16dp</dimen>
+    <dimen name="app_list_right_margin">12dp</dimen>
+    <dimen name="app_list_item_image_margin_top">13dp</dimen>
+    <dimen name="app_list_item_image_margin_bottom">13dp</dimen>
+    <dimen name="app_question_item_spacing">36dp</dimen>
 </resources>

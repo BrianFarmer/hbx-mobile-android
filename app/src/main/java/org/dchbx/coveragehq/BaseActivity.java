@@ -1,6 +1,7 @@
 package org.dchbx.coveragehq;
 
 import android.app.ProgressDialog;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
@@ -8,9 +9,13 @@ import android.util.Log;
 import android.view.View;
 
 import org.dchbx.coveragehq.models.Glossary;
+import org.dchbx.coveragehq.statemachine.EventParameters;
+import org.dchbx.coveragehq.statemachine.OnActivityResultListener;
 import org.dchbx.coveragehq.statemachine.StateManager;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
+
+import java.util.HashMap;
 
 
 public class BaseActivity extends AppCompatActivity {
@@ -21,6 +26,11 @@ public class BaseActivity extends AppCompatActivity {
     private Glossary.GlossaryItem glossaryItem;
     private String glossaryItemName;
     private static BaseActivity currentActivity;
+    protected static OnActivityResultListener onActivityResultListener;
+
+    public static void setOnActivityResultListener(OnActivityResultListener onActivityResultListener) {
+        BaseActivity.onActivityResultListener = onActivityResultListener;
+    }
 
     public Messages getMessages() {
         return messages;
@@ -70,6 +80,14 @@ public class BaseActivity extends AppCompatActivity {
     public void doThis(Events.StateAction stateAction) {
         switch (stateAction.getAction()){
             case Finish:
+                Intent intent = new Intent();
+                EventParameters eventParameters = stateAction.getEventParameters();
+                eventParameters.initIntent(intent);
+                try {
+                    setResult(eventParameters.getActivityResultCode("ResultCode").ordinal(), intent);
+                } catch (Exception e) {
+                    Log.e(TAG, "Can't find ResultCode in EventParameters");
+                }
                 finish();
                 break;
             case PopAndLaunchActivity:
@@ -79,7 +97,11 @@ public class BaseActivity extends AppCompatActivity {
                 break;
             case LaunchActivity:
                 StateManager.UiActivity.Info uiActivityType2 = StateManager.UiActivity.getUiActivityType(stateAction.getUiActivityId());
-                Intents.launchActivity(uiActivityType2.cls, this, stateAction.getEventParameters());
+                if (onActivityResultListener == null){
+                    Intents.launchActivity(uiActivityType2.cls, this, stateAction.getEventParameters());
+                } else {
+                    Intents.launchActivity(uiActivityType2.cls, this, stateAction.getEventParameters(), onActivityResultListener);
+                }
                 break;
             case LaunchDialog:
                 StateManager.UiDialog.getUiDialogType(stateAction.getUiActivityId()).dialogBuilder.build(stateAction.getEventParameters(), this);
@@ -90,6 +112,19 @@ public class BaseActivity extends AppCompatActivity {
             case HideWait:
                 hideProgress();
                 break;
+        }
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (messages == null) {
+            Log.d(TAG, "in BaseActivity.onCreate");
+            messages = BrokerApplication.getBrokerApplication().getMessages(this);
+        }
+        HashMap<Integer, OnActivityResultListener> resultListeners = Intents.getResultListeners();
+        if (resultListeners.containsKey(requestCode)){
+            OnActivityResultListener onActivityResultListener = resultListeners.get(requestCode);
+            onActivityResultListener.onActivityResult(data);
         }
     }
 
@@ -108,7 +143,7 @@ public class BaseActivity extends AppCompatActivity {
         progressDialog.show();
     }
 
-    protected void configToolbar() {
+    protected Toolbar configToolbar() {
         // Initializing Toolbar and setting it as the actionbar
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -122,6 +157,7 @@ public class BaseActivity extends AppCompatActivity {
                 getMessages().appEvent(StateManager.AppEvents.Back);
             }
         });
+        return toolbar;
     }
 
     protected void showGlossaryItem(String itemName){

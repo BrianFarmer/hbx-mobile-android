@@ -4,7 +4,6 @@ import org.joda.time.LocalDate;
 import org.joda.time.Period;
 
 import java.util.HashMap;
-import java.util.UUID;
 
 /*
     This file is part of DC.
@@ -35,13 +34,5 @@ public class ApplicationUtilities {
 
     public static String getFullName(HashMap<String, Object> person){
         return person.get(FirstName) + " " + person.get(LastName);
-    }
-
-    public static HashMap<String, Object> getNewPerson() {
-        UUID uuid = UUID.randomUUID();
-        String eaPersonId = uuid.toString();
-        HashMap<String, Object> person = new HashMap<>();
-        person.put(Id, eaPersonId);
-        return person;
     }
 }

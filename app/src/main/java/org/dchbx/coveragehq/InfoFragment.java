@@ -177,7 +177,7 @@ public class InfoFragment extends BrokerFragment {
         try {
             populateField();
         } catch (Exception e) {
-            Log.e(TAG, "exception populting fields in dothis(BrokerClient");
+            Log.e(TAG, "exception populting dependentFields in dothis(BrokerClient");
         }
     }
 

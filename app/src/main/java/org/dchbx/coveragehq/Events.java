@@ -4,9 +4,12 @@ import android.net.Uri;
 import android.util.Log;
 import android.widget.ImageView;
 
+import com.google.gson.JsonObject;
+
 import org.dchbx.coveragehq.models.Glossary;
 import org.dchbx.coveragehq.models.brokeragency.BrokerAgency;
 import org.dchbx.coveragehq.models.employer.Employer;
+import org.dchbx.coveragehq.models.fe.Family;
 import org.dchbx.coveragehq.models.fe.FinancialAssistanceApplication;
 import org.dchbx.coveragehq.models.fe.Schema;
 import org.dchbx.coveragehq.models.planshopping.Plan;
@@ -18,10 +21,10 @@ import org.dchbx.coveragehq.models.roster.RosterEntry;
 import org.dchbx.coveragehq.models.roster.SummaryOfBenefits;
 import org.dchbx.coveragehq.models.services.Service;
 import org.dchbx.coveragehq.statemachine.EventParameters;
+import org.dchbx.coveragehq.statemachine.OnActivityResultListener;
 import org.dchbx.coveragehq.statemachine.StateManager;
 import org.joda.time.LocalDate;
 
-import java.util.HashMap;
 import java.util.List;
 
 import static org.dchbx.coveragehq.Events.GetLoginResult.UserType.SignUpIndividual;
@@ -1125,6 +1128,7 @@ public class Events {
     }
 
     public static class StateAction {
+
         public Action getAction() {
             return action;
         }
@@ -1139,7 +1143,7 @@ public class Events {
             LaunchDialog,
             HideWait,
             ShowWait,
-            PopAndLaunchActivity, Dismiss
+            PopAndLaunchActivity, Pop, Dismiss
         }
 
         private final Action action;
@@ -1151,6 +1155,13 @@ public class Events {
             this.uiActivityId = uiActivityId;
             this.eventParameters = eventParameters;
         }
+
+        public StateAction(Action action, EventParameters eventParameters){
+            this.action = action;
+            this.eventParameters = eventParameters;
+        }
+
+
 
         public int getUiActivityId() {
             return uiActivityId;
@@ -1232,6 +1243,7 @@ public class Events {
         private final StateManager.AppEvents event;
         private final EventParameters intentParameters;
         private final String s;
+        private OnActivityResultListener onActivityResultListener;
 
         public AppEvent(StateManager.AppEvents event) {
             this.event = event;
@@ -1347,14 +1359,47 @@ public class Events {
     }
 
     public static class GetApplicationPersonResponse {
-        private final HashMap<String, Object> person;
+        private final JsonObject person;
 
-        public GetApplicationPersonResponse(HashMap<String, Object> person){
+        public GetApplicationPersonResponse(JsonObject person){
             this.person = person;
         }
 
-        public HashMap<String, Object> getPerson() {
+        public JsonObject getPerson() {
             return person;
         }
+    }
+
+    public static class GetUqhpSchema {
+    }
+
+    public static class GetUqhpFamily {
+    }
+
+    public static class GetUqhpFamilyResponse {
+        private Family family;
+
+        public GetUqhpFamilyResponse(Family family){
+            this.family = family;
+        }
+
+        public Family getFamily() {
+            return family;
+        }
+    }
+
+    public static class SaveUqhpFamily {
+        private Family family;
+
+        public SaveUqhpFamily(Family family){
+            this.family = family;
+        }
+
+        public Family getFamily() {
+            return family;
+        }
+    }
+
+    public static class SaveUqhpFamilyResponse {
     }
 }

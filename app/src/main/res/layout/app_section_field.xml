@@ -1,10 +1,19 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
-                                             xmlns:app="http://schemas.android.com/apk/res-auto"
-                                             android:orientation="vertical"
-                                             android:layout_width="match_parent"
-                                             android:layout_height="wrap_content"
+<android.support.constraint.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@color/transparent"
     >
+    <View
+        android:id="@+id/indicator"
+        android:layout_width="3dp"
+        android:layout_height="match_parent"
+        android:background="@color/alertRed"
+        app:layout_constraintLeft_toLeftOf="parent"
+        />
     <TextView
         android:id="@+id/label"
         android:textSize="20dp"
@@ -17,9 +26,9 @@
         app:layout_constraintRight_toLeftOf="@+id/sectionButton"
         style="@style/fe_label"
         />
-    <ImageButton
+    <ImageView
         android:id="@+id/sectionButton"
-        app:srcCompat="@drawable/right_arrow"
+        app:srcCompat="@drawable/right_arrow_blue"
         android:scaleType="fitXY"
         android:background="@color/transparent"
         android:layout_width="30dp"

@@ -221,13 +221,17 @@
             android:label=""
             />
         <activity
-            android:name=".financialeligibility.AddPersonActivity"
+            android:name=".financialeligibility.EditPersonActivity"
             android:configChanges="orientation|keyboardHidden|screenSize"
             android:label=""
             />
         <activity android:name=".financialeligibility.SectionActivity"
             android:configChanges="orientation|keyboardHidden|screenSize"
             android:label=""
+            />
+        <activity android:name=".financialeligibility.CheckedListDialog"
+                  android:configChanges="orientation|keyboardHidden|screenSize"
+                  android:label=""
             />
     </application>
 

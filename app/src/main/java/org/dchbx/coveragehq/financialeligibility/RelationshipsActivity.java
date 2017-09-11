@@ -1,7 +1,8 @@
-package org.dchbx.coveragehq;
+package org.dchbx.coveragehq.financialeligibility;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
@@ -11,7 +12,10 @@ import android.widget.TextView;
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 
-import org.dchbx.coveragehq.financialeligibility.FinancialEligibilityService;
+import org.dchbx.coveragehq.BaseActivity;
+import org.dchbx.coveragehq.Events;
+import org.dchbx.coveragehq.R;
+import org.dchbx.coveragehq.ServiceManager;
 import org.dchbx.coveragehq.models.fe.Family;
 import org.dchbx.coveragehq.models.fe.Person;
 import org.dchbx.coveragehq.statemachine.EventParameters;
@@ -24,13 +28,15 @@ import org.greenrobot.eventbus.ThreadMode;
  * Created by plast on 5/4/2017.
  */
 
-public class FamilyActivity extends BaseActivity {
-    public static StateManager.UiActivity uiActivity = new StateManager.UiActivity(FamilyActivity.class);
+public class RelationshipsActivity extends BaseActivity {
+    private static final String TAG = "RelationshipsActivity";
+    public static StateManager.UiActivity uiActivity = new StateManager.UiActivity(RelationshipsActivity.class);
 
-    private FamilyAdapter familyAdapter;
+    private RelationshipsAdapter familyAdapter;
     private Family family;
 
-    public FamilyActivity(){
+    public RelationshipsActivity(){
+        Log.d(TAG, "familyactivity ctor");
     }
 
     @Override
@@ -39,31 +45,22 @@ public class FamilyActivity extends BaseActivity {
 
         setContentView(R.layout.family);
         configToolbar();
-        getMessages().getPlanShopping();
         getMessages().getUqhpFamily();
     }
 
-    @Subscribe(threadMode = ThreadMode.MAIN)
-    public void doThis(Events.GetPlanShoppingResult  getPlanShoppingResult) throws Exception {
-        populate();
-    }
 
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void doThis(Events.GetUqhpFamilyResponse getUqhpFamilyResponse) throws Exception {
-        this.family = getUqhpFamilyResponse.getFamily();
+        family = getUqhpFamilyResponse.getFamily();
         populate();
     }
 
     protected void populate() {
-        if (family == null) {
-            return;
-        }
-
-        familyAdapter = new FamilyAdapter(this, family);
+        familyAdapter = new RelationshipsAdapter(this, family);
         ListView memberListView = (ListView) findViewById(R.id.memberList);
         memberListView.setAdapter(familyAdapter);
 
-        TextView shouldInclude = (TextView) findViewById(R.id.shouldInclude);
+        TextView shouldInclude = (TextView)findViewById(R.id.shouldInclude);
         shouldInclude.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -92,6 +89,7 @@ public class FamilyActivity extends BaseActivity {
                             JsonObject person = gson.fromJson(jsonString, JsonObject.class);
                             family.Person.add(person);
                             familyAdapter.notifyDataSetChanged();
+                            saveData();
                         }
                     }
                 });
@@ -103,7 +101,7 @@ public class FamilyActivity extends BaseActivity {
         continueButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                getMessages().appEvent(StateManager.AppEvents.Continue);
+                getMessages().appEvent(StateManager.AppEvents.EditFamilyMember);
             }
         });
     }
