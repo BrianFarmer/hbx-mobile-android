@@ -400,4 +400,5 @@ You <font color="#69a30d">favorited %d plans</font>.
     <string name="save">Save</string>
     <string name="date_hint">##/##/####</string>
     <string name="ssn_hint">###-##-####</string>
+    <string name="family_relationship" formatted="false">%1$s %2$s is %3$s %4$s’s ...</string>
 </resources>

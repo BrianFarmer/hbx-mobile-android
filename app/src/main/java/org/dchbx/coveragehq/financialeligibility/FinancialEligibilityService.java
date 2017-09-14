@@ -25,6 +25,8 @@ import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 
 /*
     This file is part of DC.
@@ -46,6 +48,7 @@ import java.util.ArrayList;
 public class FinancialEligibilityService {
     private static String TAG = "FinancialEligibility";
 
+    public static String EaPersonId = "eapersonid";
 
 
     private final Messages messages;
@@ -58,7 +61,7 @@ public class FinancialEligibilityService {
     }
 
     @Subscribe(threadMode = ThreadMode.BACKGROUND)
-    public void doThis(Events.GetUqhpFamily getUqhpFamily){
+    public void doThis(Events.GetUqhpFamily getUqhpFamily) {
         ConfigurationStorageHandler configurationStorageHandler = serviceManager.getConfigurationStorageHandler();
 
         Family family = configurationStorageHandler.readUqhpFamily();
@@ -66,30 +69,30 @@ public class FinancialEligibilityService {
     }
 
     @Subscribe(threadMode = ThreadMode.BACKGROUND)
-    public void doThis(Events.SaveUqhpFamily saveUqhpFamily){
+    public void doThis(Events.SaveUqhpFamily saveUqhpFamily) {
         ConfigurationStorageHandler configurationStorageHandler = serviceManager.getConfigurationStorageHandler();
-
-        configurationStorageHandler.storeUqhpFamily(saveUqhpFamily.getFamily());
+        Family family = saveUqhpFamily.getFamily();
+        configurationStorageHandler.storeUqhpFamily(family);
         messages.saveUqhpFamilyResponse();
     }
 
     @Subscribe(threadMode = ThreadMode.BACKGROUND)
-    public void doThis(Events.GetFinancialAssistanceApplication getFinancialAssistanceApplication){
+    public void doThis(Events.GetFinancialAssistanceApplication getFinancialAssistanceApplication) {
         messages.getFinancialAssistanceApplicationResponse(new FinancialAssistanceApplication());
     }
 
     @Subscribe(threadMode = ThreadMode.BACKGROUND)
     public void doThis(Events.GetFinancialEligibilityJson getFinancialEligibilityJson) throws Exception {
         Log.d(TAG, "in FinancialEligibilityService.doThis(Events.GetFinancialEligibilityJson)");
-        if (schema == null){
+        if (schema == null) {
             UrlHandler urlHandler = serviceManager.getUrlHandler();
             ConnectionHandler connectionHandler = serviceManager.getConnectionHandler();
 
             UrlHandler.HttpRequest request = urlHandler.getFinancialEligibilityJson();
             IConnectionHandler.HttpResponse response = connectionHandler.process(request);
-            connectionHandler.process(request, new IConnectionHandler.OnCompletion(){
-                public void onCompletion(IConnectionHandler.HttpResponse response){
-                    if (response.getResponseCode() == 200){
+            connectionHandler.process(request, new IConnectionHandler.OnCompletion() {
+                public void onCompletion(IConnectionHandler.HttpResponse response) {
+                    if (response.getResponseCode() == 200) {
                         JsonParser parser = serviceManager.getParser();
                         schema = parser.parseSchema(response.getBody());
                     } else {
@@ -104,15 +107,15 @@ public class FinancialEligibilityService {
     @Subscribe(threadMode = ThreadMode.BACKGROUND)
     public void doThis(Events.GetUqhpSchema getUqhpSchema) throws Exception {
         Log.d(TAG, "in FinancialEligibilityService.doThis(Events.GetFinancialEligibilityJson)");
-        if (schema == null){
+        if (schema == null) {
             UrlHandler urlHandler = serviceManager.getUrlHandler();
             ConnectionHandler connectionHandler = serviceManager.getConnectionHandler();
 
             UrlHandler.HttpRequest request = urlHandler.getUqhpSchema();
             IConnectionHandler.HttpResponse response = connectionHandler.process(request);
-            connectionHandler.process(request, new IConnectionHandler.OnCompletion(){
-                public void onCompletion(IConnectionHandler.HttpResponse response){
-                    if (response.getResponseCode() == 200){
+            connectionHandler.process(request, new IConnectionHandler.OnCompletion() {
+                public void onCompletion(IConnectionHandler.HttpResponse response) {
+                    if (response.getResponseCode() == 200) {
                         JsonParser parser = serviceManager.getParser();
                         schema = parser.parseSchema(response.getBody());
                     } else {
@@ -124,11 +127,24 @@ public class FinancialEligibilityService {
         messages.getFinancialEligibilityJsonResponse(schema);
     }
 
-    public Person getNewPerson() {
+    public static Person getNewPerson() {
         return new Person();
     }
 
-    public JsonObject build(ArrayList<Field> dependentFields) {
+    public static void removeFamilyMember(Family family, int i) {
+        String eapersonid = family.Person.get(i).getAsJsonObject().get("eapersonid").getAsString();
+        family.Relationship.remove(eapersonid);
+
+        for (Map.Entry<String, HashMap<String, JsonObject>> entry : family.Relationship.entrySet()) {
+            if (entry.getValue().containsKey(eapersonid)){
+                entry.getValue().remove(eapersonid);
+            }
+        }
+
+        family.Person.remove(i);
+    }
+
+    public static JsonObject build(ArrayList<Field> dependentFields) {
         JsonObject result = new JsonObject();
         for (Field dependentField : dependentFields) {
             if (dependentField.defaultValue != null){
@@ -200,5 +216,10 @@ public class FinancialEligibilityService {
         }
 
         return true;
+    }
+
+    public static void addPersonToFamily(Family family, JsonObject person) {
+        family.Person.add(person);
+        family.Relationship.put(person.get("eapersonid").getAsString(), new HashMap<String, JsonObject>());
     }
 }

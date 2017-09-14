@@ -233,6 +233,18 @@
                   android:configChanges="orientation|keyboardHidden|screenSize"
                   android:label=""
             />
+        <activity android:name=".financialeligibility.RelationshipsActivity"
+                  android:configChanges="orientation|keyboardHidden|screenSize"
+                  android:label=""
+            />
+        <activity android:name=".financialeligibility.EditRelationshipActivity"
+                  android:configChanges="orientation|keyboardHidden|screenSize"
+                  android:label=""
+            />
+        <activity android:name=".financialeligibility.AttestationActivity"
+                  android:configChanges="orientation|keyboardHidden|screenSize"
+                  android:label=""
+            />
     </application>
 
 </manifest>

@@ -30,6 +30,7 @@ import org.dchbx.coveragehq.statemachine.StateManager;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Map;
 import java.util.UUID;
 
 import static android.text.InputType.TYPE_CLASS_NUMBER;
@@ -58,6 +59,7 @@ public class ApplicationQuestionsActivity extends BrokerActivity {
     protected JsonObject jsonObject;
     protected LinearLayout linearLayout;
     private ArrayList<FieldType> fields;
+    protected static HashMap<String, String> replacements;
 
     public ApplicationQuestionsActivity(){
         schemaFields = null;
@@ -190,6 +192,15 @@ public class ApplicationQuestionsActivity extends BrokerActivity {
         return fields;
     }
 
+    public static String replace(String string){
+        if (replacements != null){
+            for (Map.Entry<String, String> entry : replacements.entrySet()) {
+                string = string.replace("{" + entry.getKey() + "}", entry.getValue());
+            }
+        }
+        return string;
+    }
+
     protected HashMap<String, Object> getValues() {
         HashMap<String, Object> values = new HashMap<>();
         getValues(values, fields);
@@ -220,19 +231,23 @@ public class ApplicationQuestionsActivity extends BrokerActivity {
         protected Field field;
         protected final LinearLayout linearLayout;
         protected JsonObject values;
+        protected final ApplicationQuestionsActivity activity;
         protected ArrayList<FieldType> dependentFields;
         protected View view;
 
-        public FieldType(Field field, LinearLayout linearLayout, JsonObject values){
+        public FieldType(Field field, LinearLayout linearLayout, JsonObject values,
+                         ApplicationQuestionsActivity activity){
             this.field = field;
             this.linearLayout = linearLayout;
             this.values = values;
+            this.activity = activity;
         }
 
         public FieldType(Field field, JsonObject values) {
             this.field = field;
             this.values = values;
             linearLayout = null;
+            activity = null;
         }
 
         public abstract Object getValue();
@@ -252,7 +267,7 @@ public class ApplicationQuestionsActivity extends BrokerActivity {
         protected View indicator;
 
         public TextField(Field field, JsonObject values, boolean numericOnly, LinearLayout linearLayout) {
-            super(field, linearLayout, values);
+            super(field, linearLayout, values, null);
             this.numericOnly = numericOnly;
         }
 
@@ -352,14 +367,12 @@ public class ApplicationQuestionsActivity extends BrokerActivity {
     }
 
     public static class DropDownField extends FieldType {
-        private final ApplicationQuestionsActivity activity;
         private TextView value;
         private String savedValue;
 
         public DropDownField(ApplicationQuestionsActivity activity, Field field, JsonObject values,
                              LinearLayout linearLayout) {
-            super(field, linearLayout, values);
-            this.activity = activity;
+            super(field, linearLayout, values, activity);
             if (values.has(field.field)) {
                 savedValue = values.get(field.field).getAsString();
             }
@@ -375,7 +388,7 @@ public class ApplicationQuestionsActivity extends BrokerActivity {
             view = inflater.inflate(R.layout.app_dropdown_field, linearLayout, false);
             linearLayout.addView(view);
             TextView label = (TextView) view.findViewById(R.id.label);
-            label.setText(field.label);
+            label.setText(ApplicationQuestionsActivity.replace(field.label));
             value = (TextView) view.findViewById(R.id.value);
 
             if (values.has(field.field)){
@@ -406,7 +419,7 @@ public class ApplicationQuestionsActivity extends BrokerActivity {
                     });
                     activity.getMessages().appEvent(StateManager.AppEvents.ShowDropDown,
                             EventParameters.build().add("Field", field)
-                                    .add("Value", getStringForDropDownValue(field, values)));
+                                    .add("Value", getDropDownValue(field, values)));
                 }
             });
             checkIndicator();
@@ -432,6 +445,13 @@ public class ApplicationQuestionsActivity extends BrokerActivity {
                         return option.name;
                     }
                 }
+            }
+            return field.defaultValue;
+        }
+
+        private String getDropDownValue(Field field, JsonObject values) {
+            if (values.has(field.field)){
+                return values.get(field.field).getAsString();
             }
             return field.defaultValue;
         }
@@ -486,7 +506,7 @@ public class ApplicationQuestionsActivity extends BrokerActivity {
         private EditText value;
 
         public Idfield (Field field, JsonObject values, LinearLayout linearLayout) {
-            super(field, linearLayout, values);
+            super(field, linearLayout, values, null);
             this.field = field;
             this.values = values;
         }
@@ -528,7 +548,7 @@ public class ApplicationQuestionsActivity extends BrokerActivity {
         protected View indicator;
 
         public DateField(Field field, JsonObject values, LinearLayout linearLayout) {
-            super(field, linearLayout, values);
+            super(field, linearLayout, values, null);
             this.field = field;
             this.values = values;
         }
@@ -637,7 +657,7 @@ public class ApplicationQuestionsActivity extends BrokerActivity {
     class MultiDropDownField extends FieldType {
 
         public MultiDropDownField(Field field, JsonObject values, LinearLayout linearLayout) {
-            super(field, linearLayout, values);
+            super(field, linearLayout, values, null);
         }
 
         @Override
@@ -675,7 +695,7 @@ public class ApplicationQuestionsActivity extends BrokerActivity {
         private View indicator;
 
         public SectionField(Field field, JsonObject values, LinearLayout linearLayout) {
-            super(field, linearLayout, values);
+            super(field, linearLayout, values, null);
             if (values.has(field.field)){
                 try {
 
@@ -747,7 +767,7 @@ public class ApplicationQuestionsActivity extends BrokerActivity {
         protected View indicator;
 
         public SsnField(Field field, JsonObject values, LinearLayout linearLayout) {
-            super(field, linearLayout, values);
+            super(field, linearLayout, values,  null);
         }
 
         @Override
@@ -849,7 +869,7 @@ public class ApplicationQuestionsActivity extends BrokerActivity {
         private View indicator;
 
         public YesNoRadioField(Field field, JsonObject values, LinearLayout linearLayout) {
-            super(field, linearLayout, values);
+            super(field, linearLayout, values, null);
         }
 
         @Override
@@ -898,15 +918,6 @@ public class ApplicationQuestionsActivity extends BrokerActivity {
             }
             indicator = view.findViewById(R.id.indicator);
             checkIndicator();
-        }
-
-        private void checkIndicator() {
-            indicator.setVisibility(radioGroup.getCheckedRadioButtonId() == -1?View.VISIBLE:View.GONE);
-        }
-
-        @Override
-        public void configureDependentFieldsVisibility(ArrayList<FieldType> fields) {
-            this.dependentFields = fields;
             radioGroup.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
                 @Override
                 public void onCheckedChanged(RadioGroup group, @IdRes int checkedId) {
@@ -919,10 +930,22 @@ public class ApplicationQuestionsActivity extends BrokerActivity {
                     checkIndicator();
                 }
             });
+        }
+
+        private void checkIndicator() {
+            indicator.setVisibility(radioGroup.getCheckedRadioButtonId() == -1?View.VISIBLE:View.GONE);
+        }
+
+        @Override
+        public void configureDependentFieldsVisibility(ArrayList<FieldType> fields) {
+            this.dependentFields = fields;
             testDependentFields(radioGroup.getCheckedRadioButtonId());
         }
 
         private void testDependentFields(int checkedId) {
+            if (dependentFields == null){
+                return;
+            }
             if (checkedId == R.id.yesButton){
                 for (FieldType dependentFieldType : dependentFields) {
                     boolean foundPrereqValue = false;
@@ -973,7 +996,7 @@ public class ApplicationQuestionsActivity extends BrokerActivity {
         protected View indicator;
 
         public ZipField(Field field, JsonObject values, LinearLayout linearLayout) {
-            super(field, linearLayout, values);
+            super(field, linearLayout, values, null);
         }
 
         @Override

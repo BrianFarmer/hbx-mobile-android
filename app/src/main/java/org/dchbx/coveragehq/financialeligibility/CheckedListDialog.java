@@ -69,12 +69,13 @@ public class CheckedListDialog extends BaseActivity {
 
     private void populate() {
         label = (TextView)findViewById(R.id.label);
-        label.setText(field.label);
+        label.setText(ApplicationQuestionsActivity.replace(field.label));
         listView = (ListView) findViewById(R.id.listView);
 
         currentIndex = -1;
         for (int i = 0 ; i < field.options.size(); i++) {
-            if (field.options.get(i).value.equals(field.defaultValue)){
+            String curValue = field.options.get(i).value;
+            if (curValue.equals(value)){
                 currentIndex=i;
             }
         }

@@ -114,7 +114,7 @@ public class FamilyActivity extends BaseActivity {
         continueButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                getMessages().appEvent(StateManager.AppEvents.EditFamilyMember);
+                getMessages().appEvent(StateManager.AppEvents.Continue);
             }
         });
     }

@@ -90,7 +90,7 @@ public class FamilyActivity extends BaseActivity {
                             String jsonString = intent.getStringExtra("Result");
                             Gson gson = new Gson();
                             JsonObject person = gson.fromJson(jsonString, JsonObject.class);
-                            family.Person.add(person);
+                            FinancialEligibilityService.addPersonToFamily(family, person);
                             familyAdapter.notifyDataSetChanged();
                         }
                     }

@@ -27,8 +27,11 @@ import org.dchbx.coveragehq.ServiceManager;
 import org.dchbx.coveragehq.StateProcessor;
 import org.dchbx.coveragehq.WelcomeBackActivity;
 import org.dchbx.coveragehq.YourMobilePasswordActivity;
+import org.dchbx.coveragehq.financialeligibility.AttestationActivity;
 import org.dchbx.coveragehq.financialeligibility.CheckedListDialog;
 import org.dchbx.coveragehq.financialeligibility.EditPersonActivity;
+import org.dchbx.coveragehq.financialeligibility.EditRelationshipActivity;
+import org.dchbx.coveragehq.financialeligibility.RelationshipsActivity;
 import org.dchbx.coveragehq.financialeligibility.SectionActivity;
 import org.dchbx.coveragehq.ridp.AcctAddress;
 import org.dchbx.coveragehq.ridp.AcctAuthConsent;
@@ -268,7 +271,7 @@ public class StateManager extends StateProcessor {
         CreatingAccountFe, VerifyingUserFe, RidpQuestionsFe, GetQuestionsFe,
         AcctSystemFoundYouInCuramAcedsFe, AcctSsnWithEmployerFe, AcctSystemFoundYouFe,
         FamilyMembersFe, FinancialAssitanceQuestions, FeDropDown,
-        Wallet, SectionQuestions, Saved
+        Wallet, SectionQuestions, EditFamilyRelationShip, Attestation, Saved
     }
 
     // You are discouraged from removing or reordring this enum. It is used in serialized objects.
@@ -314,7 +317,7 @@ public class StateManager extends StateProcessor {
         EditFamilyMember,
         OpenSection,
         Goto, // Special case for dev to goto specific state.
-        ShowDropDown, DropdownSaved, UserSaved, ErrorHappened
+        ShowDropDown, DropdownSaved, UserSaved, EditRelationship, ErrorHappened
     }
 
     public void configStates() {
@@ -428,6 +431,7 @@ public class StateManager extends StateProcessor {
         stateMachine.from(AppStates.CreatingAccountFe).on(AppEvents.SignUpUserInAceds).to(AppStates.AcctSystemFoundYouInCuramAcedsFe, new LaunchActivity(AcctSystemFoundYouAceds.uiActivity));
         stateMachine.from(AppStates.CreatingAccountFe).on(AppEvents.SignUpSuccessful).to(AppStates.FamilyMembersFe, new PopAndLaunchActivity(org.dchbx.coveragehq.financialeligibility.FamilyActivity.uiActivity));
         stateMachine.from(AppStates.FamilyMembersFe).on(AppEvents.EditFamilyMember).to(AppStates.FinancialAssitanceQuestions, new LaunchActivity(EditPersonActivity.uiActivity));
+        stateMachine.from(AppStates.FamilyMembersFe).on(AppEvents.Continue).to(AppStates.FamilyRelationships, new LaunchActivity(RelationshipsActivity.uiActivity));
         stateMachine.from(AppStates.FinancialAssitanceQuestions).on(AppEvents.ShowDropDown).to(AppStates.FeDropDown, new LaunchActivity(CheckedListDialog.uiActivity));
         stateMachine.from(AppStates.FinancialAssitanceQuestions).on(AppEvents.UserSaved).doThis(new Back());
         stateMachine.from(AppStates.FinancialAssitanceQuestions).on(AppEvents.OpenSection).to(AppStates.SectionQuestions, new LaunchActivity(SectionActivity.uiActivity));
@@ -435,6 +439,10 @@ public class StateManager extends StateProcessor {
         stateMachine.from(AppStates.SectionQuestions).on(AppEvents.UserSaved).doThis(new Back());
         stateMachine.from(AppStates.SectionQuestions).on(AppEvents.OpenSection).to(AppStates.SectionQuestions, new LaunchActivity(SectionActivity.uiActivity));
         stateMachine.from(AppStates.FeDropDown).on(AppEvents.DropdownSaved).doThis(new Back());
+        stateMachine.from(AppStates.FamilyRelationships).on(AppEvents.EditRelationship).to(AppStates.EditFamilyRelationShip, new LaunchActivity(EditRelationshipActivity.uiActivity));
+        stateMachine.from(AppStates.FamilyRelationships).on(AppEvents.Continue).to(AppStates.Attestation , new LaunchActivity(AttestationActivity.uiActivity));
+        stateMachine.from(AppStates.EditFamilyRelationShip).on(AppEvents.ShowDropDown).to(AppStates.FeDropDown, new LaunchActivity(CheckedListDialog.uiActivity));
+        stateMachine.from(AppStates.EditFamilyRelationShip).on(AppEvents.UserSaved).doThis(new Back());
     }
 
 

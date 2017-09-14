@@ -11,13 +11,14 @@
         style="@style/ivl_member_label"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        app:layout_constraintRight_toLeftOf="@+id/openRelationship"
+        android:layout_marginLeft="26dp"
+        app:layout_constraintRight_toLeftOf="@+id/editRelationship"
         app:layout_constraintLeft_toLeftOf="parent"
         android:text="Family Member"
         />
 
     <ImageView
-        android:id="@+id/openRelationship"
+        android:id="@+id/editRelationship"
         android:layout_width="wrap_content"
         android:layout_height="32dp"
         app:layout_constraintRight_toRightOf="parent"

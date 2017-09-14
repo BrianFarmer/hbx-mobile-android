@@ -6,7 +6,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
-import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.TextView;
 
@@ -83,11 +82,24 @@ public class FamilyAdapter extends BaseAdapter {
                     removeFamilyMember(i);
                 }
             });
-            memberLabel.setText(String.format(activity.getString(R.string.family_member), i));
+            JsonObject item = (JsonObject) getItem(i);
+            if (item.has("personfirstname")
+                    || item.has("personlastname")){
+                String name = "";
+                if (item.has("personfirstname")){
+                    name = item.get("personfirstname").getAsString();
+                }
+                if (item.has("personlastname")){
+                    name += " " + item.get("personlastname").getAsString();
+                }
+                name = name.trim();
+                memberLabel.setText(name);
+            } else {
+                memberLabel.setText(String.format(activity.getString(R.string.family_member), i));
+            }
         }
 
-        Button editButton = (Button) v.findViewById(R.id.editButton);
-        editButton.setOnClickListener(new View.OnClickListener() {
+        v.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 ApplicationQuestionsActivity.setOnActivityResultListener(new OnActivityResultListener() {

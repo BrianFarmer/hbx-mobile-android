@@ -6,7 +6,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
-import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.TextView;
 
@@ -15,6 +14,7 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 
 import org.dchbx.coveragehq.financialeligibility.ApplicationQuestionsActivity;
+import org.dchbx.coveragehq.financialeligibility.FinancialEligibilityService;
 import org.dchbx.coveragehq.models.fe.Family;
 import org.dchbx.coveragehq.statemachine.EventParameters;
 import org.dchbx.coveragehq.statemachine.OnActivityResultListener;
@@ -68,6 +68,7 @@ public class FamilyAdapter extends BaseAdapter {
 
         ImageButton removeMember = (ImageButton) v.findViewById(R.id.removeMember);
         TextView memberLabel = (TextView) v.findViewById(R.id.memberLabel);
+        JsonObject item = (JsonObject) getItem(i);
         if (i == 0){
             removeMember.setVisibility(View.INVISIBLE);
             memberLabel.setText(R.string.you_primary);
@@ -82,28 +83,28 @@ public class FamilyAdapter extends BaseAdapter {
             memberLabel.setText(String.format(activity.getString(R.string.family_member), i));
         }
 
-        Button editButton = (Button) v.findViewById(R.id.editButton);
-        editButton.setOnClickListener(new View.OnClickListener() {
+        v.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                ApplicationQuestionsActivity.setOnActivityResultListener(new OnActivityResultListener() {
-                    @Override
-                    public void onActivityResult(Intent intent) {
-                        if (intent != null) {
-                            String jsonString = intent.getStringExtra("Result");
-                            Gson gson = new Gson();
-                            JsonObject person = gson.fromJson(jsonString, JsonObject.class);
-                            family.Person.set(i, person);
-                        }
+            ApplicationQuestionsActivity.setOnActivityResultListener(new OnActivityResultListener() {
+                @Override
+                public void onActivityResult(Intent intent) {
+                    if (intent != null) {
+                        String jsonString = intent.getStringExtra("Result");
+                        Gson gson = new Gson();
+                        JsonObject person = gson.fromJson(jsonString, JsonObject.class);
+                        family.Person.set(i, person);
                     }
-                });
-                activity.getMessages().appEvent(StateManager.AppEvents.EditFamilyMember, EventParameters.build().add("FamilyMember", new Gson().toJson(family.Person.get(i))));
+                }
+            });
+            activity.getMessages().appEvent(StateManager.AppEvents.EditFamilyMember, EventParameters.build().add("FamilyMember", new Gson().toJson(family.Person.get(i))));
             }
         });
         return v;
     }
 
     private void removeFamilyMember(int i ){
+        FinancialEligibilityService.removeFamilyMember(family, i);
         notifyDataSetChanged();
         activity.saveData();
     }

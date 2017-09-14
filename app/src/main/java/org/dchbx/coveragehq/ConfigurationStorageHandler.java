@@ -17,6 +17,8 @@ import org.dchbx.coveragehq.models.ridp.VerifyIdentityResponse;
 import org.joda.time.LocalDate;
 import org.joda.time.LocalTime;
 
+import java.util.HashMap;
+
 public class ConfigurationStorageHandler extends IServerConfigurationStorageHandler {
     private static String TAG = "ConfigurationStorage";
 
@@ -215,7 +217,7 @@ public class ConfigurationStorageHandler extends IServerConfigurationStorageHand
                 || responseJson.length() == 0){
             Family family = new Family();
             family.Person = new JsonArray();
-            family.Relationship = new JsonArray();
+            family.Relationship = new HashMap<>();
             family.Attestation = new JsonObject();
             return family;
         }
