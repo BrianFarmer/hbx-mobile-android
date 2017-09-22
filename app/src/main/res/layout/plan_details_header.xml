@@ -24,8 +24,11 @@
         android:layout_alignStart="@+id/carrierLogo"
         android:layout_below="@+id/carrierLogo"
         android:layout_marginTop="15dp"
-        android:text="TextView"
+        android:text="Plan Name"
+        android:fontFamily="sans-serif"
         android:textSize="18sp"
+        android:textColor="@color/textdarkgray"
+        android:textStyle="bold"
         />
 
     <RelativeLayout
@@ -38,9 +41,11 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentTop="true"
-            android:fontFamily="roboto"
+            android:fontFamily="sans-serif"
             android:text="@string/plan_type"
             android:textSize="18sp"
+            android:textColor="@color/textdarkgray"
+            android:textStyle="normal"
             />
         <TextView
             android:id="@+id/planType"
@@ -50,7 +55,10 @@
             android:layout_alignParentRight="true"
             android:layout_alignParentTop="true"
             android:text="TextView"
+            android:fontFamily="sans-serif"
             android:textSize="18sp"
+            android:textColor="@color/textdarkgray"
+            android:textStyle="normal"
             />
 
     </RelativeLayout>
@@ -67,7 +75,10 @@
             android:layout_alignParentLeft="true"
             android:layout_alignParentStart="true"
             android:text="@string/plan_location"
+            android:fontFamily="sans-serif"
             android:textSize="18sp"
+            android:textColor="@color/textdarkgray"
+            android:textStyle="normal"
             />
         <TextView
             android:id="@+id/planLocation"
@@ -76,7 +87,10 @@
             android:layout_toRightOf="@+id/planLocationLabel"
             android:layout_alignParentRight="true"
             android:text="TextView"
+            android:fontFamily="sans-serif"
             android:textSize="18sp"
+            android:textColor="@color/textdarkgray"
+            android:textStyle="normal"
             />
     </RelativeLayout>
 
@@ -92,7 +106,10 @@
             android:layout_alignParentLeft="true"
             android:layout_alignParentStart="true"
             android:text="@string/metal_level"
+            android:fontFamily="sans-serif"
             android:textSize="18sp"
+            android:textColor="@color/textdarkgray"
+            android:textStyle="normal"
             />
         <ImageView
             android:id="@+id/planMetalRing"
@@ -109,7 +126,10 @@
             android:layout_toRightOf="@+id/planMetalRing"
             android:layout_alignParentRight="true"
             android:text="TextView"
+            android:fontFamily="sans-serif"
             android:textSize="18sp"
+            android:textColor="@color/textdarkgray"
+            android:textStyle="normal"
             />
     </RelativeLayout>
 
@@ -126,7 +146,10 @@
             android:layout_alignParentTop="true"
             android:gravity="center_horizontal"
             android:textSize="18dp"
+            android:fontFamily="sans-serif"
             android:text="@string/monthly"
+            android:textColor="@color/textdarkgray"
+            android:textStyle="normal"
             />
         <TextView
             android:id="@+id/monthlyPremiumLabel"
@@ -136,6 +159,9 @@
             android:gravity="center_horizontal"
             android:textSize="18dp"
             android:text="@string/premium"
+            android:fontFamily="sans-serif"
+            android:textColor="@color/textdarkgray"
+            android:textStyle="normal"
             />
         <TextView
             android:id="@+id/monthlyPremium"
@@ -145,6 +171,8 @@
             android:gravity="center_horizontal"
             android:textSize="22dp"
             android:textStyle="bold"
+            android:fontFamily="sans-serif"
+            android:textColor="@color/textdarkgray"
             />
         <TextView
             android:id="@+id/annualLabel"
@@ -155,6 +183,9 @@
             android:gravity="center_horizontal"
             android:textSize="18dp"
             android:text="@string/annual"
+            android:fontFamily="sans-serif"
+            android:textColor="@color/textdarkgray"
+            android:textStyle="normal"
             />
         <TextView
             android:id="@+id/premiumLabel"
@@ -165,6 +196,9 @@
             android:gravity="center_horizontal"
             android:textSize="18dp"
             android:text="@string/premium"
+            android:fontFamily="sans-serif"
+            android:textColor="@color/textdarkgray"
+            android:textStyle="normal"
             />
         <TextView
             android:id="@+id/annualPremium"
@@ -175,6 +209,8 @@
             android:gravity="center_horizontal"
             android:textSize="22dp"
             android:textStyle="bold"
+            android:fontFamily="sans-serif"
+            android:textColor="@color/textdarkgray"
             />
         <TextView
             android:id="@+id/deductibleLabel"
@@ -185,6 +221,9 @@
             android:gravity="center_horizontal"
             android:textSize="18dp"
             android:text="@string/deductible"
+            android:fontFamily="sans-serif"
+            android:textColor="@color/textdarkgray"
+            android:textStyle="normal"
             />
         <TextView
             android:id="@+id/deductible"
@@ -194,8 +233,10 @@
             android:layout_below="@+id/deductibleLabel"
             android:layout_toRightOf="@id/annualPremium"
             android:textSize="22dp"
-            android:text="$7,175"
+            android:text=""
+            android:fontFamily="sans-serif"
             android:textStyle="bold"
+            android:textColor="@color/textdarkgray"
             />
     </android.support.percent.PercentRelativeLayout>
 

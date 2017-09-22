@@ -30,7 +30,7 @@ public class SignUp {
     @SerializedName("token")
     @Expose
     public String token;
-    @SerializedName("jsonObject")
+    @SerializedName("person")
     @Expose
     public Person person;
 }

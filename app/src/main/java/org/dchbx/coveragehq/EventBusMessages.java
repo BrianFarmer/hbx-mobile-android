@@ -7,6 +7,7 @@ import org.dchbx.coveragehq.models.account.Account;
 import org.dchbx.coveragehq.models.fe.Family;
 import org.dchbx.coveragehq.models.fe.FinancialAssistanceApplication;
 import org.dchbx.coveragehq.models.fe.Schema;
+import org.dchbx.coveragehq.models.fe.UqhpDetermination;
 import org.dchbx.coveragehq.models.ridp.Answers;
 import org.dchbx.coveragehq.statemachine.EventParameters;
 import org.dchbx.coveragehq.statemachine.StateManager;
@@ -417,6 +418,21 @@ public class EventBusMessages implements Messages {
     @Override
     public void saveUqhpFamilyResponse() {
         eventBus.post(new Events.SaveUqhpFamilyResponse());
+    }
+
+    @Override
+    public void sendHavenApplication() {
+        eventBus.post(new Events.SendHavenApplication());
+    }
+
+    @Override
+    public void getUqhpDetermination() {
+        eventBus.post(new Events.GetUqhpDetermination());
+    }
+
+    @Override
+    public void getUqhpDeterminationResponse(UqhpDetermination uqhpDetermination){
+        eventBus.post(new Events.GetUqhpDeterminationResponse(uqhpDetermination));
     }
 }
 

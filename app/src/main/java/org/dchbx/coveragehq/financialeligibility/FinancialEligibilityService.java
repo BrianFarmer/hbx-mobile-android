@@ -2,6 +2,7 @@ package org.dchbx.coveragehq.financialeligibility;
 
 import android.util.Log;
 
+import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 
 import org.dchbx.coveragehq.BrokerApplication;
@@ -17,8 +18,10 @@ import org.dchbx.coveragehq.models.fe.Family;
 import org.dchbx.coveragehq.models.fe.Field;
 import org.dchbx.coveragehq.models.fe.FinancialAssistanceApplication;
 import org.dchbx.coveragehq.models.fe.Option;
-import org.dchbx.coveragehq.models.fe.Person;
+import org.dchbx.coveragehq.models.fe.PersonForCoverage;
 import org.dchbx.coveragehq.models.fe.Schema;
+import org.dchbx.coveragehq.models.fe.UqhpApplication;
+import org.dchbx.coveragehq.models.fe.UqhpDetermination;
 import org.dchbx.coveragehq.statemachine.EventParameters;
 import org.dchbx.coveragehq.statemachine.StateManager;
 import org.greenrobot.eventbus.Subscribe;
@@ -62,10 +65,14 @@ public class FinancialEligibilityService {
 
     @Subscribe(threadMode = ThreadMode.BACKGROUND)
     public void doThis(Events.GetUqhpFamily getUqhpFamily) {
+        Family family = getUqhpFamily();
+        messages.getUqhpFamilyResponse(family);
+    }
+
+    private Family getUqhpFamily() {
         ConfigurationStorageHandler configurationStorageHandler = serviceManager.getConfigurationStorageHandler();
 
-        Family family = configurationStorageHandler.readUqhpFamily();
-        messages.getUqhpFamilyResponse(family);
+        return configurationStorageHandler.readUqhpFamily();
     }
 
     @Subscribe(threadMode = ThreadMode.BACKGROUND)
@@ -105,6 +112,44 @@ public class FinancialEligibilityService {
     }
 
     @Subscribe(threadMode = ThreadMode.BACKGROUND)
+    public void doThis(Events.SendHavenApplication getUqhpSchema) throws Exception {
+        Log.d(TAG, "in FinancialEligibilityService.doThis(Events.GetFinancialEligibilityJson)");
+        UrlHandler urlHandler = serviceManager.getUrlHandler();
+        ConnectionHandler connectionHandler = serviceManager.getConnectionHandler();
+
+        Family uqhpFamily = getUqhpFamily();
+        UqhpApplication uqhpApplication = new UqhpApplication();
+        uqhpApplication.Person = uqhpFamily.Person;
+        uqhpApplication.Attestation = uqhpFamily.Attestation;
+        uqhpApplication.Relationship = new JsonArray();
+        if (uqhpFamily.Person.size() >= 2) {
+            for (int i = 0; i < uqhpFamily.Person.size() - 1; i++) {
+                for (int j = i + 1; j < uqhpFamily.Person.size(); j++) {
+                    HashMap<String, JsonObject> crosses = uqhpFamily.Relationship.get(uqhpFamily.Person.get(i).getAsJsonObject().get("eapersonid").getAsString());
+                    JsonObject relationship = crosses.get(uqhpFamily.Person.get(j).getAsJsonObject().get("eapersonid").getAsString());
+                    uqhpApplication.Relationship.add(relationship);
+                }
+            }
+        }
+
+        UrlHandler.HttpRequest request = urlHandler.getHavenApplication(uqhpApplication);
+        connectionHandler.process(request, new IConnectionHandler.OnCompletion() {
+            public void onCompletion(IConnectionHandler.HttpResponse response) {
+                if (response.getResponseCode() == 201) {
+                    JsonParser parser = FinancialEligibilityService.this.serviceManager.getParser();
+                    UqhpDetermination uqhpDetermination = parser.parseUqhpDeterminationResponse(response.getBody());
+                    ConfigurationStorageHandler configurationStorageHandler = serviceManager.getConfigurationStorageHandler();
+                    configurationStorageHandler.store(uqhpDetermination);
+                    messages.appEvent(StateManager.AppEvents.ReceivedUqhpDetermination);
+                } else {
+                    messages.appEvent(StateManager.AppEvents.Error, EventParameters.build().add("error_msg", "Error in UQHP determination"));
+                }
+            }
+        });
+        messages.getFinancialEligibilityJsonResponse(schema);
+    }
+
+    @Subscribe(threadMode = ThreadMode.BACKGROUND)
     public void doThis(Events.GetUqhpSchema getUqhpSchema) throws Exception {
         Log.d(TAG, "in FinancialEligibilityService.doThis(Events.GetFinancialEligibilityJson)");
         if (schema == null) {
@@ -112,7 +157,6 @@ public class FinancialEligibilityService {
             ConnectionHandler connectionHandler = serviceManager.getConnectionHandler();
 
             UrlHandler.HttpRequest request = urlHandler.getUqhpSchema();
-            IConnectionHandler.HttpResponse response = connectionHandler.process(request);
             connectionHandler.process(request, new IConnectionHandler.OnCompletion() {
                 public void onCompletion(IConnectionHandler.HttpResponse response) {
                     if (response.getResponseCode() == 200) {
@@ -127,8 +171,8 @@ public class FinancialEligibilityService {
         messages.getFinancialEligibilityJsonResponse(schema);
     }
 
-    public static Person getNewPerson() {
-        return new Person();
+    public static JsonObject getNewPerson() {
+        return new JsonObject();
     }
 
     public static void removeFamilyMember(Family family, int i) {
@@ -136,7 +180,7 @@ public class FinancialEligibilityService {
         family.Relationship.remove(eapersonid);
 
         for (Map.Entry<String, HashMap<String, JsonObject>> entry : family.Relationship.entrySet()) {
-            if (entry.getValue().containsKey(eapersonid)){
+            if (entry.getValue().containsKey(eapersonid)) {
                 entry.getValue().remove(eapersonid);
             }
         }
@@ -147,13 +191,12 @@ public class FinancialEligibilityService {
     public static JsonObject build(ArrayList<Field> dependentFields) {
         JsonObject result = new JsonObject();
         for (Field dependentField : dependentFields) {
-            if (dependentField.defaultValue != null){
+            if (dependentField.defaultValue != null) {
                 result.addProperty(dependentField.field, dependentField.defaultValue);
             }
         }
         return result;
     }
-
 
 
     public static boolean checkObject(JsonObject object, ArrayList<Field> objectSchema) {
@@ -163,26 +206,26 @@ public class FinancialEligibilityService {
                     case text:
                     case numeric:
                         if (!object.has(field.field)
-                            || object.get(field.field).getAsString().length() == 0){
+                                || object.get(field.field).getAsString().length() == 0) {
                             return false;
                         }
                         break;
                     case date:
                         if (!object.has(field.field)
-                            || object.get(field.field).getAsString().length() < 8){
+                                || object.get(field.field).getAsString().length() < 8) {
                             return false;
                         }
                         break;
                     case dropdown:
-                        if (object.has(field.field)){
+                        if (object.has(field.field)) {
                             boolean found = false;
                             for (Option option : field.options) {
-                                if (option.value.equals(object.get(field.field).getAsString())){
+                                if (option.value.equals(object.get(field.field).getAsString())) {
                                     found = true;
                                     break;
                                 }
                             }
-                            if (!found){
+                            if (!found) {
                                 return false;
                             }
                         } else {
@@ -191,18 +234,18 @@ public class FinancialEligibilityService {
                         break;
                     case multidropdown:
                         if (!object.has(field.field)
-                            || !field.options.contains(object.get(field.field).getAsString())){
+                                || !field.options.contains(object.get(field.field).getAsString())) {
                             return false;
                         }
                         break;
                     case section:
-                        if (!object.has(field.field)){
+                        if (!object.has(field.field)) {
                             return false;
                         }
                         break;
                     case ssn:
                         if (!object.has(field.field)
-                                || object.get(field.field).getAsString().length() < 8){
+                                || object.get(field.field).getAsString().length() < 8) {
                             return false;
                         }
                         break;
@@ -221,5 +264,16 @@ public class FinancialEligibilityService {
     public static void addPersonToFamily(Family family, JsonObject person) {
         family.Person.add(person);
         family.Relationship.put(person.get("eapersonid").getAsString(), new HashMap<String, JsonObject>());
+    }
+
+    @Subscribe(threadMode = ThreadMode.BACKGROUND)
+    public void doThis(Events.GetUqhpDetermination getUqhpDetermination) throws Exception {
+        ConfigurationStorageHandler configurationStorageHandler = serviceManager.getConfigurationStorageHandler();
+        UqhpDetermination uqhpDetermination = configurationStorageHandler.readUqhpDetermination();
+        messages.getUqhpDeterminationResponse(uqhpDetermination);
+    }
+
+    public static String getNameForPersonForCoverage(PersonForCoverage personForCoverage) {
+        return personForCoverage.personFirstName + " " + personForCoverage.personLastName;
     }
 }

@@ -12,6 +12,7 @@ import org.dchbx.coveragehq.models.Security.Endpoints;
 import org.dchbx.coveragehq.models.Security.SecurityAnswerResponse;
 import org.dchbx.coveragehq.models.brokeragency.BrokerAgency;
 import org.dchbx.coveragehq.models.employer.Employer;
+import org.dchbx.coveragehq.models.fe.UqhpApplication;
 import org.dchbx.coveragehq.models.planshopping.Plan;
 import org.dchbx.coveragehq.models.ridp.Answers;
 import org.dchbx.coveragehq.models.ridp.Questions;
@@ -108,6 +109,7 @@ public abstract class UrlHandler {
                     .build();
         }
         String json = (new Gson()).toJson(signUp);
+        postParameters.requestString = json;
         postParameters.requestBody = RequestBody.create(JSON, json );
         postParameters.headers = new HashMap<>();
         postParameters.headers.put("Content-Type", "application/json");
@@ -538,6 +540,7 @@ public abstract class UrlHandler {
         }
         String json = (new Gson()).toJson(verifyIdentity);
         postParameters.requestBody = RequestBody.create(JSON, json );
+        postParameters.requestString = json;
         postParameters.headers = new HashMap<>();
         postParameters.headers.put("Content-Type", "application/json");
 
@@ -594,6 +597,21 @@ public abstract class UrlHandler {
         HttpRequest request = new HttpRequest();
         request.getParameters = getParameters;
         request.requestType = HttpRequest.RequestType.Get;
+        return request;
+    }
+
+    public HttpRequest getHavenApplication(UqhpApplication family){
+        PostParameters postParameters = new PostParameters();
+        postParameters.url = HttpUrl.parse(serverConfiguration.uqhpDeterminationUrl);
+
+        HttpRequest request = new HttpRequest();
+        request.postParameters = postParameters;
+        request.requestType = HttpRequest.RequestType.Post;
+
+        String json = new Gson().toJson(family);
+        request.postParameters.requestString = json;
+        postParameters.requestBody = RequestBody.create(JSON, json);
+
         return request;
     }
 }

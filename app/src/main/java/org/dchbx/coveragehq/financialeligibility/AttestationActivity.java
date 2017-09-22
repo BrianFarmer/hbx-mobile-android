@@ -5,9 +5,11 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.View;
 import android.widget.Button;
+import android.widget.LinearLayout;
 
 import org.dchbx.coveragehq.Events;
 import org.dchbx.coveragehq.R;
+import org.dchbx.coveragehq.models.fe.Family;
 import org.dchbx.coveragehq.models.fe.Schema;
 import org.dchbx.coveragehq.statemachine.StateManager;
 import org.greenrobot.eventbus.Subscribe;
@@ -34,6 +36,7 @@ public class AttestationActivity extends ApplicationQuestionsActivity {
     private static String TAG = "AddPersonActivity";
     public static StateManager.UiActivity uiActivity = new StateManager.UiActivity(AttestationActivity.class);
     private Schema schema;
+    private Family family;
 
     public void onCreate(Bundle bundle){
         super.onCreate(bundle);
@@ -41,6 +44,7 @@ public class AttestationActivity extends ApplicationQuestionsActivity {
         setContentView(R.layout.attestation);
         Toolbar toolbar = configToolbar();
         Menu menu = toolbar.getMenu();
+        linearLayout = (LinearLayout)findViewById(R.id.linearLayout);
         getMessages().getUqhpFamily();
         getMessages().getUqhpSchema();
     }
@@ -56,28 +60,39 @@ public class AttestationActivity extends ApplicationQuestionsActivity {
     public void doThis(Events.GetFinancialEligibilityJsonResponse getFinancialEligibilityJsonResponse) throws Exception {
         schema = getFinancialEligibilityJsonResponse.getSchema();
         this.schemaFields = schema.Relationship;
-        populate();
+        populateLocal();
     }
 
 
     @Subscribe(threadMode = ThreadMode.MAIN)
-    public void doThis(Events.GetApplicationPersonResponse getApplicationPersonResponse) throws Exception {
-        jsonObject = getApplicationPersonResponse.getPerson();
-        populate();
+    public void doThis(Events.GetUqhpFamilyResponse getUqhpFamilyResponse) throws Exception {
+        family = getUqhpFamilyResponse.getFamily();
+        jsonObject = family.Attestation;
+        populateLocal();
     }
 
-    protected void populate() {
+    protected void populateLocal() throws Exception {
         if (schema == null
         || jsonObject == null){
             return;
         }
 
+        schemaFields = schema.Attestation;
+
         Button continueButton = (Button) findViewById(R.id.continueButton);
         continueButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                getMessages().appEvent(StateManager.AppEvents.EditFamilyMember);
+                jsonObject = getValues();
+                family.Attestation = jsonObject;
+                getMessages().saveUqhpFamily(family);
             }
         });
+        populate();
+    }
+
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void doThis(Events.SaveUqhpFamilyResponse saveUqhpFamilyResponse){
+        getMessages().appEvent(StateManager.AppEvents.Continue);
     }
 }

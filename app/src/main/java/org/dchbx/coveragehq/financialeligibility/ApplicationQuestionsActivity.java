@@ -14,7 +14,10 @@ import android.widget.RadioGroup;
 import android.widget.TextView;
 
 import com.google.gson.Gson;
+import com.google.gson.JsonArray;
+import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
+import com.google.gson.JsonPrimitive;
 
 import org.dchbx.coveragehq.BaseActivity;
 import org.dchbx.coveragehq.BrokerActivity;
@@ -168,6 +171,7 @@ public class ApplicationQuestionsActivity extends BrokerActivity {
                 newField = hardwiredField;
                 fields.add(hardwiredField);
                 hardwiredField.fillField(inflater, first);
+                break;
             case idgen:
                 Log.d(TAG, "found eapersonid field");
                 EaPersonIdField eaPersonIdField = new EaPersonIdField(field, values);
@@ -201,28 +205,47 @@ public class ApplicationQuestionsActivity extends BrokerActivity {
         return string;
     }
 
-    protected HashMap<String, Object> getValues() {
-        HashMap<String, Object> values = new HashMap<>();
+    protected JsonObject getValues() {
+        JsonObject values = new JsonObject();
         getValues(values, fields);
         return values;
     }
-    protected void getValues(HashMap<String, Object> values, ArrayList<FieldType> fields){
-        for (FieldType field : fields) {
-            if (field.field.prereqValues == null
-                || field.field.prereqValues.size() == 0
-                || field.field.prereqValues.contains(values.get(field.field.prereqField))) {
-                Object value = field.getValue();
-                if (value != null) {
-                    values.put(field.field.field, value);
+    protected void getValues(JsonObject values, ArrayList<FieldType> fields){
+        String mostRecentField = "";
+        FieldType mostRecentFieldType = null;
+        try {
+            for (FieldType field : fields) {
+                mostRecentField = field.field.field;
+                mostRecentFieldType = field;
+                if (field.field.field.equals("mpostalcode")) {
+                    Log.d(TAG, "found it");
                 }
-                if (field.dependentFields != null) {
-                    try {
-                        getValues(values, field.dependentFields);
-                    } catch (Throwable t) {
-                        Log.e(TAG, "exception: " + t);
-                        Log.e(TAG, "field name: " + field.field.field);
+                if (field.field.field.equals("isseparatemailaddress")) {
+                    Log.d(TAG, "found it");
+                }
+                if (field.field.prereqValues == null
+                        || field.field.prereqValues.size() == 0
+                        || (values.has(field.field.prereqField)
+                            && field.field.prereqValues.contains(values.get(field.field.prereqField).getAsString()))) {
+                    JsonElement value = field.getValue();
+                    if (value != null) {
+                        values.add(field.field.field, value);
+                    }
+                    if (field.dependentFields != null) {
+                        try {
+                            getValues(values, field.dependentFields);
+                        } catch (Throwable t) {
+                            Log.e(TAG, "exception: " + t);
+                            Log.e(TAG, "field name: " + field.field.field);
+                        }
                     }
                 }
+            }
+        } catch (Throwable t) {
+            Log.e(TAG, "exception: " + t);
+            Log.e(TAG, "field name: " + mostRecentField);
+            if (mostRecentFieldType != null) {
+                Log.e(TAG, mostRecentFieldType.field.field);
             }
         }
     }
@@ -250,7 +273,7 @@ public class ApplicationQuestionsActivity extends BrokerActivity {
             activity = null;
         }
 
-        public abstract Object getValue();
+        public abstract JsonElement getValue();
         abstract public void fillField(LayoutInflater inflater, boolean first);
         public abstract void configureDependentFieldsVisibility(ArrayList<FieldType> fields);
 
@@ -272,8 +295,8 @@ public class ApplicationQuestionsActivity extends BrokerActivity {
         }
 
         @Override
-        public Object getValue() {
-            return value.getText().toString();
+        public JsonElement getValue() {
+            return new JsonPrimitive(value.getText().toString());
         }
 
         public void fillField(LayoutInflater inflater, boolean first) {
@@ -379,8 +402,8 @@ public class ApplicationQuestionsActivity extends BrokerActivity {
         }
 
         @Override
-        public Object getValue() {
-            return savedValue;
+        public JsonElement getValue() {
+            return new JsonPrimitive(savedValue);
         }
 
         @Override
@@ -512,8 +535,8 @@ public class ApplicationQuestionsActivity extends BrokerActivity {
         }
 
         @Override
-        public Object getValue() {
-            return ((TextView)value).getText();
+        public JsonElement getValue() {
+            return new JsonPrimitive(((TextView)value).getText().toString());
         }
 
         @Override
@@ -554,14 +577,14 @@ public class ApplicationQuestionsActivity extends BrokerActivity {
         }
 
         @Override
-        public Object getValue() {
+        public JsonElement getValue() {
             CharSequence text = value.getText();
             if (text == null){
                 return null;
             }
             String s = text.toString();
             try {
-                return Utilities.DateAsString(Utilities.parseDate(s.toString()));
+                return new JsonPrimitive(Utilities.DateAsString(Utilities.parseDate(s.toString())));
             } catch (Exception e){
                 return null;
             }
@@ -661,7 +684,7 @@ public class ApplicationQuestionsActivity extends BrokerActivity {
         }
 
         @Override
-        public Object getValue() {
+        public JsonElement getValue() {
             return null;
         }
 
@@ -691,7 +714,7 @@ public class ApplicationQuestionsActivity extends BrokerActivity {
 
     class SectionField extends FieldType {
 
-        private JsonObject savedValues;
+        private JsonArray savedValues;
         private View indicator;
 
         public SectionField(Field field, JsonObject values, LinearLayout linearLayout) {
@@ -701,7 +724,7 @@ public class ApplicationQuestionsActivity extends BrokerActivity {
 
                     Object object = values.get(field.field);
                     Log.d(TAG, "object: " + object);
-                    savedValues = values.get(field.field).getAsJsonObject();
+                    savedValues = values.get(field.field).getAsJsonArray();
                 } catch (Throwable t){
                     Log.e(TAG, "Exception: " + t);
                 }
@@ -711,7 +734,7 @@ public class ApplicationQuestionsActivity extends BrokerActivity {
         }
 
         @Override
-        public Object getValue() {
+        public JsonElement getValue() {
             return savedValues;
         }
 
@@ -728,23 +751,31 @@ public class ApplicationQuestionsActivity extends BrokerActivity {
                     BaseActivity.setOnActivityResultListener(new OnActivityResultListener() {
                         @Override
                         public void onActivityResult(Intent intent) {
-                            if (intent != null) {
-                                String jsonString = intent.getStringExtra("Result");
-                                Gson gson = new Gson();
-                                JsonObject sectionValues = gson.fromJson(jsonString, JsonObject.class);
-                                savedValues = sectionValues;
-                                configureDependentFieldsVisibility(dependentFields);
-                                checkIndicator();
+                            try{
+                                if (intent != null) {
+                                    String jsonString = intent.getStringExtra("Result");
+                                    Gson gson = new Gson();
+                                    JsonObject sectionValues = gson.fromJson(jsonString, JsonObject.class);
+                                    JsonArray jsonArray = new JsonArray();
+                                    jsonArray.add(sectionValues);
+                                    savedValues = jsonArray;
+                                    configureDependentFieldsVisibility(dependentFields);
+                                    checkIndicator();
+                                }
+                            } catch (Throwable t){
+                                Log.e(TAG, "exception: " + t);
                             }
                         }
                     });
 
                     String json;
                     if (savedValues == null){
-                        savedValues = ServiceManager.getServiceManager().getFinancialEligibilityService().build(field.dependentFields);
+                        JsonArray jsonArray = new JsonArray();
+                        jsonArray.add(ServiceManager.getServiceManager().getFinancialEligibilityService().build(field.dependentFields));
+                        savedValues = jsonArray;
                     }
                     getMessages().appEvent(StateManager.AppEvents.OpenSection, EventParameters.build()
-                            .add("Section", new Gson().toJson(savedValues))
+                            .add("Section", new Gson().toJson(savedValues.get(0)))
                             .add("Schema", field.subFields));
                 }
             });
@@ -752,12 +783,18 @@ public class ApplicationQuestionsActivity extends BrokerActivity {
         }
 
         private void checkIndicator() {
-            indicator.setVisibility(FinancialEligibilityService.checkObject(savedValues, field.dependentFields)?View.GONE:View.VISIBLE);
+            if (savedValues == null){
+                indicator.setVisibility(View.VISIBLE);
+                return;
+            }
+            JsonElement jsonElement = savedValues.get(0);
+            JsonObject asJsonObject = jsonElement.getAsJsonObject();
+            indicator.setVisibility(FinancialEligibilityService.checkObject(asJsonObject, field.dependentFields)?View.GONE:View.VISIBLE);
         }
 
         @Override
         public void configureDependentFieldsVisibility(ArrayList<FieldType> fields) {
-
+            Log.d(TAG, "section dependent fields!");
         }
     }
 
@@ -771,8 +808,8 @@ public class ApplicationQuestionsActivity extends BrokerActivity {
         }
 
         @Override
-        public Object getValue() {
-            return value.getText().toString();
+        public JsonElement getValue() {
+            return new JsonPrimitive(value.getText().toString());
         }
 
         @Override
@@ -873,8 +910,11 @@ public class ApplicationQuestionsActivity extends BrokerActivity {
         }
 
         @Override
-        public Object getValue() {
-            return savedValue;
+        public JsonElement getValue() {
+            if (savedValue == null){
+                return null;
+            }
+            return new JsonPrimitive(savedValue);
         }
 
         @Override
@@ -1000,8 +1040,8 @@ public class ApplicationQuestionsActivity extends BrokerActivity {
         }
 
         @Override
-        public Object getValue() {
-            return value.getText().toString();
+        public JsonElement getValue() {
+            return new JsonPrimitive(value.getText().toString());
         }
 
         @Override
@@ -1063,9 +1103,9 @@ public class ApplicationQuestionsActivity extends BrokerActivity {
         }
 
         @Override
-        public Object getValue() {
+        public JsonElement getValue() {
             try {
-                return field.options.get(0).value;
+                return new JsonPrimitive(field.options.get(0).value);
             } catch (Throwable t){
                 Log.e(TAG, "exception getting hardwired field value: " + field.field);
             }
@@ -1089,11 +1129,11 @@ public class ApplicationQuestionsActivity extends BrokerActivity {
         }
 
         @Override
-        public Object getValue() {
-            if (values.has(field.field)){
-                return values.get(field.field);
-            }
-            return UUID.randomUUID().toString();
+        public JsonElement getValue() {
+            //if (values.has(field.field)){
+            //    return values.get(field.field);
+            //}
+            return new JsonPrimitive(UUID.randomUUID().toString());
         }
 
         @Override

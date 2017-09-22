@@ -1,6 +1,7 @@
 package org.dchbx.coveragehq;
 
 import org.dchbx.coveragehq.models.fe.Family;
+import org.dchbx.coveragehq.models.fe.UqhpDetermination;
 import org.dchbx.coveragehq.models.ridp.Questions;
 import org.dchbx.coveragehq.models.ridp.VerifyIdentityResponse;
 
@@ -34,5 +35,6 @@ public abstract class IServerConfigurationStorageHandler {
     public abstract String readStateString();
     public abstract Family readUqhpFamily();
     public abstract void storeUqhpFamily(Family family);
+    public abstract UqhpDetermination readUqhpDetermination();
 }
 

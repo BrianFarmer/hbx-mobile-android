@@ -2,11 +2,10 @@ package org.dchbx.coveragehq;
 
 import android.net.Uri;
 
-import com.google.gson.JsonObject;
-
 import org.dchbx.coveragehq.models.fe.Family;
 import org.dchbx.coveragehq.models.fe.FinancialAssistanceApplication;
 import org.dchbx.coveragehq.models.fe.Schema;
+import org.dchbx.coveragehq.models.fe.UqhpDetermination;
 import org.dchbx.coveragehq.models.ridp.Answers;
 import org.dchbx.coveragehq.statemachine.EventParameters;
 import org.dchbx.coveragehq.statemachine.StateManager;
@@ -90,5 +89,8 @@ public interface Messages {
     void getUqhpFamilyResponse(Family family);
     void saveUqhpFamily(Family family);
     void saveUqhpFamilyResponse();
+    void sendHavenApplication();
+    void getUqhpDetermination();
+    void getUqhpDeterminationResponse(UqhpDetermination uqhpDetermination);
 }
 

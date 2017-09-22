@@ -90,9 +90,8 @@ public class ConnectionHandler implements IConnectionHandler{
         int code = response.code();
         PostResponse postResponse = new PostResponse();
         postResponse.responseCode = code;
-        if (code >= 200
-            && code <= 299) {
-            postResponse.body =response.body().string();
+        if (response.body() != null){
+            postResponse.body = response.body().string();
         }
         postResponse.headers = response.headers().toMultimap();
         return postResponse;

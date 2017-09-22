@@ -13,6 +13,7 @@ import org.dchbx.coveragehq.models.Security.SecurityAnswerResponse;
 import org.dchbx.coveragehq.models.brokeragency.BrokerAgency;
 import org.dchbx.coveragehq.models.employer.Employer;
 import org.dchbx.coveragehq.models.fe.Schema;
+import org.dchbx.coveragehq.models.fe.UqhpDetermination;
 import org.dchbx.coveragehq.models.gitaccounts.AccountInfo;
 import org.dchbx.coveragehq.models.gitaccounts.GitAccounts;
 import org.dchbx.coveragehq.models.planshopping.Plan;
@@ -205,5 +206,10 @@ public class JsonParser {
 
     public Schema parseSchema(String json) {
         return parse(json, Schema.class);
+    }
+
+    public UqhpDetermination parseUqhpDeterminationResponse(String json) {
+        return parse(json, UqhpDetermination.class);
+
     }
 }

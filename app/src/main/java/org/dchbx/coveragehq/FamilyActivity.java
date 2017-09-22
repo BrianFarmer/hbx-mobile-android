@@ -13,7 +13,6 @@ import com.google.gson.JsonObject;
 
 import org.dchbx.coveragehq.financialeligibility.FinancialEligibilityService;
 import org.dchbx.coveragehq.models.fe.Family;
-import org.dchbx.coveragehq.models.fe.Person;
 import org.dchbx.coveragehq.statemachine.EventParameters;
 import org.dchbx.coveragehq.statemachine.OnActivityResultListener;
 import org.dchbx.coveragehq.statemachine.StateManager;
@@ -82,7 +81,7 @@ public class FamilyActivity extends BaseActivity {
             @Override
             public void onClick(View view) {
                 FinancialEligibilityService financialEligibilityService = ServiceManager.getServiceManager().getFinancialEligibilityService();
-                Person newPerson = financialEligibilityService.getNewPerson();
+                JsonObject newPerson = financialEligibilityService.getNewPerson();
                 BaseActivity.setOnActivityResultListener(new OnActivityResultListener() {
                     @Override
                     public void onActivityResult(Intent intent) {

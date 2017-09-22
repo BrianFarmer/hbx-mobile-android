@@ -12,6 +12,7 @@ import org.dchbx.coveragehq.models.employer.Employer;
 import org.dchbx.coveragehq.models.fe.Family;
 import org.dchbx.coveragehq.models.fe.FinancialAssistanceApplication;
 import org.dchbx.coveragehq.models.fe.Schema;
+import org.dchbx.coveragehq.models.fe.UqhpDetermination;
 import org.dchbx.coveragehq.models.planshopping.Plan;
 import org.dchbx.coveragehq.models.ridp.Answers;
 import org.dchbx.coveragehq.models.ridp.Questions;
@@ -1401,5 +1402,23 @@ public class Events {
     }
 
     public static class SaveUqhpFamilyResponse {
+    }
+
+    public static class SendHavenApplication {
+    }
+
+    public static class GetUqhpDetermination {
+    }
+
+    public static class GetUqhpDeterminationResponse {
+        private final UqhpDetermination uqhpDetermination;
+
+        public GetUqhpDeterminationResponse(UqhpDetermination uqhpDetermination) {
+            this.uqhpDetermination = uqhpDetermination;
+        }
+
+        public UqhpDetermination getUqhpDetermination() {
+            return uqhpDetermination;
+        }
     }
 }

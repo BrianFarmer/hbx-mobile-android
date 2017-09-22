@@ -1,5 +1,8 @@
 package org.dchbx.coveragehq.models.ridp.SignUp;
 
+import com.google.gson.annotations.Expose;
+import com.google.gson.annotations.SerializedName;
+
 /*
     This file is part of DC.
 
@@ -18,4 +21,24 @@ package org.dchbx.coveragehq.models.ridp.SignUp;
     This statement should go near the beginning of every source file, close to the copyright notices. When using the Lesser GPL, insert the word “Lesser” before “General” in all three places. When using the GNU AGPL, insert the word “Affero” before “General” in all three places.
 */
 public class Get {
+
+    @SerializedName("logout_url")
+    @Expose
+    public String logoutUrl;
+    @SerializedName("status_url")
+    @Expose
+    public String statusUrl;
+    @SerializedName("user_coverage_url")
+    @Expose
+    public String userCoverageUrl;
+    @SerializedName("is_deployed_url")
+    @Expose
+    public String isDeployedUrl;
+    @SerializedName("haven_determination_url")
+    @Expose
+    public String havenDeterminationUrl;
+    @SerializedName("uqhp_determination_url")
+    @Expose
+    public String uqhpDeterminationUrl;
+
 }

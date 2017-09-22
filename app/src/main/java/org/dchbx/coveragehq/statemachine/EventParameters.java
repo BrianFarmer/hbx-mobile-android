@@ -5,11 +5,11 @@ import android.os.Bundle;
 import android.util.Log;
 
 import com.google.gson.Gson;
+import com.google.gson.JsonObject;
 
 import org.dchbx.coveragehq.models.fe.Field;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 
 public class EventParameters {
@@ -50,8 +50,8 @@ public class EventParameters {
         return this;
     }
 
-    public EventParameters add(String name, HashMap<String, Object> value){
-        eventParameters.add(new HashMapStringObjectParameter(name, value));
+    public EventParameters add(String name, JsonObject value){
+        eventParameters.add(new JsonObjectParameter(name, value));
         return this;
     }
 
@@ -245,11 +245,11 @@ public class EventParameters {
         }
     }
 
-    public static class HashMapStringObjectParameter extends EventParameter {
+    public static class JsonObjectParameter extends EventParameter {
 
-        private HashMap<String, Object> value;
+        private JsonObject value;
 
-        public HashMapStringObjectParameter(String name, HashMap<String, Object> value){
+        public JsonObjectParameter(String name, JsonObject value){
             this.name = name;
             this.value = value;
         }

@@ -11,6 +11,7 @@ import com.google.gson.JsonObject;
 
 import org.dchbx.coveragehq.models.account.Account;
 import org.dchbx.coveragehq.models.fe.Family;
+import org.dchbx.coveragehq.models.fe.UqhpDetermination;
 import org.dchbx.coveragehq.models.ridp.Answers;
 import org.dchbx.coveragehq.models.ridp.Questions;
 import org.dchbx.coveragehq.models.ridp.VerifyIdentityResponse;
@@ -223,6 +224,17 @@ public class ConfigurationStorageHandler extends IServerConfigurationStorageHand
         }
         Gson gson = getGson();
         return gson.fromJson(responseJson, Family.class);
+    }
+
+    @Override
+    public UqhpDetermination readUqhpDetermination() {
+        SharedPreferences sharedPreferences = getSharedPreferences();
+        String json = sharedPreferences.getString("UqhpDetermination", null);
+        if (json != null){
+            Gson gson = getGson();
+            return gson.fromJson(json, UqhpDetermination.class);
+        }
+        return null;
     }
 
     @Override

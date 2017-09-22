@@ -9,6 +9,7 @@ import org.dchbx.coveragehq.Events;
 import org.dchbx.coveragehq.IConnectionHandler;
 import org.dchbx.coveragehq.JsonParser;
 import org.dchbx.coveragehq.Messages;
+import org.dchbx.coveragehq.ServerConfiguration;
 import org.dchbx.coveragehq.ServiceManager;
 import org.dchbx.coveragehq.StateProcessor;
 import org.dchbx.coveragehq.UrlHandler;
@@ -132,6 +133,14 @@ public class RidpService extends StateProcessor {
                 JsonParser parser = serviceManager.getParser();
                 SignUpResponse signUpResponse = parser.parseSignUpResponse(response.getBody());
                 storageHandler.store(signUpResponse);
+                ServerConfiguration serverConfiguration = serviceManager.getServerConfiguration();
+                serverConfiguration.logoutUrl = signUpResponse.links.get.logoutUrl;
+                serverConfiguration.statusUrl = signUpResponse.links.get.statusUrl;
+                serverConfiguration.userCoverageUrl = signUpResponse.links.get.userCoverageUrl;
+                serverConfiguration.isDeployedUrl = signUpResponse.links.get.isDeployedUrl;
+                serverConfiguration.havenDeterminationUrl = signUpResponse.links.get.havenDeterminationUrl;
+                serverConfiguration.uqhpDeterminationUrl = signUpResponse.links.get.uqhpDeterminationUrl;
+
                 if (signUpResponse.error != null){
                     if (signUpResponse.error.type.compareTo("userHasActiveMedicaid") == 0){
                         messages.getEventBus().post(new Events.AppEvent(StateManager.AppEvents.SignUpUserInAceds, EventParameters.build().add("error_msg", signUpResponse.error.message)));

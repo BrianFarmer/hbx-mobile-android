@@ -3,8 +3,6 @@ package org.dchbx.coveragehq.models.fe;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 
-import java.util.HashMap;
-
 /*
     This file is part of DC.
 
@@ -22,8 +20,8 @@ import java.util.HashMap;
     along with DC Health Link SmallBiz.  If not, see <http://www.gnu.org/licenses/>.
     This statement should go near the beginning of every source file, close to the copyright notices. When using the Lesser GPL, insert the word “Lesser” before “General” in all three places. When using the GNU AGPL, insert the word “Affero” before “General” in all three places.
 */
-public class Family {
+public class UqhpApplication {
     public JsonArray Person;
-    public HashMap<String, HashMap<String , JsonObject>>     Relationship;
+    public JsonArray Relationship;
     public JsonObject Attestation;
 }

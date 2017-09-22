@@ -31,6 +31,8 @@ import org.dchbx.coveragehq.financialeligibility.AttestationActivity;
 import org.dchbx.coveragehq.financialeligibility.CheckedListDialog;
 import org.dchbx.coveragehq.financialeligibility.EditPersonActivity;
 import org.dchbx.coveragehq.financialeligibility.EditRelationshipActivity;
+import org.dchbx.coveragehq.financialeligibility.EligibleResultsActivity;
+import org.dchbx.coveragehq.financialeligibility.IneligibleResultsActivity;
 import org.dchbx.coveragehq.financialeligibility.RelationshipsActivity;
 import org.dchbx.coveragehq.financialeligibility.SectionActivity;
 import org.dchbx.coveragehq.ridp.AcctAddress;
@@ -45,7 +47,6 @@ import org.dchbx.coveragehq.ridp.AcctSystemFoundYou;
 import org.dchbx.coveragehq.ridp.AcctSystemFoundYouAceds;
 import org.dchbx.coveragehq.ridp.RidpQuestionsActivity;
 import org.dchbx.coveragehq.uqhp.FamilyRelationshipsActivity;
-import org.dchbx.coveragehq.uqhp.UqhpConfirm;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.SubscriberExceptionEvent;
 import org.greenrobot.eventbus.ThreadMode;
@@ -53,6 +54,8 @@ import org.greenrobot.eventbus.ThreadMode;
 import java.io.IOException;
 import java.util.ArrayDeque;
 import java.util.HashMap;
+
+import static org.dchbx.coveragehq.statemachine.StateManager.AppEvents.ReceivedUqhpDetermination;
 
 /*
     This file is part of DC.
@@ -271,7 +274,8 @@ public class StateManager extends StateProcessor {
         CreatingAccountFe, VerifyingUserFe, RidpQuestionsFe, GetQuestionsFe,
         AcctSystemFoundYouInCuramAcedsFe, AcctSsnWithEmployerFe, AcctSystemFoundYouFe,
         FamilyMembersFe, FinancialAssitanceQuestions, FeDropDown,
-        Wallet, SectionQuestions, EditFamilyRelationShip, Attestation, Saved
+        Wallet, SectionQuestions, EditFamilyRelationShip, Attestation,
+        UqhpDetermination, Ineligible, Eligible, Saved
     }
 
     // You are discouraged from removing or reordring this enum. It is used in serialized objects.
@@ -317,7 +321,7 @@ public class StateManager extends StateProcessor {
         EditFamilyMember,
         OpenSection,
         Goto, // Special case for dev to goto specific state.
-        ShowDropDown, DropdownSaved, UserSaved, EditRelationship, ErrorHappened
+        ShowDropDown, DropdownSaved, UserSaved, EditRelationship, ReceivedUqhpDetermination, ShowEligible, ShowIneligible, ErrorHappened
     }
 
     public void configStates() {
@@ -330,7 +334,7 @@ public class StateManager extends StateProcessor {
 
         stateMachine.from(AppStates.Any).on(AppEvents.Back).doThis(new Back());
         stateMachine.from(AppStates.Any).on(AppEvents.ShowGlossaryItem).to(AppStates.GlossaryDialog, new LaunchDialog(GlossaryDialog.uiDialog));
-        stateMachine.from(AppStates.Any).on(AppEvents.Goto).to(AppStates.FamilyMembersFe, new LaunchActivity(org.dchbx.coveragehq.financialeligibility.FamilyActivity.uiActivity));
+        stateMachine.from(AppStates.Any).on(AppEvents.Goto).to(AppStates.Attestation, new LaunchActivity(AttestationActivity.uiActivity));
 
 
         // Initial states not associated with any major section of the app.
@@ -345,8 +349,8 @@ public class StateManager extends StateProcessor {
         stateMachine.from(AppStates.YourMobilePassword).on(AppEvents.Ok).to(AppStates.ChooseFinancialAssistance, new LaunchActivity(ChooseFinancialAssistanceActivity.uiActivity));
         stateMachine.from(AppStates.YourMobilePassword).on(AppEvents.Cancel).to(AppStates.ChooseFinancialAssistance, new LaunchActivity(ChooseFinancialAssistanceActivity.uiActivity));
 
-        stateMachine.from(AppStates.ChooseFinancialAssistance).on(AppEvents.Yes).to(AppStates.AcctCreateFe, new LaunchActivity(AcctCreate.uiActivity));
-        stateMachine.from(AppStates.ChooseFinancialAssistance).on(AppEvents.No).to(AppStates.AcctCreate, new LaunchActivity(AcctCreate.uiActivity));
+        //stateMachine.from(AppStates.ChooseFinancialAssistance).on(AppEvents.Yes).to(AppStates.AcctCreateFe, new LaunchActivity(AcctCreate.uiActivity));
+        stateMachine.from(AppStates.ChooseFinancialAssistance).on(AppEvents.No).to(AppStates.AcctCreateFe, new LaunchActivity(AcctCreate.uiActivity));
 
         stateMachine.from(AppStates.Login)
             .processEvent(AppEvents.Login, new UserStatusProcessor())
@@ -377,7 +381,7 @@ public class StateManager extends StateProcessor {
 
     private void initUQHPStates(StateMachine stateMachine) {
         stateMachine.from(AppStates.PlanShoppingFamilyMembers).on(AppEvents.Continue).to(AppStates.FamilyRelationships, new LaunchActivity(FamilyRelationshipsActivity.uiActivity));
-        stateMachine.from(AppStates.FamilyRelationships).on(AppEvents.Continue).to(AppStates.UqhpConfirm, new LaunchActivity(UqhpConfirm.uiActivity));
+        //stateMachine.from(AppStates.FamilyRelationships).on(AppEvents.Continue).to(AppStates.UqhpConfirm, new LaunchActivity(UqhpConfirm.uiActivity));
         stateMachine.from(AppStates.UqhpConfirm).on(AppEvents.Continue).to(AppStates.UqhpConfirm, new LaunchActivity(LoginActivity.uiActivity));
     }
 
@@ -443,6 +447,11 @@ public class StateManager extends StateProcessor {
         stateMachine.from(AppStates.FamilyRelationships).on(AppEvents.Continue).to(AppStates.Attestation , new LaunchActivity(AttestationActivity.uiActivity));
         stateMachine.from(AppStates.EditFamilyRelationShip).on(AppEvents.ShowDropDown).to(AppStates.FeDropDown, new LaunchActivity(CheckedListDialog.uiActivity));
         stateMachine.from(AppStates.EditFamilyRelationShip).on(AppEvents.UserSaved).doThis(new Back());
+        stateMachine.from(AppStates.Attestation).on(AppEvents.Continue).doThis(new StateManager.HavenApplication());
+        stateMachine.from(AppStates.Attestation).on(AppEvents.Continue).to(AppStates.UqhpDetermination, new CreateAccount());
+        stateMachine.from(AppStates.UqhpDetermination).on(ReceivedUqhpDetermination).to(AppStates.Ineligible, new LaunchActivity(IneligibleResultsActivity.uiActivity));
+        stateMachine.from(AppStates.Ineligible).on(AppEvents.ShowEligible).to(AppStates.Eligible, new LaunchActivity(EligibleResultsActivity.uiActivity));
+        stateMachine.from(AppStates.Eligible).on(AppEvents.ShowIneligible).to(AppStates.Ineligible, new LaunchActivity(IneligibleResultsActivity.uiActivity));
     }
 
 
@@ -613,5 +622,18 @@ public class StateManager extends StateProcessor {
 
     public StateMachine getStateMachine() {
         return stateMachine;
+    }
+
+    public class HavenApplication implements StateMachineAction {
+        private StateManager.UiActivity uiActivity;
+
+        @Override
+        public void call(StateMachine stateMachine, StateManager stateManager, AppEvents event,
+                         AppStates leavingState, AppStates enterState,
+                         EventParameters intentParameters) throws IOException, CoverageException {
+            stateMachine.push(new WaitActivityInfo<AppEvents, AppStates>(enterState, event, null));
+            stateManager.showWait();
+            stateManager.messages.sendHavenApplication();
+        }
     }
 }

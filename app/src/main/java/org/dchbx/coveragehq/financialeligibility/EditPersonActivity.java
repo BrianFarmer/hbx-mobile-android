@@ -18,8 +18,6 @@ import org.dchbx.coveragehq.statemachine.StateManager;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 
-import java.util.HashMap;
-
 /*
     This file is part of DC.
 
@@ -69,9 +67,9 @@ public class EditPersonActivity extends ApplicationQuestionsActivity {
         // Handle item selection
         switch (item.getItemId()) {
             case R.id.save:
-                HashMap<String, Object> values = getValues();
+                JsonObject values = getValues();
                 getMessages().appEvent(StateManager.AppEvents.UserSaved, EventParameters.build()
-                        .add("Result", values)
+                        .add("Result", new Gson().toJson(values))
                         .add("ResultCode", StateManager.ActivityResultCodes.Saved));
                 return true;
             default:

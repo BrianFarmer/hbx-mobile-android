@@ -5,6 +5,7 @@ import org.dchbx.coveragehq.models.gitaccounts.GitAccounts;
 public class ServerConfiguration {
 
 
+
     public enum UserType {
         Unknown,
         NotLoggedIn,
@@ -32,6 +33,12 @@ public class ServerConfiguration {
     public String localLogoutEndpoint;
     public String uqhpApplicationSchemaEndpoint;
     public String faaApplicationSchemaEndpoint;
+    public String logoutUrl;
+    public String statusUrl;
+    public String userCoverageUrl;
+    public String isDeployedUrl;
+    public String havenDeterminationUrl;
+    public String uqhpDeterminationUrl;
     public String sessionKey;
     public String sessionValue;
     public String enrollUrl;

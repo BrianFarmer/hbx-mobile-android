@@ -31,6 +31,7 @@ public class Account implements Serializable {
 
     public Account(){
         this.address = new Address();
+        this.gender = "female";
     }
 
     public void setFirstName(String firstName) {

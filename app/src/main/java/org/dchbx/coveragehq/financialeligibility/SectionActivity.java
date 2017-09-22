@@ -19,7 +19,6 @@ import org.dchbx.coveragehq.statemachine.StateManager;
 
 import java.lang.reflect.Type;
 import java.util.ArrayList;
-import java.util.HashMap;
 
 /*
     This file is part of DC.
@@ -82,7 +81,7 @@ public class SectionActivity extends ApplicationQuestionsActivity {
         // Handle item selection
         switch (item.getItemId()) {
             case R.id.save:
-                HashMap<String, Object> values = getValues();
+                JsonObject values = getValues();
                 getMessages().appEvent(StateManager.AppEvents.UserSaved, EventParameters.build()
                         .add("Result", values)
                         .add("ResultCode", StateManager.ActivityResultCodes.Saved));
