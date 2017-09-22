@@ -347,7 +347,7 @@ public class StateManager extends StateProcessor {
         stateMachine.from(AppStates.Hello).on(AppEvents.ResumeApplication).to(AppStates.WelcomeBack, new LaunchActivity(WelcomeBackActivity.uiActivity));
 
         stateMachine.from(AppStates.YourMobilePassword).on(AppEvents.Ok).to(AppStates.ChooseFinancialAssistance, new LaunchActivity(ChooseFinancialAssistanceActivity.uiActivity));
-        stateMachine.from(AppStates.YourMobilePassword).on(AppEvents.Cancel).to(AppStates.ChooseFinancialAssistance, new LaunchActivity(ChooseFinancialAssistanceActivity.uiActivity));
+        stateMachine.from(AppStates.YourMobilePassword).on(AppEvents.Cancel).to(AppStates.Hello, new LaunchActivity(HelloActivity.uiActivity));
 
         //stateMachine.from(AppStates.ChooseFinancialAssistance).on(AppEvents.Yes).to(AppStates.AcctCreateFe, new LaunchActivity(AcctCreate.uiActivity));
         stateMachine.from(AppStates.ChooseFinancialAssistance).on(AppEvents.No).to(AppStates.AcctCreateFe, new LaunchActivity(AcctCreate.uiActivity));
