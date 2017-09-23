@@ -415,6 +415,11 @@ public class StateManager extends StateProcessor {
         stateMachine.from(AppStates.VerifyingUser).on(AppEvents.UserVerifiedOkToCreate).to(AppStates.CreatingAccount, new CreateAccount());
         stateMachine.from(AppStates.CreatingAccount).on(AppEvents.SignUpUserInAceds).to(AppStates.AcctSystemFoundYouInCuramAceds, new LaunchActivity(AcctSystemFoundYouAceds.uiActivity));
         stateMachine.from(AppStates.CreatingAccount).on(AppEvents.SignUpSuccessful).to(AppStates.Login, new PopAndLaunchActivity(LoginActivity.uiActivity));
+
+        stateMachine.from(AppStates.AcctSystemFoundYou).on(AppEvents.ShowLogin).to(AppStates.Login, new PopAndLaunchActivity(LoginActivity.uiActivity));
+        stateMachine.from(AppStates.AcctSystemFoundYou).on(AppEvents.SignUpIndividual).to(AppStates.AcctCreate, new PopAndLaunchActivity(AcctCreate.uiActivity));
+        stateMachine.from(AppStates.AcctSystemFoundYou).on(AppEvents.Close).to(AppStates.Hello, new PopAndLaunchActivity(HelloActivity.uiActivity));
+
     }
 
     private void initRidpFeStates(StateMachine stateMachine) {
@@ -452,6 +457,10 @@ public class StateManager extends StateProcessor {
         stateMachine.from(AppStates.UqhpDetermination).on(ReceivedUqhpDetermination).to(AppStates.Ineligible, new LaunchActivity(IneligibleResultsActivity.uiActivity));
         stateMachine.from(AppStates.Ineligible).on(AppEvents.ShowEligible).to(AppStates.Eligible, new LaunchActivity(EligibleResultsActivity.uiActivity));
         stateMachine.from(AppStates.Eligible).on(AppEvents.ShowIneligible).to(AppStates.Ineligible, new LaunchActivity(IneligibleResultsActivity.uiActivity));
+        
+        stateMachine.from(AppStates.AcctSystemFoundYouFe).on(AppEvents.ShowLogin).to(AppStates.Login, new PopAndLaunchActivity(LoginActivity.uiActivity));
+        stateMachine.from(AppStates.AcctSystemFoundYouFe).on(AppEvents.SignUpIndividual).to(AppStates.AcctCreate, new PopAndLaunchActivity(AcctCreate.uiActivity));
+        stateMachine.from(AppStates.AcctSystemFoundYouFe).on(AppEvents.Close).to(AppStates.Hello, new PopAndLaunchActivity(HelloActivity.uiActivity));
     }
 
 

@@ -193,7 +193,7 @@ public class RidpService extends StateProcessor {
             storageHandler.store(questions);
             messages.appEvent(GetQuestionsOperationComplete);
         } else {
-            messages.appEvent(Error, EventParameters.build().add("error_msg", "An error happended getting the verificaiton questions"));
+            messages.appEvent(Error, EventParameters.build().add("error_msg", "An error happened getting the verificaiton questions"));
         }
     }
 
