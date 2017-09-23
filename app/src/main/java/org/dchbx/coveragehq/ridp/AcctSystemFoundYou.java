@@ -38,21 +38,27 @@ public class AcctSystemFoundYou extends PostVerifiedActivity {
         super.onCreate(savedInstanceState);
         binding = DataBindingUtil.setContentView(this, R.layout.acct_system_found_you);
         configToolbar();
+        binding.setActivity(this);
     }
 
     public void pleaseLogInClicked(){
-        Toast toast = Toast.makeText(this, "please sign in clicked", Toast.LENGTH_LONG);
-        toast.show();
+        //TODO: CLEAR PII DATA FROM RIDP, APPLICATION ETC
+        getMessages().appEvent(StateManager.AppEvents.ShowLogin);
+        //Toast toast = Toast.makeText(this, "please sign in clicked", Toast.LENGTH_LONG);
+        //toast.show();
     }
 
     public void reviewYourAnswersClicked(){
-        Toast toast = Toast.makeText(this,"reviewYourAnswersClicked in clicked", Toast.LENGTH_LONG);
-        toast.show();
+        getMessages().appEvent(StateManager.AppEvents.SignUpIndividual);
+        //Toast toast = Toast.makeText(this,"reviewYourAnswersClicked in clicked", Toast.LENGTH_LONG);
+        //toast.show();
     }
 
     public void comeBackLaterClicked(){
-        Toast toast = Toast.makeText(this,"come back later clicke", Toast.LENGTH_LONG);
-        toast.show();
+        //TODO: CLEAR PII DATA FROM RIDP, APPLICATION ETC
+        getMessages().appEvent(StateManager.AppEvents.Close);
+        //Toast toast = Toast.makeText(this,"come back later clicked", Toast.LENGTH_LONG);
+        //toast.show();
     }
 
     @Override

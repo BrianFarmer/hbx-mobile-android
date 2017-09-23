@@ -98,24 +98,26 @@ public class StateMachine {
         // This checks and processes events that aren't modified.
 
         HashMap<StateManager.AppEvents, Transition> transitionHashMap = statesMap.get(curState.getState());
-        Transition transition = transitionHashMap.get(appEvent);
-        if (transition != null){
-            eventParameters.add("NewState", transition.getToState());
-            StateMachineAction exitAction = transition.getExitAction();
-            if (exitAction != null){
-                exitAction.call(this, stateManager, appEvent, curState.getState(), transition.getToState(), eventParameters);
+        if (transitionHashMap != null) {
+            Transition transition = transitionHashMap.get(appEvent);
+            if (transition != null) {
+                eventParameters.add("NewState", transition.getToState());
+                StateMachineAction exitAction = transition.getExitAction();
+                if (exitAction != null) {
+                    exitAction.call(this, stateManager, appEvent, curState.getState(), transition.getToState(), eventParameters);
+                }
+                StateMachineAction enterAction = transition.getEnterAction();
+                if (enterAction != null) {
+                    enterAction.call(this, stateManager, appEvent, curState.getState(), transition.getToState(), eventParameters);
+                }
+                return;
             }
-            StateMachineAction enterAction = transition.getEnterAction();
-            if (enterAction != null){
-                enterAction.call(this, stateManager, appEvent, curState.getState(), transition.getToState(), eventParameters);
-            }
-            return;
         }
 
         // Now check if there are global event handlers.
         transitionHashMap = statesMap.get(StateManager.AppStates.Any);
         if (transitionHashMap != null){
-            transition = transitionHashMap.get(appEvent);
+            Transition transition = transitionHashMap.get(appEvent);
             if (eventParameters == null || transition == null){
                 Log.d(TAG, "eek!");
             }
