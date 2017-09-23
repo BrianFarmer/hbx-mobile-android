@@ -1,5 +1,13 @@
 package org.dchbx.coveragehq.startup;
 
+import android.os.Bundle;
+import android.text.Html;
+import android.widget.TextView;
+
+import org.dchbx.coveragehq.BaseActivity;
+import org.dchbx.coveragehq.R;
+import org.dchbx.coveragehq.statemachine.StateManager;
+
 /*
     This file is part of DC.
 
@@ -17,5 +25,21 @@ package org.dchbx.coveragehq.startup;
     along with DC Health Link SmallBiz.  If not, see <http://www.gnu.org/licenses/>.
     This statement should go near the beginning of every source file, close to the copyright notices. When using the Lesser GPL, insert the word “Lesser” before “General” in all three places. When using the GNU AGPL, insert the word “Affero” before “General” in all three places.
 */
-public class OpenEnrollmentClosedActivity {
+public class OpenEnrollmentClosedActivity extends BaseActivity {
+    private static String TAG = "OpenEnrollmentClosedActivity";
+    public static StateManager.UiActivity uiActivity = new StateManager.UiActivity(OpenEnrollmentClosedActivity.class);
+
+    public void onCreate(Bundle bundle) {
+        super.onCreate(bundle);
+
+        setContentView(R.layout.open_enrollment_closed);
+        ((TextView)findViewById(R.id.openEnrollmentClosedContent)).setText(Html.fromHtml(getString(R.string.open_enrollment_closed_content)));
+        configToolbar();
+    }
+
+
+
+    public void onClick(){
+
+    }
 }

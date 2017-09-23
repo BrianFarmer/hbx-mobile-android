@@ -39,6 +39,7 @@ public class EligibleResultsActivity extends BaseActivity {
         super.onCreate(bundle);
 
         setContentView(R.layout.marketplace_coverage);
+        configToolbar();
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)

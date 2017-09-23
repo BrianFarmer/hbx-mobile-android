@@ -411,4 +411,30 @@ You <font color="#69a30d">favorited %d plans</font>.
     <string name="terms_and_conditions_content">I chose this plan based upon written information provided by the insurer and nobody has my permission to change the terms of the offer or to agree to changes to it.\n\nI know that some plan benefits have limitations or maximums.\n\nI know that some personal information may be collected from other sources, such as District of Columbia or federal databases that can verify information I provided.\n\nAll of the information I provided on this application is true and complete to the best of my knowledge.\n\nI know that the plan contract will have in it the details of our agreement, including procedures, exclusions and limitations. No benefit comparison, summary or other description of the plan should be considered more correct than the contract in describing the details of the plan\'s services.\n\nI know that this application is part of the agreement or policy issued by the insurer. When I sign below, it means I agree to the terms and conditions of that agreement or policy.\n\nWARNING: It\'s a crime to provide false or misleading information to an insurer for the purpose of defrauding the insurer or any other person. Penalties include imprisonment and/or fines.</string>
     <string name="last_step">This is the last step.</string>
     <string name="sign_electronically">Sign Electronically.</string>
+    <string name="must_report">I understand that I must report any changes that might affect my eligibility, or the eligibility of a household member for health insurance. I can report changes by logging in to my account at dchealthlink.com, by calling DC Health Link at (855) 532-5465, by sending information by US mail, or providing it in-person to one of the Department of Human Services\' Service Centers.  I know that some personal information may be collected from other sources, such as District of Columbia or federal databases that can verify information I provided.  I\'m the person whose name appears in the signature line below. I attest that I have permission from all the people listed on this application to submit the application on their behalf.</string>
+    <string name="open_enrollment_closed_content" formatted="false">
+<![CDATA[
+<font color="#414141" face="sans-serif">
+    <p>
+        Open enrollment is over, but you may still qualify to enroll now.\n\nSee if you qualify for special enrollment by visiting
+        <font color="#007bc4"><a href="https://www.dchealthlink.com/individuals">www.dchealthlink.com/individuals</a></font>
+        or call us at <font color="#007bc4"><a href="tel:8555325465">(855)532-5465</a></font>.</p>
+    </p>
+    <p>
+        Open enrollment begins each year in the fall for coverage the subsequent year.
+    </p>
+</font>
+]]>
+    </string>
+    <string name="dental_coverage_content">
+<![CDATA[
+<font color="#414141" face="sans-serif">
+    <p>You can only use DC Health Link Mobile to buy health care coverage for the upcoming plan year.</p>
+    <p>To sign up for dental coverage, visit <font color="#007bc4"><a href="https://dchealthlink.com">DCHealthLink.com.</a></font>
+    </p>
+</font>
+]]>
+    </string>
+    <string name="dental_coverage">Dental Coverage</string>
+    <string name="open_enrollment_closed">Open Enrollment is currrently close</string>
 </resources>

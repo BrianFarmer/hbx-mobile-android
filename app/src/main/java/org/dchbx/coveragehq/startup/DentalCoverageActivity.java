@@ -25,15 +25,15 @@ import org.dchbx.coveragehq.statemachine.StateManager;
     along with DC Health Link SmallBiz.  If not, see <http://www.gnu.org/licenses/>.
     This statement should go near the beginning of every source file, close to the copyright notices. When using the Lesser GPL, insert the word “Lesser” before “General” in all three places. When using the GNU AGPL, insert the word “Affero” before “General” in all three places.
 */
-public class OpenEnrollmentClosedActivity extends BaseActivity {
-    private static String TAG = "OpenEnrollmentClosedActivity";
-    public static StateManager.UiActivity uiActivity = new StateManager.UiActivity(OpenEnrollmentClosedActivity.class);
+public class DentalCoverageActivity extends BaseActivity {
+    private static String TAG = "DentalCoverageActivity";
+    public static StateManager.UiActivity uiActivity = new StateManager.UiActivity(DentalCoverageActivity.class);
 
     public void onCreate(Bundle bundle) {
         super.onCreate(bundle);
 
-        setContentView(R.layout.open_enrollment_closed);
-        ((TextView)findViewById(R.id.openEnrollmentClosedContent)).setText(Html.fromHtml(getString(R.string.open_enrollment_closed_content)));
+        setContentView(R.layout.dental_coverage);
+        ((TextView)findViewById(R.id.denalCoverageContent)).setText(Html.fromHtml(getString(R.string.dental_coverage_content)));
         configToolbar();
     }
 

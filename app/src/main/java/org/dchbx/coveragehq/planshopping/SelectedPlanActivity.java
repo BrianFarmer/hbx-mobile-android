@@ -31,6 +31,7 @@ public class SelectedPlanActivity extends BaseActivity{
         super.onCreate(bundle);
 
         setContentView(R.layout.selected_plan);
+        configToolbar();
     }
 
     public void onClick(){

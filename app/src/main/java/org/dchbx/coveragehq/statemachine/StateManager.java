@@ -46,6 +46,8 @@ import org.dchbx.coveragehq.ridp.AcctSsnWithEmployer;
 import org.dchbx.coveragehq.ridp.AcctSystemFoundYou;
 import org.dchbx.coveragehq.ridp.AcctSystemFoundYouAceds;
 import org.dchbx.coveragehq.ridp.RidpQuestionsActivity;
+import org.dchbx.coveragehq.startup.DentalCoverageActivity;
+import org.dchbx.coveragehq.startup.OpenEnrollmentClosedActivity;
 import org.dchbx.coveragehq.uqhp.FamilyRelationshipsActivity;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.SubscriberExceptionEvent;
@@ -55,6 +57,7 @@ import java.io.IOException;
 import java.util.ArrayDeque;
 import java.util.HashMap;
 
+import static org.dchbx.coveragehq.statemachine.StateManager.AppEvents.Continue;
 import static org.dchbx.coveragehq.statemachine.StateManager.AppEvents.ReceivedUqhpDetermination;
 
 /*
@@ -275,7 +278,8 @@ public class StateManager extends StateProcessor {
         AcctSystemFoundYouInCuramAcedsFe, AcctSsnWithEmployerFe, AcctSystemFoundYouFe,
         FamilyMembersFe, FinancialAssitanceQuestions, FeDropDown,
         Wallet, SectionQuestions, EditFamilyRelationShip, Attestation,
-        UqhpDetermination, Ineligible, Eligible, Saved
+        UqhpDetermination, Ineligible, Eligible, Saved,
+        OpenEnrollmentClosed, DentalCoverage
     }
 
     // You are discouraged from removing or reordring this enum. It is used in serialized objects.
@@ -321,7 +325,8 @@ public class StateManager extends StateProcessor {
         EditFamilyMember,
         OpenSection,
         Goto, // Special case for dev to goto specific state.
-        ShowDropDown, DropdownSaved, UserSaved, EditRelationship, ReceivedUqhpDetermination, ShowEligible, ShowIneligible, ErrorHappened
+        ShowDropDown, DropdownSaved, UserSaved, EditRelationship, ReceivedUqhpDetermination,
+        ShowEligible, ShowIneligible, ErrorHappened
     }
 
     public void configStates() {
@@ -334,7 +339,7 @@ public class StateManager extends StateProcessor {
 
         stateMachine.from(AppStates.Any).on(AppEvents.Back).doThis(new Back());
         stateMachine.from(AppStates.Any).on(AppEvents.ShowGlossaryItem).to(AppStates.GlossaryDialog, new LaunchDialog(GlossaryDialog.uiDialog));
-        stateMachine.from(AppStates.Any).on(AppEvents.Goto).to(AppStates.Attestation, new LaunchActivity(AttestationActivity.uiActivity));
+        stateMachine.from(AppStates.Any).on(AppEvents.Goto).to(AppStates.DentalCoverage, new LaunchActivity(DentalCoverageActivity.uiActivity));
 
 
         // Initial states not associated with any major section of the app.
@@ -395,6 +400,8 @@ public class StateManager extends StateProcessor {
         stateMachine.from(AppStates.PlanShoppingPremiumAndDeductible).on(AppEvents.SeePlans).to(AppStates.PlanSelector, new LaunchActivity(PlanSelector.uiActivity));
         stateMachine.from(AppStates.PlanSelector).on(AppEvents.ShowPlanDetails).to(AppStates.PlanShoppingDetails, new LaunchActivity(PlanDetailsActivity.uiActivity));
         stateMachine.from(AppStates.PlanSelector).on(AppEvents.BuyPlan).to(AppStates.PlanShoppingPremiumAndDeductible, new LaunchActivity(PremiumAndDeductibleActivity.uiActivity));
+        stateMachine.from(AppStates.OpenEnrollmentClosed).on(Continue).to(AppStates.OpenEnrollmentClosed, new LaunchActivity(OpenEnrollmentClosedActivity.uiActivity));
+        stateMachine.from(AppStates.DentalCoverage).on(Continue).to(AppStates.DentalCoverage, new LaunchActivity(OpenEnrollmentClosedActivity.uiActivity));
     }
 
     private void initRidpStates(StateMachine stateMachine) {
