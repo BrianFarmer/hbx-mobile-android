@@ -435,6 +435,28 @@ You <font color="#69a30d">favorited %d plans</font>.
 </font>
 ]]>
     </string>
+    <string name="coverage_this_year_content">
+<![CDATA[
+<font color="#414141" face="sans-serif">
+    <p>You can only use DC Health Link Mobile to buy health care coverage for the upcoming plan year.</p>
+    <p>You may be able to sign up for a plan that starts before Jaunary 1, 2018 if you\'ve had a recent, major life change like losing other insurance or moving to DC.</p>
+    <p>To see if you qualify, visit <font color="#007bc4"><a href="https://dchealthlink.com">DCHealthLink.com.</a></font>
+    </p>
+</font>
+]]>
+    </string>
+    <string name="full_price_plan_content">
+<![CDATA[
+<font color="#414141" face="sans-serif">
+    <p>You can only use DC Health Link Mobile to buy a full-price private insurance plan.</p>
+    <p>To find out whether you\'d qualify for a tax credit or Medicaid, you can use tha <font color="#007bc4"><a href="https://dchealthlink.com">financial calculator</a></font> on our website.</p>
+    <p>To apply for a Medicaid or tax credit savings, visit <font color="#007bc4"><a href="https://dchealthlink.com">DCHealthLink.com.</a></font>
+    </p>
+</font>
+]]>
+    </string>
     <string name="dental_coverage">Dental Coverage</string>
     <string name="open_enrollment_closed">Open Enrollment is currrently close</string>
+    <string name="i_want_to">I want to...</string>
+    <string name="full_price_plan">Do you want to buy afull-price health insurance plan?</string>
 </resources>

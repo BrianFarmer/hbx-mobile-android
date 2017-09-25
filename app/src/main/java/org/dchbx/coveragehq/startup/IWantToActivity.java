@@ -1,8 +1,8 @@
 package org.dchbx.coveragehq.startup;
 
 import android.os.Bundle;
-import android.text.Html;
-import android.widget.TextView;
+import android.view.View;
+import android.widget.Button;
 
 import org.dchbx.coveragehq.BaseActivity;
 import org.dchbx.coveragehq.R;
@@ -25,21 +25,32 @@ import org.dchbx.coveragehq.statemachine.StateManager;
     along with DC Health Link SmallBiz.  If not, see <http://www.gnu.org/licenses/>.
     This statement should go near the beginning of every source file, close to the copyright notices. When using the Lesser GPL, insert the word “Lesser” before “General” in all three places. When using the GNU AGPL, insert the word “Affero” before “General” in all three places.
 */
-public class DentalCoverageActivity extends BaseActivity {
-    private static String TAG = "DentalCoverageActivity";
-    public static StateManager.UiActivity uiActivity = new StateManager.UiActivity(DentalCoverageActivity.class);
+public class IWantToActivity extends BaseActivity {
+    private static String TAG = "IWantToActivity";
+    public static StateManager.UiActivity uiActivity = new StateManager.UiActivity(IWantToActivity.class);
 
     public void onCreate(Bundle bundle) {
         super.onCreate(bundle);
 
-        setContentView(R.layout.dental_coverage);
-        ((TextView)findViewById(R.id.dentalCoverageContent)).setText(Html.fromHtml(getString(R.string.dental_coverage_content)));
+        setContentView(R.layout.i_want_to);
         configToolbar();
-    }
-
-
-
-    public void onClick(){
-
+        ((Button)findViewById(R.id.dentalCoverage)).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                messages.appEvent(StateManager.AppEvents.GetDentalCoverage);
+            }
+        });
+        ((Button)findViewById(R.id.nextYearCoverage)).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                messages.appEvent(StateManager.AppEvents.GetCoverageNextYear);
+            }
+        });
+        ((Button)findViewById(R.id.earlyCoverage)).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                messages.appEvent(StateManager.AppEvents.GetCoverageThisYear);
+            }
+        });
     }
 }

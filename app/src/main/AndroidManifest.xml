@@ -261,6 +261,18 @@
                   android:configChanges="orientation|keyboardHidden|screenSize"
                   android:label=""
             />
+        <activity android:name=".startup.IWantToActivity"
+                  android:configChanges="orientation|keyboardHidden|screenSize"
+                  android:label=""
+            />
+        <activity android:name=".startup.CoverageThisYearActivity"
+                  android:configChanges="orientation|keyboardHidden|screenSize"
+                  android:label=""
+            />
+        <activity android:name=".startup.FullPricePlanActivity"
+                  android:configChanges="orientation|keyboardHidden|screenSize"
+                  android:label=""
+            />
     </application>
 
 </manifest>
