@@ -248,7 +248,6 @@ public class StateManager extends StateProcessor {
         AcctPreAuth,
         AcctSsn,
         AcctSsnWithEmployer,
-        AcctSystemFoundYou,
         AcctSystemFoundYouInCuramAceds,
         FoundEmployers,
         RidpQuestions,
@@ -410,16 +409,11 @@ public class StateManager extends StateProcessor {
         stateMachine.from(AppStates.GetQuestions).on(AppEvents.GetQuestionsOperationComplete).to(AppStates.RidpQuestions, new PopAndLaunchActivity(RidpQuestionsActivity.uiActivity));
         stateMachine.from(AppStates.AcctAuthConsent).on(AppEvents.ConsentDenied).to(AppStates.Login, new LaunchActivity(AcctSystemFoundYouAceds.uiActivity));
         stateMachine.from(AppStates.RidpQuestions).on(AppEvents.Continue).to(AppStates.VerifyingUser, new VerifyUser());
-        stateMachine.from(AppStates.VerifyingUser).on(AppEvents.UserVerifiedFoundYou).to(AppStates.AcctSystemFoundYou, new LaunchActivity(AcctSystemFoundYou.uiActivity));
+        stateMachine.from(AppStates.VerifyingUser).on(AppEvents.UserVerifiedFoundYou).to(AppStates.AcctSystemFoundYouFe, new LaunchActivity(AcctSystemFoundYou.uiActivity));
         stateMachine.from(AppStates.VerifyingUser).on(AppEvents.UserVerifiedSsnWithEmployer).to(AppStates.AcctSsnWithEmployer, new LaunchActivity(AcctSsnWithEmployer.uiActivity));
         stateMachine.from(AppStates.VerifyingUser).on(AppEvents.UserVerifiedOkToCreate).to(AppStates.CreatingAccount, new CreateAccount());
         stateMachine.from(AppStates.CreatingAccount).on(AppEvents.SignUpUserInAceds).to(AppStates.AcctSystemFoundYouInCuramAceds, new LaunchActivity(AcctSystemFoundYouAceds.uiActivity));
         stateMachine.from(AppStates.CreatingAccount).on(AppEvents.SignUpSuccessful).to(AppStates.Login, new PopAndLaunchActivity(LoginActivity.uiActivity));
-
-        stateMachine.from(AppStates.AcctSystemFoundYou).on(AppEvents.ShowLogin).to(AppStates.Login, new PopAndLaunchActivity(LoginActivity.uiActivity));
-        stateMachine.from(AppStates.AcctSystemFoundYou).on(AppEvents.SignUpIndividual).to(AppStates.AcctCreate, new PopAndLaunchActivity(AcctCreate.uiActivity));
-        stateMachine.from(AppStates.AcctSystemFoundYou).on(AppEvents.Close).to(AppStates.Hello, new PopAndLaunchActivity(HelloActivity.uiActivity));
-
     }
 
     private void initRidpFeStates(StateMachine stateMachine) {
