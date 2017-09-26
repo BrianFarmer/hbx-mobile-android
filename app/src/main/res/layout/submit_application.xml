@@ -27,7 +27,7 @@
             android:id="@+id/firstText"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:text="I understand that I must report any changes that might affect my eligibility, or the eligibility of a household member for health insurance. I can report changes by logging in to my account at dchealthlink.com, by calling DC Health Link at (855) 532-5465, by sending information by US mail, or providing it in-person to one of the Department of Human Services' Service Centers.\n\nI know that some personal information may be collected from other sources, such as District of Columbia or federal databases that can verify information I provided.\n\nI'm the person whose name appears in the signature line below. I attest that I have permission from all the people listed on this application to submit the application on their behalf."
+            android:text="@string/must_report"
             android:textSize="20dp"
             android:textColor="@color/textdarkgray"
             android:fontFamily="sans-serif"

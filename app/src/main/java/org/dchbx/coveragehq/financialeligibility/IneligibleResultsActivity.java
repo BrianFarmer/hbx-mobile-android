@@ -40,6 +40,7 @@ public class IneligibleResultsActivity extends BaseActivity {
 
         setContentView(R.layout.ineligible_applicants);
         messages.getUqhpDetermination();
+        configToolbar();
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)

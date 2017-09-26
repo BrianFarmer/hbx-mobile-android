@@ -32,6 +32,7 @@ public class SubmitApplicationActivity extends BaseActivity {
 
         setContentView(R.layout.submit_application);
         messages.getUqhpDetermination();
+        configToolbar();
     }
 
     public void onClick(){

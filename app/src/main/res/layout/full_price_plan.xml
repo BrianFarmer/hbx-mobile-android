@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout
+xmlns:android="http://schemas.android.com/apk/res/android"
+xmlns:tools="http://schemas.android.com/tools"
+android:layout_width="match_parent"
+android:layout_height="match_parent"
+xmlns:app="http://schemas.android.com/apk/res-auto"
+    >
+
+    <android.support.v7.widget.Toolbar
+        android:id="@+id/toolbar"
+        android:layout_height="wrap_content"
+        android:layout_width="0dp"
+        android:fitsSystemWindows="true"
+        android:minHeight="?attr/actionBarSize"
+        android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
+        android:title=""
+        android:background="@color/titlebar"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        />
+
+    <TextView
+        android:id="@+id/fullPricePlan"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentTop="true"
+        android:layout_marginLeft="15dp"
+        android:layout_marginRight="15dp"
+        android:layout_marginTop="15dp"
+        android:fontFamily="sans-serif"
+        android:text="@string/full_price_plan"
+        android:textAlignment="center"
+        android:textSize="32dp"
+        android:textColor="@color/textdarkgray"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/toolbar"
+        />
+
+    <TextView
+        android:id="@+id/fullPricePlanContent"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:text="@string/full_price_plan_content"
+        android:textSize="20dp"
+        android:textColor="@color/textdarkgray"
+        android:fontFamily="sans-serif"
+        android:textStyle="normal"
+        app:layout_constraintTop_toBottomOf="@+id/fullPricePlan"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        android:layout_marginTop="15dp"
+        android:layout_marginLeft="15dp"
+        android:layout_marginRight="15dp"
+        android:layout_marginStart="15dp"
+        android:layout_marginEnd="15dp"
+        />
+    <Button
+        android:id="@+id/buttonYes"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:text="@string/yes"
+        android:textAllCaps="true"
+        android:background="@drawable/ivl_button_blue_solid"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintBottom_toTopOf="@+id/buttonNo"
+        android:layout_marginLeft="45dp"
+        android:layout_marginRight="45dp"
+        android:layout_marginTop="57dp"
+        android:layout_marginBottom="34dp"
+        android:paddingTop="19dp"
+        android:paddingBottom="19dp"
+        />
+    <Button
+        android:id="@+id/buttonNo"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:text="@string/no"
+        android:textAllCaps="true"
+        android:background="@drawable/ivl_button_red_solid"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        android:layout_marginLeft="45dp"
+        android:layout_marginRight="45dp"
+        android:layout_marginTop="57dp"
+        android:layout_marginBottom="34dp"
+        android:paddingTop="19dp"
+        android:paddingBottom="19dp"
+        />
+
+</android.support.constraint.ConstraintLayout>

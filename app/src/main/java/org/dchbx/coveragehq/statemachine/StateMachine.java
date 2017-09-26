@@ -63,8 +63,8 @@ public class StateMachine {
         }
         eventParameters.add("OldState", curState.getState());
 
-        if (curState.getState() == StateManager.AppStates.AcctAuthConsentFe
-            && appEvent == StateManager.AppEvents.ConsentGiven){
+        if (curState.getState() == StateManager.AppStates.Hello
+            && appEvent == StateManager.AppEvents.StartApplication){
             Log.d(TAG, "the button you asked for has been clicked.");
         }
 
