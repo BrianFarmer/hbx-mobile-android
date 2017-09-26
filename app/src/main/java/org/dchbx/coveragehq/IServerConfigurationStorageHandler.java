@@ -28,6 +28,7 @@ public abstract class IServerConfigurationStorageHandler {
     public abstract void store(ServiceManager.AppConfig appConfig);
     public abstract boolean read(ServiceManager.AppConfig appConfig);
     public abstract void store(org.dchbx.coveragehq.models.account.Account account);
+    public abstract void clearAccount();
     public abstract org.dchbx.coveragehq.models.account.Account readAccount();
     public abstract void store(Questions questions);
     public abstract Questions readQuestions();

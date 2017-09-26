@@ -123,6 +123,13 @@ public class ConfigurationStorageHandler extends IServerConfigurationStorageHand
     }
 
     @Override
+    public void clearAccount() {
+        SharedPreferences.Editor editor = getSharedPreferences().edit();
+        editor.remove("AccountJson");
+        editor.commit();
+    }
+
+        @Override
     public Account readAccount() {
         SharedPreferences sharedPreferences = getSharedPreferences();
         String accountJson = sharedPreferences.getString("AccountJson", null);
