@@ -372,6 +372,7 @@ public class StateManager extends StateProcessor {
         });
 
         stateMachine.from(AppStates.Login).on(AppEvents.SignUpIndividual).to(AppStates.PlanShoppingChoices, new LaunchActivity(PlanShoppingChoicesActivity.uiActivity));
+        stateMachine.from(AppStates.Login).on(AppEvents.Cancel).to(AppStates.Hello, new LaunchActivity(HelloActivity.uiActivity));
 
         stateMachine.from(AppStates.PlanShoppingChoices)
                 .on(AppEvents.StartShopping)
