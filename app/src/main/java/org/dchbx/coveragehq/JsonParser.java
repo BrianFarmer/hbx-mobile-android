@@ -24,6 +24,7 @@ import org.dchbx.coveragehq.models.roster.Roster;
 import org.dchbx.coveragehq.models.roster.RosterEntry;
 import org.dchbx.coveragehq.models.roster.SummaryOfBenefits;
 import org.dchbx.coveragehq.models.services.Service;
+import org.dchbx.coveragehq.models.startup.Status;
 import org.joda.time.DateTime;
 import org.joda.time.LocalDate;
 
@@ -211,5 +212,13 @@ public class JsonParser {
     public UqhpDetermination parseUqhpDeterminationResponse(String json) {
         return parse(json, UqhpDetermination.class);
 
+    }
+
+    public Status parseStatus(String json) {
+        return parse(json, Status.class);
+    }
+
+    public org.dchbx.coveragehq.models.startup.LoginResponse parseResumeLogin(String json) {
+        return parse(json, org.dchbx.coveragehq.models.startup.LoginResponse.class);
     }
 }

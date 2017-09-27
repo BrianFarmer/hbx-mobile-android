@@ -86,7 +86,7 @@ public class BrokerWorker extends IntentService {
             }
 
             ServerConfiguration serverConfiguration = serviceManager.getServerConfiguration();
-            UrlHandler urlHandler = serviceManager.enrollConfig().getUrlHandler();
+            UrlHandler urlHandler = serviceManager.getEnrollConfig().getUrlHandler();
             String urlRoot = serverConfiguration.GitAccountsUrl;
             GitAccounts gitAccounts = serviceManager.getCoverageConnection().getGitAccounts(urlRoot);
                 Log.d(TAG, "got git accounts");
@@ -527,9 +527,9 @@ public class BrokerWorker extends IntentService {
                 @Override
                 public void success(String encryptedText) {
                     try {
-                        ServerConfiguration serverConfiguration = serviceManager.enrollConfig().getServerConfiguration();
+                        ServerConfiguration serverConfiguration = serviceManager.getEnrollConfig().getServerConfiguration();
                         serverConfiguration.encryptedString = encryptedText;
-                        IServerConfigurationStorageHandler serverConfigurationStorageHandler = serviceManager.enrollConfig().getServerConfigurationStorageHandler();
+                        IServerConfigurationStorageHandler serverConfigurationStorageHandler = serviceManager.getEnrollConfig().getServerConfigurationStorageHandler();
                         serverConfigurationStorageHandler.store(serverConfiguration);
                         serviceManager.getCoverageConnection().saveLoginInfo(true);
                     } catch (Exception e) {
@@ -551,7 +551,7 @@ public class BrokerWorker extends IntentService {
     @Subscribe(threadMode = ThreadMode.BACKGROUND)
     public void doThis(Events.AuthenticateFingerprintDecrypt authenticateFingerprint) {
         try {
-            final ServerConfiguration serverConfiguration = serviceManager.enrollConfig().getServerConfiguration();
+            final ServerConfiguration serverConfiguration = serviceManager.getEnrollConfig().getServerConfiguration();
 
             if (!SystemUtilities.detectNetwork()){
                 Log.e(TAG, "no network, returning from BrokerWorker");
@@ -559,7 +559,7 @@ public class BrokerWorker extends IntentService {
                 return;
             }
 
-            IServerConfigurationStorageHandler serverConfigurationStorageHandler = serviceManager.enrollConfig().getServerConfigurationStorageHandler();
+            IServerConfigurationStorageHandler serverConfigurationStorageHandler = serviceManager.getEnrollConfig().getServerConfigurationStorageHandler();
             serverConfigurationStorageHandler.read(serverConfiguration);
 
             fingerprintManager.authenticate(serverConfiguration.encryptedString, new FingerprintManager.IAuthenticationDecryptResult() {

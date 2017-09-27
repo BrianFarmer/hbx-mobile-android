@@ -85,7 +85,13 @@ public class ConnectionHandler implements IConnectionHandler{
 
         Request request = builder.post(body)
                 .build();
-        Response response = getClient(url.scheme(), true).newCall(request).execute();
+        Response response;
+        try {
+            response = getClient(url.scheme(), true).newCall(request).execute();
+        } catch (Throwable t){
+            Log.e(TAG, t.toString());
+            throw t;
+        }
 
         int code = response.code();
         PostResponse postResponse = new PostResponse();

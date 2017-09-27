@@ -8,6 +8,7 @@ import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 
 import org.dchbx.coveragehq.models.fe.Field;
+import org.dchbx.coveragehq.models.startup.ResumeParameters;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -70,6 +71,11 @@ public class EventParameters {
         return this;
     }
 
+    public EventParameters add(String name, Object obj){
+        eventParameters.add(new StringParameter(name, new Gson().toJson(obj)));
+        return this;
+    }
+
     public void initBundle(Bundle bundle) {
         for (EventParameter eventParameter : eventParameters) {
             eventParameter.initBundle(bundle);
@@ -95,6 +101,20 @@ public class EventParameters {
         }
 
         throw new Exception("Can find ResultCode event parameter");
+    }
+
+    public Object getObject(String loginParameters, Class<ResumeParameters> resumeParametersClass) {
+        int i = 0;
+        for (EventParameter eventParameter : eventParameters) {
+            if (eventParameter.getName().equals(loginParameters)){
+                break;
+            }
+            i ++;
+        }
+
+        EventParameter eventParameter = eventParameters.get(i);
+        StringParameter stringParameter = (StringParameter) eventParameter;
+        return new Gson().fromJson(stringParameter.value, resumeParametersClass);
     }
 
     public static abstract class EventParameter {

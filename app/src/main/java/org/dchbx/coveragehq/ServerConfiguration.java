@@ -4,8 +4,6 @@ import org.dchbx.coveragehq.models.gitaccounts.GitAccounts;
 
 public class ServerConfiguration {
 
-
-
     public enum UserType {
         Unknown,
         NotLoggedIn,
@@ -46,6 +44,9 @@ public class ServerConfiguration {
     public String employerDetailsEndpoint;
     public String employeeRosterEndpoint;
     public String individualEndpoint;
+    public String effectiveDateEndpoint;
+    public String glossaryEndpoint;
+    public String openEnrollmentStatusEndpoint;
 
     public static class HostInfo {
         public String scheme;

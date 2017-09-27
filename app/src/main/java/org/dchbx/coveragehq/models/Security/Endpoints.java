@@ -29,4 +29,8 @@ public class Endpoints {
     public String local_logout_endpoint;
     public String uqhp_application_schema_endpoint;
     public String faa_application_schema_endpoint;
+    public String effective_date_endpoint;
+    public String open_enrollment_status_endpoint;
+    public String glossary_endpoint;
+
 }

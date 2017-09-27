@@ -7,7 +7,10 @@
     <data>
         <variable
             name="activity"
-            type="org.dchbx.coveragehq.WelcomeBackActivity"/>
+            type="org.dchbx.coveragehq.startup.ResumeApplicationActivity"/>
+        <variable
+            name="resumeParameters"
+            type="org.dchbx.coveragehq.models.startup.ResumeParameters"/>
     </data>
     <RelativeLayout
         android:layout_width="match_parent"
@@ -32,6 +35,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:hint="@string/email"
+            android:text="@={resumeParameters.email}"
             android:layout_below="@id/imageViewDcHealthLinkLogo"
             android:layout_marginLeft="20dp"
             android:layout_marginRight="20dp"
@@ -68,6 +72,7 @@
             android:inputType="textPassword"
             android:layout_marginLeft="20dp"
             android:layout_marginRight="20dp"
+            android:text="@={resumeParameters.password}"
             android:textSize="16dp"
             android:background="@android:color/transparent"
             android:paddingTop="10dp"
@@ -105,7 +110,6 @@
             android:layout_height="wrap_content"
             android:text="@string/enable_fingerprint_login"
             android:id="@+id/switchEnableFingerprintLogin"
-            android:checked="false"
             android:layout_marginLeft="20dp"
             android:layout_marginRight="20dp"
             android:layout_below="@+id/forgot_password"

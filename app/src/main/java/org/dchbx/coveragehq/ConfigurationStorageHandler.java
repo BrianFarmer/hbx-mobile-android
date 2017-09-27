@@ -24,6 +24,7 @@ public class ConfigurationStorageHandler extends IServerConfigurationStorageHand
     private static String TAG = "ConfigurationStorage";
 
 
+
     private SharedPreferences getSharedPreferences(){
         return BrokerApplication.getBrokerApplication().getSharedPreferences(BrokerApplication.getBrokerApplication().getString(R.string.sharedpreferencename), Context.MODE_PRIVATE);
     }

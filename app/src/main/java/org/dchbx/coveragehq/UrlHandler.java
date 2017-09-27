@@ -16,6 +16,7 @@ import org.dchbx.coveragehq.models.fe.UqhpApplication;
 import org.dchbx.coveragehq.models.planshopping.Plan;
 import org.dchbx.coveragehq.models.ridp.Answers;
 import org.dchbx.coveragehq.models.ridp.Questions;
+import org.dchbx.coveragehq.models.ridp.SignUp.Links;
 import org.dchbx.coveragehq.models.ridp.SignUp.SignUp;
 import org.dchbx.coveragehq.models.ridp.VerifyIdentity;
 import org.dchbx.coveragehq.models.roster.Enrollment;
@@ -24,6 +25,7 @@ import org.dchbx.coveragehq.models.roster.Roster;
 import org.dchbx.coveragehq.models.roster.RosterEntry;
 import org.dchbx.coveragehq.models.roster.SummaryOfBenefits;
 import org.dchbx.coveragehq.models.services.Service;
+import org.dchbx.coveragehq.models.startup.Login;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -41,7 +43,6 @@ import static org.dchbx.coveragehq.ConnectionHandler.JSON;
 
 public abstract class UrlHandler {
     private static String TAG = "UrlHandler";
-
 
     public class PutParameters {
         FormBody body;
@@ -475,7 +476,9 @@ public abstract class UrlHandler {
         serverConfiguration.localLogoutEndpoint = endpoints.local_logout_endpoint;
         serverConfiguration.uqhpApplicationSchemaEndpoint = endpoints.uqhp_application_schema_endpoint;
         serverConfiguration.faaApplicationSchemaEndpoint = endpoints.faa_application_schema_endpoint;
-
+        serverConfiguration.effectiveDateEndpoint = endpoints.effective_date_endpoint;
+        serverConfiguration.glossaryEndpoint = endpoints.glossary_endpoint;
+        serverConfiguration.openEnrollmentStatusEndpoint = endpoints.open_enrollment_status_endpoint;
     }
 
     public List<Plan> processPlans(IConnectionHandler.GetResponse getResponse) {
@@ -613,5 +616,43 @@ public abstract class UrlHandler {
         postParameters.requestBody = RequestBody.create(JSON, json);
 
         return request;
+    }
+
+    public HttpRequest getLoginRequest(Login login) {
+        PostParameters postParameters = new PostParameters();
+        postParameters.url = getLoginUrl();
+        FormBody formBody = new FormBody.Builder()
+                .build();
+        String jsonString = (new Gson()).toJson(login);
+        postParameters.requestBody = RequestBody.create(JSON, jsonString);
+        postParameters.requestString = jsonString;
+
+        HttpRequest httpRequest = new HttpRequest();
+        httpRequest.requestType = HttpRequest.RequestType.Post;
+        httpRequest.postParameters = postParameters;
+        return httpRequest;
+    }
+
+
+    public HttpRequest getResumeRequest() {
+        GetParameters getParameters = new GetParameters();
+        getParameters.url = HttpUrl.parse(serverConfiguration.statusUrl);
+        HttpRequest request = new HttpRequest();
+        request.requestType = HttpRequest.RequestType.Get;
+        request.getParameters = getParameters;
+        return request;
+    }
+
+    public HttpRequest getOpenEnrollmentRequest() {
+        GetParameters getParameters = new GetParameters();
+        getParameters.url = HttpUrl.parse(serverConfiguration.openEnrollmentStatusEndpoint);
+        HttpRequest request = new HttpRequest();
+        request.requestType = HttpRequest.RequestType.Get;
+        request.getParameters = getParameters;
+        return request;
+    }
+
+    public void populateLinks(Links links) {
+
     }
 }

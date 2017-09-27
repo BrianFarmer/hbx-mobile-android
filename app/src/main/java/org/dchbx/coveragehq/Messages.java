@@ -92,5 +92,6 @@ public interface Messages {
     void sendHavenApplication();
     void getUqhpDetermination();
     void getUqhpDeterminationResponse(UqhpDetermination uqhpDetermination);
+    void sendBackgroundProcess(Events.BackgroundProcess o);
 }
 

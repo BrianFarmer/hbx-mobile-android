@@ -434,5 +434,10 @@ public class EventBusMessages implements Messages {
     public void getUqhpDeterminationResponse(UqhpDetermination uqhpDetermination){
         eventBus.post(new Events.GetUqhpDeterminationResponse(uqhpDetermination));
     }
+
+    @Override
+    public void sendBackgroundProcess(Events.BackgroundProcess o) {
+        eventBus.post(o);
+    }
 }
 
