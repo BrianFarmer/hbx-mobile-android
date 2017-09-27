@@ -1421,4 +1421,28 @@ public class Events {
             return uqhpDetermination;
         }
     }
+
+    public static class BackgroundProcess {
+        EventParameters eventParameters;
+
+        public BackgroundProcess(){
+        }
+
+        public void setEventParameters(EventParameters eventParameters){
+            this.eventParameters = eventParameters;
+        }
+
+        public EventParameters getEventParameters(){
+            return eventParameters;
+        }
+    }
+
+    public static class ResumeApplication extends BackgroundProcess {
+    }
+
+    public static class CheckOpenEnrollment {
+    }
+
+    static public class IvlLoginRequest extends BackgroundProcess {
+    }
 }

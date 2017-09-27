@@ -7,10 +7,10 @@ import org.dchbx.coveragehq.ConfigurationStorageHandler;
 import org.dchbx.coveragehq.ConnectionHandler;
 import org.dchbx.coveragehq.Events;
 import org.dchbx.coveragehq.IConnectionHandler;
+import org.dchbx.coveragehq.IServiceManager;
 import org.dchbx.coveragehq.JsonParser;
 import org.dchbx.coveragehq.Messages;
 import org.dchbx.coveragehq.ServerConfiguration;
-import org.dchbx.coveragehq.ServiceManager;
 import org.dchbx.coveragehq.StateProcessor;
 import org.dchbx.coveragehq.UrlHandler;
 import org.dchbx.coveragehq.models.account.Account;
@@ -62,10 +62,10 @@ import static org.dchbx.coveragehq.statemachine.StateManager.AppEvents.GetQuesti
 */
 public class RidpService extends StateProcessor {
     private static String TAG = "RidpService";
-    private final ServiceManager serviceManager;
+    private final IServiceManager serviceManager;
     private Messages messages;
 
-    public RidpService(ServiceManager serviceManager) {
+    public RidpService(IServiceManager serviceManager) {
         this.serviceManager = serviceManager;
         messages = BrokerApplication.getBrokerApplication().getMessages(this);
     }

@@ -21,27 +21,28 @@ import com.google.gson.annotations.Expose;
 
 import org.dchbx.coveragehq.financialeligibility.FinancialEligibilityService;
 import org.dchbx.coveragehq.ridp.RidpService;
+import org.dchbx.coveragehq.startup.StartUpService;
 import org.dchbx.coveragehq.statemachine.StateManager;
-import org.dchbx.coveragehq.uqhp.UQHPService;
 
 import java.io.Serializable;
 
-public class ServiceManager {
+
+public class ServiceManager implements IServiceManager {
 
     private static ServiceManager staticServiceManager = new ServiceManager();
 
 
     // Services
-    private SignUpService signUpService;
     private RidpService ridpService;
-    private UQHPService uqhpService;
     private BrokerWorker brokerWorker;
     private StateManager stateManager;
     private ConfigurationStorageHandler configurationStorageHandler;
     private AppStatusService appStatusService;
     private DebugStateService debugStateService;
     private FinancialEligibilityService financialEligibilityService;
+    private StartUpService startUpService;
 
+    @Override
     public AppConfig getAppConfig(){
         AppConfig appConfig = new AppConfig();
         appConfig.DataSource = config.DataSource();
@@ -75,6 +76,7 @@ public class ServiceManager {
         }
     }
 
+    @Override
     public StateManager getStateManager() {
         return stateManager;
     }
@@ -82,15 +84,14 @@ public class ServiceManager {
     public void init() {
         // Initialize all of the services
 
-        signUpService = new SignUpService();
         ridpService = new RidpService(this);
-        uqhpService = new UQHPService(this);
         brokerWorker = new BrokerWorker(this);
         stateManager = new StateManager(this);
         configurationStorageHandler = new ConfigurationStorageHandler();
         appStatusService = new AppStatusService(this);
         debugStateService = new DebugStateService();
         financialEligibilityService = new FinancialEligibilityService(this);
+        startUpService = new StartUpService(this);
 
         debugStateService.init();
         stateManager.init();
@@ -101,26 +102,27 @@ public class ServiceManager {
         }
     }
 
+    @Override
     public BrokerWorker getBrokerWorker() {
         return brokerWorker;
     }
 
+    @Override
     public RidpService getRidpService() {
         return ridpService;
     }
 
-    public SignUpService getSignUpService() {
-        return signUpService;
-    }
-
+    @Override
     public JsonParser getParser() {
         return new JsonParser();
     }
 
+    @Override
     public AppStatusService getAppStatusService() {
         return appStatusService;
     }
 
+    @Override
     public FinancialEligibilityService getFinancialEligibilityService() {
         return financialEligibilityService;
     }
@@ -149,30 +151,35 @@ public class ServiceManager {
     private static GitHubBuildConfig2 gitHubBuildConfig2 = new GitHubBuildConfig2();
     private static EnrollConfigBase config = BuildVariant.initialEnrollConfig();
 
+    @Override
     public ServerConfiguration getServerConfiguration(){
         return config.getServerConfiguration();
     }
 
-    public EnrollConfigBase enrollConfig(){
+    public EnrollConfigBase getEnrollConfig(){
         return config;
     }
 
+    @Override
     public UrlHandler getUrlHandler(){
-        return enrollConfig().getUrlHandler();
+        return getEnrollConfig().getUrlHandler();
     }
 
+    @Override
     public ConnectionHandler getConnectionHandler() {
         return new EnrollConnectionHandler(getServerConfiguration());
     }
 
+    @Override
     public CoverageConnection getCoverageConnection() {
-        return enrollConfig().getCoverageConnection();
+        return getEnrollConfig().getCoverageConnection();
     }
 
     public static ServiceManager getServiceManager(){
         return staticServiceManager;
     }
 
+    @Override
     public ConfigurationStorageHandler getConfigurationStorageHandler(){
         return configurationStorageHandler;
     }

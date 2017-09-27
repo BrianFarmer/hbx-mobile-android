@@ -1,4 +1,4 @@
-package org.dchbx.coveragehq;
+package org.dchbx.coveragehq.models.startup;
 
 /*
     This file is part of DC.
@@ -17,5 +17,7 @@ package org.dchbx.coveragehq;
     along with DC Health Link SmallBiz.  If not, see <http://www.gnu.org/licenses/>.
     This statement should go near the beginning of every source file, close to the copyright notices. When using the Lesser GPL, insert the word “Lesser” before “General” in all three places. When using the GNU AGPL, insert the word “Affero” before “General” in all three places.
 */
-public class WelcomeBackActivity extends BrokerActivity {
+public class Status {
+    public String eaid;
+    public String status;
 }

@@ -24,7 +24,7 @@ public class RootActivity extends BrokerActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         Log.d(TAG, "**************** onCreate");
-        ServiceManager.getServiceManager().enrollConfig().initMobileCenter();
+        ServiceManager.getServiceManager().getEnrollConfig().initMobileCenter();
     }
 
 

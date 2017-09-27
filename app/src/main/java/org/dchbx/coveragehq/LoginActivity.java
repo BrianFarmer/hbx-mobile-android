@@ -85,7 +85,7 @@ public class LoginActivity extends BrokerActivity {
         super.onCreate(savedInstanceState);
 
 
-        setContentView(ServiceManager.getServiceManager().enrollConfig().getLoginLayout());
+        setContentView(ServiceManager.getServiceManager().getEnrollConfig().getLoginLayout());
         pastFingerprint = false;
 
         View configButton = findViewById(R.id.configButton);
@@ -112,7 +112,7 @@ public class LoginActivity extends BrokerActivity {
             }
         }
         TextView textViewVersion = (TextView) findViewById(R.id.textViewVersion);
-        String version = ServiceManager.getServiceManager().enrollConfig().getVersion();
+        String version = ServiceManager.getServiceManager().getEnrollConfig().getVersion();
         textViewVersion.setVisibility(View.GONE);
         if (version != null) {
             try {
@@ -125,7 +125,7 @@ public class LoginActivity extends BrokerActivity {
         }
 
         // Set up the login form.
-        if (ServiceManager.getServiceManager().enrollConfig().isGit()){
+        if (ServiceManager.getServiceManager().getEnrollConfig().isGit()){
             accountsSpinner = (Spinner)findViewById(R.id.spinnerAccounts);
             getMessages().getGitAccounts(null);
         } else {
@@ -194,7 +194,7 @@ public class LoginActivity extends BrokerActivity {
     }
 
     private void attemptLogin() {
-        if (ServiceManager.getServiceManager().enrollConfig().isGit()){
+        if (ServiceManager.getServiceManager().getEnrollConfig().isGit()){
             if (urlsSpinner == null
                 || accountsSpinner == null){
                 return;

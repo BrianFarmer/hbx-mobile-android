@@ -23,7 +23,7 @@ import java.util.TimerTask;
     This statement should go near the beginning of every source file, close to the copyright notices. When using the Lesser GPL, insert the word “Lesser” before “General” in all three places. When using the GNU AGPL, insert the word “Affero” before “General” in all three places.
 */
 public class AppStatusService {
-    private final ServiceManager serviceManager;
+    private final IServiceManager serviceManager;
 
     private DateTime timeout = null;
     private Timer sessionTimeoutTimer;
@@ -32,14 +32,14 @@ public class AppStatusService {
     private ServerConfiguration.UserType userStatus;
 
 
-    public AppStatusService(ServiceManager serviceManager){
+    public AppStatusService(IServiceManager serviceManager){
         this.serviceManager = serviceManager;
     }
 
 
     public void startSessionTimeout() {
 
-        countdownTimerTicksLeft = serviceManager.enrollConfig().getTimeoutCountdownSeconds();
+        countdownTimerTicksLeft = serviceManager.getEnrollConfig().getTimeoutCountdownSeconds();
         countdownTimer = new Timer();
         countdownTimer.schedule(new TimerTask() {
             @Override
@@ -75,7 +75,7 @@ public class AppStatusService {
         if (sessionTimeoutTimer != null) {
             sessionTimeoutTimer.cancel();
         }
-        int timeoutMilliSeconds = serviceManager.enrollConfig().getSessionTimeoutSeconds() * 1000;
+        int timeoutMilliSeconds = serviceManager.getEnrollConfig().getSessionTimeoutSeconds() * 1000;
         timeout = DateTime.now().plusMillis(timeoutMilliSeconds);
         sessionTimeoutTimer = new Timer();;
         sessionTimeoutTimer.schedule(new TimerTask() {
