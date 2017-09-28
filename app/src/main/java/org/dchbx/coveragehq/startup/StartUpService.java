@@ -42,7 +42,14 @@ public class StartUpService {
 
     public StartUpService(IServiceManager serviceManager) {
         this.serviceManager = serviceManager;
-        Messages messages = BrokerApplication.getBrokerApplication().getMessages(this);
+        messages = BrokerApplication.getBrokerApplication().getMessages(this);
+    }
+
+    @Subscribe(threadMode = ThreadMode.BACKGROUND)
+    public void doThis(Events.ClearPIIRequest clearPIIRequest) throws Exception {
+        serviceManager.getConfigurationStorageHandler().clearAccount();
+        serviceManager.getConfigurationStorageHandler().clearAnswers();
+        messages.appEvent(StateManager.AppEvents.ClearedPII);
     }
 
     @Subscribe(threadMode = ThreadMode.BACKGROUND)

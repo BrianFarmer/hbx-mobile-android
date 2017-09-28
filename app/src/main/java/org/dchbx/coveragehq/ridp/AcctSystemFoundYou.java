@@ -42,23 +42,15 @@ public class AcctSystemFoundYou extends PostVerifiedActivity {
     }
 
     public void pleaseLogInClicked(){
-        //TODO: CLEAR PII DATA FROM RIDP, APPLICATION ETC
         getMessages().appEvent(StateManager.AppEvents.ShowLogin);
-        //Toast toast = Toast.makeText(this, "please sign in clicked", Toast.LENGTH_LONG);
-        //toast.show();
     }
 
     public void reviewYourAnswersClicked(){
         getMessages().appEvent(StateManager.AppEvents.SignUpIndividual);
-        //Toast toast = Toast.makeText(this,"reviewYourAnswersClicked in clicked", Toast.LENGTH_LONG);
-        //toast.show();
     }
 
     public void comeBackLaterClicked(){
-        //TODO: CLEAR PII DATA FROM RIDP, APPLICATION ETC
         getMessages().appEvent(StateManager.AppEvents.Close);
-        //Toast toast = Toast.makeText(this,"come back later clicked", Toast.LENGTH_LONG);
-        //toast.show();
     }
 
     @Override
