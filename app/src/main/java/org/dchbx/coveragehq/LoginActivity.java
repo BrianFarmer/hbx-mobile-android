@@ -179,7 +179,7 @@ public class LoginActivity extends BrokerActivity {
 
     @Override
     public void onBackPressed(){
-        System.exit(0);
+        getMessages().appEvent(StateManager.AppEvents.Cancel);
     }
 
     @Override
