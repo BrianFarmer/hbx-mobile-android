@@ -96,7 +96,7 @@
                     />
 
                 <TextView
-                    android:id="@+id/youCanComplete"
+                    android:id="@+id/verifyInfoForExperian"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:text="Make sure that you entered your legal name, current home address, primary phone number, date of birth and email address correctly. We will only collect personal information to verify your identity with Experian, a third party identity verification provider."
@@ -121,7 +121,7 @@
                     android:textColor="@color/textgray"
                     android:textSize="20dp"
                     android:textStyle="normal"
-                    app:layout_constraintTop_toBottomOf="@+id/youCanComplete"
+                    app:layout_constraintTop_toBottomOf="@+id/verifyInfoForExperian"
                     app:layout_constraintLeft_toLeftOf="parent"
                     app:layout_constraintRight_toRightOf="parent"
                     android:layout_marginTop="26dp"
@@ -132,7 +132,7 @@
                     />
 
                 <TextView
-                    android:id="@+id/learnMoreAbout"
+                    android:id="@+id/haveInfoReadyForExperian"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:text="You may need to have access to your personal and consumer report information, as the Experian application will pose questions to you based on data in their files."
@@ -150,14 +150,14 @@
                     />
 
                 <TextView
-                    android:id="@+id/viewPrivacy"
+                    android:id="@+id/selectAgreeOrDisagreePrompt"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:text="Please select one of the following options to continue: *"
                     android:textColor="@color/textgray"
                     android:textSize="24dp"
                     android:textStyle="bold"
-                    app:layout_constraintTop_toBottomOf="@+id/learnMoreAbout"
+                    app:layout_constraintTop_toBottomOf="@+id/haveInfoReadyForExperian"
                     app:layout_constraintLeft_toLeftOf="parent"
                     app:layout_constraintRight_toRightOf="parent"
                     android:layout_marginTop="25dp"
@@ -168,7 +168,7 @@
                     android:id="@+id/agreeOrDisagree"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    app:layout_constraintTop_toBottomOf="@+id/viewPrivacy"
+                    app:layout_constraintTop_toBottomOf="@+id/selectAgreeOrDisagreePrompt"
                     app:layout_constraintLeft_toLeftOf="parent"
                     app:layout_constraintRight_toRightOf="parent"
                     android:layout_marginTop="25dp"
@@ -203,6 +203,23 @@
                         android:onCheckedChanged="@{(radioButton, isChecked) -> (isChecked) ? account.setExperianConsent(false) : void}"
                         />
                 </RadioGroup>
+                <TextView
+                    android:id="@+id/weAreRequiredToVerify"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:text="@string/we_are_required_to_verify_content"
+                    android:textColor="@color/textgray"
+                    android:textSize="20dp"
+                    android:textStyle="normal"
+                    app:layout_constraintTop_toBottomOf="@+id/agreeOrDisagree"
+                    app:layout_constraintLeft_toLeftOf="parent"
+                    app:layout_constraintRight_toRightOf="parent"
+                    android:layout_marginTop="47dp"
+                    android:layout_marginLeft="22dp"
+                    android:layout_marginRight="22dp"
+                    android:layout_marginStart="22dp"
+                    android:layout_marginEnd="22dp"
+                    />
                 <Button
                     android:id="@+id/continueButton"
                     android:layout_width="0dp"
@@ -211,7 +228,7 @@
                     android:background="@drawable/ivl_button_blue_solid"
                     app:layout_constraintLeft_toLeftOf="parent"
                     app:layout_constraintRight_toRightOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/agreeOrDisagree"
+                    app:layout_constraintTop_toBottomOf="@+id/weAreRequiredToVerify"
                     android:layout_marginLeft="45dp"
                     android:layout_marginRight="45dp"
                     android:layout_marginTop="57dp"

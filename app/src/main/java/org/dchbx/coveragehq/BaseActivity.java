@@ -3,10 +3,14 @@ package org.dchbx.coveragehq;
 import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.annotation.IdRes;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.text.Html;
+import android.text.method.LinkMovementMethod;
 import android.util.Log;
 import android.view.View;
+import android.widget.TextView;
 
 import org.dchbx.coveragehq.models.Glossary;
 import org.dchbx.coveragehq.statemachine.EventParameters;
@@ -172,6 +176,13 @@ public class BaseActivity extends AppCompatActivity {
 
     static public BaseActivity getCurrentActivity() {
         return currentActivity;
+    }
+
+    public void htmlifyTextControl(@IdRes int id) {
+
+        TextView view = (TextView)findViewById(id);
+        view.setMovementMethod(LinkMovementMethod.getInstance());
+        view.setText(Html.fromHtml(view.getText().toString()));
     }
 
     /*@Override

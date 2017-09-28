@@ -72,20 +72,6 @@ public class FamilyActivity extends BaseActivity {
         ListView memberListView = (ListView) findViewById(R.id.memberList);
         memberListView.setAdapter(familyAdapter);
 
-        TextView shouldInclude = (TextView)findViewById(R.id.shouldInclude);
-        shouldInclude.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                getMessages().appEvent(StateManager.AppEvents.ShowGlossaryItem, EventParameters.build().add("term", "family"));
-            }
-        });
-        ImageView shouldIncludeImage = (ImageView) findViewById(R.id.shouldIncludeImage);
-        shouldIncludeImage.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                getMessages().appEvent(StateManager.AppEvents.ShowGlossaryItem, EventParameters.build().add("term", "family"));
-            }
-        });
         Button addFamilyMember = (Button) findViewById(R.id.addFamilyMember);
         addFamilyMember.setOnClickListener(new View.OnClickListener() {
             @Override
