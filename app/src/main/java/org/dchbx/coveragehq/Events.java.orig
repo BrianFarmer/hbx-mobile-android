@@ -4,12 +4,31 @@ import android.net.Uri;
 import android.util.Log;
 import android.widget.ImageView;
 
-import org.dchbx.coveragehq.models.roster.RosterEntry;
-import org.joda.time.LocalDate;
+import com.google.gson.JsonObject;
 
+import org.dchbx.coveragehq.models.Glossary;
 import org.dchbx.coveragehq.models.brokeragency.BrokerAgency;
 import org.dchbx.coveragehq.models.employer.Employer;
+import org.dchbx.coveragehq.models.fe.Family;
+import org.dchbx.coveragehq.models.fe.FinancialAssistanceApplication;
+import org.dchbx.coveragehq.models.fe.Schema;
+import org.dchbx.coveragehq.models.fe.UqhpDetermination;
+import org.dchbx.coveragehq.models.planshopping.Plan;
+import org.dchbx.coveragehq.models.ridp.Answers;
+import org.dchbx.coveragehq.models.ridp.Questions;
+import org.dchbx.coveragehq.models.ridp.VerifyIdentityResponse;
 import org.dchbx.coveragehq.models.roster.Roster;
+import org.dchbx.coveragehq.models.roster.RosterEntry;
+import org.dchbx.coveragehq.models.roster.SummaryOfBenefits;
+import org.dchbx.coveragehq.models.services.Service;
+import org.dchbx.coveragehq.statemachine.EventParameters;
+import org.dchbx.coveragehq.statemachine.OnActivityResultListener;
+import org.dchbx.coveragehq.statemachine.StateManager;
+import org.joda.time.LocalDate;
+
+import java.util.List;
+
+import static org.dchbx.coveragehq.Events.GetLoginResult.UserType.SignUpIndividual;
 
 public class Events {
     static int lastCancelableRequestId = 0;
@@ -262,11 +281,15 @@ public class Events {
         static final int Error = 2;
 
         private final int loginResult;
-        private final ServerConfiguration.UserType userType;
+        private ServerConfiguration.UserType userType;
 
         public LoginRequestResult(int loginResult, ServerConfiguration.UserType userType) {
             this.loginResult = loginResult;
             this.userType = userType;
+        }
+
+        public LoginRequestResult(int loginResult) {
+            this.loginResult = loginResult;
         }
 
         public int getLoginResult() {
@@ -332,8 +355,9 @@ public class Events {
         }
 
         public boolean isLoggedIn() {
-            return (this.accountName != null
-                    && this.accountName.length() > 0);
+            return (getUserType() == SignUpIndividual
+                    || (this.accountName != null
+                        && this.accountName.length() > 0));
         }
 
         public CharSequence getSecurityAnswer() {
@@ -364,6 +388,8 @@ public class Events {
             Broker,
             Employer,
             Employee,
+            SignUpIndividual,
+            IndividualEmployee,
             Unknown
         }
     }
@@ -696,27 +722,19 @@ public class Events {
     }
 
     static public class EmployerActivityReady {
-        public EmployerActivityReady(){
+        public EmployerActivityReady() {
 
         }
     }
 
-<<<<<<< HEAD
     static public class EmployeeFragmentUpdate {
         public RosterEntry employee;
         public LocalDate currentEnrollmentStartDate;
 
-        public static class TestTimeoutResult {
-            public boolean timedOut;
+        public EmployeeFragmentUpdate(RosterEntry employee, LocalDate currentEnrollmentStartDate){
 
-            public TestTimeoutResult(boolean timedOut) {
-                this.timedOut = timedOut;
-            }
-=======
-    static public class TestTimeout {
-        public TestTimeout(){
-            Log.d("TestTimeout", "TestTimeout ctor");
->>>>>>> coveragehq-preprod
+            this.employee = employee;
+            this.currentEnrollmentStartDate = currentEnrollmentStartDate;
         }
     }
 
@@ -759,6 +777,9 @@ public class Events {
     }
 
     public static class UpdateInsuranceCard {
+
+        public UpdateInsuranceCard() {
+        }
     }
 
     static public class MoveImageToData {
@@ -824,5 +845,611 @@ public class Events {
         public boolean isSuccess() {
             return success;
         }
+    }
+
+    public static class GetInsuredAndBenefits {
+        private LocalDate currentDate;
+
+        public GetInsuredAndBenefits(LocalDate currentDate) {
+            this.currentDate = currentDate;
+        }
+
+        public LocalDate getCurrentDate() {
+            return currentDate;
+        }
+    }
+
+    public static class GetInsuredAndSummaryOfBenefitsResult {
+        private final RosterEntry insured;
+        private final List<SummaryOfBenefits> summaryOfBenefitsList;
+
+        public GetInsuredAndSummaryOfBenefitsResult(RosterEntry insured, List<SummaryOfBenefits> summaryOfBenefitsList) {
+            this.insured = insured;
+            this.summaryOfBenefitsList = summaryOfBenefitsList;
+        }
+
+        public RosterEntry getInsured() {
+            return insured;
+        }
+
+        public List<SummaryOfBenefits> getSummaryOfBenefitsList() {
+            return summaryOfBenefitsList;
+        }
+    }
+
+    public static class GetInsuredAndServices {
+        private final LocalDate enrollmentDate;
+
+        public GetInsuredAndServices(LocalDate enrollmentDate) {
+            this.enrollmentDate = enrollmentDate;
+        }
+
+        public LocalDate getEnrollmentDate() {
+            return enrollmentDate;
+        }
+    }
+
+    public static class GetInsuredAndServicesResult {
+        private final RosterEntry insured;
+        private final List<Service> servicesList;
+
+        public GetInsuredAndServicesResult(RosterEntry insured, List<Service> servicesList) {
+            this.insured = insured;
+            this.servicesList = servicesList;
+        }
+
+        public RosterEntry getInsured() {
+            return insured;
+        }
+
+        public List<Service> getServicesList() {
+            return servicesList;
+        }
+    }
+
+    public static class SignUp {
+        private final String planShoppingPath;
+
+        public SignUp(String planShoppingPath) {
+
+            this.planShoppingPath = planShoppingPath;
+        }
+
+        public String getEndPointUrl() {
+            return planShoppingPath;
+        }
+    }
+
+    public static class SignUpResult {
+    }
+
+    public static class GetPlanShopping {
+    }
+
+    public static class GetPlanShoppingResult {
+        private final PlanShoppingParameters planShoppingParameters;
+
+        public GetPlanShoppingResult(PlanShoppingParameters planShoppingParameters) {
+            this.planShoppingParameters = planShoppingParameters;
+        }
+
+        public PlanShoppingParameters getPlanShoppingParameters() {
+            return planShoppingParameters;
+        }
+    }
+
+    public static class UpdatePlanShopping {
+        private final PlanShoppingParameters planShoppingParameters;
+
+        public UpdatePlanShopping(PlanShoppingParameters planShoppingParameters) {
+            this.planShoppingParameters = planShoppingParameters;
+        }
+
+        public PlanShoppingParameters getPlanShoppingParameters() {
+            return planShoppingParameters;
+        }
+    }
+
+    public static class ResetPlanShopping {
+    }
+
+    public static class ResetPlanShoppingResult {
+    }
+
+    public static class UpdatePlanShoppingResult {
+    }
+
+    public static class GetPlans {
+    }
+
+    public static class GetPlansResult {
+        private final List<Plan> planList;
+        private final double premiumFilter;
+        private final double deductibleFilter;
+
+        public GetPlansResult(List<Plan> planList, double premiumFilter, double deductibleFilter) {
+            this.planList = planList;
+            this.premiumFilter = premiumFilter;
+            this.deductibleFilter = deductibleFilter;
+        }
+
+        public List<Plan> getPlanList() {
+            return planList;
+        }
+
+        public double getPremiumFilter() {
+            return premiumFilter;
+        }
+
+        public double getDeductibleFilter() {
+            return deductibleFilter;
+        }
+    }
+
+    public static class SetPlanFilter {
+        private final double premiumFilter;
+        private final double deductibleFilter;
+
+        public SetPlanFilter(double premiumFilter, double deductibleFilter) {
+            this.premiumFilter = premiumFilter;
+            this.deductibleFilter = deductibleFilter;
+        }
+
+        public double getPremiumFilter() {
+            return premiumFilter;
+        }
+
+        public double getDeductibleFilter() {
+            return deductibleFilter;
+        }
+    }
+
+    public static class GetPlan {
+        private final String planId;
+        private final boolean getSummaryAndBenefits;
+
+        public GetPlan(String planId, boolean getSummaryAndBenefits) {
+            this.planId = planId;
+            this.getSummaryAndBenefits = getSummaryAndBenefits;
+        }
+
+        public String getPlanId() {
+            return planId;
+        }
+
+        public boolean isGetSummaryAndBenefits() {
+            return getSummaryAndBenefits;
+        }
+    }
+
+    public static class GetPlanResult {
+        private final Plan plan;
+        private final List<Service> services;
+
+        public GetPlanResult(Plan plan, List<Service> services) {
+            this.plan = plan;
+            this.services = services;
+        }
+
+        public Plan getPlan() {
+            return plan;
+        }
+
+        public List<Service> getServices() {
+            return services;
+        }
+    }
+
+    public static class GetAppConfig {
+        public GetAppConfig() {
+        }
+    }
+
+    public static class UpdateAppConfig {
+        private final ServiceManager.AppConfig appConfig;
+
+        public UpdateAppConfig(ServiceManager.AppConfig appConfig) {
+
+            this.appConfig = appConfig;
+        }
+
+        public ServiceManager.AppConfig getAppConfig() {
+            return appConfig;
+        }
+    }
+
+    public static class GetAppConfigResult {
+        private ServiceManager.AppConfig appConfig;
+
+        public GetAppConfigResult(ServiceManager.AppConfig appConfig){
+            this.appConfig = appConfig;
+        }
+
+        public ServiceManager.AppConfig getAppConfig() {
+            return appConfig;
+        }
+    }
+
+    public static class GetRidpQuestions {
+    }
+
+    public static class GetRidpQuestionsResult {
+        private final Questions ridpQuestions;
+        private Answers ridpAnswers;
+
+        public GetRidpQuestionsResult(Questions ridpQuestions, Answers answers) {
+            this.ridpQuestions = ridpQuestions;
+            this.ridpAnswers = answers;
+        }
+
+        public Questions getRidpQuestions() {
+            return ridpQuestions;
+        }
+
+        public Answers getRidpAnswers() {
+            return ridpAnswers;
+        }
+    }
+
+    public static class AccountButtonClicked {
+        private final org.dchbx.coveragehq.models.account.Account  account;
+        private final Answers answers;
+        private final StateManager.AppEvents appEvent;
+
+        public AccountButtonClicked(StateManager.AppEvents appEvent, org.dchbx.coveragehq.models.account.Account account,
+                                    Answers answers) {
+            this.appEvent = appEvent;
+            this.account = account;
+            this.answers = answers;
+        }
+
+        public org.dchbx.coveragehq.models.account.Account  getAccount() {
+            return account;
+        }
+
+        public StateManager.AppEvents getAppEvent() {
+            return appEvent;
+        }
+
+        public Answers getAnswers() {
+            return answers;
+        }
+    }
+
+    public static class ButtonClicked {
+        private final StateManager.AppEvents appEvent;
+
+        public ButtonClicked(StateManager.AppEvents appEvent){
+            this.appEvent = appEvent;
+        }
+
+        public StateManager.AppEvents getAppEvent() {
+            return appEvent;
+        }
+    }
+
+    public static class StateAction {
+
+        public Action getAction() {
+            return action;
+        }
+
+        public EventParameters getEventParameters() {
+            return eventParameters;
+        }
+
+        public enum Action {
+            Finish,
+            LaunchActivity,
+            LaunchDialog,
+            HideWait,
+            ShowWait,
+            PopAndLaunchActivity, Pop, Dismiss
+        }
+
+        private final Action action;
+        private int uiActivityId;
+        private final EventParameters eventParameters;
+
+        public StateAction(Action action, int uiActivityId, EventParameters eventParameters){
+            this.action = action;
+            this.uiActivityId = uiActivityId;
+            this.eventParameters = eventParameters;
+        }
+
+        public StateAction(Action action, EventParameters eventParameters){
+            this.action = action;
+            this.eventParameters = eventParameters;
+        }
+
+
+
+        public int getUiActivityId() {
+            return uiActivityId;
+        }
+    }
+
+    public static class GetCreateAccountInfo {
+    }
+
+    public static class GetCreateAccountInfoResult {
+        private final org.dchbx.coveragehq.models.account.Account account;
+
+        public GetCreateAccountInfoResult(org.dchbx.coveragehq.models.account.Account account) {
+
+            this.account = account;
+        }
+
+        public org.dchbx.coveragehq.models.account.Account getAccount() {
+            return account;
+        }
+    }
+
+    public static class UpdateCreateAccountInfo {
+        private final org.dchbx.coveragehq.models.account.Account account;
+
+        public UpdateCreateAccountInfo(org.dchbx.coveragehq.models.account.Account account) {
+            this.account = account;
+        }
+
+        public org.dchbx.coveragehq.models.account.Account getAccount() {
+            return account;
+        }
+    }
+
+    public static class UpdateAnswers {
+        private final Answers answers;
+
+        public UpdateAnswers(Answers answers) {
+            this.answers = answers;
+        }
+
+        public Answers getAnswers() {
+            return answers;
+        }
+    }
+
+    public static class GetVerificationResponse {
+    }
+
+    public static class GetVerificationResponseResponse {
+        private final VerifyIdentityResponse verificationResponse;
+
+        public GetVerificationResponseResponse(VerifyIdentityResponse verificationResponse) {
+
+            this.verificationResponse = verificationResponse;
+        }
+
+        public VerifyIdentityResponse getVerificationResponse() {
+            return verificationResponse;
+        }
+    }
+
+    public static class GetCurrentActivity {
+    }
+
+    public static class GetCurrentActivityResult {
+        private final StateManager.UiActivity uiActivity;
+
+        public GetCurrentActivityResult(StateManager.UiActivity uiActivity){
+            this.uiActivity = uiActivity;
+        }
+
+        public StateManager.UiActivity getUiActivity() {
+            return uiActivity;
+        }
+    }
+
+    public static class AppEvent {
+        private final StateManager.AppEvents event;
+        private final EventParameters intentParameters;
+        private final String s;
+        private OnActivityResultListener onActivityResultListener;
+
+        public AppEvent(StateManager.AppEvents event) {
+            this.event = event;
+            this.s = null;
+            intentParameters = null;
+        }
+
+        public AppEvent(StateManager.AppEvents event, EventParameters intentParameters) {
+            this.event = event;
+            this.intentParameters = intentParameters;
+            s = null;
+        }
+
+        public StateManager.AppEvents getEvent() {
+            return event;
+        }
+
+        public String getString1() {
+            return s;
+        }
+
+        public EventParameters getIntentParameters() {
+            return intentParameters;
+        }
+    }
+
+    public static class CreateAccount {
+    }
+
+    public static class VerifyUser {
+    }
+
+    public static class GetGlossary {
+    }
+
+    public static class GetGlossaryResponse {
+        private final Glossary glossary;
+
+        public GetGlossaryResponse(Glossary glossary) {
+            this.glossary = glossary;
+        }
+
+        public Glossary getGlossary() {
+            return glossary;
+        }
+    }
+
+    public static class GetGlossaryItemResponse {
+        private final Glossary.GlossaryItem glossaryItem;
+
+        public GetGlossaryItemResponse(Glossary.GlossaryItem glossaryItem) {
+            this.glossaryItem = glossaryItem;
+        }
+
+        public Glossary.GlossaryItem getGlossaryItem() {
+            return glossaryItem;
+        }
+    }
+
+    public static class GetGlossaryItem {
+        private final String term;
+
+        public GetGlossaryItem(String term) {
+            this.term = term;
+        }
+
+        public String getTerm() {
+            return term;
+        }
+    }
+
+    public static class GetFinancialEligibilityJson {
+    }
+
+    public static class GetFinancialEligibilityJsonResponse {
+        private final Schema schema;
+
+        public GetFinancialEligibilityJsonResponse(Schema schema){
+            this.schema = schema;
+        }
+
+        public Schema getSchema() {
+            return schema;
+        }
+    }
+
+    public static class GetFinancialAssistanceApplication {
+    }
+
+    public static class GetFinancialAssistanceApplicationResponse {
+
+        private final FinancialAssistanceApplication financialAssistanceApplication;
+
+        public GetFinancialAssistanceApplicationResponse(FinancialAssistanceApplication financialAssistanceApplication){
+            this.financialAssistanceApplication = financialAssistanceApplication;
+        }
+
+        public FinancialAssistanceApplication getFinancialAssistanceApplication() {
+            return financialAssistanceApplication;
+        }
+    }
+
+    public static class GetApplicationPerson {
+        private final String eapersonid;
+
+        public GetApplicationPerson(String eapersonid) {
+            this.eapersonid = eapersonid;
+        }
+
+        public String getEaPersonId() {
+            return eapersonid;
+        }
+    }
+
+    public static class GetApplicationPersonResponse {
+        private final JsonObject person;
+
+        public GetApplicationPersonResponse(JsonObject person){
+            this.person = person;
+        }
+
+        public JsonObject getPerson() {
+            return person;
+        }
+    }
+
+    public static class GetUqhpSchema {
+    }
+
+    public static class GetUqhpFamily {
+    }
+
+    public static class GetUqhpFamilyResponse {
+        private Family family;
+
+        public GetUqhpFamilyResponse(Family family){
+            this.family = family;
+        }
+
+        public Family getFamily() {
+            return family;
+        }
+    }
+
+    public static class SaveUqhpFamily {
+        private Family family;
+
+        public SaveUqhpFamily(Family family){
+            this.family = family;
+        }
+
+        public Family getFamily() {
+            return family;
+        }
+    }
+
+    public static class SaveUqhpFamilyResponse {
+    }
+
+    public static class SendHavenApplication {
+    }
+
+    public static class GetUqhpDetermination {
+    }
+
+    public static class GetUqhpDeterminationResponse {
+        private final UqhpDetermination uqhpDetermination;
+
+        public GetUqhpDeterminationResponse(UqhpDetermination uqhpDetermination) {
+            this.uqhpDetermination = uqhpDetermination;
+        }
+
+        public UqhpDetermination getUqhpDetermination() {
+            return uqhpDetermination;
+        }
+    }
+
+    public static class BackgroundProcess {
+        EventParameters eventParameters;
+
+        public BackgroundProcess(){
+        }
+
+        public void setEventParameters(EventParameters eventParameters){
+            this.eventParameters = eventParameters;
+        }
+
+        public EventParameters getEventParameters(){
+            return eventParameters;
+        }
+    }
+
+    public static class ResumeApplication extends BackgroundProcess {
+    }
+
+    public static class CheckOpenEnrollment extends BackgroundProcess {
+    }
+
+    static public class IvlLoginRequest extends BackgroundProcess {
+    }
+
+<<<<<<< HEAD
+    public static class GetEffectiveDate extends BackgroundProcess {
+=======
+    static public class ClearPIIRequest extends BackgroundProcess {
+>>>>>>> 221d22349ec258167ef1df4410fd21165a0aa0ba
     }
 }

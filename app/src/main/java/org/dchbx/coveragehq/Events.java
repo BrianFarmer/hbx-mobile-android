@@ -1448,4 +1448,7 @@ public class Events {
 
     public static class GetEffectiveDate extends BackgroundProcess {
     }
+
+    static public class ClearPIIRequest extends BackgroundProcess {
+    }
 }

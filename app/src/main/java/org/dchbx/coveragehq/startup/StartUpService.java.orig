@@ -45,6 +45,8 @@ public class StartUpService {
     public StartUpService(IServiceManager serviceManager) {
         this.serviceManager = serviceManager;
         messages = BrokerApplication.getBrokerApplication().getMessages(this);
+<<<<<<< HEAD
+=======
     }
 
     @Subscribe(threadMode = ThreadMode.BACKGROUND)
@@ -52,6 +54,7 @@ public class StartUpService {
         serviceManager.getConfigurationStorageHandler().clearAccount();
         serviceManager.getConfigurationStorageHandler().clearAnswers();
         messages.appEvent(StateManager.AppEvents.ClearedPII);
+>>>>>>> 221d22349ec258167ef1df4410fd21165a0aa0ba
     }
 
     @Subscribe(threadMode = ThreadMode.BACKGROUND)

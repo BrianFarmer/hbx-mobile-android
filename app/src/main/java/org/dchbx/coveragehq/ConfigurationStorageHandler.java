@@ -126,6 +126,13 @@ public class ConfigurationStorageHandler extends IServerConfigurationStorageHand
     }
 
     @Override
+    public void clearAccount() {
+        SharedPreferences.Editor editor = getSharedPreferences().edit();
+        editor.remove("AccountJson");
+        editor.commit();
+    }
+
+        @Override
     public Account readAccount() {
         SharedPreferences sharedPreferences = getSharedPreferences();
         String accountJson = sharedPreferences.getString("AccountJson", null);
@@ -162,6 +169,13 @@ public class ConfigurationStorageHandler extends IServerConfigurationStorageHand
         Gson gson = getGson();
         Questions questions = gson.fromJson(questionsJson, Questions.class);
         return questions;
+    }
+
+    @Override
+    public void clearAnswers() {
+        SharedPreferences.Editor editor = getSharedPreferences().edit();
+        editor.remove(Answers.class.getName());
+        editor.commit();
     }
 
     public Answers readAnswers() {

@@ -333,9 +333,13 @@ public class StateManager extends StateProcessor {
         Goto, // Special case for dev to goto specific state.
         ShowDropDown, DropdownSaved, UserSaved, EditRelationship, ReceivedUqhpDetermination,
         ShowEligible, ShowIneligible, ErrorHappened, GetCoverageThisYear, GetCoverageNextYear,
+<<<<<<< HEAD
         StatusAppliedUqhp, StatusEnrollingUqhp, StatusApplying, StatusEnrolled,
-        ReceivedEffectiveDate, InOpenEnrollment, OpenEnrollmentClosed, GetDentalCoverage,
+        ReceivedEffectiveDate, InOpenEnrollment, OpenEnrollmentClosed, GetDentalCoverage
+=======
+        StatusAppliedUqhp, StatusEnrollingUqhp, StatusApplying, StatusEnrolled, GetDentalCoverage,
         ClearedPII
+>>>>>>> 221d22349ec258167ef1df4410fd21165a0aa0ba
     }
 
     public void configStates() {
