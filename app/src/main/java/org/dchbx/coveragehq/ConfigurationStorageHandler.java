@@ -15,6 +15,8 @@ import org.dchbx.coveragehq.models.fe.UqhpDetermination;
 import org.dchbx.coveragehq.models.ridp.Answers;
 import org.dchbx.coveragehq.models.ridp.Questions;
 import org.dchbx.coveragehq.models.ridp.VerifyIdentityResponse;
+import org.dchbx.coveragehq.models.startup.EffectiveDate;
+import org.dchbx.coveragehq.models.startup.OpenEnrollmentStatus;
 import org.joda.time.LocalDate;
 import org.joda.time.LocalTime;
 
@@ -239,15 +241,33 @@ public class ConfigurationStorageHandler extends IServerConfigurationStorageHand
     }
 
     @Override
+    public void storeEffectiveDate(EffectiveDate effectiveDate) {
+        store("EffectiveDate", effectiveDate);
+    }
+
+    @Override
+    public EffectiveDate readEffectiveDate(){
+        SharedPreferences sharedPreferences = getSharedPreferences();
+        String json = sharedPreferences.getString("EffectiveDate", null);
+        if (json != null){
+            Gson gson = getGson();
+            return gson.fromJson(json, EffectiveDate.class);
+        }
+        return null;
+    }
+
+    @Override
+    public void storeOpenEnrollmentStatus(OpenEnrollmentStatus openEnrollmentStatus) {
+        store("OpenEnrollmentStatus", openEnrollmentStatus);
+    }
+
+    @Override
     public void storeUqhpFamily(Family family){
         store("UqhpFamily", family);
     }
 
     public void storeStateString(String stateString) {
         Log.d(TAG, "StateString: ->" + stateString + "<-");
-        if (stateString.compareTo("[]") == 0){
-            Log.d(TAG, "HEY!!!");
-        }
         SharedPreferences.Editor editor = getSharedPreferences().edit();
         editor.putString("StateString", stateString);
         editor.commit();

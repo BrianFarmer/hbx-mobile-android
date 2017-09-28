@@ -12,8 +12,8 @@ android {
         applicationId "org.dchbx.coveragehq"
         minSdkVersion 16
         targetSdkVersion 25
-        versionCode 52
-        versionName "1.0.52"
+        versionCode 53
+        versionName "1.0.53"
         testInstrumentationRunner 'android.support.test.runner.AndroidJUnitRunner'
         vectorDrawables.useSupportLibrary = true
     }

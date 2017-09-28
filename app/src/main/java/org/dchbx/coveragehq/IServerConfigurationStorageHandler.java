@@ -4,6 +4,8 @@ import org.dchbx.coveragehq.models.fe.Family;
 import org.dchbx.coveragehq.models.fe.UqhpDetermination;
 import org.dchbx.coveragehq.models.ridp.Questions;
 import org.dchbx.coveragehq.models.ridp.VerifyIdentityResponse;
+import org.dchbx.coveragehq.models.startup.EffectiveDate;
+import org.dchbx.coveragehq.models.startup.OpenEnrollmentStatus;
 
 import java.io.IOException;
 import java.security.InvalidAlgorithmParameterException;
@@ -36,5 +38,8 @@ public abstract class IServerConfigurationStorageHandler {
     public abstract Family readUqhpFamily();
     public abstract void storeUqhpFamily(Family family);
     public abstract UqhpDetermination readUqhpDetermination();
+    public abstract void storeEffectiveDate(EffectiveDate effectiveDate);
+    public abstract EffectiveDate readEffectiveDate();
+    public abstract void storeOpenEnrollmentStatus(OpenEnrollmentStatus openEnrollmentStatus);
 }
 

@@ -10,7 +10,9 @@ import org.dchbx.coveragehq.JsonParser;
 import org.dchbx.coveragehq.Messages;
 import org.dchbx.coveragehq.ServerConfiguration;
 import org.dchbx.coveragehq.UrlHandler;
+import org.dchbx.coveragehq.models.startup.EffectiveDate;
 import org.dchbx.coveragehq.models.startup.Login;
+import org.dchbx.coveragehq.models.startup.OpenEnrollmentStatus;
 import org.dchbx.coveragehq.models.startup.ResumeParameters;
 import org.dchbx.coveragehq.models.startup.Status;
 import org.dchbx.coveragehq.statemachine.EventParameters;
@@ -42,7 +44,7 @@ public class StartUpService {
 
     public StartUpService(IServiceManager serviceManager) {
         this.serviceManager = serviceManager;
-        Messages messages = BrokerApplication.getBrokerApplication().getMessages(this);
+        messages = BrokerApplication.getBrokerApplication().getMessages(this);
     }
 
     @Subscribe(threadMode = ThreadMode.BACKGROUND)
@@ -64,10 +66,31 @@ public class StartUpService {
                 if (response.getResponseCode() >= 200
                         && response.getResponseCode() < 300){
                     JsonParser parser = serviceManager.getParser();
-
                     ServerConfiguration serverConfiguration = serviceManager.getServerConfiguration();
                     org.dchbx.coveragehq.models.startup.LoginResponse loginResponse = parser.parseResumeLogin(response.getBody());
                     urlHandler.populateLinks(loginResponse._links);
+                    messages.appEvent(StateManager.AppEvents.IndividualLoggedIn);
+                }
+            }
+        });
+    }
+
+    @Subscribe(threadMode = ThreadMode.BACKGROUND)
+    public void doThis(Events.GetEffectiveDate getEffectiveDate) throws Exception {
+
+        final UrlHandler urlHandler = serviceManager.getUrlHandler();
+        UrlHandler.HttpRequest httpRequest = urlHandler.getEffectiveDateRequest();
+        CoverageConnection coverageConnection = serviceManager.getCoverageConnection();
+        ConnectionHandler connectionHandler = serviceManager.getConnectionHandler();
+        connectionHandler.process(httpRequest, new IConnectionHandler.OnCompletion() {
+            @Override
+            public void onCompletion(IConnectionHandler.HttpResponse response) {
+                if (response.getResponseCode() >= 200
+                        && response.getResponseCode() < 300){
+                    JsonParser parser = serviceManager.getParser();
+                    EffectiveDate effectiveDate = parser.parseEffectiveDate(response.getBody());
+                    serviceManager.getConfigurationStorageHandler().storeEffectiveDate(effectiveDate);
+                    messages.appEvent(StateManager.AppEvents.ReceivedEffectiveDate);
                 }
             }
         });
@@ -78,7 +101,7 @@ public class StartUpService {
         EventParameters eventParameters = resumeApplication.getEventParameters();
 
         UrlHandler urlHandler = serviceManager.getUrlHandler();
-        UrlHandler.HttpRequest httpRequest = urlHandler.getResumeRequest();
+        UrlHandler.HttpRequest httpRequest = urlHandler.getResumeRequest(serviceManager.getConfigurationStorageHandler().readEffectiveDate().effectiveDate);
         CoverageConnection coverageConnection = serviceManager.getCoverageConnection();
         ConnectionHandler connectionHandler = serviceManager.getConnectionHandler();
         connectionHandler.process(httpRequest, new IConnectionHandler.OnCompletion() {
@@ -88,6 +111,7 @@ public class StartUpService {
                     && response.getResponseCode() < 300){
                     JsonParser parser = serviceManager.getParser();
                     Status status = parser.parseStatus(response.getBody());
+
                     switch (status.status){
                         case "applied_uqhp":
                             messages.appEvent(StateManager.AppEvents.StatusAppliedUqhp);
@@ -119,7 +143,14 @@ public class StartUpService {
             public void onCompletion(IConnectionHandler.HttpResponse response) {
                 if (response.getResponseCode() >= 200
                     && response.getResponseCode() < 300){
-
+                    JsonParser parser = serviceManager.getParser();
+                    OpenEnrollmentStatus openEnrollmentStatus = parser.parseOpenEnrollment(response.getBody());
+                    serviceManager.getConfigurationStorageHandler().storeOpenEnrollmentStatus(openEnrollmentStatus);
+                    if (openEnrollmentStatus.status.equals("enrollment_closed")){
+                        messages.appEvent(StateManager.AppEvents.OpenEnrollmentClosed);
+                    } else {
+                        messages.appEvent(StateManager.AppEvents.InOpenEnrollment);
+                    }
                 }
             }
         });

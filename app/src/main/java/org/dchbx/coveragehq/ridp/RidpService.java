@@ -133,13 +133,7 @@ public class RidpService extends StateProcessor {
                 JsonParser parser = serviceManager.getParser();
                 SignUpResponse signUpResponse = parser.parseSignUpResponse(response.getBody());
                 storageHandler.store(signUpResponse);
-                ServerConfiguration serverConfiguration = serviceManager.getServerConfiguration();
-                serverConfiguration.logoutUrl = signUpResponse.links.get.logoutUrl;
-                serverConfiguration.statusUrl = signUpResponse.links.get.statusUrl;
-                serverConfiguration.userCoverageUrl = signUpResponse.links.get.userCoverageUrl;
-                serverConfiguration.isDeployedUrl = signUpResponse.links.get.isDeployedUrl;
-                serverConfiguration.havenDeterminationUrl = signUpResponse.links.get.havenDeterminationUrl;
-                serverConfiguration.uqhpDeterminationUrl = signUpResponse.links.get.uqhpDeterminationUrl;
+                urlHandler.populateLinks(signUpResponse.links);
 
                 if (signUpResponse.error != null){
                     if (signUpResponse.error.type.compareTo("userHasActiveMedicaid") == 0){

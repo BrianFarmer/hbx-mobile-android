@@ -1440,9 +1440,12 @@ public class Events {
     public static class ResumeApplication extends BackgroundProcess {
     }
 
-    public static class CheckOpenEnrollment {
+    public static class CheckOpenEnrollment extends BackgroundProcess {
     }
 
     static public class IvlLoginRequest extends BackgroundProcess {
+    }
+
+    public static class GetEffectiveDate extends BackgroundProcess {
     }
 }

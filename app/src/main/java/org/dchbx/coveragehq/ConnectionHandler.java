@@ -581,7 +581,7 @@ public class ConnectionHandler implements IConnectionHandler{
         }
 
         Request request = builder.get().build();
-        Response response = getClient(getParameters.url.scheme(), false).newCall(request).execute();
+        Response response = getClient(getParameters.url.scheme(), true).newCall(request).execute();
 
 
         /*OkHttpClient client = new OkHttpClient()

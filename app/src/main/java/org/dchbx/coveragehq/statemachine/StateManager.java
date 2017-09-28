@@ -286,7 +286,7 @@ public class StateManager extends StateProcessor {
         FamilyMembersFe, FinancialAssitanceQuestions, FeDropDown,
         Wallet, SectionQuestions, EditFamilyRelationShip, Attestation,
         UqhpDetermination, Ineligible, Eligible, Saved,
-        OpenEnrollmentClosed, DentalCoverage, IWantTo, CoverageNextYear, HelpPaying, MobilePassword, ResumeApplication, ResumingAppliedUqhp, ResumingApplying, CoverageThisYear
+        OpenEnrollmentClosed, DentalCoverage, IWantTo, CoverageNextYear, HelpPaying, MobilePassword, ResumeApplication, ResumingAppliedUqhp, ResumingApplying, LoggingIn, GettingEffectiveDate, GettingStatus, CoverageThisYear
     }
 
     // You are discouraged from removing or reordring this enum. It is used in serialized objects.
@@ -334,7 +334,8 @@ public class StateManager extends StateProcessor {
         Goto, // Special case for dev to goto specific state.
         ShowDropDown, DropdownSaved, UserSaved, EditRelationship, ReceivedUqhpDetermination,
         ShowEligible, ShowIneligible, ErrorHappened, GetCoverageThisYear, GetCoverageNextYear,
-        StatusAppliedUqhp, StatusEnrollingUqhp, StatusApplying, StatusEnrolled, GetDentalCoverage
+        StatusAppliedUqhp, StatusEnrollingUqhp, StatusApplying, StatusEnrolled,
+        ReceivedEffectiveDate, InOpenEnrollment, OpenEnrollmentClosed, GetDentalCoverage
     }
 
     public void configStates() {
@@ -404,12 +405,17 @@ public class StateManager extends StateProcessor {
         stateMachine.from(AppStates.CoverageNextYear).on(No).to(AppStates.HelpPaying, new LaunchActivity(HelpPayingActivity.uiActivity));
         stateMachine.from(AppStates.MobilePassword).on(Yes).to(AppStates.AcctCreateFe, new LaunchActivity(AcctCreate.uiActivity));
         stateMachine.from(AppStates.MobilePassword).on(No).to(AppStates.Hello, new LaunchActivity(HelloActivity.uiActivity));
-        stateMachine.from(AppStates.ResumeApplication).on(AppEvents.ResumeApplication).to(AppStates.ResumeApplication, new StateManager.BackgroundProcess(Events.IvlLoginRequest.class));
-        stateMachine.from(AppStates.ResumeApplication).on(AppEvents.IndividualLoggedIn).to(AppStates.ResumeApplication, new StateManager.BackgroundProcess(Events.ResumeApplication.class));
-        stateMachine.from(AppStates.ResumeApplication).on(AppEvents.StatusAppliedUqhp).to(AppStates.ResumingAppliedUqhp, new StateManager.BackgroundProcess(Events.ResumeApplication.class));
-        stateMachine.from(AppStates.ResumeApplication).on(AppEvents.StatusEnrollingUqhp).to(AppStates.ResumeApplication, new StateManager.BackgroundProcess(Events.ResumeApplication.class));
-        stateMachine.from(AppStates.ResumeApplication).on(AppEvents.StatusApplying).to(AppStates.ResumingApplying, new StateManager.BackgroundProcess(Events.CheckOpenEnrollment.class));
-        stateMachine.from(AppStates.ResumeApplication).on(AppEvents.StatusEnrolled).to(AppStates.ResumeApplication, new StateManager.BackgroundProcess(Events.ResumeApplication.class));
+        stateMachine.from(AppStates.ResumeApplication).on(AppEvents.ResumeApplication).to(AppStates.LoggingIn, new StateManager.BackgroundProcess(Events.IvlLoginRequest.class));
+        stateMachine.from(AppStates.LoggingIn).on(AppEvents.IndividualLoggedIn).to(AppStates.GettingEffectiveDate, new StateManager.BackgroundProcess(Events.GetEffectiveDate.class));
+        stateMachine.from(AppStates.GettingEffectiveDate).on(AppEvents.ReceivedEffectiveDate).to(AppStates.GettingStatus, new StateManager.BackgroundProcess(Events.ResumeApplication.class));
+        stateMachine.from(AppStates.GettingStatus).on(AppEvents.StatusAppliedUqhp).to(AppStates.ResumingAppliedUqhp, new StateManager.BackgroundProcess(Events.CheckOpenEnrollment.class));
+        stateMachine.from(AppStates.ResumingAppliedUqhp).on(AppEvents.InOpenEnrollment).to(AppStates.ResumingAppliedUqhp, new StateManager.BackgroundProcess(Events.CheckOpenEnrollment.class));
+        stateMachine.from(AppStates.ResumingAppliedUqhp).on(AppEvents.OpenEnrollmentClosed).to(AppStates.ResumingAppliedUqhp, new StateManager.BackgroundProcess(Events.CheckOpenEnrollment.class));
+        stateMachine.from(AppStates.GettingStatus).on(AppEvents.StatusEnrollingUqhp).to(AppStates.ResumeApplication, new StateManager.BackgroundProcess(Events.ResumeApplication.class));
+        stateMachine.from(AppStates.GettingStatus).on(AppEvents.StatusEnrolled).to(AppStates.ResumeApplication, new StateManager.BackgroundProcess(Events.ResumeApplication.class));
+        stateMachine.from(AppStates.GettingStatus).on(AppEvents.StatusApplying).to(AppStates.ResumingApplying, new StateManager.BackgroundProcess(Events.CheckOpenEnrollment.class));
+        stateMachine.from(AppStates.ResumingApplying).on(AppEvents.InOpenEnrollment).to(AppStates.FamilyMembersFe, new PopAndLaunchActivity(org.dchbx.coveragehq.financialeligibility.FamilyActivity.uiActivity));
+        stateMachine.from(AppStates.ResumingApplying).on(AppEvents.OpenEnrollmentClosed).to(AppStates.OpenEnrollmentClosed, new LaunchActivity(OpenEnrollmentClosedActivity.uiActivity));
     }
 
     private void initUQHPStates(StateMachine stateMachine) {

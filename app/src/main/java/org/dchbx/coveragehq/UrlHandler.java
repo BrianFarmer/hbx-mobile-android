@@ -26,6 +26,7 @@ import org.dchbx.coveragehq.models.roster.RosterEntry;
 import org.dchbx.coveragehq.models.roster.SummaryOfBenefits;
 import org.dchbx.coveragehq.models.services.Service;
 import org.dchbx.coveragehq.models.startup.Login;
+import org.joda.time.LocalDate;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -99,16 +100,7 @@ public abstract class UrlHandler {
 
     public HttpRequest getCreateAccount(SignUp signUp) {
         PostParameters postParameters = new PostParameters();
-        if (serverConfiguration.verifyIdentityEndpoint.substring(0, 4).toLowerCase().compareTo("http") == 0){
-            postParameters.url = HttpUrl.parse(serverConfiguration.localSignUpEndpoint);
-        } else {
-            postParameters.url = new HttpUrl.Builder()
-                    .scheme(serverConfiguration.loginInfo.scheme)
-                    .host(serverConfiguration.loginInfo.host)
-                    .addPathSegments(serverConfiguration.localSignUpEndpoint)
-                    .port(serverConfiguration.loginInfo.port)
-                    .build();
-        }
+        postParameters.url = HttpUrl.parse(serverConfiguration.localSignUpEndpoint);
         String json = (new Gson()).toJson(signUp);
         postParameters.requestString = json;
         postParameters.requestBody = RequestBody.create(JSON, json );
@@ -620,7 +612,7 @@ public abstract class UrlHandler {
 
     public HttpRequest getLoginRequest(Login login) {
         PostParameters postParameters = new PostParameters();
-        postParameters.url = getLoginUrl();
+        postParameters.url = HttpUrl.parse(serverConfiguration.localLoginEndpoint);
         FormBody formBody = new FormBody.Builder()
                 .build();
         String jsonString = (new Gson()).toJson(login);
@@ -634,9 +626,9 @@ public abstract class UrlHandler {
     }
 
 
-    public HttpRequest getResumeRequest() {
+    public HttpRequest getResumeRequest(LocalDate effectiveDate) {
         GetParameters getParameters = new GetParameters();
-        getParameters.url = HttpUrl.parse(serverConfiguration.statusUrl);
+        getParameters.url = HttpUrl.parse(serverConfiguration.statusUrl+"?year="+effectiveDate.year());
         HttpRequest request = new HttpRequest();
         request.requestType = HttpRequest.RequestType.Get;
         request.getParameters = getParameters;
@@ -653,6 +645,22 @@ public abstract class UrlHandler {
     }
 
     public void populateLinks(Links links) {
+        serverConfiguration.logoutUrl = links.get.logoutUrl;
+        serverConfiguration.statusUrl = links.get.statusUrl;
+        serverConfiguration.userCoverageUrl = links.get.userCoverageUrl;
+        serverConfiguration.isDeployedUrl = links.get.isDeployedUrl;
+        serverConfiguration.havenDeterminationUrl = links.get.havenDeterminationUrl;
+        serverConfiguration.uqhpDeterminationUrl = links.get.uqhpDeterminationUrl;
+        serverConfiguration.localLoginEndpoint = links.post.loginUrl;
+        serverConfiguration.planChoiceUrl = links.post.planChoiceUrl;
+    }
 
+    public HttpRequest getEffectiveDateRequest() {
+        GetParameters getParameters = new GetParameters();
+        getParameters.url = HttpUrl.parse(serverConfiguration.effectiveDateEndpoint);
+        HttpRequest request = new HttpRequest();
+        request.requestType = HttpRequest.RequestType.Get;
+        request.getParameters = getParameters;
+        return request;
     }
 }
