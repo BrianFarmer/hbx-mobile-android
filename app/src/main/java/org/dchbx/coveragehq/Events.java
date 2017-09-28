@@ -1445,4 +1445,7 @@ public class Events {
 
     static public class IvlLoginRequest extends BackgroundProcess {
     }
+
+    static public class ClearPIIRequest extends BackgroundProcess {
+    }
 }

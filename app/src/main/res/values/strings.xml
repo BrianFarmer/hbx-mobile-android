@@ -476,7 +476,7 @@ You <font color="#69a30d">favorited %d plans</font>.
     <string name="dental_coverage">Dental Coverage</string>
     <string name="open_enrollment_closed">Open Enrollment is currrently close</string>
     <string name="i_want_to">I want to...</string>
-    <string name="full_price_plan">Do you want to buy afull-price health insurance plan?</string>
+    <string name="full_price_plan">Do you want to buy a full-price health insurance plan?</string>
     <string name="mobile_password">Your mobile password.</string>
     <string name="help_paying_for_coverage">Help paying for coverage.</string>
 </resources>

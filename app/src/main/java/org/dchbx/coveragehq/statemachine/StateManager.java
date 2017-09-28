@@ -281,7 +281,7 @@ public class StateManager extends StateProcessor {
         FamilyRelationships,
         GlossaryDialog,
         CreatingAccountFe, VerifyingUserFe, RidpQuestionsFe, GetQuestionsFe,
-        AcctSystemFoundYouInCuramAcedsFe, AcctSsnWithEmployerFe, AcctSystemFoundYouFe,
+        AcctSystemFoundYouInCuramAcedsFe, AcctSsnWithEmployerFe, AcctSystemFoundYouFe, AcctSystemFoundYouReturningToLogin, AcctSystemFoundYouClosing,
         FamilyMembersFe, FinancialAssitanceQuestions, FeDropDown,
         Wallet, SectionQuestions, EditFamilyRelationShip, Attestation,
         UqhpDetermination, Ineligible, Eligible, Saved,
@@ -333,7 +333,8 @@ public class StateManager extends StateProcessor {
         Goto, // Special case for dev to goto specific state.
         ShowDropDown, DropdownSaved, UserSaved, EditRelationship, ReceivedUqhpDetermination,
         ShowEligible, ShowIneligible, ErrorHappened, GetCoverageThisYear, GetCoverageNextYear,
-        StatusAppliedUqhp, StatusEnrollingUqhp, StatusApplying, StatusEnrolled, GetDentalCoverage
+        StatusAppliedUqhp, StatusEnrollingUqhp, StatusApplying, StatusEnrolled, GetDentalCoverage,
+        ClearedPII
     }
 
     public void configStates() {
@@ -484,10 +485,12 @@ public class StateManager extends StateProcessor {
         stateMachine.from(AppStates.UqhpDetermination).on(ReceivedUqhpDetermination).to(AppStates.Ineligible, new LaunchActivity(IneligibleResultsActivity.uiActivity));
         stateMachine.from(AppStates.Ineligible).on(AppEvents.ShowEligible).to(AppStates.Eligible, new LaunchActivity(EligibleResultsActivity.uiActivity));
         stateMachine.from(AppStates.Eligible).on(AppEvents.ShowIneligible).to(AppStates.Ineligible, new LaunchActivity(IneligibleResultsActivity.uiActivity));
-        
-        stateMachine.from(AppStates.AcctSystemFoundYouFe).on(AppEvents.ShowLogin).to(AppStates.Login, new PopAndLaunchActivity(LoginActivity.uiActivity));
+
+        stateMachine.from(AppStates.AcctSystemFoundYouFe).on(AppEvents.ShowLogin).to(AppStates.AcctSystemFoundYouReturningToLogin, new StateManager.BackgroundProcess(Events.ClearPIIRequest.class));
+        stateMachine.from(AppStates.AcctSystemFoundYouReturningToLogin).on(AppEvents.ClearedPII).to(AppStates.Login, new PopAndLaunchActivity(LoginActivity.uiActivity));
         stateMachine.from(AppStates.AcctSystemFoundYouFe).on(AppEvents.SignUpIndividual).to(AppStates.AcctCreate, new PopAndLaunchActivity(AcctCreate.uiActivity));
-        stateMachine.from(AppStates.AcctSystemFoundYouFe).on(AppEvents.Close).to(AppStates.Hello, new PopAndLaunchActivity(HelloActivity.uiActivity));
+        stateMachine.from(AppStates.AcctSystemFoundYouFe).on(AppEvents.Close).to(AppStates.AcctSystemFoundYouClosing, new StateManager.BackgroundProcess(Events.ClearPIIRequest.class));
+        stateMachine.from(AppStates.AcctSystemFoundYouClosing).on(AppEvents.ClearedPII).to(AppStates.Hello, new PopAndLaunchActivity(HelloActivity.uiActivity));
     }
 
 

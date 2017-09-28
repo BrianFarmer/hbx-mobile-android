@@ -169,6 +169,13 @@ public class ConfigurationStorageHandler extends IServerConfigurationStorageHand
         return questions;
     }
 
+    @Override
+    public void clearAnswers() {
+        SharedPreferences.Editor editor = getSharedPreferences().edit();
+        editor.remove(Answers.class.getName());
+        editor.commit();
+    }
+
     public Answers readAnswers() {
         SharedPreferences sharedPreferences = getSharedPreferences();
         String answersJson = sharedPreferences.getString(Answers.class.getName(), null);
