@@ -1,7 +1,9 @@
 package org.dchbx.coveragehq;
 
+import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.Intent;
+import android.content.res.Resources;
 import android.os.Bundle;
 import android.support.annotation.IdRes;
 import android.support.v7.app.AppCompatActivity;
@@ -183,6 +185,24 @@ public class BaseActivity extends AppCompatActivity {
         TextView view = (TextView)findViewById(id);
         view.setMovementMethod(LinkMovementMethod.getInstance());
         view.setText(Html.fromHtml(view.getText().toString()));
+    }
+
+    public void simpleAlert(@IdRes int title, @IdRes int text) {
+        Resources r = getResources();
+        AlertDialog.Builder alert = new AlertDialog.Builder(this);
+        alert.setTitle(r.getString(title));
+        alert.setMessage(r.getString(text));
+        alert.setPositiveButton("OK", null);
+        alert.show();
+    }
+
+    public View.OnClickListener clickForSimpleAlert(@IdRes final int title, @IdRes final int text) {
+        return new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                simpleAlert(title, text);
+            }
+        };
     }
 
     /*@Override

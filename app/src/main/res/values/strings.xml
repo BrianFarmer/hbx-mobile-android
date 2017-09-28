@@ -492,4 +492,6 @@ You <font color="#69a30d">favorited %d plans</font>.
 </font>
 ]]>
     </string>
+    <string name="who_can_apply_together_title">Who can apply for coverage together?</string>
+    <string name="who_can_apply_together_text">Each person covered under your plan must be the spouse, domestic partner, or qualified dependent of the primary applicant.</string>
 </resources>

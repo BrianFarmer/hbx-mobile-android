@@ -33,9 +33,35 @@
         android:id="@+id/memberList"
         style="@style/ivl_list"
         android:layout_below="@+id/question"
+        android:layout_above="@+id/includeWhoQuestion"
         android:divider="@color/transparent"
         android:dividerHeight="0dp"
         />
+    <RelativeLayout
+        android:id="@+id/includeWhoQuestion"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:layout_above="@+id/addFamilyMember"
+        android:layout_marginBottom="30dp"
+        android:layout_marginTop="30dp"
+        >
+        <TextView
+            android:id="@+id/shouldInclude"
+            style="@style/ivl_link"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Who can apply together?"
+            />
+        <ImageView
+            android:id="@+id/shouldIncludeImage"
+            android:layout_toRightOf="@+id/shouldInclude"
+            android:layout_marginLeft="8dp"
+            style="@style/ivl_link_image"
+            app:srcCompat="@drawable/open_link_arrow"
+            />
+    </RelativeLayout>
+
     <Button
         android:id="@+id/addFamilyMember"
         style="@style/ivl_solid_blue_button"
