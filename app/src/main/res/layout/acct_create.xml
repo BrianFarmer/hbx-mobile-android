@@ -198,7 +198,7 @@
             android:id="@+id/skipButton"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:text="@string/skip"
+            android:text="@string/skip_this"
             android:background="@drawable/ivl_button_blue_solid"
             android:textAllCaps="true"
             app:layout_constraintLeft_toLeftOf="parent"
