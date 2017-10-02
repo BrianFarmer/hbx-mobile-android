@@ -37,6 +37,7 @@ public class AcctAuthConsent extends BaseActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         binding = DataBindingUtil.setContentView(this, R.layout.acct_auth_consent);
+        htmlifyTextControl(R.id.weAreRequiredToVerify);
         configToolbar();
 
         Intent intent = getIntent();

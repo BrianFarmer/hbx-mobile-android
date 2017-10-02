@@ -34,8 +34,8 @@ public class OpenEnrollmentClosedActivity extends BaseActivity {
         super.onCreate(bundle);
 
         setContentView(R.layout.open_enrollment_closed);
-        TextView openEnrollmentClosedContent = (TextView) findViewById(R.id.openEnrollmentClosedContent);
-        (openEnrollmentClosedContent).setText(Html.fromHtml(getString(R.string.open_enrollment_closed_content)));
+        //((TextView)findViewById(R.id.openEnrollmentClosedContent)).setText(Html.fromHtml(getString(R.string.open_enrollment_closed_content)));
+        htmlifyTextControl(R.id.openEnrollmentClosedContent);
         openEnrollmentClosedContent.setMovementMethod(LinkMovementMethod.getInstance());
         configToolbar();
     }
