@@ -1,4 +1,11 @@
-package org.dchbx.coveragehq.models.ridp;
+package org.dchbx.coveragehq.ridp;
+
+import android.databinding.DataBindingUtil;
+
+import org.dchbx.coveragehq.R;
+import org.dchbx.coveragehq.databinding.AcctNewPasswordBinding;
+import org.dchbx.coveragehq.models.account.Account;
+import org.dchbx.coveragehq.statemachine.StateManager;
 
 /*
     This file is part of DC.
@@ -18,24 +25,25 @@ package org.dchbx.coveragehq.models.ridp;
     This statement should go near the beginning of every source file, close to the copyright notices. When using the Lesser GPL, insert the word “Lesser” before “General” in all three places. When using the GNU AGPL, insert the word “Affero” before “General” in all three places.
 */
 
-import com.google.gson.annotations.Expose;
-import com.google.gson.annotations.SerializedName;
+public class AcctCreateNewPassword extends AcctCreateBase {
+    public static StateManager.UiActivity uiActivity = new StateManager.UiActivity(AcctCreateNewPassword.class);
+    private static String TAG = "AcctCreateNewPassword";
+    AcctNewPasswordBinding binding;
 
-import java.util.ArrayList;
-import java.util.List;
+    @Override
+    protected void setContentView() {
+        binding = DataBindingUtil.setContentView(this, getLayoutId());
 
-public class Answers {
-    @SerializedName("session_id")
-    @Expose
-    public String sessionId;
-    @SerializedName("transaction_id")
-    @Expose
-    public String transactionId;
-    @SerializedName("question_response")
-    @Expose
-    public List<QuestionResponse> questionResponse = null;
+    }
 
-    public Answers(){
-        questionResponse = new ArrayList<>();
+    @Override
+    protected void bind(Account account) {
+        binding.setAccount(account);
+        binding.setActivity(this);
+    }
+
+    @Override
+    protected int getLayoutId() {
+        return R.layout.acct_new_password;
     }
 }

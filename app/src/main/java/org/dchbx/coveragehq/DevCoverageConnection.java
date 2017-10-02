@@ -11,8 +11,10 @@ public class DevCoverageConnection extends CoverageConnection {
 
     public DevCoverageConnection(DevUrlHandler devUrlHandler, IConnectionHandler connectionHandler,
                                  ServerConfiguration serverConfiguration, JsonParser parser, IDataCache dataCache,
-                                 IServerConfigurationStorageHandler clearStorageHandler) {
-        super(devUrlHandler, connectionHandler, serverConfiguration, parser, dataCache, clearStorageHandler);
+                                 IServerConfigurationStorageHandler clearStorageHandler,
+                                 ServiceManager serviceManager) {
+        super(devUrlHandler, connectionHandler, serverConfiguration, parser, dataCache,
+              clearStorageHandler, serviceManager);
         this.devUrlHandler = devUrlHandler;
         this.storageHandler = clearStorageHandler;
     }

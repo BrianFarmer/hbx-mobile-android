@@ -29,7 +29,6 @@ import org.dchbx.coveragehq.models.startup.OpenEnrollmentStatus;
 import org.dchbx.coveragehq.models.startup.Status;
 import org.joda.time.DateTime;
 import org.joda.time.LocalDate;
-import org.joda.time.LocalDateTime;
 
 import java.lang.reflect.Type;
 import java.util.HashMap;
@@ -230,14 +229,6 @@ public class JsonParser {
     }
 
     public OpenEnrollmentStatus parseOpenEnrollment(String json) {
-        try {
-            return parse(json, org.dchbx.coveragehq.models.startup.OpenEnrollmentStatus.class);
-        } catch (Throwable t){
-            OpenEnrollmentStatus openEnrollmentStatus = new OpenEnrollmentStatus();
-            openEnrollmentStatus.status = "enrollment_open";
-            openEnrollmentStatus.enrollmentEnds = LocalDateTime.parse("2017-12-31T23:59:59");
-            openEnrollmentStatus.enrollmentStarts = null;
-            return openEnrollmentStatus;
-        }
+        return parse(json, org.dchbx.coveragehq.models.startup.OpenEnrollmentStatus.class);
     }
 }

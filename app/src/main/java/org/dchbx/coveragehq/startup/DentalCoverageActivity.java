@@ -2,6 +2,7 @@ package org.dchbx.coveragehq.startup;
 
 import android.os.Bundle;
 import android.text.Html;
+import android.text.method.LinkMovementMethod;
 import android.widget.TextView;
 
 import org.dchbx.coveragehq.BaseActivity;
@@ -33,7 +34,9 @@ public class DentalCoverageActivity extends BaseActivity {
         super.onCreate(bundle);
 
         setContentView(R.layout.dental_coverage);
-        ((TextView)findViewById(R.id.dentalCoverageContent)).setText(Html.fromHtml(getString(R.string.dental_coverage_content)));
+        TextView dentalCoverageContent = (TextView) findViewById(R.id.dentalCoverageContent);
+        (dentalCoverageContent).setText(Html.fromHtml(getString(R.string.dental_coverage_content)));
+        dentalCoverageContent.setMovementMethod(LinkMovementMethod.getInstance());
         configToolbar();
     }
 

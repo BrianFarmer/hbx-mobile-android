@@ -13,7 +13,7 @@ import java.lang.reflect.Type;
 /**
  * Created by plast on 3/31/2017.
  */
-class LocalDateDeserializer implements JsonDeserializer<LocalDate> {
+public class LocalDateDeserializer implements JsonDeserializer<LocalDate> {
     public LocalDate deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context)
             throws JsonParseException {
         JsonPrimitive primitive = json.getAsJsonPrimitive();

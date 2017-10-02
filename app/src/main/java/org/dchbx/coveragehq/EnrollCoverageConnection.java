@@ -9,8 +9,10 @@ public class EnrollCoverageConnection extends CoverageConnection {
 
     public EnrollCoverageConnection(EnrollUrlHandler urlHandler, IConnectionHandler connectionHandler,
                                     ServerConfiguration serverConfiguration, JsonParser parser,
-                                    IDataCache dataCache, IServerConfigurationStorageHandler clearStorageHandler) {
-        super(urlHandler, connectionHandler, serverConfiguration, parser, dataCache, clearStorageHandler);
+                                    IDataCache dataCache, IServerConfigurationStorageHandler clearStorageHandler,
+                                    IServiceManager serviceManager) {
+        super(urlHandler, connectionHandler, serverConfiguration, parser, dataCache,
+              clearStorageHandler, serviceManager);
         this.enrollUrlHandler = urlHandler;
     }
 

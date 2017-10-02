@@ -241,7 +241,7 @@ public class EventBusMessages implements Messages {
 
     @Override
     public void getVerificationResponse() {
-        eventBus.post(new Events.GetVerificationResponse());
+        eventBus.post(new Events.GetRidpQuestions());
     }
 
     @Override
@@ -346,7 +346,7 @@ public class EventBusMessages implements Messages {
 
     @Override
     public void getRidpQuestions() {
-        eventBus.post(new Events.GetRidpQuestions());
+        eventBus.post(new Events.GetRidpQuestionsAndAnswers());
     }
 
     @Override

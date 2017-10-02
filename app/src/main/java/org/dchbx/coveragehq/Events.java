@@ -1070,7 +1070,7 @@ public class Events {
         }
     }
 
-    public static class GetRidpQuestions {
+    public static class GetRidpQuestionsAndAnswers {
     }
 
     public static class GetRidpQuestionsResult {
@@ -1209,7 +1209,7 @@ public class Events {
         }
     }
 
-    public static class GetVerificationResponse {
+    public static class GetRidpQuestions extends BackgroundProcess{
     }
 
     public static class GetVerificationResponseResponse {
@@ -1271,10 +1271,10 @@ public class Events {
         }
     }
 
-    public static class CreateAccount {
+    public static class CreateAccount extends BackgroundProcess {
     }
 
-    public static class VerifyUser {
+    public static class VerifyUser extends BackgroundProcess{
     }
 
     public static class GetGlossary {

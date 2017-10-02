@@ -2,6 +2,7 @@ package org.dchbx.coveragehq.startup;
 
 import android.os.Bundle;
 import android.text.Html;
+import android.text.method.LinkMovementMethod;
 import android.widget.TextView;
 
 import org.dchbx.coveragehq.BaseActivity;
@@ -33,6 +34,8 @@ public class HelpPayingActivity extends BaseActivity {
         super.onCreate(bundle);
 
         setContentView(R.layout.help_paying);
-        ((TextView)findViewById(R.id.helpPayingContent)).setText(Html.fromHtml(getString(R.string.full_price_plan_content)));
+        TextView helpPayingContent = (TextView) findViewById(R.id.helpPayingContent);
+        (helpPayingContent).setText(Html.fromHtml(getString(R.string.full_price_plan_content)));
+        helpPayingContent.setMovementMethod(LinkMovementMethod.getInstance());
         configToolbar();}
 }

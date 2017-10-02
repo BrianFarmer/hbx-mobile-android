@@ -17,6 +17,7 @@ import org.dchbx.coveragehq.models.roster.Roster;
 import org.dchbx.coveragehq.models.roster.RosterEntry;
 import org.dchbx.coveragehq.models.roster.SummaryOfBenefits;
 import org.dchbx.coveragehq.models.services.Service;
+import org.dchbx.coveragehq.models.startup.EffectiveDate;
 import org.joda.time.DateTime;
 import org.joda.time.LocalDate;
 
@@ -52,12 +53,14 @@ public abstract class CoverageConnection {
     protected final JsonParser parser;
     private final IDataCache dataCache;
     protected final IServerConfigurationStorageHandler clearStorageHandler;
+    private final IServiceManager serviceManager;
     private static Glossary glossary;
 
     public CoverageConnection(UrlHandler urlHandler, IConnectionHandler connectionHandler,
                               ServerConfiguration serverConfiguration,
                               JsonParser parser, IDataCache dataCache,
-                              IServerConfigurationStorageHandler clearStorageHandler){
+                              IServerConfigurationStorageHandler clearStorageHandler,
+                              IServiceManager serviceManager){
 
         this.urlHandler = urlHandler;
         this.connectionHandler = connectionHandler;
@@ -65,6 +68,7 @@ public abstract class CoverageConnection {
         this.parser = parser;
         this.dataCache = dataCache;
         this.clearStorageHandler = clearStorageHandler;
+        this.serviceManager = serviceManager;
     }
 
     public LoginResult loginAfterFingerprintAuthenticated() throws Exception{
@@ -527,7 +531,9 @@ public abstract class CoverageConnection {
 
 
     public List<Plan> getPlans() throws IOException, CoverageException {
-        UrlHandler.GetParameters getParameters = urlHandler.getPlansParameters();
+        ConfigurationStorageHandler configurationStorageHandler = serviceManager.getConfigurationStorageHandler();
+        EffectiveDate effectiveDate = configurationStorageHandler.readEffectiveDate();
+        UrlHandler.GetParameters getParameters = urlHandler.getPlansParameters(effectiveDate.effectiveDate.year());
         IConnectionHandler.GetResponse getResponse = connectionHandler.get(getParameters);
         return urlHandler.processPlans(getResponse);
     }

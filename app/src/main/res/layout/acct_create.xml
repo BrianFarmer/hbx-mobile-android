@@ -4,7 +4,7 @@
     <data>
         <variable
             name="activity"
-            type="org.dchbx.coveragehq.ridp.AcctCreate"/>
+            type="org.dchbx.coveragehq.ridp.AcctCreateBase"/>
         <variable
             name="account"
             type="org.dchbx.coveragehq.models.account.Account"/>
@@ -35,7 +35,7 @@
             android:id="@+id/textView9"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:text="@string/lets_create"
+            android:text="@string/set_up_you_mobile_password"
             android:textAlignment="center"
             android:textSize="28dp"
             android:textStyle="bold"
@@ -44,7 +44,7 @@
             app:layout_constraintTop_toBottomOf="@+id/toolbar"
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintRight_toRightOf="parent"
-            android:layout_marginTop="35dp"
+            android:layout_marginTop="28dp"
             android:layout_marginLeft="45dp"
             android:layout_marginRight="45dp"
             />
@@ -65,8 +65,8 @@
             android:layout_marginTop="22dp"
             android:layout_marginLeft="45dp"
             android:layout_marginRight="45dp"
-            android:paddingTop="8dp"
-            android:paddingBottom="7dp"
+            android:paddingTop="6dp"
+            android:paddingBottom="5dp"
             />
         <View
             android:id="@+id/addressUnderline"
@@ -96,8 +96,8 @@
             android:layout_marginLeft="45dp"
             android:layout_marginRight="45dp"
             android:layout_marginTop="22dp"
-            android:paddingTop="8dp"
-            android:paddingBottom="7dp"
+            android:paddingTop="7dp"
+            android:paddingBottom="5dp"
             />
         <View
             android:id="@+id/address2Underline"
@@ -128,8 +128,8 @@
             android:layout_marginLeft="45dp"
             android:layout_marginRight="45dp"
             android:layout_marginTop="22dp"
-            android:paddingTop="8dp"
-            android:paddingBottom="7dp"
+            android:paddingTop="7dp"
+            android:paddingBottom="5dp"
             />
         <View
             android:id="@+id/cityUnderline"
@@ -160,8 +160,8 @@
             android:layout_marginLeft="45dp"
             android:layout_marginRight="45dp"
             android:layout_marginTop="22dp"
-            android:paddingTop="8dp"
-            android:paddingBottom="7dp"
+            android:paddingTop="7dp"
+            android:paddingBottom="5dp"
             />
         <View
             android:id="@+id/passwordUnderline"
@@ -171,6 +171,38 @@
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintRight_toRightOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/password"
+            android:background="@color/mainblue"
+            android:layout_marginLeft="45dp"
+            android:layout_marginRight="45dp"
+            />
+
+        <EditText
+            android:id="@+id/confirmPassword"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:text="@={account.password}"
+            android:textColor="@color/keep_green"
+            android:hint="@string/confirm_password"
+            android:inputType="textPassword"
+            android:textSize="22dp"
+            android:background="@color/transparent"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/passwordUnderline"
+            android:layout_marginLeft="45dp"
+            android:layout_marginRight="45dp"
+            android:layout_marginTop="22dp"
+            android:paddingTop="7dp"
+            android:paddingBottom="5dp"
+            />
+        <View
+            android:id="@+id/confirmPasswordUnderline"
+            android:layout_width="0dp"
+            android:layout_height="1dp"
+            style="@style/NormalSeparator"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/confirmPassword"
             android:background="@color/mainblue"
             android:layout_marginLeft="45dp"
             android:layout_marginRight="45dp"

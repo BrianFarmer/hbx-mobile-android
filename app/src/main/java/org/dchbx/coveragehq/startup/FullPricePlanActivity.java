@@ -2,6 +2,7 @@ package org.dchbx.coveragehq.startup;
 
 import android.os.Bundle;
 import android.text.Html;
+import android.text.method.LinkMovementMethod;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
@@ -35,7 +36,9 @@ public class FullPricePlanActivity extends BaseActivity {
         super.onCreate(bundle);
 
         setContentView(R.layout.full_price_plan);
-        ((TextView)findViewById(R.id.fullPricePlanContent)).setText(Html.fromHtml(getString(R.string.full_price_plan_content)));
+        TextView textView = (TextView) findViewById(R.id.fullPricePlanContent);
+        textView.setText(Html.fromHtml(getString(R.string.full_price_plan_content)));
+        textView.setMovementMethod(LinkMovementMethod.getInstance());
         configToolbar();
         ((Button)findViewById(R.id.buttonYes)).setOnClickListener(new View.OnClickListener() {
             @Override

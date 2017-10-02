@@ -1,14 +1,16 @@
 package org.dchbx.coveragehq.ridp;
 
+import android.content.Intent;
 import android.databinding.DataBindingUtil;
 import android.os.Bundle;
 import android.widget.ImageButton;
 
-import org.dchbx.coveragehq.AcctActivity;
+import org.dchbx.coveragehq.BaseActivity;
 import org.dchbx.coveragehq.R;
-import org.dchbx.coveragehq.statemachine.StateManager;
 import org.dchbx.coveragehq.databinding.AcctGenderBinding;
 import org.dchbx.coveragehq.models.account.Account;
+import org.dchbx.coveragehq.statemachine.EventParameters;
+import org.dchbx.coveragehq.statemachine.StateManager;
 
 /*
     This file is part of DC.
@@ -27,7 +29,7 @@ import org.dchbx.coveragehq.models.account.Account;
     along with DC Health Link SmallBiz.  If not, see <http://www.gnu.org/licenses/>.
     This statement should go near the beginning of every source file, close to the copyright notices. When using the Lesser GPL, insert the word “Lesser” before “General” in all three places. When using the GNU AGPL, insert the word “Affero” before “General” in all three places.
 */
-public class AcctGenderActivity extends AcctActivity {
+public class AcctGenderActivity extends BaseActivity {
     public static StateManager.UiActivity uiActivity = new StateManager.UiActivity(AcctGenderActivity.class);
     private static String TAG = "AcctGenderActivity";
 
@@ -40,15 +42,16 @@ public class AcctGenderActivity extends AcctActivity {
         super.onCreate(savedInstanceState);
         binding = DataBindingUtil.setContentView(this, R.layout.acct_gender);
         configToolbar();
-    }
 
-    @Override
-    protected void populate(final Account account) {
+        Intent intent = getIntent();
+        int newStateInt = intent.getExtras().getInt("NewState");
+        Account account = RidpService.getAccountFromIntent(intent);
+        StateManager.AppStates state = StateManager.AppStates.values()[newStateInt];
         binding.setAccount(account);
         binding.setActivity(this);
     }
 
     public void onClick(Account account){
-        getMessages().accountButtonClicked(StateManager.AppEvents.Continue, account, null);
+        getMessages().appEvent(StateManager.AppEvents.Continue, EventParameters.build().add("Account", account));
     }
 }

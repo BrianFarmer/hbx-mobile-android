@@ -172,6 +172,8 @@
                     android:layout_height="wrap_content"
                     android:text="@string/continue_string"
                     android:background="@drawable/ivl_button_blue_solid"
+                    android:textAllCaps="true"
+                    android:textColor="@color/white"
                     app:layout_constraintLeft_toLeftOf="parent"
                     app:layout_constraintRight_toRightOf="parent"
                     app:layout_constraintTop_toBottomOf="@+id/byClickingContinue"

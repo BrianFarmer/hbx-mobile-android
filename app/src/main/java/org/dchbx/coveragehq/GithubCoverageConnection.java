@@ -7,8 +7,6 @@ import android.util.Log;
 import org.dchbx.coveragehq.models.gitaccounts.GitAccounts;
 import org.dchbx.coveragehq.models.roster.RosterEntry;
 
-import java.io.IOException;
-
 import okhttp3.HttpUrl;
 
 /**
@@ -20,8 +18,10 @@ public class GithubCoverageConnection extends CoverageConnection {
 
     public GithubCoverageConnection(GitUrlHandler urlHandler, ConnectionHandler connectionHandler,
                                     ServerConfiguration serverConfiguration, JsonParser parser,
-                                    IDataCache dataCache, IServerConfigurationStorageHandler clearStorageHandler) {
-        super(urlHandler, connectionHandler, serverConfiguration, parser, dataCache, clearStorageHandler);
+                                    IDataCache dataCache, IServerConfigurationStorageHandler clearStorageHandler,
+                                    IServiceManager serviceManager) {
+        super(urlHandler, connectionHandler, serverConfiguration, parser, dataCache,
+              clearStorageHandler, serviceManager);
         gitUrlHandler = urlHandler;
     }
 

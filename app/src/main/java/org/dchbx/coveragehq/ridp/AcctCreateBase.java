@@ -1,10 +1,11 @@
 package org.dchbx.coveragehq.ridp;
 
-import android.databinding.DataBindingUtil;
+import android.content.Intent;
+import android.os.Bundle;
 
-import org.dchbx.coveragehq.R;
-import org.dchbx.coveragehq.databinding.AcctCreateBinding;
+import org.dchbx.coveragehq.BaseActivity;
 import org.dchbx.coveragehq.models.account.Account;
+import org.dchbx.coveragehq.statemachine.EventParameters;
 import org.dchbx.coveragehq.statemachine.StateManager;
 
 /*
@@ -25,25 +26,31 @@ import org.dchbx.coveragehq.statemachine.StateManager;
     This statement should go near the beginning of every source file, close to the copyright notices. When using the Lesser GPL, insert the word “Lesser” before “General” in all three places. When using the GNU AGPL, insert the word “Affero” before “General” in all three places.
 */
 
-public class AcctCreate extends AcctCreateBase {
+public abstract class AcctCreateBase extends BaseActivity {
     public static StateManager.UiActivity uiActivity = new StateManager.UiActivity(AcctCreate.class);
-
     private static String TAG = "AcctCreate";
-    AcctCreateBinding binding;
 
     @Override
-    protected void setContentView() {
-        binding = DataBindingUtil.setContentView(this, getLayoutId());
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView();
+        configToolbar();
+
+        Intent intent = getIntent();
+        int newStateInt = intent.getExtras().getInt("NewState");
+        Account account = RidpService.getAccountFromIntent(intent);
+        StateManager.AppStates state = StateManager.AppStates.values()[newStateInt];
+        bind(account);
     }
 
-    @Override
-    protected void bind(Account account) {
-        binding.setAccount(account);
-        binding.setActivity(this);
-    }
+    protected abstract void setContentView();
 
-    protected int getLayoutId() {
-        return R.layout.acct_create;
+    protected abstract void bind(Account account);
+
+    protected abstract int getLayoutId();
+
+    public void onClick(Account account){
+        getMessages().appEvent(StateManager.AppEvents.Continue, EventParameters.build().add("Account", account));
     }
 
     public void onSkip(){

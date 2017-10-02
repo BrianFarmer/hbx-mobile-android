@@ -3,6 +3,7 @@ package org.dchbx.coveragehq.models.ridp;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /*
@@ -36,4 +37,8 @@ public class Session {
     @SerializedName("questions")
     @Expose
     public List<Question> questions = null;
+
+    public Session(){
+        questions = new ArrayList<>();
+    }
 }

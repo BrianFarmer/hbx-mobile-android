@@ -27,4 +27,8 @@ public class Questions {
     @Expose
     @SerializedName("session")
     public Session session;
+
+    public Questions(){
+        session = new Session();
     }
+}

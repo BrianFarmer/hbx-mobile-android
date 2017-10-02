@@ -19,6 +19,7 @@ package org.dchbx.coveragehq.ridp;
 */
 
 import android.content.Context;
+import android.content.Intent;
 import android.databinding.DataBindingUtil;
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -28,62 +29,40 @@ import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.TextView;
 
-import org.dchbx.coveragehq.AcctActivity;
-import org.dchbx.coveragehq.Events;
-import org.dchbx.coveragehq.statemachine.StateManager;
+import org.dchbx.coveragehq.BaseActivity;
 import org.dchbx.coveragehq.R;
 import org.dchbx.coveragehq.databinding.RidpQuestionsBinding;
 import org.dchbx.coveragehq.models.account.Account;
 import org.dchbx.coveragehq.models.ridp.Answer;
-import org.dchbx.coveragehq.models.ridp.Answers;
 import org.dchbx.coveragehq.models.ridp.Question;
 import org.dchbx.coveragehq.models.ridp.QuestionResponse;
-import org.dchbx.coveragehq.models.ridp.Questions;
 import org.dchbx.coveragehq.models.ridp.ResponseOption;
-import org.greenrobot.eventbus.Subscribe;
-import org.greenrobot.eventbus.ThreadMode;
+import org.dchbx.coveragehq.statemachine.EventParameters;
+import org.dchbx.coveragehq.statemachine.StateManager;
 
-public class RidpQuestionsActivity extends AcctActivity {
+public class RidpQuestionsActivity extends BaseActivity {
     public static StateManager.UiActivity uiActivity = new StateManager.UiActivity(RidpQuestionsActivity.class);
     private static String TAG = "RidpQuestionsActivity";
-    private Questions ridpQuestions;
-    private Answers usersAnswers;
     private RidpQuestionsBinding binding;
-
+    private RidpService.QuestionsAndAnswers questionsAndAnswers;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         binding = DataBindingUtil.setContentView(this, R.layout.ridp_questions);
         configToolbar();
-    }
 
-    @Override
-    public void onResume(){
-        super.onResume();
-        getMessages().getRidpQuestions();
-    }
-
-    @Subscribe(threadMode = ThreadMode.MAIN)
-    public void doThis(Events.GetRidpQuestionsResult getRidpQuestionsResult) {
-        ridpQuestions = getRidpQuestionsResult.getRidpQuestions();
-        usersAnswers = getRidpQuestionsResult.getRidpAnswers();
-        if (account != null){
-            populateQuestions();
-        }
-    }
-
-    @Override
-    protected void populate(final Account account) {
+        Intent intent = getIntent();
+        int newStateInt = intent.getExtras().getInt("NewState");
+        Account account = RidpService.getAccountFromIntent(intent);
+        questionsAndAnswers = RidpService.getQuestionsFromIntent(intent);
         binding.setAccount(account);
         binding.setActivity(this);
-        if (ridpQuestions != null){
-            populateQuestions();
-        }
+        populateQuestions();
     }
 
-    private QuestionResponse getAnswer(Question question, Answers answers){
-        for (QuestionResponse questionResponse : answers.questionResponse) {
+    private QuestionResponse getAnswer(Question question){
+        for (QuestionResponse questionResponse : questionsAndAnswers.answers.questionResponse) {
             if (questionResponse.questionId.compareTo(question.questionId) == 0){
                 return questionResponse;
             }
@@ -98,8 +77,8 @@ public class RidpQuestionsActivity extends AcctActivity {
 
         int i = 100;
         int x = 0;
-        for (Question question : ridpQuestions.session.questions) {
-            QuestionResponse answer1 = getAnswer(question, usersAnswers);
+        for (final Question question : questionsAndAnswers.questions.session.questions) {
+            QuestionResponse answer1 = getAnswer(question);
 
             View newQuestion = layoutInflater.inflate(R.layout.acct_ridp_question, questionArea, false);
             int questionAreaCount = questionArea.getChildCount();
@@ -117,7 +96,7 @@ public class RidpQuestionsActivity extends AcctActivity {
                 answer.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        QuestionResponse response = usersAnswers.questionResponse.get(currentQuestionIndex);
+                        QuestionResponse response = questionsAndAnswers.answers.questionResponse.get(currentQuestionIndex);
                         if (response.answer == null){
                             response.answer = new Answer();
                         }
@@ -139,6 +118,6 @@ public class RidpQuestionsActivity extends AcctActivity {
     }
 
     public void onClick(Account account){
-        getMessages().accountButtonClicked(StateManager.AppEvents.Continue, account, usersAnswers);
+        getMessages().appEvent(StateManager.AppEvents.Continue, EventParameters.build().add("Account", account).add("QuestionsAndAnswers", questionsAndAnswers));
     }
 }

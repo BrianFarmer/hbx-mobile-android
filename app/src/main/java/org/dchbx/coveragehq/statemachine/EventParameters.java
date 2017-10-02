@@ -5,10 +5,16 @@ import android.os.Bundle;
 import android.util.Log;
 
 import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import com.google.gson.JsonObject;
 
+import org.dchbx.coveragehq.DateTimeDeserializer;
+import org.dchbx.coveragehq.LocalDateSerializer;
+import org.dchbx.coveragehq.LocalTimeDeserializer;
 import org.dchbx.coveragehq.models.fe.Field;
-import org.dchbx.coveragehq.models.startup.ResumeParameters;
+import org.joda.time.DateTime;
+import org.joda.time.LocalDate;
+import org.joda.time.LocalTime;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -72,8 +78,19 @@ public class EventParameters {
     }
 
     public EventParameters add(String name, Object obj){
-        eventParameters.add(new StringParameter(name, new Gson().toJson(obj)));
+        try{
+        GsonBuilder gsonBuilder = new GsonBuilder();
+        gsonBuilder.registerTypeAdapter(DateTime.class, new DateTimeDeserializer());
+        gsonBuilder.registerTypeAdapter(LocalDate.class, new LocalDateSerializer());
+        gsonBuilder.registerTypeAdapter(LocalTime.class, new LocalTimeDeserializer());
+        String jsonString = gsonBuilder.create().toJson(obj);
+        eventParameters.add(new StringParameter(name, jsonString));
         return this;
+        } catch (Throwable t){
+            Log.e(TAG, "throwable: " + t);
+            return null;
+        }
+
     }
 
     public void initBundle(Bundle bundle) {
@@ -103,7 +120,7 @@ public class EventParameters {
         throw new Exception("Can find ResultCode event parameter");
     }
 
-    public Object getObject(String loginParameters, Class<ResumeParameters> resumeParametersClass) {
+    public Object getObject(String loginParameters, Class cls) {
         int i = 0;
         for (EventParameter eventParameter : eventParameters) {
             if (eventParameter.getName().equals(loginParameters)){
@@ -113,8 +130,13 @@ public class EventParameters {
         }
 
         EventParameter eventParameter = eventParameters.get(i);
+
         StringParameter stringParameter = (StringParameter) eventParameter;
-        return new Gson().fromJson(stringParameter.value, resumeParametersClass);
+        GsonBuilder gsonBuilder = new GsonBuilder();
+        gsonBuilder.registerTypeAdapter(DateTime.class, new DateTimeDeserializer());
+        gsonBuilder.registerTypeAdapter(LocalDate.class, new LocalDateSerializer());
+        gsonBuilder.registerTypeAdapter(LocalTime.class, new LocalTimeDeserializer());
+        return gsonBuilder.create().fromJson(stringParameter.value, cls);
     }
 
     public static abstract class EventParameter {

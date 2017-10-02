@@ -99,7 +99,9 @@ class GitHubBuildConfig2 extends EnrollConfigBase{
     }
 
     public CoverageConnection getCoverageConnection() {
-        return new GithubCoverageConnection(getGitUrlHandler(), getConnectionHandler(), getServerConfiguration(), getParser(), getDataCache(), getServerConfigurationStorageHandler());
+        return new GithubCoverageConnection(getGitUrlHandler(), getConnectionHandler(), getServerConfiguration(),
+                   getParser(), getDataCache(), getServerConfigurationStorageHandler(),
+                   ServiceManager.getServiceManager());
     }
 
     private JsonParser getParser() {

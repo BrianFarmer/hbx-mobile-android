@@ -89,7 +89,8 @@ abstract class EnrollConfigBase {
     }
 
     public CoverageConnection getCoverageConnection() {
-        return new EnrollCoverageConnection(getUrlHandler(), getConnectionHandler(), getServerConfiguration(), getParser(), getDataCache(), new ConfigurationStorageHandler());
+        return new EnrollCoverageConnection(getUrlHandler(), getConnectionHandler(), getServerConfiguration(),
+                getParser(), getDataCache(), new ConfigurationStorageHandler(), ServiceManager.getServiceManager());
     }
 
     private JsonParser getParser() {

@@ -1,6 +1,6 @@
 package org.dchbx.coveragehq;
 
-import  com.google.gson.JsonDeserializationContext;
+import com.google.gson.JsonDeserializationContext;
 import com.google.gson.JsonDeserializer;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonParseException;
@@ -8,7 +8,7 @@ import com.google.gson.JsonPrimitive;
 import com.google.gson.JsonSerializationContext;
 import com.google.gson.JsonSerializer;
 
-import org.joda.time.LocalDate;
+import org.joda.time.LocalTime;
 import org.joda.time.format.DateTimeFormatter;
 import org.joda.time.format.ISODateTimeFormat;
 
@@ -31,16 +31,13 @@ import java.lang.reflect.Type;
     along with DC Health Link SmallBiz.  If not, see <http://www.gnu.org/licenses/>.
     This statement should go near the beginning of every source file, close to the copyright notices. When using the Lesser GPL, insert the word “Lesser” before “General” in all three places. When using the GNU AGPL, insert the word “Affero” before “General” in all three places.
 */
-
-// Copied from: https://stackoverflow.com/questions/26287074/serializing-custom-object-that-contains-jodatime-objects-into-json
-
-
-public class LocalDateSerializer implements JsonDeserializer<LocalDate>, JsonSerializer<LocalDate>
+public class LocalTimeDeserializer implements JsonDeserializer<LocalTime>, JsonSerializer<LocalTime>
 {
-    private static final DateTimeFormatter DATE_FORMAT = ISODateTimeFormat.date();
+
+    private static final DateTimeFormatter TIME_FORMAT = ISODateTimeFormat.timeNoMillis();
 
     @Override
-    public LocalDate deserialize(final JsonElement je, final Type type,
+    public LocalTime deserialize(final JsonElement je, final Type type,
                                  final JsonDeserializationContext jdc) throws JsonParseException
     {
         final String dateAsString = je.getAsString();
@@ -50,12 +47,12 @@ public class LocalDateSerializer implements JsonDeserializer<LocalDate>, JsonSer
         }
         else
         {
-            return DATE_FORMAT.parseLocalDate(dateAsString);
+            return TIME_FORMAT.parseLocalTime(dateAsString);
         }
     }
 
     @Override
-    public JsonElement serialize(final LocalDate src, final Type typeOfSrc,
+    public JsonElement serialize(final LocalTime src, final Type typeOfSrc,
                                  final JsonSerializationContext context)
     {
         String retVal;
@@ -65,8 +62,9 @@ public class LocalDateSerializer implements JsonDeserializer<LocalDate>, JsonSer
         }
         else
         {
-            retVal = DATE_FORMAT.print(src);
+            retVal = TIME_FORMAT.print(src);
         }
         return new JsonPrimitive(retVal);
     }
+
 }

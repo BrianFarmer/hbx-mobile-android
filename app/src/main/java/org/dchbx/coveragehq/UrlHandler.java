@@ -407,10 +407,10 @@ public abstract class UrlHandler {
         return parser.parseServices(response.body);
     }
 
-    public GetParameters getPlansParameters() {
+    public GetParameters getPlansParameters(LocalDate.Property year) {
         GetParameters parameters = new GetParameters();
 
-        String queryParameters = "?coverage_kind=health&active_year=2017";
+        String queryParameters = "?coverage_kind=health&active_year=" + year;
         for (Integer age : serverConfiguration.planShoppingParameters.ages) {
             queryParameters = queryParameters + "&ages=" + age.toString();
         }

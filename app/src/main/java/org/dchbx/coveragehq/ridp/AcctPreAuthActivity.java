@@ -1,13 +1,15 @@
 package org.dchbx.coveragehq.ridp;
 
+import android.content.Intent;
 import android.databinding.DataBindingUtil;
 import android.os.Bundle;
 
-import org.dchbx.coveragehq.AcctActivity;
-import org.dchbx.coveragehq.statemachine.StateManager;
+import org.dchbx.coveragehq.BaseActivity;
 import org.dchbx.coveragehq.R;
 import org.dchbx.coveragehq.databinding.AcctPiiBinding;
 import org.dchbx.coveragehq.models.account.Account;
+import org.dchbx.coveragehq.statemachine.EventParameters;
+import org.dchbx.coveragehq.statemachine.StateManager;
 
 /*
     This file is part of DC.
@@ -26,7 +28,7 @@ import org.dchbx.coveragehq.models.account.Account;
     along with DC Health Link SmallBiz.  If not, see <http://www.gnu.org/licenses/>.
     This statement should go near the beginning of every source file, close to the copyright notices. When using the Lesser GPL, insert the word “Lesser” before “General” in all three places. When using the GNU AGPL, insert the word “Affero” before “General” in all three places.
 */
-public class AcctPreAuthActivity extends AcctActivity {
+public class AcctPreAuthActivity extends BaseActivity {
     public static StateManager.UiActivity uiActivity = new StateManager.UiActivity(AcctPreAuthActivity.class);
 
     private static String TAG = "AcctPreAuthActivity";
@@ -34,18 +36,19 @@ public class AcctPreAuthActivity extends AcctActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
         binding = DataBindingUtil.setContentView(this, R.layout.acct_pii);
+        super.onCreate(savedInstanceState);
         configToolbar();
-    }
 
-    @Override
-    protected void populate(Account account) {
+        Intent intent = getIntent();
+        int newStateInt = intent.getExtras().getInt("NewState");
+        Account account = RidpService.getAccountFromIntent(intent);
+        StateManager.AppStates state = StateManager.AppStates.values()[newStateInt];
         binding.setAccount(account);
         binding.setActivity(this);
     }
 
     public void onClick(Account account){
-        getMessages().accountButtonClicked(StateManager.AppEvents.Continue, account, null);
+        getMessages().appEvent(StateManager.AppEvents.Continue, EventParameters.build().add("Account", account));
     }
 }

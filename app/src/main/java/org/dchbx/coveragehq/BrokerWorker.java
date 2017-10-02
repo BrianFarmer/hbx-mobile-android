@@ -798,7 +798,7 @@ public class BrokerWorker extends IntentService {
     }
 
     @Subscribe(threadMode = ThreadMode.BACKGROUND)
-    public void doThis(Events.GetRidpQuestions getRidpQuestions) {
+    public void doThis(Events.GetRidpQuestionsAndAnswers getRidpQuestions) {
         try {
             RidpService.QuestionsAndAnswers questions = serviceManager.getRidpService().getRidpQuestions();
             if (questions == null) {

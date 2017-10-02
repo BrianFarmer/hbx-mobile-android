@@ -24,13 +24,5 @@ import org.joda.time.LocalDateTime;
 */
 public class OpenEnrollmentStatus {
     @Expose
-    public String note;
-    @Expose
     public String status;
-    @SerializedName("enrollment_starts")
-    @Expose
-    public LocalDateTime enrollmentStarts;
-    @SerializedName("enrollment_ends")
-    @Expose
-    public LocalDateTime enrollmentEnds;
 }

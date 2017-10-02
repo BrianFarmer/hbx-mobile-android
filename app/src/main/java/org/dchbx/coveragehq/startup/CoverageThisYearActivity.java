@@ -2,6 +2,7 @@ package org.dchbx.coveragehq.startup;
 
 import android.os.Bundle;
 import android.text.Html;
+import android.text.method.LinkMovementMethod;
 import android.widget.TextView;
 
 import org.dchbx.coveragehq.BaseActivity;
@@ -33,7 +34,9 @@ public class CoverageThisYearActivity extends BaseActivity {
         super.onCreate(bundle);
 
         setContentView(R.layout.coverage_this_year);
-        ((TextView)findViewById(R.id.coverageThisYearContent)).setText(Html.fromHtml(getString(R.string.coverage_this_year_content)));
+        TextView coverageThisYearContent = (TextView) findViewById(R.id.coverageThisYearContent);
+        (coverageThisYearContent).setText(Html.fromHtml(getString(R.string.coverage_this_year_content)));
+        coverageThisYearContent.setMovementMethod(LinkMovementMethod.getInstance());
         configToolbar();
     }
 

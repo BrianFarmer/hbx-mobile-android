@@ -42,6 +42,10 @@ public class ResumeApplicationActivity extends BaseActivity{
         binding.setResumeParameters(resumeParameters);
     }
 
+    public void onForgotPasswordClicked(){
+        messages.appEvent(StateManager.AppEvents.ForgotPassword);
+    }
+
     public void onResumeClicked(){
         messages.appEvent(StateManager.AppEvents.ResumeApplication, EventParameters.build().add("LoginParameters", resumeParameters));
     }

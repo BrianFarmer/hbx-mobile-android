@@ -2,6 +2,7 @@ package org.dchbx.coveragehq.startup;
 
 import android.os.Bundle;
 import android.text.Html;
+import android.text.method.LinkMovementMethod;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
@@ -35,18 +36,20 @@ public class MobilePasswordActivity extends BaseActivity {
         super.onCreate(bundle);
 
         setContentView(R.layout.mobile_password);
-        ((TextView)findViewById(R.id.mobilePasswordContent)).setText(Html.fromHtml(getString(R.string.mobile_password_content)));
+        TextView mobilePasswordContent = (TextView) findViewById(R.id.mobilePasswordContent);
+        (mobilePasswordContent).setText(Html.fromHtml(getString(R.string.mobile_password_content)));
+        mobilePasswordContent.setMovementMethod(LinkMovementMethod.getInstance());
         configToolbar();
-        ((Button)findViewById(R.id.buttonYes)).setOnClickListener(new View.OnClickListener() {
+        ((Button)findViewById(R.id.buttonOk)).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                messages.appEvent(StateManager.AppEvents.Yes);
+                messages.appEvent(StateManager.AppEvents.Ok);
             }
         });
-        ((Button)findViewById(R.id.buttonNo)).setOnClickListener(new View.OnClickListener() {
+        ((Button)findViewById(R.id.buttonCancel)).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                messages.appEvent(StateManager.AppEvents.No);
+                messages.appEvent(StateManager.AppEvents.Cancel);
             }
         });
     }

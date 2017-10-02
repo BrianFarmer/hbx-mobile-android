@@ -75,7 +75,7 @@
             android:id="@+id/purchasePlan"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:text="@string/purchase_plan"
+            android:text="@string/choose_plan"
             android:background="@drawable/ivl_button_green_solid"
             android:textAllCaps="true"
             app:layout_constraintLeft_toLeftOf="parent"

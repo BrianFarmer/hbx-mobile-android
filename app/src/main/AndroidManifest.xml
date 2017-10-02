@@ -131,6 +131,16 @@
             >
         </activity>
         <activity
+            android:name=".ridp.AcctCreateAfterPlanShopping"
+            android:configChanges="orientation|keyboardHidden|screenSize"
+            android:label=""
+            />
+        <activity
+            android:name=".ridp.AcctCreateNewPassword"
+            android:configChanges="orientation|keyboardHidden|screenSize"
+            android:label=""
+            />
+        <activity
             android:name=".ridp.AcctCreate"
             android:configChanges="orientation|keyboardHidden|screenSize"
             android:label=""
@@ -285,6 +295,7 @@
                   android:configChanges="orientation|keyboardHidden|screenSize"
                   android:label=""
             />
+        <activity android:name=".ridp.AcctNewPasswordActivity"/>
     </application>
 
 </manifest>

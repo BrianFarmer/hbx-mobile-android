@@ -106,6 +106,7 @@
     <string name="renewal_deadlines">Renewal Deadlines</string>
     <string name="account_name">Username</string>
     <string name="password">Password</string>
+    <string name="confirm_password">Confirm Password</string>
     <string name="log_in">Log In</string>
     <string name="remember_me">Remember me</string>
     <string name="existing_customers">SmallBiz is for existing Health Link customers.</string>
@@ -354,7 +355,8 @@ You <font color="#69a30d">favorited %d plans</font>.
     <string name="plans_and_favorites_slash" formatted="false">/</string>
     <string name="plans_and_favorites_favorites" formatted="false">%d Favorites</string>
     <string name="phyisician_directory">Phyisician Directory</string>
-    <string name="lets_create">First, let’s create\nyour account ...</string>
+    <string name="lets_create">First, let’s create\nyour account...</string>
+    <string name="choose_new_password">Choose a new password and confirm your identity.</string>
     <string name="date_of_birth">date of birth?</string>
     <string name="what_is_your_gender">What is your gender?</string>
     <string name="what_is_your">What is your</string>
@@ -405,7 +407,7 @@ You <font color="#69a30d">favorited %d plans</font>.
     <string name="do_not_qualify">These people do not qualify for Medicad or private health insurance through DC Health Link:</string>
     <string name="applicants_ineligible">Some applicants\nare ineligible.</string>
     <string name="receive_notice">You will receive a notice from DC Health Link explaining why they don\'t qualify.</string>
-    <string name="purchase_plan">Purchase Plan</string>
+    <string name="choose_plan">Choose Plan</string>
     <string name="you_ve_selected_this_plan">You\'ve selected this plan...</string>
     <string name="confirm">Confirm</string>
     <string name="submit_my_application">Submit My Application</string>
@@ -418,8 +420,8 @@ You <font color="#69a30d">favorited %d plans</font>.
 <font color="#414141" face="sans-serif">
     <p>
         Open enrollment is over, but you may still qualify to enroll now.\n\nSee if you qualify for special enrollment by visiting
-        <font color="#007bc4"><a href="https://www.dchealthlink.com/individuals">www.dchealthlink.com/individuals</a></font>
-        or call us at <font color="#007bc4"><a href="tel:8555325465">(855)532-5465</a></font>.</p>
+        <a href="https://www.dchealthlink.com/individuals">www.dchealthlink.com/individuals</a>
+        or call us at <a href="tel:8555325465">(855)532-5465</a>.</p>
     </p>
     <p>
         Open enrollment begins each year in the fall for coverage the subsequent year.
@@ -431,7 +433,7 @@ You <font color="#69a30d">favorited %d plans</font>.
 <![CDATA[
 <font color="#414141" face="sans-serif">
     <p>You can only use DC Health Link Mobile to buy health care coverage for the upcoming plan year.</p>
-    <p>To sign up for dental coverage, visit <font color="#007bc4"><a href="https://dchealthlink.com">DCHealthLink.com.</a></font>
+    <p>To sign up for dental coverage, visit <a href="https://dchealthlink.com">DCHealthLink.com.</a>
     </p>
 </font>
 ]]>
@@ -441,7 +443,7 @@ You <font color="#69a30d">favorited %d plans</font>.
 <font color="#414141" face="sans-serif">
     <p>You can only use DC Health Link Mobile to buy health care coverage for the upcoming plan year.</p>
     <p>You may be able to sign up for a plan that starts before Jaunary 1, 2018 if you\'ve had a recent, major life change like losing other insurance or moving to DC.</p>
-    <p>To see if you qualify, visit <font color="#007bc4"><a href="https://dchealthlink.com">DCHealthLink.com.</a></font>
+    <p>To see if you qualify, visit <a href="https://dchealthlink.com">DCHealthLink.com.</a>
     </p>
 </font>
 ]]>
@@ -450,8 +452,8 @@ You <font color="#69a30d">favorited %d plans</font>.
 <![CDATA[
 <font color="#414141" face="sans-serif">
     <p>You can only use DC Health Link Mobile to buy a full-price private insurance plan.</p>
-    <p>To find out whether you\'d qualify for a tax credit or Medicaid, you can use tha <font color="#007bc4"><a href="https://dchealthlink.com">financial calculator</a></font> on our website.</p>
-    <p>To apply for a Medicaid or tax credit savings, visit <font color="#007bc4"><a href="https://dchealthlink.com">DCHealthLink.com.</a></font>
+    <p>To find out whether you\'d qualify for a tax credit or Medicaid, you can use tha <a href="https://dc.checkbookhealth.org/hie/DC/2017/search.cfm">financial calculator</a> on our website.</p>
+    <p>To apply for a Medicaid or tax credit savings, visit <a href="https://dchealthlink.com">DCHealthLink.com</a>.
     </p>
 </font>
 ]]>
@@ -468,8 +470,8 @@ You <font color="#69a30d">favorited %d plans</font>.
 <![CDATA[
 <font color="#414141" face="sans-serif">
     <p>You can only use DC Health Link Mobile to buy a full-price private insurance plan.</p>
-    <p>To find out whether you\'d qualify for a tax credit or Medicaid, you can use tha <font color="#007bc4"><a href="https://dchealthlink.com">financial calculator</a></font> on our website.</p>
-    <p>To apply for a Medicaid or tax credit savings, visit <font color="#007bc4"><a href="https://dchealthlink.com">DCHealthLink.com.</a></font>
+    <p>To find out whether you\'d qualify for a tax credit or Medicaid, you can use tha <a href="https://dc.checkbookhealth.org/hie/DC/2017/search.cfm">financial calculator</a> on our website.</p>
+    <p>To apply for a Medicaid or tax credit savings, visit <a href="https://dchealthlink.com">DCHealthLink.com.</a>
     </p>
 </font>
 ]]>
@@ -480,4 +482,6 @@ You <font color="#69a30d">favorited %d plans</font>.
     <string name="full_price_plan">Do you want to buy a full-price health insurance plan?</string>
     <string name="mobile_password">Your mobile password.</string>
     <string name="help_paying_for_coverage">Help paying for coverage.</string>
+    <string name="set_up_you_mobile_password">Set up you mobile password.</string>
+    <string name="we_need_to_know_a_bit_more_about_you">We need to know a bit more about you.</string>
 </resources>
