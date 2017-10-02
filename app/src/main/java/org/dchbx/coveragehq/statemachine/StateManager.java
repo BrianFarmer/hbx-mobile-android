@@ -243,13 +243,6 @@ public class StateManager extends StateProcessor {
     public enum AppStates {
         Any,
         Previous,
-        AcctAddressFe,
-        AcctAuthConsentFe,
-        AcctCreateFe,
-        AcctGenderFe,
-        AcctDateOfBirthFe,
-        AcctPreAuthFe,
-        AcctSsnFe,
         AcctAddress,
         AcctAuthConsent,
         AcctCreate,
@@ -258,7 +251,9 @@ public class StateManager extends StateProcessor {
         AcctPreAuth,
         AcctSsn,
         AcctSsnWithEmployer,
+        GetQuestions,
         AcctSystemFoundYouInCuramAceds,
+        AcctSystemFoundYou, AcctSystemFoundYouReturningToLogin, AcctSystemFoundYouClosing,
         FoundEmployers,
         RidpQuestions,
         PlanShoppingChoices,
@@ -269,9 +264,6 @@ public class StateManager extends StateProcessor {
         PlanSelector,
         PlanShoppingDetails,
         Broker,
-        GetQuestions,
-        VerifyingUser,
-        CreatingAccount,
         UqhpConfirm,
         WalletLogin,
         Hello,
@@ -280,8 +272,7 @@ public class StateManager extends StateProcessor {
         ChooseFinancialAssistance,
         FamilyRelationships,
         GlossaryDialog,
-        CreatingAccountFe, VerifyingUserFe, RidpQuestionsFe, GetQuestionsFe,
-        AcctSystemFoundYouInCuramAcedsFe, AcctSsnWithEmployerFe, AcctSystemFoundYouFe, AcctSystemFoundYouReturningToLogin, AcctSystemFoundYouClosing,
+        CreatingAccount, VerifyingUser,
         FamilyMembersFe, FinancialAssitanceQuestions, FeDropDown,
         Wallet, SectionQuestions, EditFamilyRelationShip, Attestation,
         UqhpDetermination, Ineligible, Eligible, Saved,
@@ -361,7 +352,7 @@ public class StateManager extends StateProcessor {
         stateMachine.from(AppStates.YourMobilePassword).on(AppEvents.Cancel).to(AppStates.Hello, new LaunchActivity(HelloActivity.uiActivity));
 
         //stateMachine.from(AppStates.ChooseFinancialAssistance).on(AppEvents.Yes).to(AppStates.AcctCreateFe, new LaunchActivity(AcctCreate.uiActivity));
-        stateMachine.from(AppStates.ChooseFinancialAssistance).on(No).to(AppStates.AcctCreateFe, new LaunchActivity(AcctCreate.uiActivity));
+        stateMachine.from(AppStates.ChooseFinancialAssistance).on(No).to(AppStates.AcctCreate, new LaunchActivity(AcctCreate.uiActivity));
 
         stateMachine.from(AppStates.Login)
             .processEvent(AppEvents.Login, new UserStatusProcessor())
@@ -386,7 +377,6 @@ public class StateManager extends StateProcessor {
 
         initStartupStates(stateMachine);
         initRidpFeStates(stateMachine);
-        initRidpStates(stateMachine);
         initUQHPStates(stateMachine);
         initBasicPlanShoppingStates(stateMachine);
         initWalletStates(stateMachine);
@@ -404,7 +394,7 @@ public class StateManager extends StateProcessor {
         stateMachine.from(AppStates.CoverageNextYear).on(Yes).to(AppStates.MobilePassword, new LaunchActivity(MobilePasswordActivity.uiActivity));
         stateMachine.from(AppStates.Any).on(AppEvents.Goto).to(AppStates.DentalCoverage, new LaunchActivity(DentalCoverageActivity.uiActivity));
         stateMachine.from(AppStates.CoverageNextYear).on(No).to(AppStates.HelpPaying, new LaunchActivity(HelpPayingActivity.uiActivity));
-        stateMachine.from(AppStates.MobilePassword).on(Yes).to(AppStates.AcctCreateFe, new LaunchActivity(AcctCreate.uiActivity));
+        stateMachine.from(AppStates.MobilePassword).on(Yes).to(AppStates.AcctCreate, new LaunchActivity(AcctCreate.uiActivity));
         stateMachine.from(AppStates.MobilePassword).on(No).to(AppStates.Hello, new LaunchActivity(HelloActivity.uiActivity));
         stateMachine.from(AppStates.ResumeApplication).on(AppEvents.ResumeApplication).to(AppStates.LoggingIn, new StateManager.BackgroundProcess(Events.IvlLoginRequest.class));
         stateMachine.from(AppStates.LoggingIn).on(AppEvents.IndividualLoggedIn).to(AppStates.GettingEffectiveDate, new StateManager.BackgroundProcess(Events.GetEffectiveDate.class));
@@ -437,7 +427,7 @@ public class StateManager extends StateProcessor {
         stateMachine.from(AppStates.PlanSelector).on(AppEvents.BuyPlan).to(AppStates.PlanShoppingPremiumAndDeductible, new LaunchActivity(PremiumAndDeductibleActivity.uiActivity));
     }
 
-    private void initRidpStates(StateMachine stateMachine) {
+    private void initRidpFeStates(StateMachine stateMachine) {
 
         stateMachine.from(AppStates.AcctCreate).on(AppEvents.Continue).to(AppStates.AcctPreAuth, new LaunchActivity(AcctPreAuthActivity.uiActivity));
         stateMachine.from(AppStates.AcctCreate).on(AppEvents.Skip).to(AppStates.PlanShoppingFamilyMembers, new LaunchActivity(FamilyActivity.uiActivity));
@@ -450,30 +440,11 @@ public class StateManager extends StateProcessor {
         stateMachine.from(AppStates.GetQuestions).on(AppEvents.GetQuestionsOperationComplete).to(AppStates.RidpQuestions, new PopAndLaunchActivity(RidpQuestionsActivity.uiActivity));
         stateMachine.from(AppStates.AcctAuthConsent).on(AppEvents.ConsentDenied).to(AppStates.Login, new LaunchActivity(AcctSystemFoundYouAceds.uiActivity));
         stateMachine.from(AppStates.RidpQuestions).on(AppEvents.Continue).to(AppStates.VerifyingUser, new VerifyUser());
-        stateMachine.from(AppStates.VerifyingUser).on(AppEvents.UserVerifiedFoundYou).to(AppStates.AcctSystemFoundYouFe, new LaunchActivity(AcctSystemFoundYou.uiActivity));
+        stateMachine.from(AppStates.VerifyingUser).on(AppEvents.UserVerifiedFoundYou).to(AppStates.AcctSystemFoundYou, new LaunchActivity(AcctSystemFoundYou.uiActivity));
         stateMachine.from(AppStates.VerifyingUser).on(AppEvents.UserVerifiedSsnWithEmployer).to(AppStates.AcctSsnWithEmployer, new LaunchActivity(AcctSsnWithEmployer.uiActivity));
         stateMachine.from(AppStates.VerifyingUser).on(AppEvents.UserVerifiedOkToCreate).to(AppStates.CreatingAccount, new CreateAccount());
         stateMachine.from(AppStates.CreatingAccount).on(AppEvents.SignUpUserInAceds).to(AppStates.AcctSystemFoundYouInCuramAceds, new LaunchActivity(AcctSystemFoundYouAceds.uiActivity));
-        stateMachine.from(AppStates.CreatingAccount).on(AppEvents.SignUpSuccessful).to(AppStates.Login, new PopAndLaunchActivity(LoginActivity.uiActivity));
-    }
-
-    private void initRidpFeStates(StateMachine stateMachine) {
-
-        stateMachine.from(AppStates.AcctCreateFe).on(AppEvents.Continue).to(AppStates.AcctPreAuthFe, new LaunchActivity(AcctPreAuthActivity.uiActivity));
-        stateMachine.from(AppStates.AcctPreAuthFe).on(AppEvents.Continue).to(AppStates.AcctAddressFe, new LaunchActivity(AcctAddress.uiActivity));
-        stateMachine.from(AppStates.AcctAddressFe).on(AppEvents.Continue).to(AppStates.AcctGenderFe, new LaunchActivity(AcctGenderActivity.uiActivity));
-        stateMachine.from(AppStates.AcctGenderFe).on(AppEvents.Continue).to(AppStates.AcctDateOfBirthFe, new LaunchActivity(AcctDateOfBirth.uiActivity));
-        stateMachine.from(AppStates.AcctDateOfBirthFe).on(AppEvents.Continue).to(AppStates.AcctSsnFe, new LaunchActivity(AcctSsn.uiActivity));
-        stateMachine.from(AppStates.AcctSsnFe).on(AppEvents.Continue).to(AppStates.AcctAuthConsentFe, new LaunchActivity(AcctAuthConsent.uiActivity));
-        stateMachine.from(AppStates.AcctAuthConsentFe).on(AppEvents.ConsentGiven).to(AppStates.GetQuestionsFe, new StateManager.GetQuestions());
-        stateMachine.from(AppStates.GetQuestionsFe).on(AppEvents.GetQuestionsOperationComplete).to(AppStates.RidpQuestionsFe, new PopAndLaunchActivity(RidpQuestionsActivity.uiActivity));
-        stateMachine.from(AppStates.AcctAuthConsentFe).on(AppEvents.ConsentDenied).to(AppStates.Login, new LaunchActivity(AcctSystemFoundYouAceds.uiActivity));
-        stateMachine.from(AppStates.RidpQuestionsFe).on(AppEvents.Continue).to(AppStates.VerifyingUserFe, new VerifyUser());
-        stateMachine.from(AppStates.VerifyingUserFe).on(AppEvents.UserVerifiedFoundYou).to(AppStates.AcctSystemFoundYouFe, new LaunchActivity(AcctSystemFoundYou.uiActivity));
-        stateMachine.from(AppStates.VerifyingUserFe).on(AppEvents.UserVerifiedSsnWithEmployer).to(AppStates.AcctSsnWithEmployerFe, new LaunchActivity(AcctSsnWithEmployer.uiActivity));
-        stateMachine.from(AppStates.VerifyingUserFe).on(AppEvents.UserVerifiedOkToCreate).to(AppStates.CreatingAccountFe, new CreateAccount());
-        stateMachine.from(AppStates.CreatingAccountFe).on(AppEvents.SignUpUserInAceds).to(AppStates.AcctSystemFoundYouInCuramAcedsFe, new LaunchActivity(AcctSystemFoundYouAceds.uiActivity));
-        stateMachine.from(AppStates.CreatingAccountFe).on(AppEvents.SignUpSuccessful).to(AppStates.FamilyMembersFe, new PopAndLaunchActivity(org.dchbx.coveragehq.financialeligibility.FamilyActivity.uiActivity));
+        stateMachine.from(AppStates.CreatingAccount).on(AppEvents.SignUpSuccessful).to(AppStates.FamilyMembersFe, new PopAndLaunchActivity(org.dchbx.coveragehq.financialeligibility.FamilyActivity.uiActivity));
         stateMachine.from(AppStates.FamilyMembersFe).on(AppEvents.EditFamilyMember).to(AppStates.FinancialAssitanceQuestions, new LaunchActivity(EditPersonActivity.uiActivity));
         stateMachine.from(AppStates.FamilyMembersFe).on(AppEvents.Continue).to(AppStates.FamilyRelationships, new LaunchActivity(RelationshipsActivity.uiActivity));
         stateMachine.from(AppStates.FinancialAssitanceQuestions).on(AppEvents.ShowDropDown).to(AppStates.FeDropDown, new LaunchActivity(CheckedListDialog.uiActivity));
@@ -493,10 +464,10 @@ public class StateManager extends StateProcessor {
         stateMachine.from(AppStates.Ineligible).on(AppEvents.ShowEligible).to(AppStates.Eligible, new LaunchActivity(EligibleResultsActivity.uiActivity));
         stateMachine.from(AppStates.Eligible).on(AppEvents.ShowIneligible).to(AppStates.Ineligible, new LaunchActivity(IneligibleResultsActivity.uiActivity));
 
-        stateMachine.from(AppStates.AcctSystemFoundYouFe).on(AppEvents.ShowLogin).to(AppStates.AcctSystemFoundYouReturningToLogin, new StateManager.BackgroundProcess(Events.ClearPIIRequest.class));
+        stateMachine.from(AppStates.AcctSystemFoundYou).on(AppEvents.ShowLogin).to(AppStates.AcctSystemFoundYouReturningToLogin, new StateManager.BackgroundProcess(Events.ClearPIIRequest.class));
         stateMachine.from(AppStates.AcctSystemFoundYouReturningToLogin).on(AppEvents.ClearedPII).to(AppStates.Login, new PopAndLaunchActivity(LoginActivity.uiActivity));
-        stateMachine.from(AppStates.AcctSystemFoundYouFe).on(AppEvents.SignUpIndividual).to(AppStates.AcctCreate, new PopAndLaunchActivity(AcctCreate.uiActivity));
-        stateMachine.from(AppStates.AcctSystemFoundYouFe).on(AppEvents.Close).to(AppStates.AcctSystemFoundYouClosing, new StateManager.BackgroundProcess(Events.ClearPIIRequest.class));
+        stateMachine.from(AppStates.AcctSystemFoundYou).on(AppEvents.SignUpIndividual).to(AppStates.AcctCreate, new PopAndLaunchActivity(AcctCreate.uiActivity));
+        stateMachine.from(AppStates.AcctSystemFoundYou).on(AppEvents.Close).to(AppStates.AcctSystemFoundYouClosing, new StateManager.BackgroundProcess(Events.ClearPIIRequest.class));
         stateMachine.from(AppStates.AcctSystemFoundYouClosing).on(AppEvents.ClearedPII).to(AppStates.Hello, new PopAndLaunchActivity(HelloActivity.uiActivity));
     }
 

@@ -44,9 +44,6 @@ public class AcctCreate extends AcctActivity {
         Intent intent = getIntent();
         int newStateInt = intent.getExtras().getInt("NewState");
         StateManager.AppStates state = StateManager.AppStates.values()[newStateInt];
-        if (state == StateManager.AppStates.AcctCreateFe){
-            findViewById(R.id.skipButton).setVisibility(View.GONE);
-        }
     }
 
     @Override
