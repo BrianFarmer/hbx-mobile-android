@@ -27,8 +27,8 @@ import org.dchbx.coveragehq.statemachine.StateManager;
 
 public class AcctCreate extends AcctCreateBase {
     public static StateManager.UiActivity uiActivity = new StateManager.UiActivity(AcctCreate.class);
-
     private static String TAG = "AcctCreate";
+
     AcctCreateBinding binding;
 
     @Override

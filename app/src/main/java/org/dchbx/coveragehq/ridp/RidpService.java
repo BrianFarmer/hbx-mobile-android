@@ -89,7 +89,11 @@ public class RidpService extends StateProcessor {
         address.address = new Address.InternalAddress();
         address.address.type = "home";
         address.address.addressLine1 = account.address.address1;
-        address.address.addressLine2 = account.address.address2;
+        if (account.address.address2 != null) {
+            address.address.addressLine2 = account.address.address2;
+        } else {
+            address.address.addressLine2 = "";
+        }
         address.address.locationCityName = account.address.city;
         address.address.locationStateCode = account.address.state;
         address.address.postalCode = account.address.zipCode;
@@ -229,7 +233,7 @@ public class RidpService extends StateProcessor {
                 if (response.getResponseCode() == 200){
                     JsonParser parser = serviceManager.getParser();
                     VerifyIdentityResponse verifiyIdentityResponse = parser.parseVerificationResponse(response.getBody());
-                    eventParameters.add(VerifyIdentityResponse, verificationResponse);
+                    eventParameters.add(VerifyIdentityResponse, verifiyIdentityResponse);
                     switch (determineState(verifiyIdentityResponse)){
                         case InRoster:
                             messages.appEvent(StateManager.AppEvents.UserVerifiedSsnWithEmployer, eventParameters);

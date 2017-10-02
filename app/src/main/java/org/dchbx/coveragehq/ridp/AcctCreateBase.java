@@ -52,8 +52,4 @@ public abstract class AcctCreateBase extends BaseActivity {
     public void onClick(Account account){
         getMessages().appEvent(StateManager.AppEvents.Continue, EventParameters.build().add("Account", account));
     }
-
-    public void onSkip(){
-        getMessages().buttonClicked(StateManager.AppEvents.Skip);
-    }
 }
