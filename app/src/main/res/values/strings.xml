@@ -354,7 +354,7 @@ You <font color="#69a30d">favorited %d plans</font>.
     <string name="plans_and_favorites_slash" formatted="false">/</string>
     <string name="plans_and_favorites_favorites" formatted="false">%d Favorites</string>
     <string name="phyisician_directory">Phyisician Directory</string>
-    <string name="lets_create">First, let’s create\nyour account ...</string>
+    <string name="lets_create">Set up your mobile password.</string>
     <string name="date_of_birth">date of birth?</string>
     <string name="what_is_your_gender">What is your gender?</string>
     <string name="what_is_your">What is your</string>
@@ -370,8 +370,8 @@ You <font color="#69a30d">favorited %d plans</font>.
     <string name="your_information">Your Information.</string>
     <string name="we_will_keep_your_information">We will keep your information private and will not share it with anyone unless you allow it or it is required by law. Your answers will only be used to decide whether you are eligible for health insurance. Information about your health will not be used to deny you insurance or determine how much you pay.</string>
     <string name="you_can_complete">You can complete an application for health insurance for your children or other family members even if you do not qualify yourself. If you are applying for benefits for other members of your family, you will need to give us information about where you live, but you are not required to answer any questions about your citizenship or immigration status and you will not have to give us a Social Security Number.</string>
-    <string name="learn_more_about">Learn more about how we will use your information</string>
-    <string name="view_privacy_act">View Privacy Act Statement</string>
+    <string name="learn_more_about"><![CDATA[<a href="https://dchealthlink.com/privacy">Learn more about how we will use your information</a>]]></string>
+    <string name="view_privacy_act"><![CDATA[<a href="https://dchealthlink.com/privacy-act-statement">View Privacy Act Statement</a>]]></string>
     <string name="by_clicking_continue">By clicking CONTINUE, you are saying that you understand that information in this application, and the information we get from data sources will be used to decide the eligibility of the people who are applying for health insurance. You are also indicating that you have permission from all of the people listed on the application for their information to be retrieved and used from data sources.</string>
     <string name="no_thanks_i_need_an_individual_plan">No thanks, I need\nan individual plan.</string>
     <string name="already_have_application">It looks like you already have an application in DC Health Link.</string>
@@ -468,7 +468,7 @@ You <font color="#69a30d">favorited %d plans</font>.
 <![CDATA[
 <font color="#414141" face="sans-serif">
     <p>You can only use DC Health Link Mobile to buy a full-price private insurance plan.</p>
-    <p>To find out whether you\'d qualify for a tax credit or Medicaid, you can use tha <font color="#007bc4"><a href="https://dchealthlink.com">financial calculator</a></font> on our website.</p>
+    <p>To find out whether you\'d qualify for a tax credit or Medicaid, you can use the <font color="#007bc4"><a href="https://dchealthlink.com">financial calculator</a></font> on our website.</p>
     <p>To apply for a Medicaid or tax credit savings, visit <font color="#007bc4"><a href="https://dchealthlink.com">DCHealthLink.com.</a></font>
     </p>
 </font>
@@ -480,4 +480,18 @@ You <font color="#69a30d">favorited %d plans</font>.
     <string name="full_price_plan">Do you want to buy a full-price health insurance plan?</string>
     <string name="mobile_password">Your mobile password.</string>
     <string name="help_paying_for_coverage">Help paying for coverage.</string>
+    <string name="we_are_required_to_verify_content">
+<![CDATA[
+<font color="#414141" face="sans-serif">
+    <p>We are required by federal law to verify your identity before you continue with your application. If you do not want
+       to continue with identity verification through Experian, you can apply by completing and sending us a
+       <font color="#007bc4"><a href="https://dchealthlink.com/forms">paper application</a></font>
+       or going to a
+       <font color="#007bc4"><a href="https://dchealthlink.com/dhsservicecenters">Department of Human Services</a></font> service center to apply in person.</p>
+    </p>
+</font>
+]]>
+    </string>
+    <string name="who_can_apply_together_title">Who can apply for coverage together?</string>
+    <string name="who_can_apply_together_text">Each person covered under your plan must be the spouse, domestic partner, or qualified dependent of the primary applicant.</string>
 </resources>

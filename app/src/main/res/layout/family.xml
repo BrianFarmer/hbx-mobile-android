@@ -51,7 +51,7 @@
             style="@style/ivl_link"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Who should I include in my family?"
+            android:text="Who can apply together?"
             />
         <ImageView
             android:id="@+id/shouldIncludeImage"
