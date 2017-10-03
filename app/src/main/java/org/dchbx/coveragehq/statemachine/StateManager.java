@@ -465,7 +465,7 @@ public class StateManager extends StateProcessor {
         stateMachine.from(AppStates.RidpQuestions).on(AppEvents.Continue).to(AppStates.VerifyingUser, new VerifyUser());
         stateMachine.from(AppStates.VerifyingUser).on(AppEvents.UserVerifiedFoundYou).to(AppStates.AcctSystemFoundYouFe, new LaunchActivity(AcctSystemFoundYou.uiActivity));
         stateMachine.from(AppStates.VerifyingUser).on(AppEvents.UserVerifiedSsnWithEmployer).to(AppStates.AcctSsnWithEmployer, new LaunchActivity(AcctSsnWithEmployer.uiActivity));
-        stateMachine.from(AppStates.VerifyingUser).on(AppEvents.UserVerifiedOkToCreate).to(AppStates.CreatingAccount, new CreateAccount());
+        stateMachine.from(AppStates.VerifyingUser).on(AppEvents.UserVerifiedOkToCreate).to(AppStates.CreatingAccount, new BackgroundProcess(Events.CreateAccount.class));
         stateMachine.from(AppStates.CreatingAccount).on(AppEvents.SignUpUserInAceds).to(AppStates.AcctSystemFoundYouInCuramAceds, new LaunchActivity(AcctSystemFoundYouAceds.uiActivity));
         stateMachine.from(AppStates.CreatingAccount).on(AppEvents.SignUpSuccessful).to(AppStates.Login, new PopAndLaunchActivity(LoginActivity.uiActivity));
     }
@@ -508,7 +508,7 @@ public class StateManager extends StateProcessor {
         stateMachine.from(AppStates.EditFamilyRelationShip).on(AppEvents.ShowDropDown).to(AppStates.FeDropDown, new LaunchActivity(CheckedListDialog.uiActivity));
         stateMachine.from(AppStates.EditFamilyRelationShip).on(AppEvents.UserSaved).doThis(new Back());
         stateMachine.from(AppStates.Attestation).on(AppEvents.Continue).doThis(new StateManager.HavenApplication()); // ????
-        stateMachine.from(AppStates.Attestation).on(AppEvents.Continue).to(AppStates.UqhpDetermination, new CreateAccount()); // ???? This looks like the same event are the previous line????
+        stateMachine.from(AppStates.Attestation).on(AppEvents.Continue).to(AppStates.UqhpDetermination, new BackgroundProcess(Events.CreateAccount.class)); // ???? This looks like the same event are the previous line????
         stateMachine.from(AppStates.UqhpDetermination).on(ReceivedUqhpDetermination).to(AppStates.Ineligible, new LaunchActivity(IneligibleResultsActivity.uiActivity));
         stateMachine.from(AppStates.Ineligible).on(AppEvents.ShowEligible).to(AppStates.Eligible, new LaunchActivity(EligibleResultsActivity.uiActivity));
         stateMachine.from(AppStates.Eligible).on(AppEvents.ShowIneligible).to(AppStates.Ineligible, new LaunchActivity(IneligibleResultsActivity.uiActivity));
@@ -657,25 +657,7 @@ public class StateManager extends StateProcessor {
         }
     }
 
-        // Do the actual account creation.
-
-    public static class CreateAccount implements StateMachineAction {
-        private StateManager.UiActivity uiActivity;
-
-        @Override
-        public void call(StateMachine stateMachine, StateManager stateManager,
-                         AppEvents event, AppStates leavingState,
-                         AppStates enterState,
-                         EventParameters intentParameters) throws IOException, CoverageException {
-            stateMachine.getStatesStack().pop();
-            stateMachine.push(new WaitActivityInfo(enterState, event, null));
-            stateManager.messages.createAccount();
-        }
-    }
-
-
     public class DialogInfo extends StateInfoBase {
-
         private StateManager.UiDialog uiDialog;
         private ActivityInfo activityInfo;
 

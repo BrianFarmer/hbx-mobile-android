@@ -285,11 +285,6 @@ public class EventBusMessages implements Messages {
     }
 
     @Override
-    public void createAccount() {
-        eventBus.post(new Events.CreateAccount());
-    }
-
-    @Override
     public void verifyUser() {
         eventBus.post(new Events.VerifyUser());
     }

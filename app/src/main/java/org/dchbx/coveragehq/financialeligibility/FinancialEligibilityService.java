@@ -14,6 +14,8 @@ import org.dchbx.coveragehq.JsonParser;
 import org.dchbx.coveragehq.Messages;
 import org.dchbx.coveragehq.ServiceManager;
 import org.dchbx.coveragehq.UrlHandler;
+import org.dchbx.coveragehq.Utilities;
+import org.dchbx.coveragehq.models.account.Account;
 import org.dchbx.coveragehq.models.fe.Family;
 import org.dchbx.coveragehq.models.fe.Field;
 import org.dchbx.coveragehq.models.fe.FinancialAssistanceApplication;
@@ -173,6 +175,50 @@ public class FinancialEligibilityService {
 
     public static JsonObject getNewPerson() {
         return new JsonObject();
+    }
+
+    public static JsonObject getNewPerson(Account account, Schema schema) {
+        JsonObject person = build(schema.Person);
+
+        person.addProperty("personfirstname", account.getFirstName());
+        person.addProperty("personlastname", account.getLastName());
+        person.addProperty("persondob", Utilities.DateAsIso8601(account.getBirthdate()));
+        person.addProperty("isssntrue", "Y");
+        person.addProperty("personssn", account.getSsn());
+        if (account.isMale()) {
+            person.addProperty("gender", "M");
+        } else {
+            person.addProperty("gender", "F");
+        }
+        person.addProperty("homeemail", account.emailAddress);
+
+        /*
+        This is a nice to have feature, skipping for now.
+
+        JsonArray addressArray = new JsonArray();
+        person.add("Address", addressArray);
+        JsonObject address = new JsonObject();
+        addressArray.add(address);
+
+        Address accountAddress = account.getAddress();
+        address.addProperty("streetaddress1", accountAddress.address1);
+        address.addProperty("streetaddress2", accountAddress.address2);
+        address.addProperty("city", accountAddress.city);
+        address.addProperty("postalcode", accountAddress.zipCode);
+        for (Field field : schema.Person) {
+            if (field.field == "statecd") {
+                for (Option option : field.options) {
+                    if (option.value == accountAddress.state) {
+                        address.addProperty("statecd", accountAddress.state);
+                        break;
+                    }
+                }
+                break;
+            }
+        }
+        */
+
+        return person;
     }
 
     public static void removeFamilyMember(Family family, int i) {

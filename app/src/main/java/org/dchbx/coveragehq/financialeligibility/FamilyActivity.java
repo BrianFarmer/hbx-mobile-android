@@ -16,8 +16,10 @@ import org.dchbx.coveragehq.BaseActivity;
 import org.dchbx.coveragehq.Events;
 import org.dchbx.coveragehq.R;
 import org.dchbx.coveragehq.ServiceManager;
+import org.dchbx.coveragehq.models.account.Account;
 import org.dchbx.coveragehq.models.fe.Family;
 import org.dchbx.coveragehq.models.fe.Schema;
+import org.dchbx.coveragehq.ridp.RidpService;
 import org.dchbx.coveragehq.statemachine.EventParameters;
 import org.dchbx.coveragehq.statemachine.OnActivityResultListener;
 import org.dchbx.coveragehq.statemachine.StateManager;
@@ -35,6 +37,7 @@ public class FamilyActivity extends BaseActivity {
     private FamilyAdapter familyAdapter;
     private Family family;
     private Schema schema;
+    private Account account;
 
     public FamilyActivity(){
         Log.d(TAG, "familyactivity ctor");
@@ -43,6 +46,9 @@ public class FamilyActivity extends BaseActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        Intent intent = getIntent();
+        account = RidpService.getAccountFromIntent(intent);
 
         setContentView(R.layout.family);
         configToolbar();
@@ -66,6 +72,11 @@ public class FamilyActivity extends BaseActivity {
         if (schema == null
             || family == null){
             return;
+        }
+
+        if (family.Person.size() == 0){
+            JsonObject newPerson = FinancialEligibilityService.getNewPerson(account, schema);
+            family.Person.add(newPerson);
         }
 
         familyAdapter = new org.dchbx.coveragehq.financialeligibility.FamilyAdapter(this, family, schema);

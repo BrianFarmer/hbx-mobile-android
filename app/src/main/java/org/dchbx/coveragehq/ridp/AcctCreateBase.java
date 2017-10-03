@@ -37,9 +37,7 @@ public abstract class AcctCreateBase extends BaseActivity {
         configToolbar();
 
         Intent intent = getIntent();
-        int newStateInt = intent.getExtras().getInt("NewState");
         Account account = RidpService.getAccountFromIntent(intent);
-        StateManager.AppStates state = StateManager.AppStates.values()[newStateInt];
         bind(account);
     }
 

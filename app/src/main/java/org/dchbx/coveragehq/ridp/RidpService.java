@@ -4,6 +4,8 @@ import android.content.Intent;
 import android.util.Log;
 
 import com.google.gson.GsonBuilder;
+import com.google.gson.JsonArray;
+import com.google.gson.JsonObject;
 
 import org.dchbx.coveragehq.BrokerApplication;
 import org.dchbx.coveragehq.ConfigurationStorageHandler;
@@ -19,6 +21,7 @@ import org.dchbx.coveragehq.Messages;
 import org.dchbx.coveragehq.StateProcessor;
 import org.dchbx.coveragehq.UrlHandler;
 import org.dchbx.coveragehq.models.account.Account;
+import org.dchbx.coveragehq.models.fe.Family;
 import org.dchbx.coveragehq.models.ridp.Address;
 import org.dchbx.coveragehq.models.ridp.Answer;
 import org.dchbx.coveragehq.models.ridp.Answers;
@@ -46,6 +49,7 @@ import org.joda.time.format.DateTimeFormatter;
 import org.joda.time.format.ISODateTimeFormat;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 
 import static org.dchbx.coveragehq.statemachine.StateManager.AppEvents.Error;
 import static org.dchbx.coveragehq.statemachine.StateManager.AppEvents.GetQuestionsOperationComplete;
@@ -139,7 +143,7 @@ public class RidpService extends StateProcessor {
             ConnectionHandler connectionHandler = serviceManager.getConnectionHandler();
             final EventParameters eventParameters = createAccount.getEventParameters();
             VerifyIdentityResponse verifiyIdentityResponse = (org.dchbx.coveragehq.models.ridp.VerifyIdentityResponse) eventParameters.getObject(VerifyIdentityResponse, org.dchbx.coveragehq.models.ridp.VerifyIdentityResponse.class);
-            Account account = (org.dchbx.coveragehq.models.account.Account) eventParameters.getObject(Account, Account.class);
+            final Account account = (org.dchbx.coveragehq.models.account.Account) eventParameters.getObject(Account, Account.class);
             SignUp signUp = buildSignUp(verifiyIdentityResponse, account);
 
             UrlHandler.HttpRequest request = urlHandler.getCreateAccount(signUp);
@@ -170,6 +174,16 @@ public class RidpService extends StateProcessor {
             Log.e(TAG, "exception processing http request");
             messages.getEventBus().post(new Events.Error("Error processing RidpService.signUp", e.getMessage()));
         }
+    }
+
+    private void configureFamily(Account account) {
+        Family family = new Family();
+        JsonArray personArray = new JsonArray();
+        family.Person = personArray;
+        JsonObject person = new JsonObject();
+        person.addProperty("", "");
+        family.Relationship = new HashMap<>();
+        family.Attestation = new JsonObject();
     }
 
     private SignUp buildSignUp(VerifyIdentityResponse verifiyIdentityResponse, Account account) {

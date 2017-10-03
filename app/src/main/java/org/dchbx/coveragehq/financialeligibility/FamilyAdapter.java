@@ -64,7 +64,7 @@ public class FamilyAdapter extends BaseAdapter {
         View v = view;
         if (v == null){
             LayoutInflater inflater = (LayoutInflater) activity.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-            v = inflater.inflate(R.layout.family_row, viewGroup, false);
+            v = inflater.inflate(R.layout.family_row_uqhp, viewGroup, false);
         }
 
 

@@ -76,7 +76,6 @@ public interface Messages {
     void error(String str1, String str2);
     void appEvent(StateManager.AppEvents event, EventParameters intentParameters);
     void appEvent(StateManager.AppEvents event);
-    void createAccount();
     void verifyUser();
     void getGlossary();
     void getGlossaryItem(String name);

@@ -5,6 +5,8 @@ import org.joda.time.Days;
 import org.joda.time.Duration;
 import org.joda.time.LocalDate;
 import org.joda.time.format.DateTimeFormat;
+import org.joda.time.format.DateTimeFormatter;
+import org.joda.time.format.ISODateTimeFormat;
 
 /**
  * Created by plast on 10/28/2016.
@@ -31,6 +33,11 @@ public class Utilities {
     }
     public static String DateAsString(LocalDate date){
         return DateTimeFormat.forPattern("MM/dd/yyyy").print(date);
+    }
+
+    public static String DateAsIso8601(LocalDate date){
+        DateTimeFormatter fmt = ISODateTimeFormat.dateTime();
+        return fmt.print(date);
     }
 
     public static String DateAsMonthYear(DateTime date){
