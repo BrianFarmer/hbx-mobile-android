@@ -142,7 +142,11 @@ public class FinancialEligibilityService {
                     UqhpDetermination uqhpDetermination = parser.parseUqhpDeterminationResponse(response.getBody());
                     ConfigurationStorageHandler configurationStorageHandler = serviceManager.getConfigurationStorageHandler();
                     configurationStorageHandler.store(uqhpDetermination);
-                    messages.appEvent(StateManager.AppEvents.ReceivedUqhpDetermination);
+                    if (uqhpDetermination.ineligibleForQhp.size() > 0){
+                        messages.appEvent(StateManager.AppEvents.ReceivedUqhpDeterminationHasIneligible);
+                    } else {
+                        messages.appEvent(StateManager.AppEvents.ReceivedUqhpDeterminationOnlyEligible);
+                    }
                 } else {
                     messages.appEvent(StateManager.AppEvents.Error, EventParameters.build().add("error_msg", "Error in UQHP determination"));
                 }

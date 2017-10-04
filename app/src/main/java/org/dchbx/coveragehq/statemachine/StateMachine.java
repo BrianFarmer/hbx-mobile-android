@@ -63,9 +63,9 @@ public class StateMachine {
         }
         eventParameters.add("OldState", curState.getState());
 
-        if (curState.getState() == StateManager.AppStates.Hello
-            && appEvent == StateManager.AppEvents.StartApplication){
-            Log.d(TAG, "the button you asked for has been clicked.");
+        if (curState.getState() == StateManager.AppStates.AcctAuthConsent
+            || curState.getState() == StateManager.AppStates.GetQuestions){
+            Log.d(TAG, "the state you asked for has been reached.");
         }
 
         // This checks and processes events that have to modified by data in the system.

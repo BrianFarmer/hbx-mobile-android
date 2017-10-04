@@ -1404,7 +1404,7 @@ public class Events {
     public static class SaveUqhpFamilyResponse {
     }
 
-    public static class SendHavenApplication {
+    public static class SendHavenApplication extends BackgroundProcess {
     }
 
     public static class GetUqhpDetermination {
