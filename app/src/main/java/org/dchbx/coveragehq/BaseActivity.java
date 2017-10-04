@@ -180,14 +180,14 @@ public class BaseActivity extends AppCompatActivity {
         return currentActivity;
     }
 
-    public void htmlifyTextControl(@IdRes int id) {
+    public void htmlifyTextControl(int id) {
 
         TextView view = (TextView)findViewById(id);
         view.setMovementMethod(LinkMovementMethod.getInstance());
         view.setText(Html.fromHtml(view.getText().toString()));
     }
 
-    public void simpleAlert(@IdRes int title, @IdRes int text) {
+    public void simpleAlert(int title, int text) {
         Resources r = getResources();
         AlertDialog.Builder alert = new AlertDialog.Builder(this);
         alert.setTitle(r.getString(title));
@@ -196,7 +196,7 @@ public class BaseActivity extends AppCompatActivity {
         alert.show();
     }
 
-    public View.OnClickListener clickForSimpleAlert(@IdRes final int title, @IdRes final int text) {
+    public View.OnClickListener clickForSimpleAlert(final int title, final int text) {
         return new View.OnClickListener() {
             @Override
             public void onClick(View v) {
