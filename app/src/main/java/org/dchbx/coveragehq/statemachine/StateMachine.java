@@ -135,11 +135,6 @@ public class StateMachine {
         }
     }
 
-    //private void launchDialog(DialogInfo<E,S> dialogInfo) {
-    //    statesStack.push(dialogInfo);
-    //    stateManager.launchDialog(dialogInfo.uiDialog);
-    //}
-
     public StateManager getStateManager() {
         return stateManager;
     }
@@ -239,6 +234,7 @@ public class StateMachine {
         private final StateManager.AppEvents event;
         private final FromState fromState;
         private final HashMap<StateManager.AppEvents, Transition> transitionsMap;
+        private StateManager.PopulateEventParameters populateEventParameters;
 
         public OnEvent(StateManager.AppEvents event, FromState fromState, HashMap<StateManager.AppEvents, Transition> transitionsMap) {
             this.event = event;
@@ -251,7 +247,14 @@ public class StateMachine {
             return fromState;
         }
 
+        public FromState to(StateManager.AppStates state, StateMachineAction exitAction, StateManager.PopulateEventParameters populateEventParameters){
+            this.populateEventParameters = populateEventParameters;
+            transitionsMap.put(event, new Transition(event, state, fromState.getAction(), exitAction));
+            return fromState;
+        }
+
         public FromState doThis(StateMachineAction exitAction){
+            this.populateEventParameters = null;
             transitionsMap.put(event, new Transition(event, null, fromState.getAction(), exitAction));
             return fromState;
         }

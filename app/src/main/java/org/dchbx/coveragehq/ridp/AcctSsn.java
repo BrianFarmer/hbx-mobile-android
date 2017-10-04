@@ -49,15 +49,9 @@ public class AcctSsn extends BaseActivity {
     }
 
 
+
     public void onClick(Account account){
-        String ssn = account.getSsn();
-        String unmasked = "";
-        for (int i = 0; i < ssn.length(); i ++){
-            if (!ssn.substring(i, i + 1).equals("-")){
-                unmasked = unmasked + ssn.substring(i, i + 1);
-            }
-        }
-        account.setSsn(unmasked);
+        account.setSsn(RidpService.stripSsnDashes(account.getSsn()));
         getMessages().appEvent(StateManager.AppEvents.Continue, EventParameters.build().add("Account", account));
     }
 }

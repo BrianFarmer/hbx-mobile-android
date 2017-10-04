@@ -35,9 +35,15 @@ public class Utilities {
         return DateTimeFormat.forPattern("MM/dd/yyyy").print(date);
     }
 
-    public static String DateAsIso8601(LocalDate date){
+    public static String DateTimeAsIso8601(DateTime date){
         DateTimeFormatter fmt = ISODateTimeFormat.dateTime();
         return fmt.print(date);
+    }
+
+    public static String DateAsIso8601(LocalDate date){
+        DateTimeFormatter fmt = ISODateTimeFormat.dateTime();
+        String dateString = fmt.print(date).substring(0,10);
+        return dateString;
     }
 
     public static String DateAsMonthYear(DateTime date){

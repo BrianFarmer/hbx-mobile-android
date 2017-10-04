@@ -115,7 +115,11 @@ public class FamilyActivity extends BaseActivity {
         continueButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                getMessages().appEvent(StateManager.AppEvents.Continue);
+                if (family.Person.size() == 1){
+                    getMessages().appEvent(StateManager.AppEvents.ContinueSingleMemberFamily, EventParameters.build().add("FamilyMemberCount", family.Person.size()));
+                } else {
+                    getMessages().appEvent(StateManager.AppEvents.ContinueMultipleMemberFamily, EventParameters.build().add("FamilyMemberCount", family.Person.size()));
+                }
             }
         });
     }

@@ -27,9 +27,11 @@ import org.dchbx.coveragehq.Utilities;
 import org.dchbx.coveragehq.models.fe.Field;
 import org.dchbx.coveragehq.models.fe.Option;
 import org.dchbx.coveragehq.models.fe.Schema;
+import org.dchbx.coveragehq.ridp.RidpService;
 import org.dchbx.coveragehq.statemachine.EventParameters;
 import org.dchbx.coveragehq.statemachine.OnActivityResultListener;
 import org.dchbx.coveragehq.statemachine.StateManager;
+import org.joda.time.LocalDate;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -594,7 +596,7 @@ public class ApplicationQuestionsActivity extends BrokerActivity {
             }
             String s = text.toString();
             try {
-                return new JsonPrimitive(Utilities.DateAsString(Utilities.parseDate(s.toString())));
+                return new JsonPrimitive(Utilities.DateAsIso8601(Utilities.parseDate(s.toString())));
             } catch (Exception e){
                 return null;
             }
@@ -609,7 +611,8 @@ public class ApplicationQuestionsActivity extends BrokerActivity {
             value = (EditText) view.findViewById(R.id.value);
             if (values.has(field.field)){
                 String str = (String) values.get(field.field).getAsString();
-                value.setText(str);
+                LocalDate localDate = LocalDate.parse(str);
+                value.setText(Utilities.DateAsString(localDate));
             } else {
                 if (field.defaultValue != null){
                     value.setText((String)field.defaultValue);
@@ -819,7 +822,7 @@ public class ApplicationQuestionsActivity extends BrokerActivity {
 
         @Override
         public JsonElement getValue() {
-            return new JsonPrimitive(value.getText().toString());
+            return new JsonPrimitive(RidpService.stripSsnDashes(value.getText().toString()));
         }
 
         @Override

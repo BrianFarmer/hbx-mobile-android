@@ -60,8 +60,21 @@ public class ConnectionHandler implements IConnectionHandler{
         if (clientHttp != null) {
             return;
         }
-        cookieJar1 = new PersistentCookieJar(new SetCookieCache(), new SharedPrefsCookiePersistor(BrokerApplication.getBrokerApplication()));
-        cookieJar2 = new PersistentCookieJar(new SetCookieCache(), new SharedPrefsCookiePersistor(BrokerApplication.getBrokerApplication()));
+        SetCookieCache cookies1 = new SetCookieCache();
+        cookies1.clear();
+        SetCookieCache cookies2 = new SetCookieCache();
+        cookies2.clear();
+        SharedPrefsCookiePersistor sharedPrefsCookiePersistor1 = new SharedPrefsCookiePersistor(BrokerApplication.getBrokerApplication());
+        sharedPrefsCookiePersistor1.clear();
+        SharedPrefsCookiePersistor sharedPrefsCookiePersistor2 = new SharedPrefsCookiePersistor(BrokerApplication.getBrokerApplication());
+        sharedPrefsCookiePersistor2.clear();
+        PersistentCookieJar persistentCookieJar1 = new PersistentCookieJar(cookies1, sharedPrefsCookiePersistor1);
+        PersistentCookieJar persistentCookieJar2 = new PersistentCookieJar(cookies1, sharedPrefsCookiePersistor1);
+        persistentCookieJar1.clearSession();
+        persistentCookieJar2.clearSession();
+        cookieJar1 = persistentCookieJar1;
+        cookieJar2 = persistentCookieJar2;
+
 
         clientHttp = new OkHttpClient()
                 .newBuilder()

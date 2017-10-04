@@ -37,6 +37,10 @@ public class BrokerApplication extends Application {
 
         //Intent intent = new Intent(this, LoginActivity.class);
         JodaTimeAndroid.init(this);
+
+        // This clears the cookies
+        EnrollConnectionHandler.clear();
+
         // ConnectionHandler.initClients();
         ServiceManager serviceManager = ServiceManager.getServiceManager();
         serviceManager.init();

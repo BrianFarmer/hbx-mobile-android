@@ -342,4 +342,14 @@ public class RidpService extends StateProcessor {
         InEnroll,
         OkToCreateAccount
     }
+
+    public static String stripSsnDashes(String ssn){
+        String unmasked = "";
+        for (int i = 0; i < ssn.length(); i ++){
+            if (!ssn.substring(i, i + 1).equals("-")){
+                unmasked = unmasked + ssn.substring(i, i + 1);
+            }
+        }
+        return unmasked;
+    }
 }
