@@ -54,11 +54,16 @@ public class AcctCreate extends AcctCreateBase {
 
     @Override
     protected boolean validate(List<String> issues) {
+
+        //of the various email regexs online, this is an intentionally simple one, to avoid false negatives
+        String emailPattern = "^.+@.+\\..+$";
+
         //note the use of non-short-circuiting "&" instead of "&&" to collect all errors.
         return validateRequiredTextField(R.id.firstName, "First Name", issues)
                 & validateRequiredTextField(R.id.lastName, "Last Name", issues)
-                & validateRequiredTextField(R.id.emailAddress, "Email Address", issues)
+                //& validateRequiredTextField(R.id.emailAddress, "Email Address", issues)
                 & validateRequiredTextField(R.id.password, "Password", issues)
+                & validateTextFieldByRegex(R.id.emailAddress, emailPattern, "Please enter a valid email address", issues)
                 & validateTextFieldsMatch(R.id.password, "Password", R.id.confirmPassword, "Confirm Password", issues);
     }
 }

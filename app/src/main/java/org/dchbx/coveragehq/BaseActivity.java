@@ -198,13 +198,13 @@ public class BaseActivity extends AppCompatActivity {
     }
 
     protected void simpleAlert(String title, String text) {
-        AlertDialog.Builder alert = new AlertDialog.Builder(this);
+        AlertDialog.Builder alert = new AlertDialog.Builder(this, R.style.AlertDialogTheme);
         WebView webView = new WebView(this);
         webView.loadData(text, "text/html", "utf-8");
 
         alert.setTitle(title)
                 .setView(webView)
-                .setPositiveButton("OK", null)
+                .setPositiveButton(R.string.ok, null)
                 .show();
     }
 

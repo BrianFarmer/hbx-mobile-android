@@ -14,6 +14,8 @@ import org.dchbx.coveragehq.statemachine.StateManager;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 
 /*
@@ -61,24 +63,31 @@ public abstract class AcctCreateBase extends BaseActivity {
         return field.getText().toString();
     }
 
-    protected boolean validateRequiredTextField(int fieldId, String fieldName, List<String> issues) {
-        if (getTextFromField(fieldId).length() == 0) {
-            issues.add(fieldName + " is a required field");
-            return false;
+    private boolean applyValidation(boolean valid, String errorMessage, List<String> issues) {
+        if (!valid) {
+            issues.add(errorMessage);
         }
-        return true;
+        return valid;
+    }
+
+    protected boolean validateTextFieldByRegex(int fieldId, String pattern, String errorMessage,
+                                               List<String> issues) {
+        Matcher matcher = Pattern.compile(pattern).matcher(getTextFromField(fieldId));
+        return applyValidation(matcher.matches(), errorMessage, issues);
+    }
+
+    protected boolean validateRequiredTextField(int fieldId, String fieldName, List<String> issues) {
+        int length = getTextFromField(fieldId).length();
+        return applyValidation (length > 0, fieldName + " is a required field", issues);
     }
 
     protected boolean validateTextFieldsMatch(int fieldId, String fieldName, int fieldId2,
                                                       String fieldName2, List<String> issues) {
-
         String field1 = getTextFromField(fieldId);
         String field2 = getTextFromField(fieldId2);
-        if (!field1.equals(field2)) {
-            issues.add(fieldName + " and " + fieldName2 + " must match.");
-            return false;
-        }
-        return true;
+        return applyValidation(field1.equals(field2),
+                fieldName + " and " + fieldName2 + " must match.",
+                issues);
     }
 
     protected boolean validate(List<String> issues) {
