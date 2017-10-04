@@ -187,6 +187,10 @@ public class ApplicationQuestionsActivity extends BrokerActivity {
                 && field.dependentFields.size() > 0){
                 try {
                     newField.dependentFields = populateSchemaFields(field.dependentFields, values, inflater, false);
+                } catch (Throwable t){
+                    Log.e(TAG, "field name: " + field.field);
+                }
+                    try {
                     newField.configureDependentFieldsVisibility(newField.dependentFields);
                 } catch (Throwable t){
                     Log.e(TAG, "field name: " + field.field);
@@ -280,6 +284,12 @@ public class ApplicationQuestionsActivity extends BrokerActivity {
         public void showView(int visibility){
             if (view != null){
                 view.setVisibility(visibility);
+            }
+        }
+
+        public void setVisibility(int visible){
+            if (view != null){
+                view.setVisibility(visible);
             }
         }
     }
@@ -991,7 +1001,7 @@ public class ApplicationQuestionsActivity extends BrokerActivity {
                     boolean foundPrereqValue = false;
                     for (Object prereqValue : dependentFieldType.field.prereqValues) {
                         if (prereqValue.equals("Y")) {
-                            dependentFieldType.view.setVisibility(View.VISIBLE);
+                            dependentFieldType.setVisibility(View.VISIBLE);
                             foundPrereqValue = true;
                             if (dependentFieldType.dependentFields != null){
                                 dependentFieldType.configureDependentFieldsVisibility(dependentFieldType.dependentFields);
@@ -1011,20 +1021,20 @@ public class ApplicationQuestionsActivity extends BrokerActivity {
                     for (Object prereqValue : dependentFieldType.field.prereqValues) {
                         if (prereqValue.equals("N")) {
                             if (dependentFieldType.view != null){
-                                dependentFieldType.view.setVisibility(View.VISIBLE);
+                                dependentFieldType.setVisibility(View.VISIBLE);
                             }
                             foundPrereqValue = true;
                         }
                     }
                     if (!foundPrereqValue
                         && dependentFieldType.view != null) {
-                        dependentFieldType.view.setVisibility(View.GONE);
+                        dependentFieldType.setVisibility(View.GONE);
                     }
                 }
             } else {
                 for (FieldType dependentFieldType : dependentFields) {
                     if (dependentFieldType.view != null) {
-                        dependentFieldType.view.setVisibility(View.GONE);
+                        dependentFieldType.setVisibility(View.GONE);
                     }
                 }
             }

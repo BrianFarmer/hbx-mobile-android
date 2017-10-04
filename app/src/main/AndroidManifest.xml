@@ -295,7 +295,6 @@
                   android:configChanges="orientation|keyboardHidden|screenSize"
                   android:label=""
             />
-        <activity android:name=".ridp.AcctNewPasswordActivity"/>
     </application>
 
 </manifest>
