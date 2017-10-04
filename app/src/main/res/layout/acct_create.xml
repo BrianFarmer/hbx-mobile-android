@@ -35,7 +35,7 @@
             android:id="@+id/textView9"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:text="@string/set_up_you_mobile_password"
+            android:text="@string/set_up_your_mobile_password"
             android:textAlignment="center"
             android:textSize="28dp"
             android:textStyle="bold"
@@ -69,7 +69,7 @@
             android:paddingBottom="5dp"
             />
         <View
-            android:id="@+id/addressUnderline"
+            android:id="@+id/firstNameUnderline"
             android:layout_width="0dp"
             android:layout_height="1dp"
             style="@style/NormalSeparator"
@@ -81,7 +81,7 @@
             android:layout_marginRight="45dp"
             />
         <EditText
-            android:id="@+id/address2"
+            android:id="@+id/lastName"
             android:inputType="textPersonName"
             android:text="@={account.lastName}"
             android:textColor="@color/keep_green"
@@ -92,7 +92,7 @@
             android:layout_height="wrap_content"
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintRight_toRightOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/addressUnderline"
+            app:layout_constraintTop_toBottomOf="@+id/firstNameUnderline"
             android:layout_marginLeft="45dp"
             android:layout_marginRight="45dp"
             android:layout_marginTop="22dp"
@@ -100,20 +100,20 @@
             android:paddingBottom="5dp"
             />
         <View
-            android:id="@+id/address2Underline"
+            android:id="@+id/lastNameUnderline"
             android:layout_width="0dp"
             android:layout_height="1dp"
             style="@style/NormalSeparator"
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintRight_toRightOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/address2"
+            app:layout_constraintTop_toBottomOf="@+id/lastName"
             android:background="@color/mainblue"
             android:layout_marginLeft="45dp"
             android:layout_marginRight="45dp"
             />
 
         <EditText
-            android:id="@+id/city"
+            android:id="@+id/emailAddress"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:inputType="textEmailAddress"
@@ -124,7 +124,7 @@
             android:hint="@string/email_address"
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintRight_toRightOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/address2Underline"
+            app:layout_constraintTop_toBottomOf="@+id/lastNameUnderline"
             android:layout_marginLeft="45dp"
             android:layout_marginRight="45dp"
             android:layout_marginTop="22dp"
@@ -132,13 +132,13 @@
             android:paddingBottom="5dp"
             />
         <View
-            android:id="@+id/cityUnderline"
+            android:id="@+id/emailAddressUnderline"
             android:layout_width="0dp"
             android:layout_height="1dp"
             style="@style/NormalSeparator"
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintRight_toRightOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/city"
+            app:layout_constraintTop_toBottomOf="@+id/emailAddress"
             android:background="@color/mainblue"
             android:layout_marginLeft="45dp"
             android:layout_marginRight="45dp"
@@ -156,7 +156,7 @@
             android:background="@color/transparent"
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintRight_toRightOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/cityUnderline"
+            app:layout_constraintTop_toBottomOf="@+id/emailAddressUnderline"
             android:layout_marginLeft="45dp"
             android:layout_marginRight="45dp"
             android:layout_marginTop="22dp"

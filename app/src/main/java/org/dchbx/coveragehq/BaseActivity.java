@@ -180,23 +180,29 @@ public class BaseActivity extends AppCompatActivity {
         return currentActivity;
     }
 
-    public void htmlifyTextControl(int id) {
+    protected void htmlifyTextControl(int id) {
 
         TextView view = (TextView)findViewById(id);
         view.setMovementMethod(LinkMovementMethod.getInstance());
         view.setText(Html.fromHtml(view.getText().toString()));
     }
 
-    public void simpleAlert(int title, int text) {
+    protected void simpleAlert(int titleId, int textId) {
         Resources r = getResources();
+        String title = r.getString(titleId);
+        String text = r.getString(textId);
+        simpleAlert(title, text);
+    }
+
+    protected void simpleAlert(String title, String text) {
         AlertDialog.Builder alert = new AlertDialog.Builder(this);
-        alert.setTitle(r.getString(title));
-        alert.setMessage(r.getString(text));
+        alert.setTitle(title);
+        alert.setMessage(text);
         alert.setPositiveButton("OK", null);
         alert.show();
     }
 
-    public View.OnClickListener clickForSimpleAlert(final int title, final int text) {
+    protected View.OnClickListener clickForSimpleAlert(final int title, final int text) {
         return new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -204,6 +210,11 @@ public class BaseActivity extends AppCompatActivity {
             }
         };
     }
+
+    protected void installSimpleAlertClickListener(final int id, final int title, final int text) {
+        findViewById(id).setOnClickListener(clickForSimpleAlert(title, text));
+    }
+
 
     /*@Override
     public boolean onKeyDown(int keyCode, KeyEvent event) {

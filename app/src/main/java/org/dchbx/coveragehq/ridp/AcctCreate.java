@@ -49,4 +49,14 @@ public class AcctCreate extends AcctCreateBase {
     public void onSkip(){
         getMessages().buttonClicked(StateManager.AppEvents.Skip);
     }
+
+    @Override
+    protected boolean validate(StringBuffer issues) {
+        //note the use of non-short-circuiting "&" instead of "&&" to collect all errors.
+        return validateRequiredTextField(R.id.firstName, "First Name", issues)
+                & validateRequiredTextField(R.id.lastName, "Last Name", issues)
+                & validateRequiredTextField(R.id.emailAddress, "Email Address", issues)
+                & validateRequiredTextField(R.id.password, "Password", issues)
+                & validateRequiredTextField(R.id.confirmPassword, "Confirm Password", issues);
+    }
 }

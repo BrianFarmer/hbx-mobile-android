@@ -2,11 +2,14 @@ package org.dchbx.coveragehq.ridp;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.view.View;
+import android.widget.TextView;
 
 import org.dchbx.coveragehq.BaseActivity;
 import org.dchbx.coveragehq.models.account.Account;
 import org.dchbx.coveragehq.statemachine.EventParameters;
 import org.dchbx.coveragehq.statemachine.StateManager;
+
 
 /*
     This file is part of DC.
@@ -47,7 +50,39 @@ public abstract class AcctCreateBase extends BaseActivity {
 
     protected abstract int getLayoutId();
 
+
+    private String getTextFromField(int fieldId){
+        TextView field = (TextView)findViewById(fieldId);
+        return field.getText().toString();
+    }
+
+    protected boolean validateRequiredTextField(int fieldId, String fieldName, StringBuffer issues) {
+        if (getTextFromField(fieldId).length() == 0) {
+            issues.append(fieldName + " is a required field");
+            return false;
+        }
+        return true;
+    }
+
+    protected boolean validateRequiredTextFieldsMatch(int fieldId, String fieldName, int fieldId2,
+                                                      String fieldName2, StringBuffer issues) {
+        if (!getTextFromField(fieldId).equals(getTextFromField(fieldId2))) {
+            issues.append(fieldName + " and " + fieldName2 + " must match.");
+            return false;
+        }
+        return true;
+    }
+
+    protected boolean validate(StringBuffer issues) {
+      return false;
+    }
+
     public void onClick(Account account){
-        getMessages().appEvent(StateManager.AppEvents.Continue, EventParameters.build().add("Account", account));
+        StringBuffer issues = new StringBuffer();
+        if (!validate(issues)) {
+            simpleAlert("Please review your entries",  issues.toString());
+        } else {
+            getMessages().appEvent(StateManager.AppEvents.Continue, EventParameters.build().add("Account", account));
+        }
     }
 }
