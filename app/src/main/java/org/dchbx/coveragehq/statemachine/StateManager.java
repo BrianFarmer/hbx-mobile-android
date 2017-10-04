@@ -329,7 +329,7 @@ public class StateManager extends StateProcessor {
         ShowEligible, ShowIneligible, ErrorHappened, GetCoverageThisYear, GetCoverageNextYear,
         StatusAppliedUqhp, StatusEnrollingUqhp, StatusApplying, StatusEnrolled,
         ReceivedEffectiveDate, InOpenEnrollment, OpenEnrollmentClosed, GetDentalCoverage,
-        ForgotPassword, ReceivedUqhpDeterminationHasIneligible, PurchasePlan, ClearedPII
+        ForgotPassword, ReceivedUqhpDeterminationHasIneligible, PurchasePlan, ContinueMultipleMemberFamily, ContinueSingleMemberFamily, ClearedPII
     }
 
     public void configStates() {
@@ -466,7 +466,8 @@ public class StateManager extends StateProcessor {
         stateMachine.from(AppStates.AcctNewPassword).on(AppEvents.Continue).to(AppStates.AcctPreAuth, new LaunchActivity(AcctPreAuthActivity.uiActivity));
 
         stateMachine.from(AppStates.FamilyMembers).on(AppEvents.EditFamilyMember).to(AppStates.FinancialAssitanceQuestions, new LaunchActivity(EditPersonActivity.uiActivity));
-        stateMachine.from(AppStates.FamilyMembers).on(AppEvents.Continue).to(AppStates.FamilyRelationships, new LaunchActivity(RelationshipsActivity.uiActivity));
+        stateMachine.from(AppStates.FamilyMembers).on(AppEvents.ContinueSingleMemberFamily).to(AppStates.Attestation, new LaunchActivity(AttestationActivity.uiActivity));
+        stateMachine.from(AppStates.FamilyMembers).on(AppEvents.ContinueMultipleMemberFamily).to(AppStates.FamilyRelationships, new LaunchActivity(RelationshipsActivity.uiActivity));
         stateMachine.from(AppStates.FinancialAssitanceQuestions).on(AppEvents.ShowDropDown).to(AppStates.FeDropDown, new LaunchActivity(CheckedListDialog.uiActivity));
         stateMachine.from(AppStates.FinancialAssitanceQuestions).on(AppEvents.UserSaved).doThis(new Back());
         stateMachine.from(AppStates.FinancialAssitanceQuestions).on(AppEvents.OpenSection).to(AppStates.SectionQuestions, new LaunchActivity(SectionActivity.uiActivity));
@@ -479,7 +480,9 @@ public class StateManager extends StateProcessor {
         stateMachine.from(AppStates.EditFamilyRelationShip).on(AppEvents.ShowDropDown).to(AppStates.FeDropDown, new LaunchActivity(CheckedListDialog.uiActivity));
         stateMachine.from(AppStates.EditFamilyRelationShip).on(AppEvents.UserSaved).doThis(new Back());
         stateMachine.from(AppStates.Attestation).on(AppEvents.Continue).to(AppStates.UqhpDetermination, new BackgroundProcess(Events.SendHavenApplication.class));
-        stateMachine.from(AppStates.UqhpDetermination).on(AppEvents.ReceivedUqhpDeterminationHasIneligible).to(AppStates.Ineligible, new LaunchActivity(IneligibleResultsActivity.uiActivity)); // ???? This looks like the same event are the previous line????
+        stateMachine.from(AppStates.UqhpDetermination)
+            .on(AppEvents.ReceivedUqhpDeterminationHasIneligible)
+                .to(AppStates.Ineligible, new LaunchActivity(IneligibleResultsActivity.uiActivity));
         stateMachine.from(AppStates.UqhpDetermination).on(ReceivedUqhpDeterminationOnlyEligible).to(AppStates.Eligible, new LaunchActivity(EligibleResultsActivity.uiActivity));
         stateMachine.from(AppStates.Ineligible).on(AppEvents.ShowEligible).to(AppStates.Eligible, new LaunchActivity(EligibleResultsActivity.uiActivity));
         stateMachine.from(AppStates.Eligible).on(AppEvents.ShowIneligible).to(AppStates.Ineligible, new LaunchActivity(IneligibleResultsActivity.uiActivity));
@@ -491,7 +494,6 @@ public class StateManager extends StateProcessor {
         stateMachine.from(AppStates.AcctSystemFoundYou).on(AppEvents.Close).to(AppStates.AcctSystemFoundYouClosing, new StateManager.BackgroundProcess(Events.ClearPIIRequest.class));
         stateMachine.from(AppStates.AcctSystemFoundYouClosing).on(AppEvents.ClearedPII).to(AppStates.Hello, new PopAndLaunchActivity(HelloActivity.uiActivity));
     }
-
 
     class UserStatusProcessor implements EventProcessor {
 
@@ -680,5 +682,9 @@ public class StateManager extends StateProcessor {
                 e.printStackTrace();
             }
         }
+    }
+
+    public interface PopulateEventParameters{
+        void fill(EventParameters eventParameters);
     }
 }

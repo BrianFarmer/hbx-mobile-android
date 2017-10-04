@@ -40,6 +40,7 @@ public class EligibleResultsActivity extends BaseActivity {
 
         setContentView(R.layout.marketplace_coverage);
         configToolbar();
+        messages.getUqhpDetermination();
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)

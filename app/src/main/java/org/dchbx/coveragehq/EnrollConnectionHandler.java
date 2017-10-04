@@ -2,7 +2,6 @@ package org.dchbx.coveragehq;
 
 import android.content.Context;
 
-import com.franmontiel.persistentcookiejar.ClearableCookieJar;
 import com.franmontiel.persistentcookiejar.PersistentCookieJar;
 import com.franmontiel.persistentcookiejar.cache.SetCookieCache;
 import com.franmontiel.persistentcookiejar.persistence.SharedPrefsCookiePersistor;
@@ -20,8 +19,8 @@ public class EnrollConnectionHandler extends ConnectionHandler {
     private Context context = null;
     static SharedPrefsCookiePersistor cookiePersistor3 = new SharedPrefsCookiePersistor(BrokerApplication.getBrokerApplication());
     static SharedPrefsCookiePersistor cookiePersistor4 = new SharedPrefsCookiePersistor(BrokerApplication.getBrokerApplication());
-    static ClearableCookieJar cookieJar3 = new PersistentCookieJar(new SetCookieCache(), cookiePersistor3);
-    static ClearableCookieJar cookieJar4 = new PersistentCookieJar(new SetCookieCache(), cookiePersistor3);
+    static PersistentCookieJar cookieJar3 = new PersistentCookieJar(new SetCookieCache(), cookiePersistor3);
+    static PersistentCookieJar cookieJar4 = new PersistentCookieJar(new SetCookieCache(), cookiePersistor3);
 
     static protected OkHttpClient clientHttps = new OkHttpClient()
             .newBuilder()
@@ -38,6 +37,11 @@ public class EnrollConnectionHandler extends ConnectionHandler {
             .followRedirects(false)
             .followSslRedirects(false)
             .build();
+
+    public static void clear(){
+        cookieJar3.clearSession();
+        cookieJar4.clearSession();
+    }
 
     public EnrollConnectionHandler(ServerConfiguration serverConfiguration) {
         super(serverConfiguration);
