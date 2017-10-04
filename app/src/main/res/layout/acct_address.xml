@@ -51,8 +51,8 @@
             />
 
         <EditText
-            android:id="@+id/firstName"
-            android:inputType="text"
+            android:id="@+id/address"
+            android:inputType="textPostalAddress"
             android:text="@={account.address.address1}"
             android:hint="Address"
             android:textSize="24dp"
@@ -77,14 +77,14 @@
             style="@style/NormalSeparator"
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintRight_toRightOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/firstName"
+            app:layout_constraintTop_toBottomOf="@+id/address"
             android:background="@color/mainblue"
             android:layout_marginLeft="45dp"
             android:layout_marginRight="45dp"
             />
         <EditText
             android:id="@+id/address2"
-            android:inputType="textPersonName"
+            android:inputType="textPostalAddress"
             android:text="@={account.address.address2}"
             android:hint="Address 2"
             android:textSize="24dp"
@@ -119,7 +119,8 @@
             android:id="@+id/city"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:inputType="textEmailAddress"
+            android:inputType="text"
+            android:textAllCaps="true"
             android:textSize="24dp"
             android:textColor="@color/keep_green"
             android:maxLines="1"
@@ -164,6 +165,7 @@
             android:textColor="@color/keep_green"
             android:textSize="24dp"
             android:maxLines="1"
+            android:maxLength="2"
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/cityUnderline"
             />
@@ -183,10 +185,12 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:text="@={account.address.zipCode}"
+            android:inputType="number"
             android:hint="ZIP Code"
             android:textSize="24dp"
             android:textColor="@color/keep_green"
             android:maxLines="1"
+            android:maxLength="5"
             android:background="@color/transparent"
             app:layout_constraintLeft_toRightOf="@+id/state"
             app:layout_constraintRight_toRightOf="parent"

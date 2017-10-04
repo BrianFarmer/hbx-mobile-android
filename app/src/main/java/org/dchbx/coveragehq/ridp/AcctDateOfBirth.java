@@ -13,6 +13,11 @@ import org.dchbx.coveragehq.models.ridp.Questions;
 import org.dchbx.coveragehq.statemachine.EventParameters;
 import org.dchbx.coveragehq.statemachine.StateManager;
 
+import java.util.Calendar;
+import java.util.Date;
+import java.util.GregorianCalendar;
+import java.util.List;
+
 /*
     This file is part of DC.
 
@@ -30,14 +35,19 @@ import org.dchbx.coveragehq.statemachine.StateManager;
     along with DC Health Link SmallBiz.  If not, see <http://www.gnu.org/licenses/>.
     This statement should go near the beginning of every source file, close to the copyright notices. When using the Lesser GPL, insert the word “Lesser” before “General” in all three places. When using the GNU AGPL, insert the word “Affero” before “General” in all three places.
 */
-public class AcctDateOfBirth extends BaseActivity {
+public class AcctDateOfBirth extends ValidatedActivityBase {
     public static StateManager.UiActivity uiActivity = new StateManager.UiActivity(AcctDateOfBirth.class);
     private static String TAG = "AcctDateOfBirth";
 
-    private Questions ridpQuestions;
-    private ImageButton continueButton;
+    //private Questions ridpQuestions;
+    //private ImageButton continueButton;
     private AcctDateOfBirthBinding binding;
 
+    @Override
+    protected boolean validate(List<String> issues) {
+        Date min = new GregorianCalendar(1911, Calendar.JANUARY, 1).getTime();
+        return validateDateInRange(R.id.dateOfBirth, R.string.dateOfBirth,  min, new Date(), issues);
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -53,7 +63,5 @@ public class AcctDateOfBirth extends BaseActivity {
         binding.setActivity(this);
     }
 
-    public void onClick(Account account){
-        getMessages().appEvent(StateManager.AppEvents.Continue, EventParameters.build().add("Account", account));
-    }
+
 }

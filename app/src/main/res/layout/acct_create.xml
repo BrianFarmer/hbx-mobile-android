@@ -51,7 +51,7 @@
 
         <EditText
             android:id="@+id/firstName"
-            android:inputType="text"
+            android:inputType="textPersonName"
             android:text="@={account.firstName}"
             android:textColor="@color/keep_green"
             android:hint="@string/first_name"

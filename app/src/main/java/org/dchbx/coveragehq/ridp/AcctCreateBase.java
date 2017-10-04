@@ -2,21 +2,9 @@ package org.dchbx.coveragehq.ridp;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.view.View;
-import android.widget.TextView;
 
-import org.dchbx.coveragehq.BaseActivity;
-import org.dchbx.coveragehq.Utilities;
 import org.dchbx.coveragehq.models.account.Account;
-import org.dchbx.coveragehq.statemachine.EventParameters;
 import org.dchbx.coveragehq.statemachine.StateManager;
-
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-
 
 /*
     This file is part of DC.
@@ -36,7 +24,7 @@ import java.util.regex.Pattern;
     This statement should go near the beginning of every source file, close to the copyright notices. When using the Lesser GPL, insert the word “Lesser” before “General” in all three places. When using the GNU AGPL, insert the word “Affero” before “General” in all three places.
 */
 
-public abstract class AcctCreateBase extends BaseActivity {
+public abstract class AcctCreateBase extends ValidatedActivityBase {
     public static StateManager.UiActivity uiActivity = new StateManager.UiActivity(AcctCreate.class);
     private static String TAG = "AcctCreate";
 
@@ -58,48 +46,5 @@ public abstract class AcctCreateBase extends BaseActivity {
     protected abstract int getLayoutId();
 
 
-    private String getTextFromField(int fieldId){
-        TextView field = (TextView)findViewById(fieldId);
-        return field.getText().toString();
-    }
 
-    private boolean applyValidation(boolean valid, String errorMessage, List<String> issues) {
-        if (!valid) {
-            issues.add(errorMessage);
-        }
-        return valid;
-    }
-
-    protected boolean validateTextFieldByRegex(int fieldId, String pattern, String errorMessage,
-                                               List<String> issues) {
-        Matcher matcher = Pattern.compile(pattern).matcher(getTextFromField(fieldId));
-        return applyValidation(matcher.matches(), errorMessage, issues);
-    }
-
-    protected boolean validateRequiredTextField(int fieldId, String fieldName, List<String> issues) {
-        int length = getTextFromField(fieldId).length();
-        return applyValidation (length > 0, fieldName + " is a required field", issues);
-    }
-
-    protected boolean validateTextFieldsMatch(int fieldId, String fieldName, int fieldId2,
-                                                      String fieldName2, List<String> issues) {
-        String field1 = getTextFromField(fieldId);
-        String field2 = getTextFromField(fieldId2);
-        return applyValidation(field1.equals(field2),
-                fieldName + " and " + fieldName2 + " must match.",
-                issues);
-    }
-
-    protected boolean validate(List<String> issues) {
-      return false;
-    }
-
-    public void onClick(Account account){
-        List<String> issues = new ArrayList<String>();
-        if (!validate(issues)) {
-            simpleAlert("Please review your entries",  "<ul><li> " + Utilities.join(issues, "<li>") + "</ul>");
-        } else {
-            getMessages().appEvent(StateManager.AppEvents.Continue, EventParameters.build().add("Account", account));
-        }
-    }
 }
