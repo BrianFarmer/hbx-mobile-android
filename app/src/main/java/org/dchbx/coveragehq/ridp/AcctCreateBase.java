@@ -6,9 +6,14 @@ import android.view.View;
 import android.widget.TextView;
 
 import org.dchbx.coveragehq.BaseActivity;
+import org.dchbx.coveragehq.Utilities;
 import org.dchbx.coveragehq.models.account.Account;
 import org.dchbx.coveragehq.statemachine.EventParameters;
 import org.dchbx.coveragehq.statemachine.StateManager;
+
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
 
 
 /*
@@ -56,31 +61,34 @@ public abstract class AcctCreateBase extends BaseActivity {
         return field.getText().toString();
     }
 
-    protected boolean validateRequiredTextField(int fieldId, String fieldName, StringBuffer issues) {
+    protected boolean validateRequiredTextField(int fieldId, String fieldName, List<String> issues) {
         if (getTextFromField(fieldId).length() == 0) {
-            issues.append(fieldName + " is a required field");
+            issues.add(fieldName + " is a required field");
             return false;
         }
         return true;
     }
 
-    protected boolean validateRequiredTextFieldsMatch(int fieldId, String fieldName, int fieldId2,
-                                                      String fieldName2, StringBuffer issues) {
-        if (!getTextFromField(fieldId).equals(getTextFromField(fieldId2))) {
-            issues.append(fieldName + " and " + fieldName2 + " must match.");
+    protected boolean validateTextFieldsMatch(int fieldId, String fieldName, int fieldId2,
+                                                      String fieldName2, List<String> issues) {
+
+        String field1 = getTextFromField(fieldId);
+        String field2 = getTextFromField(fieldId2);
+        if (!field1.equals(field2)) {
+            issues.add(fieldName + " and " + fieldName2 + " must match.");
             return false;
         }
         return true;
     }
 
-    protected boolean validate(StringBuffer issues) {
+    protected boolean validate(List<String> issues) {
       return false;
     }
 
     public void onClick(Account account){
-        StringBuffer issues = new StringBuffer();
+        List<String> issues = new ArrayList<String>();
         if (!validate(issues)) {
-            simpleAlert("Please review your entries",  issues.toString());
+            simpleAlert("Please review your entries",  "<ul><li> " + Utilities.join(issues, "<li>") + "</ul>");
         } else {
             getMessages().appEvent(StateManager.AppEvents.Continue, EventParameters.build().add("Account", account));
         }

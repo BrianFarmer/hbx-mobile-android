@@ -12,6 +12,7 @@ import android.text.Html;
 import android.text.method.LinkMovementMethod;
 import android.util.Log;
 import android.view.View;
+import android.webkit.WebView;
 import android.widget.TextView;
 
 import org.dchbx.coveragehq.models.Glossary;
@@ -22,6 +23,8 @@ import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 
 import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
 
 
 public class BaseActivity extends AppCompatActivity {
@@ -196,10 +199,13 @@ public class BaseActivity extends AppCompatActivity {
 
     protected void simpleAlert(String title, String text) {
         AlertDialog.Builder alert = new AlertDialog.Builder(this);
-        alert.setTitle(title);
-        alert.setMessage(text);
-        alert.setPositiveButton("OK", null);
-        alert.show();
+        WebView webView = new WebView(this);
+        webView.loadData(text, "text/html", "utf-8");
+
+        alert.setTitle(title)
+                .setView(webView)
+                .setPositiveButton("OK", null)
+                .show();
     }
 
     protected View.OnClickListener clickForSimpleAlert(final int title, final int text) {
@@ -214,7 +220,6 @@ public class BaseActivity extends AppCompatActivity {
     protected void installSimpleAlertClickListener(final int id, final int title, final int text) {
         findViewById(id).setOnClickListener(clickForSimpleAlert(title, text));
     }
-
 
     /*@Override
     public boolean onKeyDown(int keyCode, KeyEvent event) {

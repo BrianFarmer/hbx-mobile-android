@@ -7,6 +7,8 @@ import org.dchbx.coveragehq.databinding.AcctCreateBinding;
 import org.dchbx.coveragehq.models.account.Account;
 import org.dchbx.coveragehq.statemachine.StateManager;
 
+import java.util.List;
+
 /*
     This file is part of DC.
 
@@ -51,12 +53,12 @@ public class AcctCreate extends AcctCreateBase {
     }
 
     @Override
-    protected boolean validate(StringBuffer issues) {
+    protected boolean validate(List<String> issues) {
         //note the use of non-short-circuiting "&" instead of "&&" to collect all errors.
         return validateRequiredTextField(R.id.firstName, "First Name", issues)
                 & validateRequiredTextField(R.id.lastName, "Last Name", issues)
                 & validateRequiredTextField(R.id.emailAddress, "Email Address", issues)
                 & validateRequiredTextField(R.id.password, "Password", issues)
-                & validateRequiredTextField(R.id.confirmPassword, "Confirm Password", issues);
+                & validateTextFieldsMatch(R.id.password, "Password", R.id.confirmPassword, "Confirm Password", issues);
     }
 }
