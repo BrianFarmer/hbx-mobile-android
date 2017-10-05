@@ -513,4 +513,5 @@ You <font color="#69a30d">favorited %d plans</font>.
     <string name="maxDateValidationError" formatted="false">%s cannot be after %tm/%td/%tY</string>
     <string name="invalidDateValidationError" formatted="false">Please enter a valid date for %s</string>
     <string name="dateOfBirth">Date of Birth</string>
+    <string name="ssnValidationError">Please enter a valid Social Security Number</string>
 </resources>
