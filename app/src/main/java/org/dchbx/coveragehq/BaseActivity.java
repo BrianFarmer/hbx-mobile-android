@@ -12,6 +12,7 @@ import android.text.Html;
 import android.text.method.LinkMovementMethod;
 import android.util.Log;
 import android.view.View;
+import android.webkit.WebView;
 import android.widget.TextView;
 
 import org.dchbx.coveragehq.models.Glossary;
@@ -22,6 +23,8 @@ import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 
 import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
 
 
 public class BaseActivity extends AppCompatActivity {
@@ -180,29 +183,42 @@ public class BaseActivity extends AppCompatActivity {
         return currentActivity;
     }
 
-    public void htmlifyTextControl(int id) {
+    protected void htmlifyTextControl(int id) {
 
         TextView view = (TextView)findViewById(id);
         view.setMovementMethod(LinkMovementMethod.getInstance());
         view.setText(Html.fromHtml(view.getText().toString()));
     }
 
-    public void simpleAlert(int title, int text) {
+    protected void simpleAlert(int titleId, int textId) {
         Resources r = getResources();
-        AlertDialog.Builder alert = new AlertDialog.Builder(this);
-        alert.setTitle(r.getString(title));
-        alert.setMessage(r.getString(text));
-        alert.setPositiveButton("OK", null);
-        alert.show();
+        String title = r.getString(titleId);
+        String text = r.getString(textId);
+        simpleAlert(title, text);
     }
 
-    public View.OnClickListener clickForSimpleAlert(final int title, final int text) {
+    protected void simpleAlert(String title, String text) {
+        AlertDialog.Builder alert = new AlertDialog.Builder(this, R.style.AlertDialogTheme);
+        WebView webView = new WebView(this);
+        webView.loadData(text, "text/html", "utf-8");
+
+        alert.setTitle(title)
+                .setView(webView)
+                .setPositiveButton(R.string.ok, null)
+                .show();
+    }
+
+    protected View.OnClickListener clickForSimpleAlert(final int title, final int text) {
         return new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 simpleAlert(title, text);
             }
         };
+    }
+
+    protected void installSimpleAlertClickListener(final int id, final int title, final int text) {
+        findViewById(id).setOnClickListener(clickForSimpleAlert(title, text));
     }
 
     /*@Override

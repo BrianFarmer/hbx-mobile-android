@@ -3,9 +3,7 @@ package org.dchbx.coveragehq.ridp;
 import android.content.Intent;
 import android.os.Bundle;
 
-import org.dchbx.coveragehq.BaseActivity;
 import org.dchbx.coveragehq.models.account.Account;
-import org.dchbx.coveragehq.statemachine.EventParameters;
 import org.dchbx.coveragehq.statemachine.StateManager;
 
 /*
@@ -26,7 +24,7 @@ import org.dchbx.coveragehq.statemachine.StateManager;
     This statement should go near the beginning of every source file, close to the copyright notices. When using the Lesser GPL, insert the word “Lesser” before “General” in all three places. When using the GNU AGPL, insert the word “Affero” before “General” in all three places.
 */
 
-public abstract class AcctCreateBase extends BaseActivity {
+public abstract class AcctCreateBase extends ValidatedActivityBase {
     public static StateManager.UiActivity uiActivity = new StateManager.UiActivity(AcctCreate.class);
     private static String TAG = "AcctCreate";
 
@@ -47,7 +45,6 @@ public abstract class AcctCreateBase extends BaseActivity {
 
     protected abstract int getLayoutId();
 
-    public void onClick(Account account){
-        getMessages().appEvent(StateManager.AppEvents.Continue, EventParameters.build().add("Account", account));
-    }
+
+
 }

@@ -7,6 +7,8 @@ import org.dchbx.coveragehq.databinding.AcctCreateBinding;
 import org.dchbx.coveragehq.models.account.Account;
 import org.dchbx.coveragehq.statemachine.StateManager;
 
+import java.util.List;
+
 /*
     This file is part of DC.
 
@@ -48,5 +50,17 @@ public class AcctCreate extends AcctCreateBase {
 
     public void onSkip(){
         getMessages().buttonClicked(StateManager.AppEvents.Skip);
+    }
+
+    @Override
+    protected boolean validate(List<String> issues) {
+        //note the use of non-short-circuiting "&" instead of "&&" to collect all errors.
+        return validateRequiredTextField(R.id.firstName, R.string.firstName, issues)
+                & validateRequiredTextField(R.id.lastName, R.string.lastName, issues)
+                & validateRequiredTextField(R.id.password, R.string.password, issues)
+                & validateTextFieldByRegex(R.id.emailAddress, Patterns.EMAIL,
+                    R.string.emailValidationError, issues)
+                & validateTextFieldsMatch(R.id.password, R.string.password,
+                    R.id.confirmPassword, R.string.confirmPassword, issues);
     }
 }

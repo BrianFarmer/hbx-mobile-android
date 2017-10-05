@@ -8,6 +8,9 @@ import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
 import org.joda.time.format.ISODateTimeFormat;
 
+import java.util.Iterator;
+import java.util.List;
+
 /**
  * Created by plast on 10/28/2016.
  */
@@ -79,5 +82,18 @@ public class Utilities {
         //if (statusString.compareToIgnoreCase("enrolled") == 0){
         // Everything else is getting the enrolled color...Maybe this should throw?
         return R.color.enrolled_color;
+    }
+
+    //it's astounding that there's not a standard method for this before Java 8
+    public static String join(List<String> strings, String delimeter) {
+        StringBuffer buffer = new StringBuffer();
+        for (Iterator<String> iterator = strings.iterator(); iterator.hasNext(); ) {
+            String s = iterator.next();
+            buffer.append(s);
+            if (iterator.hasNext()) {
+                buffer.append(delimeter);
+            }
+        }
+        return buffer.toString();
     }
 }
