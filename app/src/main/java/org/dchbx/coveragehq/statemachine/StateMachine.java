@@ -63,8 +63,7 @@ public class StateMachine {
         }
         eventParameters.add("OldState", curState.getState());
 
-        if (curState.getState() == StateManager.AppStates.AcctAuthConsent
-            || curState.getState() == StateManager.AppStates.GetQuestions){
+        if (appEvent == StateManager.AppEvents.ReceivedUqhpDeterminationOnlyEligible){
             Log.d(TAG, "the state you asked for has been reached.");
         }
 

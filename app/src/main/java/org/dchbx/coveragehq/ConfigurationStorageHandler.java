@@ -280,6 +280,10 @@ public class ConfigurationStorageHandler extends IServerConfigurationStorageHand
         store("UqhpFamily", family);
     }
 
+    @Override
+    public void storeUqhpDetermination(UqhpDetermination uqhpDetermination){
+        store("UqhpDetermination", uqhpDetermination);
+    }
     public void storeStateString(String stateString) {
         Log.d(TAG, "StateString: ->" + stateString + "<-");
         SharedPreferences.Editor editor = getSharedPreferences().edit();

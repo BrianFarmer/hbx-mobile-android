@@ -24,6 +24,7 @@ import org.dchbx.coveragehq.models.fe.PersonForCoverage;
 import org.dchbx.coveragehq.models.fe.Schema;
 import org.dchbx.coveragehq.models.fe.UqhpApplication;
 import org.dchbx.coveragehq.models.fe.UqhpDetermination;
+import org.dchbx.coveragehq.models.startup.Status;
 import org.dchbx.coveragehq.statemachine.EventParameters;
 import org.dchbx.coveragehq.statemachine.StateManager;
 import org.greenrobot.eventbus.Subscribe;
@@ -55,6 +56,7 @@ public class FinancialEligibilityService {
 
     public static String EaPersonId = "eapersonid";
 
+    public static String UqhpDetermination = "UqhpDetermination";
 
     private final Messages messages;
     private final ServiceManager serviceManager;
@@ -137,22 +139,21 @@ public class FinancialEligibilityService {
         UrlHandler.HttpRequest request = urlHandler.getHavenApplication(uqhpApplication);
         connectionHandler.process(request, new IConnectionHandler.OnCompletion() {
             public void onCompletion(IConnectionHandler.HttpResponse response) {
-                if (response.getResponseCode() == 201) {
-                    JsonParser parser = FinancialEligibilityService.this.serviceManager.getParser();
-                    UqhpDetermination uqhpDetermination = parser.parseUqhpDeterminationResponse(response.getBody());
-                    ConfigurationStorageHandler configurationStorageHandler = serviceManager.getConfigurationStorageHandler();
-                    configurationStorageHandler.store(uqhpDetermination);
-                    if (uqhpDetermination.ineligibleForQhp.size() > 0){
-                        messages.appEvent(StateManager.AppEvents.ReceivedUqhpDeterminationHasIneligible);
-                    } else {
-                        messages.appEvent(StateManager.AppEvents.ReceivedUqhpDeterminationOnlyEligible);
-                    }
+            if (response.getResponseCode() == 201) {
+                JsonParser parser = FinancialEligibilityService.this.serviceManager.getParser();
+                UqhpDetermination uqhpDetermination = parser.parseUqhpDeterminationResponse(response.getBody());
+                ConfigurationStorageHandler configurationStorageHandler = serviceManager.getConfigurationStorageHandler();
+                configurationStorageHandler.storeUqhpDetermination(uqhpDetermination);
+                if (uqhpDetermination.ineligibleForQhp.size() > 0){
+                    messages.appEvent(StateManager.AppEvents.ReceivedUqhpDeterminationHasIneligible);
                 } else {
-                    messages.appEvent(StateManager.AppEvents.Error, EventParameters.build().add("error_msg", "Error in UQHP determination"));
+                    messages.appEvent(StateManager.AppEvents.ReceivedUqhpDeterminationOnlyEligible);
                 }
+            } else {
+                messages.appEvent(StateManager.AppEvents.Error, EventParameters.build().add("error_msg", "Error in UQHP determination"));
+            }
             }
         });
-        messages.getFinancialEligibilityJsonResponse(schema);
     }
 
     @Subscribe(threadMode = ThreadMode.BACKGROUND)
@@ -316,6 +317,32 @@ public class FinancialEligibilityService {
         family.Relationship.put(person.get("eapersonid").getAsString(), new HashMap<String, JsonObject>());
     }
 
+    @Subscribe(threadMode = ThreadMode.BACKGROUND)
+    public void doThis(Events.GetUqhpDeterminationFromServer getUqhpDeterminationFromServer) throws Exception {
+        final EventParameters eventParameters = getUqhpDeterminationFromServer.getEventParameters();
+        Status status = (Status) eventParameters.getObject("Status", Status.class);
+
+        UrlHandler urlHandler = serviceManager.getUrlHandler();
+        ConnectionHandler connectionHandler = serviceManager.getConnectionHandler();
+        UrlHandler.HttpRequest request = urlHandler.getUqhpDetermination(status.eaid);
+        connectionHandler.process(request, new IConnectionHandler.OnCompletion() {
+            public void onCompletion(IConnectionHandler.HttpResponse response) {
+                if (response.getResponseCode() == 200) {
+                    JsonParser parser = FinancialEligibilityService.this.serviceManager.getParser();
+                    UqhpDetermination uqhpDetermination = parser.parseUqhpDeterminationResponse(response.getBody());
+                    ConfigurationStorageHandler configurationStorageHandler = serviceManager.getConfigurationStorageHandler();
+                    configurationStorageHandler.storeUqhpDetermination(uqhpDetermination);
+                    if (uqhpDetermination.ineligibleForQhp.size() > 0){
+                        messages.appEvent(StateManager.AppEvents.ReceivedUqhpDeterminationHasIneligible);
+                    } else {
+                        messages.appEvent(StateManager.AppEvents.ReceivedUqhpDeterminationOnlyEligible);
+                    }
+                } else {
+                    messages.appEvent(StateManager.AppEvents.Error, EventParameters.build().add("error_msg", "Error in UQHP determination"));
+                }
+            }
+        });
+    }
     @Subscribe(threadMode = ThreadMode.BACKGROUND)
     public void doThis(Events.GetUqhpDetermination getUqhpDetermination) throws Exception {
         ConfigurationStorageHandler configurationStorageHandler = serviceManager.getConfigurationStorageHandler();

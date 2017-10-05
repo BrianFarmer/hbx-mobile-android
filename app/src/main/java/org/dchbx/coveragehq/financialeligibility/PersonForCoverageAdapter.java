@@ -1,6 +1,7 @@
 package org.dchbx.coveragehq.financialeligibility;
 
 import android.app.Activity;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -30,11 +31,12 @@ import java.util.ArrayList;
     This statement should go near the beginning of every source file, close to the copyright notices. When using the Lesser GPL, insert the word “Lesser” before “General” in all three places. When using the GNU AGPL, insert the word “Affero” before “General” in all three places.
 */
 public class PersonForCoverageAdapter extends BaseAdapter {
+    private static String TAG = "Person4CoverageAdapter";
+
     private final Activity activity;
     private final ArrayList<PersonForCoverage> people;
 
     public PersonForCoverageAdapter(Activity activity, ArrayList<PersonForCoverage> people) {
-
         this.activity = activity;
         this.people = people;
     }
@@ -56,12 +58,17 @@ public class PersonForCoverageAdapter extends BaseAdapter {
 
     @Override
     public View getView(int position, View view, ViewGroup parent) {
-        if (view == null) {
-            LayoutInflater layoutInflater = activity.getLayoutInflater();
-            view = layoutInflater.inflate(R.layout.person_for_coverage, parent, false);
+        try {
+            if (view == null) {
+                LayoutInflater layoutInflater = activity.getLayoutInflater();
+                view = layoutInflater.inflate(R.layout.person_for_coverage, parent, false);
+            }
+            TextView personName = (TextView) view.findViewById(R.id.personName);
+            personName.setText(FinancialEligibilityService.getNameForPersonForCoverage(people.get(position)));
+            return view;
+        } catch (Throwable t){
+            Log.d(TAG, "throwable: " + t);
         }
-        TextView personName = (TextView) view.findViewById(R.id.personName);
-        personName.setText(FinancialEligibilityService.getNameForPersonForCoverage(people.get(position)));
         return view;
     }
 }

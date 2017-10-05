@@ -628,7 +628,7 @@ public abstract class UrlHandler {
 
     public HttpRequest getResumeRequest(LocalDate effectiveDate) {
         GetParameters getParameters = new GetParameters();
-        getParameters.url = HttpUrl.parse(serverConfiguration.statusUrl+"?year="+effectiveDate.year());
+        getParameters.url = HttpUrl.parse(serverConfiguration.statusUrl+"?year="+effectiveDate.getYear());
         HttpRequest request = new HttpRequest();
         request.requestType = HttpRequest.RequestType.Get;
         request.getParameters = getParameters;
@@ -656,11 +656,33 @@ public abstract class UrlHandler {
     }
 
     public HttpRequest getEffectiveDateRequest() {
+        return buildGet(new UrlSource() {
+            @Override
+            public String source() {
+                return serverConfiguration.effectiveDateEndpoint;
+            }
+        });
+    }
+
+    private interface UrlSource {
+        String source();
+    }
+    private HttpRequest buildGet(UrlSource urlSource){
+
         GetParameters getParameters = new GetParameters();
-        getParameters.url = HttpUrl.parse(serverConfiguration.effectiveDateEndpoint);
+        getParameters.url = HttpUrl.parse(urlSource.source());
         HttpRequest request = new HttpRequest();
         request.requestType = HttpRequest.RequestType.Get;
         request.getParameters = getParameters;
         return request;
     }
+
+    public HttpRequest getUqhpDetermination(final String eaid) {
+        return buildGet(new UrlSource() {
+            @Override
+            public String source() {
+                return serverConfiguration.uqhpDeterminationUrl + "?eaid=" + eaid;
+            }
+        });
+        }
 }

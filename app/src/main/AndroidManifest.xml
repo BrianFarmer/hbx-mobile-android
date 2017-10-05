@@ -295,6 +295,14 @@
                   android:configChanges="orientation|keyboardHidden|screenSize"
                   android:label=""
             />
+        <activity android:name=".financialeligibility.EligibleResultsActivity"
+                  android:configChanges="orientation|keyboardHidden|screenSize"
+                  android:label=""
+            />
+        <activity android:name=".financialeligibility.IneligibleResultsActivity"
+                  android:configChanges="orientation|keyboardHidden|screenSize"
+                  android:label=""
+            />
     </application>
 
 </manifest>

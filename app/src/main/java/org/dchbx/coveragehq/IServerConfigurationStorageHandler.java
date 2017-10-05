@@ -43,5 +43,7 @@ public abstract class IServerConfigurationStorageHandler {
     public abstract void storeEffectiveDate(EffectiveDate effectiveDate);
     public abstract EffectiveDate readEffectiveDate();
     public abstract void storeOpenEnrollmentStatus(OpenEnrollmentStatus openEnrollmentStatus);
+
+    public abstract void storeUqhpDetermination(UqhpDetermination uqhpDetermination);
 }
 

@@ -105,7 +105,7 @@ public class StartUpService {
 
     @Subscribe(threadMode = ThreadMode.BACKGROUND)
     public void doThis(Events.ResumeApplication resumeApplication) throws Exception {
-        EventParameters eventParameters = resumeApplication.getEventParameters();
+        final EventParameters eventParameters = resumeApplication.getEventParameters();
 
         UrlHandler urlHandler = serviceManager.getUrlHandler();
         UrlHandler.HttpRequest httpRequest = urlHandler.getResumeRequest(serviceManager.getConfigurationStorageHandler().readEffectiveDate().effectiveDate);
@@ -121,7 +121,7 @@ public class StartUpService {
 
                     switch (status.status){
                         case "applied_uqhp":
-                            messages.appEvent(StateManager.AppEvents.StatusAppliedUqhp);
+                                messages.appEvent(StateManager.AppEvents.StatusAppliedUqhp, eventParameters.add("Status", status));
                             break;
                         case "enrolled":
                             messages.appEvent(StateManager.AppEvents.StatusEnrolled);

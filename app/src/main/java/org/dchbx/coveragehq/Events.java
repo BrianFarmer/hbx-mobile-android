@@ -1451,4 +1451,7 @@ public class Events {
 
     static public class ClearPIIRequest extends BackgroundProcess {
     }
+
+    public static class GetUqhpDeterminationFromServer extends BackgroundProcess{
+    }
 }

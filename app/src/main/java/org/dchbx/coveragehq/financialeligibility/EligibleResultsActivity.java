@@ -1,7 +1,9 @@
 package org.dchbx.coveragehq.financialeligibility;
 
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
+import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ListView;
 
@@ -31,7 +33,7 @@ import org.greenrobot.eventbus.ThreadMode;
     This statement should go near the beginning of every source file, close to the copyright notices. When using the Lesser GPL, insert the word “Lesser” before “General” in all three places. When using the GNU AGPL, insert the word “Affero” before “General” in all three places.
 */
 public class EligibleResultsActivity extends BaseActivity {
-    private static String TAG = "IneligibleResultsActivity";
+    private static String TAG = "EligibleResultsActivity";
     public static StateManager.UiActivity uiActivity = new StateManager.UiActivity(EligibleResultsActivity.class);
     private UqhpDetermination uqhpDetermination;
 
@@ -50,15 +52,32 @@ public class EligibleResultsActivity extends BaseActivity {
     }
 
     private void populate() {
-        PersonForCoverageAdapter personForCoverageAdapter = new PersonForCoverageAdapter(this, uqhpDetermination.eligibleForQhp);
-        ListView ineligibleList = (ListView) findViewById(R.id.eligibleList);
-        ineligibleList.setAdapter(personForCoverageAdapter);
-        ImageButton leftButton = (ImageButton) findViewById(R.id.leftButton);
-        leftButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                messages.appEvent(StateManager.AppEvents.ShowIneligible);
+        try {
+            PersonForCoverageAdapter personForCoverageAdapter = new PersonForCoverageAdapter(this, uqhpDetermination.eligibleForQhp);
+            ListView ineligibleList = (ListView) findViewById(R.id.eligibleList);
+            ineligibleList.setAdapter(personForCoverageAdapter);
+            ImageButton leftButton = (ImageButton) findViewById(R.id.leftButton);
+            ImageButton rightButton = (ImageButton) findViewById(R.id.rightButton);
+            if (uqhpDetermination.ineligibleForQhp.size() == 0) {
+                leftButton.setVisibility(View.GONE);
+                rightButton.setVisibility(View.GONE);
+            } else {
+                leftButton.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        messages.appEvent(StateManager.AppEvents.ShowIneligible);
+                    }
+                });
             }
-        });
+            Button purchasePlan = (Button) findViewById(R.id.purchasePlan);
+            purchasePlan.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    messages.appEvent(StateManager.AppEvents.ChoosePlan);
+                }
+            });
+        } catch (Throwable t){
+            Log.d(TAG, "t: " + t.getMessage());
+        }
     }
 }
