@@ -496,6 +496,22 @@ You <font color="#69a30d">favorited %d plans</font>.
     </string>
     <string name="who_can_apply_together_title">Who can apply for coverage together?</string>
     <string name="who_can_apply_together_text">Each person covered under your plan must be the spouse, domestic partner, or qualified dependent of the primary applicant.</string>
-    <string name="set_up_you_mobile_password">Setup your mobile password.</string>
+    <string name="set_up_your_mobile_password">Setup your mobile password.</string>
     <string name="we_need_to_know_a_bit_more_about_you">We need to know a bit more about you.</string>
+    <string name="stateValidationError">Please enter a two-letter State abbreviation</string>
+    <string name="zipcodeValidationError">Please enter a 5-digit Zip Code</string>
+    <string name="Address">Address</string>
+    <string name="requiredFieldValidationFormat">%s is a required field</string>
+    <string name="city">City</string>
+    <string name="firstName">First Name</string>
+    <string name="lastName">Last Name</string>
+    <string name="confirmPassword">Confirm Password</string>
+    <string name="emailValidationError">Please enter a valid email address</string>
+    <string name="validationDialogTitle">Please review your entries</string>
+    <string name="matchingValidationError" formatted="false">%s and %s must match</string>
+    <string name="minDateValidationError" formatted="false">%s cannot be before %tm/%td/%tY</string>
+    <string name="maxDateValidationError" formatted="false">%s cannot be after %tm/%td/%tY</string>
+    <string name="invalidDateValidationError" formatted="false">Please enter a valid date for %s</string>
+    <string name="dateOfBirth">Date of Birth</string>
+    <string name="ssnValidationError">Please enter a valid Social Security Number</string>
 </resources>

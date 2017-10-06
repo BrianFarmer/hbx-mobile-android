@@ -11,6 +11,8 @@ import org.dchbx.coveragehq.models.account.Account;
 import org.dchbx.coveragehq.statemachine.EventParameters;
 import org.dchbx.coveragehq.statemachine.StateManager;
 
+import java.util.List;
+
 /*
     This file is part of DC.
 
@@ -28,7 +30,7 @@ import org.dchbx.coveragehq.statemachine.StateManager;
     along with DC Health Link SmallBiz.  If not, see <http://www.gnu.org/licenses/>.
     This statement should go near the beginning of every source file, close to the copyright notices. When using the Lesser GPL, insert the word “Lesser” before “General” in all three places. When using the GNU AGPL, insert the word “Affero” before “General” in all three places.
 */
-public class AcctAddress extends BaseActivity {
+public class AcctAddress extends ValidatedActivityBase {
     public static StateManager.UiActivity uiActivity = new StateManager.UiActivity(AcctAddress.class);
 
     AcctAddressBinding binding;
@@ -48,8 +50,14 @@ public class AcctAddress extends BaseActivity {
 
     }
 
-    public void onClick(Account account){
-        account.address.state = account.address.state.toUpperCase();
-        getMessages().appEvent(StateManager.AppEvents.Continue, EventParameters.build().add("Account", account));
+    @Override
+    protected boolean validate(List<String> issues) {
+        //note the use of non-short-circuiting "&" instead of "&&" to collect all errors.
+        return validateRequiredTextField(R.id.address, R.string.Address, issues)
+                & validateRequiredTextField(R.id.city, R.string.city, issues)
+                & validateTextFieldByRegex(R.id.state, Patterns.STATE,
+                    R.string.stateValidationError, issues)
+                & validateTextFieldByRegex(R.id.zipCode, Patterns.ZIPCODE,
+                    R.string.zipcodeValidationError, issues);
     }
 }
