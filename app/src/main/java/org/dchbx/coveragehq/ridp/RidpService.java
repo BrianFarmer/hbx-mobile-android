@@ -205,7 +205,7 @@ public class RidpService extends StateProcessor {
     public void doThis(Events.GetRidpQuestions verificationResponse) throws Exception {
         Log.d(TAG, "in RidpService.doThis(Events(GetVerificationResponse)");
 
-        EventParameters eventParameters = verificationResponse.getEventParameters();
+        final EventParameters eventParameters = verificationResponse.getEventParameters();
         Account account = (Account) eventParameters.getObject("Account", Account.class);
 
         UrlHandler urlHandler = serviceManager.getUrlHandler();
@@ -213,18 +213,21 @@ public class RidpService extends StateProcessor {
         VerifyIdentity verifyIdentity = veriftyIdentityFromAccount(account);
 
         UrlHandler.HttpRequest request = urlHandler.getRidpVerificationParameters(verifyIdentity);
-        IConnectionHandler.HttpResponse process = connectionHandler.process(request);
-        if (process.getResponseCode() == 200){
-            Log.d(TAG, "verification request successful");
-            JsonParser parser = new JsonParser();
-            Questions questions = parser.parseRidpQuestions(process.getBody());
-            QuestionsAndAnswers questionsAndAnswers = new QuestionsAndAnswers();
-            questionsAndAnswers.questions = questions;
-            questionsAndAnswers.answers = buildAnswerObject(questions);
-            messages.appEvent(GetQuestionsOperationComplete, eventParameters.add(QuestionsAndAnswers, questionsAndAnswers));
-        } else {
-            messages.appEvent(Error, EventParameters.build().add("error_msg", "An error happened getting the verificaiton questions"));
-        }
+        connectionHandler.process(request, new IConnectionHandler.OnCompletion() {
+            @Override
+            public void onCompletion(IConnectionHandler.HttpResponse response) {
+            if (response.getResponseCode() == 200){
+                Log.d(TAG, "verification request successful");
+                JsonParser parser = new JsonParser();
+                Questions questions = parser.parseRidpQuestions(response.getBody());
+                QuestionsAndAnswers questionsAndAnswers = new QuestionsAndAnswers();
+                questionsAndAnswers.questions = questions;
+                questionsAndAnswers.answers = buildAnswerObject(questions);
+                messages.appEvent(GetQuestionsOperationComplete, eventParameters.add(QuestionsAndAnswers, questionsAndAnswers));
+            } else {
+                messages.appEvent(Error, EventParameters.build().add("error_msg", "An error happened getting the verificaiton questions"));
+            }
+        }});
     }
 
     public void updateAnswers(Answers answers) {

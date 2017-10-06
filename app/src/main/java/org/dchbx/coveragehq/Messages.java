@@ -84,6 +84,8 @@ public interface Messages {
     void getFinancialAssistanceApplication();
     void getFinancialAssistanceApplicationResponse(FinancialAssistanceApplication financialAssistanceApplication);
     void getUqhpSchema();
+    void getPlanShoppingFamily();
+    void getPlanShoppingFamilyResponse();
     void getUqhpFamily();
     void getUqhpFamilyResponse(Family family);
     void saveUqhpFamily(Family family);

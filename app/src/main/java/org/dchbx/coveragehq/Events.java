@@ -1454,4 +1454,10 @@ public class Events {
 
     public static class GetUqhpDeterminationFromServer extends BackgroundProcess{
     }
+
+    public static class GetPlanShoppingFamily {
+    }
+
+    public static class GetPlanShoppingFamilyResponse {
+    }
 }

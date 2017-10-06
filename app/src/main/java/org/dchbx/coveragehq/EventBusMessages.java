@@ -396,6 +396,16 @@ public class EventBusMessages implements Messages {
     }
 
     @Override
+    public void getPlanShoppingFamily() {
+        eventBus.post(new Events.GetPlanShoppingFamily());
+    }
+
+    @Override
+    public void getPlanShoppingFamilyResponse() {
+        eventBus.post(new Events.GetPlanShoppingFamilyResponse());
+    }
+
+    @Override
     public void getUqhpFamily() {
         eventBus.post(new Events.GetUqhpFamily());
     }

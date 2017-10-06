@@ -4,11 +4,9 @@ import android.content.Intent;
 import android.databinding.DataBindingUtil;
 import android.os.Bundle;
 
-import org.dchbx.coveragehq.BaseActivity;
 import org.dchbx.coveragehq.R;
 import org.dchbx.coveragehq.databinding.AcctSsnBinding;
 import org.dchbx.coveragehq.models.account.Account;
-import org.dchbx.coveragehq.statemachine.EventParameters;
 import org.dchbx.coveragehq.statemachine.StateManager;
 
 import java.util.List;
@@ -53,5 +51,11 @@ public class AcctSsn extends ValidatedActivityBase {
     @Override
     protected boolean validate(List<String> issues) {
         return validateTextFieldByRegex(R.id.ssn, Patterns.SSN, R.string.ssnValidationError, issues);
+    }
+
+    @Override
+    public void onClick(Account account) {
+        account.setSsn(account.getSsn().replace("-", ""));
+        super.onClick(account);
     }
 }

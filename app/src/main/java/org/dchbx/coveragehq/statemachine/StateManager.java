@@ -441,6 +441,7 @@ public class StateManager extends StateProcessor {
 
 
     private void initBasicPlanShoppingStates(StateMachine stateMachine){
+        stateMachine.from(AppStates.AcctCreate).on(AppEvents.Skip).to(AppStates.PlanShoppingFamilyMembers, new LaunchActivity(org.dchbx.coveragehq.FamilyActivity.uiActivity));
         stateMachine.from(AppStates.PlanShoppingFamilyMembers).on(AppEvents.Continue).to(AppStates.PlanShoppingPremiumAndDeductible, new LaunchActivity(PremiumAndDeductibleActivity.uiActivity));
         stateMachine.from(AppStates.PlanShoppingPremiumAndDeductible).on(AppEvents.SeePlans).to(AppStates.PlanSelector, new LaunchActivity(PlanSelector.uiActivity));
         stateMachine.from(AppStates.PlanSelector).on(AppEvents.ShowPlanDetails).to(AppStates.PlanShoppingDetails, new LaunchActivity(PlanDetailsActivity.uiActivity));
