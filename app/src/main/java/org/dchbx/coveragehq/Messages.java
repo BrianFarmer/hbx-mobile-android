@@ -6,11 +6,15 @@ import org.dchbx.coveragehq.models.fe.Family;
 import org.dchbx.coveragehq.models.fe.FinancialAssistanceApplication;
 import org.dchbx.coveragehq.models.fe.Schema;
 import org.dchbx.coveragehq.models.fe.UqhpDetermination;
+import org.dchbx.coveragehq.models.planshopping.Plan;
 import org.dchbx.coveragehq.models.ridp.Answers;
+import org.dchbx.coveragehq.models.services.Service;
 import org.dchbx.coveragehq.statemachine.EventParameters;
 import org.dchbx.coveragehq.statemachine.StateManager;
 import org.greenrobot.eventbus.EventBus;
 import org.joda.time.LocalDate;
+
+import java.util.List;
 
 public interface Messages {
     void release();
@@ -55,6 +59,7 @@ public interface Messages {
     void resetPlanShopping();
     void updatePlanShopping(PlanShoppingParameters planShoppingParameters);
     void getPlans();
+    void getPlansResponse(List<Plan> plans);
     void updateFilters(int premiumFilter, int deductibleFilter);
     void getPlan(String planId);
     void getAppConfig();
@@ -94,5 +99,6 @@ public interface Messages {
     void getUqhpDetermination();
     void getUqhpDeterminationResponse(UqhpDetermination uqhpDetermination);
     void sendBackgroundProcess(Events.BackgroundProcess o);
+    void getPlanResult(Plan plan, List<Service> services);
 }
 

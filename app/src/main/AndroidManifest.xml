@@ -110,12 +110,12 @@
             android:windowSoftInputMode="adjustPan"
             />
         <activity
-            android:name=".PremiumAndDeductibleActivity"
+            android:name=".planshopping.PremiumAndDeductibleActivity"
             android:configChanges="orientation|keyboardHidden|screenSize"
             android:label=""
             />
         <activity
-            android:name=".PlanSelector"
+            android:name=".planshopping.PlanSelector"
             android:configChanges="orientation|keyboardHidden|screenSize"
             android:label=""
             />

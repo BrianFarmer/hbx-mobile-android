@@ -1,5 +1,6 @@
-package org.dchbx.coveragehq;
+package org.dchbx.coveragehq.planshopping;
 
+import org.dchbx.coveragehq.R;
 import org.dchbx.coveragehq.models.planshopping.Plan;
 import org.dchbx.coveragehq.models.roster.Health;
 
@@ -9,7 +10,7 @@ import java.util.List;
 
 
 
-class PlanUtilities {
+public class PlanUtilities {
 
 
     public static int roundToHundress(double number) {

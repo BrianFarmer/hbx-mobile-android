@@ -8,11 +8,15 @@ import org.dchbx.coveragehq.models.fe.Family;
 import org.dchbx.coveragehq.models.fe.FinancialAssistanceApplication;
 import org.dchbx.coveragehq.models.fe.Schema;
 import org.dchbx.coveragehq.models.fe.UqhpDetermination;
+import org.dchbx.coveragehq.models.planshopping.Plan;
 import org.dchbx.coveragehq.models.ridp.Answers;
+import org.dchbx.coveragehq.models.services.Service;
 import org.dchbx.coveragehq.statemachine.EventParameters;
 import org.dchbx.coveragehq.statemachine.StateManager;
 import org.greenrobot.eventbus.EventBus;
 import org.joda.time.LocalDate;
+
+import java.util.List;
 
 /*
     This file is part of DC.
@@ -310,6 +314,11 @@ public class EventBusMessages implements Messages {
     }
 
     @Override
+    public void getPlansResponse(List<Plan> plans) {
+
+    }
+
+    @Override
     public void updateFilters(int premiumFilter, int deductibleFilter) {
         eventBus.post(new Events.SetPlanFilter(premiumFilter, deductibleFilter));
     }
@@ -443,6 +452,11 @@ public class EventBusMessages implements Messages {
     @Override
     public void sendBackgroundProcess(Events.BackgroundProcess o) {
         eventBus.post(o);
+    }
+
+    @Override
+    public void getPlanResult(Plan plan, List<Service> services) {
+        eventBus.post(new Events.GetPlanResult(plan, services));
     }
 }
 

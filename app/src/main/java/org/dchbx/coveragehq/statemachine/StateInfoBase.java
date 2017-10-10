@@ -12,7 +12,6 @@ public abstract class StateInfoBase  implements Serializable{
     public StateInfoBase(StateManager.AppStates state, StateManager.AppEvents event){
         this.state = state;
         this.event = event;
-
     }
 
     public void onPop(StateMachine stateMachine, StateManager stateManager, EventParameters eventParameters){

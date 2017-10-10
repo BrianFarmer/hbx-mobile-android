@@ -1,6 +1,7 @@
 package org.dchbx.coveragehq;
 
 import org.dchbx.coveragehq.financialeligibility.FinancialEligibilityService;
+import org.dchbx.coveragehq.planshopping.PlanShoppingService;
 import org.dchbx.coveragehq.ridp.RidpService;
 import org.dchbx.coveragehq.statemachine.StateManager;
 
@@ -13,6 +14,8 @@ public interface IServiceManager {
     BrokerWorker getBrokerWorker();
 
     RidpService getRidpService();
+
+    PlanShoppingService getPlanShoppingService();
 
     JsonParser getParser();
 

@@ -12,6 +12,7 @@ import com.bumptech.glide.request.RequestListener;
 import com.bumptech.glide.request.target.Target;
 
 import org.dchbx.coveragehq.models.planshopping.Plan;
+import org.dchbx.coveragehq.planshopping.PlanUtilities;
 
 /*
     This file is part of DC.

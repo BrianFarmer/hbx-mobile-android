@@ -9,10 +9,8 @@ import org.dchbx.coveragehq.models.brokeragency.BrokerAgency;
 import org.dchbx.coveragehq.models.brokeragency.BrokerClient;
 import org.dchbx.coveragehq.models.employer.Employer;
 import org.dchbx.coveragehq.models.gitaccounts.GitAccounts;
-import org.dchbx.coveragehq.models.planshopping.Plan;
 import org.dchbx.coveragehq.models.roster.Roster;
 import org.dchbx.coveragehq.models.roster.RosterEntry;
-import org.dchbx.coveragehq.models.services.Service;
 import org.dchbx.coveragehq.ridp.RidpService;
 import org.dchbx.coveragehq.statemachine.StateManager;
 import org.greenrobot.eventbus.EventBus;
@@ -21,7 +19,6 @@ import org.greenrobot.eventbus.ThreadMode;
 import org.joda.time.DateTime;
 
 import java.io.IOException;
-import java.util.List;
 
 
 /**
@@ -722,11 +719,6 @@ public class BrokerWorker extends IntentService {
     }
 
     @Subscribe(threadMode = ThreadMode.BACKGROUND)
-    public void doThis(Events.GetPlanShopping getPlanShopping){
-        BrokerWorker.eventBus.post(new Events.GetPlanShoppingResult(serviceManager.getCoverageConnection().getPlanShoppingParameters()));
-    }
-
-    @Subscribe(threadMode = ThreadMode.BACKGROUND)
     public void doThis(Events.ResetPlanShopping resetPlanShopping){
         try {
             serviceManager.getCoverageConnection().configureForSignUp(null);
@@ -737,6 +729,7 @@ public class BrokerWorker extends IntentService {
         }
     }
 
+    /*
     @Subscribe(threadMode = ThreadMode.BACKGROUND)
     public void doThis(Events.UpdatePlanShopping updatePlanShopping){
         try {
@@ -745,43 +738,7 @@ public class BrokerWorker extends IntentService {
             e.printStackTrace();
         }
         BrokerWorker.eventBus.post(new Events.UpdatePlanShoppingResult());
-    }
-
-    @Subscribe(threadMode = ThreadMode.BACKGROUND)
-    public void doThis(Events.GetPlans getPlans){
-        try {
-            CoverageConnection coverageConnection = serviceManager.getCoverageConnection();
-            List<Plan> plans = coverageConnection.getPlans();
-            BrokerWorker.eventBus.post(new Events.GetPlansResult(plans, coverageConnection.getPremiumFilter(), coverageConnection.getDeductibleFilter()));
-        } catch (Exception e) {
-            Log.e(TAG, "Exception getting plans: " + e.getMessage());
-        }
-    }
-
-    @Subscribe(threadMode = ThreadMode.BACKGROUND)
-    public void doThis(Events.SetPlanFilter setPlanFilter) {
-        try {
-            serviceManager.getCoverageConnection().updatePlanFilters(setPlanFilter.getPremiumFilter(), setPlanFilter.getDeductibleFilter());
-        } catch (Exception e) {
-            // edit these exceptions since we are doing this asyncronously to the user.
-        }
-    }
-
-    @Subscribe(threadMode = ThreadMode.BACKGROUND)
-    public void doThis(Events.GetPlan getPlan) {
-        try {
-            Plan plan = serviceManager.getCoverageConnection().getPlan(getPlan.getPlanId());
-
-            List<Service> services = null;
-            if (getPlan.isGetSummaryAndBenefits()){
-                services = serviceManager.getCoverageConnection().getSummaryForPlan(plan);
-            }
-
-            BrokerWorker.eventBus.post(new Events.GetPlanResult(plan, services));
-        } catch (Exception e) {
-            // edit these exceptions since we are doing this asyncronously to the user.
-        }
-    }
+    }*/
 
     @Subscribe(threadMode = ThreadMode.BACKGROUND)
     public void doThis(Events.GetAppConfig getAppConfig) {

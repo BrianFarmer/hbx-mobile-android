@@ -1,4 +1,4 @@
-package org.dchbx.coveragehq;
+package org.dchbx.coveragehq.planshopping;
 
 import android.content.Context;
 import android.text.Html;
@@ -10,6 +10,9 @@ import android.widget.BaseAdapter;
 import android.widget.Button;
 import android.widget.TextView;
 
+import org.dchbx.coveragehq.AdapterItemWrapperBase;
+import org.dchbx.coveragehq.PlanCardPopulation;
+import org.dchbx.coveragehq.R;
 import org.dchbx.coveragehq.models.planshopping.Plan;
 import org.dchbx.coveragehq.statemachine.EventParameters;
 import org.dchbx.coveragehq.statemachine.StateManager;

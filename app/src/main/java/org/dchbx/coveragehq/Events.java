@@ -959,7 +959,7 @@ public class Events {
     public static class UpdatePlanShoppingResult {
     }
 
-    public static class GetPlans {
+    public static class GetPlans extends BackgroundProcess  {
     }
 
     public static class GetPlansResult {
@@ -1004,7 +1004,7 @@ public class Events {
         }
     }
 
-    public static class GetPlan {
+    public static class GetPlan extends BackgroundProcess {
         private final String planId;
         private final boolean getSummaryAndBenefits;
 
@@ -1459,5 +1459,8 @@ public class Events {
     }
 
     public static class GetPlanShoppingFamilyResponse {
+    }
+
+    public class GetPlansFromServer {
     }
 }

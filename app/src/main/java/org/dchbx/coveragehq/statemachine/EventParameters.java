@@ -72,6 +72,11 @@ public class EventParameters {
         return this;
     }
 
+    public EventParameters add(String name, Double value) {
+        eventParameters.add(new DoubleParameter(name, value));
+        return this;
+    }
+
     public EventParameters add(String name, String value){
         eventParameters.add(new StringParameter(name, value));
         return this;
@@ -236,6 +241,26 @@ public class EventParameters {
         @Override
         public void initBundle(Bundle bundle) {
             bundle.putString(name, value);
+        }
+    }
+
+    public static class DoubleParameter extends EventParameter {
+
+        private double value;
+
+        public DoubleParameter(String name, double value){
+            this.name = name;
+            this.value = value;
+        }
+
+        @Override
+        public void initIntent(Intent intent) {
+            intent.putExtra(name, value);
+        }
+
+        @Override
+        public void initBundle(Bundle bundle) {
+            bundle.putDouble(name, value);
         }
     }
 

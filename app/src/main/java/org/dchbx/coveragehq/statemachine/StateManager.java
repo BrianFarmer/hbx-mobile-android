@@ -19,9 +19,9 @@ import org.dchbx.coveragehq.Intents;
 import org.dchbx.coveragehq.LoginActivity;
 import org.dchbx.coveragehq.Messages;
 import org.dchbx.coveragehq.PlanDetailsActivity;
-import org.dchbx.coveragehq.PlanSelector;
+import org.dchbx.coveragehq.planshopping.PlanSelector;
 import org.dchbx.coveragehq.PlanShoppingChoicesActivity;
-import org.dchbx.coveragehq.PremiumAndDeductibleActivity;
+import org.dchbx.coveragehq.planshopping.PremiumAndDeductibleActivity;
 import org.dchbx.coveragehq.ServerConfiguration;
 import org.dchbx.coveragehq.ServiceManager;
 import org.dchbx.coveragehq.StateProcessor;
@@ -68,6 +68,7 @@ import static org.dchbx.coveragehq.statemachine.StateManager.AppEvents.Continue;
 import static org.dchbx.coveragehq.statemachine.StateManager.AppEvents.No;
 import static org.dchbx.coveragehq.statemachine.StateManager.AppEvents.Ok;
 import static org.dchbx.coveragehq.statemachine.StateManager.AppEvents.ReceivedUqhpDeterminationOnlyEligible;
+import static org.dchbx.coveragehq.statemachine.StateManager.AppEvents.SeePlans;
 import static org.dchbx.coveragehq.statemachine.StateManager.AppEvents.Yes;
 
 /*
@@ -279,7 +280,7 @@ public class StateManager extends StateProcessor {
         ResumeApplication, ResumingAppliedUqhp, ResumingApplying, LoggingIn, GettingEffectiveDate,
         GettingStatus, AcctNewPassword, AcctPreAuthNP, AcctAddressNP, AcctGenderNP, AcctDateOfBirthNP,
         AcctSsnNP, AcctAuthConsentNP, GetQuestionsNP, RidpQuestionsNP, AcctSystemFoundYou, FamilyMembers,
-        GettingUqhpDetermination, CoverageThisYear
+        GettingUqhpDetermination, PremiumAndDeductible, GettingPlans, CoverageThisYear
     }
 
     // You are discouraged from removing or reordring this enum. It is used in serialized objects.
@@ -329,7 +330,7 @@ public class StateManager extends StateProcessor {
         ShowEligible, ShowIneligible, ErrorHappened, GetCoverageThisYear, GetCoverageNextYear,
         StatusAppliedUqhp, StatusEnrollingUqhp, StatusApplying, StatusEnrolled,
         ReceivedEffectiveDate, InOpenEnrollment, OpenEnrollmentClosed, GetDentalCoverage,
-        ForgotPassword, ReceivedUqhpDeterminationHasIneligible, ChoosePlan, ContinueMultipleMemberFamily, ContinueSingleMemberFamily, ClearedPII
+        ForgotPassword, ReceivedUqhpDeterminationHasIneligible, ChoosePlan, ContinueMultipleMemberFamily, ContinueSingleMemberFamily, GotPlans, ClearedPII
     }
 
     public void configStates() {
@@ -425,7 +426,7 @@ public class StateManager extends StateProcessor {
         stateMachine.from(AppStates.GettingStatus).on(AppEvents.StatusEnrollingUqhp).to(AppStates.ResumeApplication, new StateManager.BackgroundProcess(Events.ResumeApplication.class));
         stateMachine.from(AppStates.GettingStatus).on(AppEvents.StatusEnrolled).to(AppStates.ResumeApplication, new StateManager.BackgroundProcess(Events.ResumeApplication.class));
         stateMachine.from(AppStates.GettingStatus).on(AppEvents.StatusApplying).to(AppStates.ResumingApplying, new StateManager.BackgroundProcess(Events.CheckOpenEnrollment.class));
-        stateMachine.from(AppStates.ResumingApplying).on(AppEvents.InOpenEnrollment).to(AppStates.FamilyMembers, new PopAndLaunchActivity(org.dchbx.coveragehq.financialeligibility.FamilyActivity.uiActivity));
+        stateMachine.from(AppStates.ResumingApplying).on(AppEvents.InOpenEnrollment).to(AppStates.FamilyMembers, new LaunchActivity(org.dchbx.coveragehq.financialeligibility.FamilyActivity.uiActivity));
         stateMachine.from(AppStates.ResumingApplying).on(AppEvents.OpenEnrollmentClosed).to(AppStates.OpenEnrollmentClosed, new LaunchActivity(OpenEnrollmentClosedActivity.uiActivity));
     }
 
@@ -494,8 +495,9 @@ public class StateManager extends StateProcessor {
         stateMachine.from(AppStates.UqhpDetermination).on(ReceivedUqhpDeterminationOnlyEligible).to(AppStates.Eligible, new LaunchActivity(EligibleResultsActivity.uiActivity));
         stateMachine.from(AppStates.Ineligible).on(AppEvents.ShowEligible).to(AppStates.Eligible, new LaunchActivity(EligibleResultsActivity.uiActivity));
         stateMachine.from(AppStates.Eligible).on(AppEvents.ShowIneligible).to(AppStates.Ineligible, new LaunchActivity(IneligibleResultsActivity.uiActivity));
-        stateMachine.from(AppStates.Eligible).on(AppEvents.ChoosePlan).to(AppStates.Ineligible, new LaunchActivity(PlanSelector.uiActivity));
-
+        stateMachine.from(AppStates.Eligible).on(AppEvents.ChoosePlan).to(AppStates.GettingPlans, new BackgroundProcess(Events.GetPlans.class));
+        stateMachine.from(AppStates.GettingPlans).on(AppEvents.GotPlans).to(AppStates.PremiumAndDeductible, new LaunchActivity(PremiumAndDeductibleActivity.uiActivity));
+        stateMachine.from(AppStates.PremiumAndDeductible).on(SeePlans).to(AppStates.PlanSelector, new LaunchActivity(PlanSelector.uiActivity));
         stateMachine.from(AppStates.AcctSystemFoundYou).on(AppEvents.ShowLogin).to(AppStates.AcctSystemFoundYouReturningToLogin, new StateManager.BackgroundProcess(Events.ClearPIIRequest.class));
         stateMachine.from(AppStates.AcctSystemFoundYouReturningToLogin).on(AppEvents.ClearedPII).to(AppStates.Login, new PopAndLaunchActivity(LoginActivity.uiActivity));
         stateMachine.from(AppStates.AcctSystemFoundYou).on(AppEvents.SignUpIndividual).to(AppStates.AcctCreate, new PopAndLaunchActivity(AcctCreate.uiActivity));
@@ -611,21 +613,6 @@ public class StateManager extends StateProcessor {
         }
     }
 
-    // Get the Experian questions.
-
-    public static class GetQuestions implements StateMachineAction {
-        private StateManager.UiActivity uiActivity;
-
-        @Override
-        public void call(StateMachine stateMachine, StateManager stateManager, AppEvents event,
-                         AppStates leavingState, AppStates enterState,
-                         EventParameters intentParameters) throws IOException, CoverageException {
-            stateMachine.push(new WaitActivityInfo<AppEvents, AppStates>(enterState, event, null));
-            stateManager.showWait();
-            stateManager.messages.getVerificationResponse();
-        }
-    }
-
     // Verifiy user / send answers to server.
 
     public static class VerifyUser implements StateMachineAction {
@@ -689,6 +676,10 @@ public class StateManager extends StateProcessor {
             } catch (IllegalAccessException e) {
                 e.printStackTrace();
             }
+        }
+
+        public boolean autoPopOnTransitionAway(){
+            return true;
         }
     }
 

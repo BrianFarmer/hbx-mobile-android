@@ -11,13 +11,11 @@ import org.dchbx.coveragehq.models.Glossary;
 import org.dchbx.coveragehq.models.brokeragency.BrokerAgency;
 import org.dchbx.coveragehq.models.employer.Employer;
 import org.dchbx.coveragehq.models.gitaccounts.GitAccounts;
-import org.dchbx.coveragehq.models.planshopping.Plan;
 import org.dchbx.coveragehq.models.roster.Enrollment;
 import org.dchbx.coveragehq.models.roster.Roster;
 import org.dchbx.coveragehq.models.roster.RosterEntry;
 import org.dchbx.coveragehq.models.roster.SummaryOfBenefits;
 import org.dchbx.coveragehq.models.services.Service;
-import org.dchbx.coveragehq.models.startup.EffectiveDate;
 import org.joda.time.DateTime;
 import org.joda.time.LocalDate;
 
@@ -88,51 +86,6 @@ public abstract class CoverageConnection {
         }
     }
 
-    public PlanShoppingParameters getPlanShoppingParameters() {
-        return serverConfiguration.planShoppingParameters;
-    }
-
-    public void updatePlanShopping(Events.UpdatePlanShopping updatePlanShopping) throws IOException, CertificateException, NoSuchAlgorithmException, UnrecoverableKeyException, InvalidKeyException, NoSuchPaddingException, BadPaddingException, KeyStoreException, NoSuchProviderException, IllegalBlockSizeException {
-        serverConfiguration.planShoppingParameters = updatePlanShopping.getPlanShoppingParameters();
-        clearStorageHandler.store(serverConfiguration);
-    }
-
-    public void updatePlanFilters(double premiumFilter, double deductibleFilter) throws IOException, CertificateException, NoSuchAlgorithmException, UnrecoverableKeyException, InvalidKeyException, NoSuchPaddingException, BadPaddingException, KeyStoreException, NoSuchProviderException, IllegalBlockSizeException {
-        serverConfiguration.premiumFilter = premiumFilter;
-        serverConfiguration.deductibleFilter = deductibleFilter;
-        clearStorageHandler.store(serverConfiguration);
-    }
-
-    public double getPremiumFilter() {
-        return serverConfiguration.premiumFilter;
-    }
-
-    public double getDeductibleFilter() {
-        return serverConfiguration.deductibleFilter;
-    }
-
-    public Plan getPlan(String planId) throws IOException, CoverageException {
-        for (Plan plan : getPlans()) {
-            if (plan.id.compareTo(planId) == 0){
-                return plan;
-            }
-        }
-        throw new CoverageException("plan not found");
-    }
-
-    public List<Service> getSummaryForPlan(Plan plan) throws IOException, CoverageException {
-        DateTime now = DateTime.now();
-        List<Service> services = dataCache.getServices(plan.id, now);
-        if (services != null){
-            return services;
-        }
-        UrlHandler.GetParameters getParameters = urlHandler.getSummaryParameters(plan.links.servicesRates.substring(1));
-        IConnectionHandler.GetResponse response = connectionHandler.get(getParameters);
-        services = urlHandler.processSummaryAndBenefits(response);
-        dataCache.store(plan.id, services, now);
-
-        return services;
-    }
 
     enum LoginResult {
         Error,
@@ -527,15 +480,6 @@ public abstract class CoverageConnection {
         }
         Log.d(TAG, "number of services: " + services.size());
         return new InsuredAndServices(insured, services);
-    }
-
-
-    public List<Plan> getPlans() throws IOException, CoverageException {
-        ConfigurationStorageHandler configurationStorageHandler = serviceManager.getConfigurationStorageHandler();
-        EffectiveDate effectiveDate = configurationStorageHandler.readEffectiveDate();
-        UrlHandler.GetParameters getParameters = urlHandler.getPlansParameters(effectiveDate.effectiveDate.year());
-        IConnectionHandler.GetResponse getResponse = connectionHandler.get(getParameters);
-        return urlHandler.processPlans(getResponse);
     }
 
     public void getEndPoints() throws IOException, CoverageException {

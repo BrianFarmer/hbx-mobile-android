@@ -1,4 +1,4 @@
-package org.dchbx.coveragehq;
+package org.dchbx.coveragehq.planshopping;
 
 import android.graphics.Paint;
 import android.graphics.Rect;
@@ -6,17 +6,24 @@ import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.view.ViewTreeObserver;
 import android.widget.Button;
 import android.widget.SeekBar;
 import android.widget.TextView;
 
+import org.dchbx.coveragehq.BaseActivity;
+import org.dchbx.coveragehq.Events;
+import org.dchbx.coveragehq.R;
 import org.dchbx.coveragehq.models.planshopping.Plan;
+import org.dchbx.coveragehq.statemachine.EventParameters;
 import org.dchbx.coveragehq.statemachine.StateManager;
-import org.greenrobot.eventbus.Subscribe;
-import org.greenrobot.eventbus.ThreadMode;
 
 import java.text.NumberFormat;
 import java.util.List;
+
+import static org.dchbx.coveragehq.planshopping.PlanShoppingService.DeductibleFilter;
+import static org.dchbx.coveragehq.planshopping.PlanShoppingService.GetPlansResult;
+import static org.dchbx.coveragehq.planshopping.PlanShoppingService.PremiumFilter;
 
 /**
  * Created by plast on 5/11/2017.
@@ -36,22 +43,29 @@ public class PremiumAndDeductibleActivity extends BaseActivity {
     private SeekBar premium;
     private double currentPremium;
     private double currentDeductible;
+    private Events.GetPlansResult planResults;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
+        planResults = PlanShoppingService.getPlanResults(getIntent());
+        planList = planResults.getPlanList();
+        currentDeductible = planResults.getDeductibleFilter();;
+        currentPremium = planResults.getPremiumFilter();
+
         setContentView(R.layout.premium_and_deductible);
         configToolbar();
-        getMessages().getPlans();
-    }
 
-    @Subscribe(threadMode = ThreadMode.MAIN)
-    public void doThis(Events.GetPlansResult getPlansResult) throws Exception {
-        planList = getPlansResult.getPlanList();
-        currentPremium = getPlansResult.getPremiumFilter();
-        currentDeductible = getPlansResult.getDeductibleFilter();
-        populate();
+        premium = (SeekBar) findViewById(R.id.premium);
+        deductible = (SeekBar) findViewById(R.id.deductible);
+        premium.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
+            @Override
+            public void onGlobalLayout() {
+                premium.getViewTreeObserver().removeOnGlobalLayoutListener(this);
+                populate();
+            }
+        });
     }
 
     private void populate() {
@@ -60,7 +74,6 @@ public class PremiumAndDeductibleActivity extends BaseActivity {
         deductibleHint = (TextView)findViewById(R.id.deductibleHint);
         premiumHint = (TextView)findViewById(R.id.premiumHint);
 
-        premium = (SeekBar) findViewById(R.id.premium);
         premium.setMax((int)maxPremium/100);
         if (currentPremium > -1) {
             premium.setProgress((int)(currentPremium/100));
@@ -71,7 +84,6 @@ public class PremiumAndDeductibleActivity extends BaseActivity {
             setHint(maxPremium, premium, premiumHint);
         }
 
-        deductible = (SeekBar) findViewById(R.id.deductible);
         deductible.setMax((int)maxDeductible/100);
         if (currentDeductible > -1){
             deductible.setProgress((int)(currentDeductible/100));
@@ -85,8 +97,7 @@ public class PremiumAndDeductibleActivity extends BaseActivity {
         premium.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             @Override
             public void onProgressChanged(SeekBar seekBar, int value, boolean fromUser) {
-                NumberFormat currencyInstance = NumberFormat.getCurrencyInstance();
-                String premiumString = currencyInstance.format(value * 100);
+                updateFilters();
                 setHint(value * 100, premium, premiumHint);
                 setPlansAvailableText();
             }
@@ -126,7 +137,8 @@ public class PremiumAndDeductibleActivity extends BaseActivity {
         plansAvailable.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                getMessages().appEvent(StateManager.AppEvents.SeePlans);
+                getMessages().appEvent(StateManager.AppEvents.SeePlans, EventParameters.build()
+                        .add(GetPlansResult, planResults).add(DeductibleFilter, currentDeductible).add(PremiumFilter, currentPremium));
             }
         });
         setPlansAvailableText();
@@ -138,7 +150,8 @@ public class PremiumAndDeductibleActivity extends BaseActivity {
             || deductible == null){
             return;
         }
-        getMessages().updateFilters(premium.getProgress() * 100, deductible.getProgress() * 100);
+        currentPremium = premium.getProgress() * 100;
+        currentDeductible = deductible.getProgress() * 100;
     }
 
     private void setHint(double value, SeekBar seekBar, TextView hint) {

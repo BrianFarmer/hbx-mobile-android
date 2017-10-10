@@ -407,30 +407,18 @@ public abstract class UrlHandler {
         return parser.parseServices(response.body);
     }
 
-    public GetParameters getPlansParameters(LocalDate.Property year) {
+    public HttpRequest getPlansParameters(LocalDate year, ArrayList<Integer> ages) {
         GetParameters parameters = new GetParameters();
-
-        String queryParameters = "?coverage_kind=health&active_year=" + year;
-        for (Integer age : serverConfiguration.planShoppingParameters.ages) {
+        String queryParameters = "?coverage_kind=health&active_year=2017"; // + year.getYear();
+        for (Integer age : ages) {
             queryParameters = queryParameters + "&ages=" + age.toString();
         }
-
-
         parameters.url = HttpUrl.parse(serverConfiguration.planEndpoint + queryParameters);
-        String pathSegments = "";
-        for (String s : parameters.url.pathSegments()) {
-            pathSegments = pathSegments + "/" + s;
-        }
-        //pathSegments += queryParameters;
 
-        parameters.url = new HttpUrl.Builder()
-                .scheme(parameters.url.scheme())
-                .host("enroll-mobile2.dchbx.org")
-                .port(parameters.url.port())
-                .addPathSegments(pathSegments.substring(1))
-                .query(queryParameters.substring(1))
-                .build();
-        return parameters;
+        HttpRequest httpRequest = new HttpRequest();
+        httpRequest.requestType = HttpRequest.RequestType.Get;
+        httpRequest.getParameters = parameters;
+        return httpRequest;
     }
 
     public GetParameters getEndpointsParameters(){
@@ -501,7 +489,7 @@ public abstract class UrlHandler {
         return plans;
     }
 
-    public GetParameters getSummaryParameters(String summaryOfBenefits) {
+    public HttpRequest getSummaryParameters(String summaryOfBenefits) {
 
         String[] split = summaryOfBenefits.split("\\?");
         GetParameters getParameters = new GetParameters();
@@ -513,12 +501,11 @@ public abstract class UrlHandler {
                 .query(split[1])
                 .port(serverConfiguration.dataInfo.port)
                 .build();
-        return getParameters;
-    }
 
-    public List<Service> processSummaryAndBenefits(IConnectionHandler.GetResponse response) {
-        List<Service> services = parser.parseServices(response.body);
-        return services;
+        HttpRequest httpRequest = new HttpRequest();
+        httpRequest.requestType = HttpRequest.RequestType.Get;
+        httpRequest.getParameters = getParameters;
+        return httpRequest;
     }
 
     public HttpRequest getRidpVerificationParameters(VerifyIdentity verifyIdentity) {

@@ -1,5 +1,6 @@
-package org.dchbx.coveragehq;
+package org.dchbx.coveragehq.planshopping;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.NavigationView;
 import android.support.v4.widget.DrawerLayout;
@@ -12,6 +13,9 @@ import com.daprlabs.aaron.swipedeck.SwipeDeck;
 import com.daprlabs.aaron.swipedeck.SwipeDeck.SwipeDeckCallback;
 import com.daprlabs.aaron.swipedeck.layouts.SwipeFrameLayout;
 
+import org.dchbx.coveragehq.BaseActivity;
+import org.dchbx.coveragehq.Events;
+import org.dchbx.coveragehq.R;
 import org.dchbx.coveragehq.models.planshopping.Plan;
 import org.dchbx.coveragehq.statemachine.StateManager;
 import org.greenrobot.eventbus.Subscribe;
@@ -50,7 +54,7 @@ public class PlanSelector extends BaseActivity {
     private TextView plansAndFavoritesPlans;
     private TextView plansAndFavoritesFavorites;
     private TextView plansAndFavoritesSlash;
-
+    private Events.GetPlansResult planResults;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -59,6 +63,15 @@ public class PlanSelector extends BaseActivity {
         setContentView(R.layout.plan_selector);
 
         inflateSwipeDeck();
+
+        Intent intent = getIntent();
+        planResults = PlanShoppingService.getPlanResults(intent);
+        planList = planResults.getPlanList();
+        currentPremium = PlanShoppingService.getPremiumFilterFromIntent(intent);
+        currentDeductible = PlanShoppingService.getDeductibleFilterFromIntent(intent);
+        currentFilteredPlans = PlanUtilities.getPlansInRange(planList, currentPremium, currentDeductible);
+        filteredPlans = currentFilteredPlans;
+
 
         deckLayout = (SwipeFrameLayout)findViewById(R.id.swipeLayout);
         deckView = (SwipeDeck) findViewById(R.id.swipeDeck);
@@ -99,8 +112,8 @@ public class PlanSelector extends BaseActivity {
             }
         });
 
-        getMessages().getPlans();
         configToolbar();
+        populate();
     }
 
     private void inflateSwipeDeck() {
@@ -148,9 +161,6 @@ public class PlanSelector extends BaseActivity {
         planList = getPlansResult.getPlanList();
         currentPremium = getPlansResult.getPremiumFilter();
         currentDeductible = getPlansResult.getDeductibleFilter();
-        currentFilteredPlans = PlanUtilities.getPlansInRange(planList, currentPremium, currentDeductible);
-        filteredPlans = currentFilteredPlans;
-        populate();
     }
 
     private void populate() {

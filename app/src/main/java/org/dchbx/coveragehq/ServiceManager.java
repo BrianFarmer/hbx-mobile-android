@@ -20,6 +20,7 @@ package org.dchbx.coveragehq;
 import com.google.gson.annotations.Expose;
 
 import org.dchbx.coveragehq.financialeligibility.FinancialEligibilityService;
+import org.dchbx.coveragehq.planshopping.PlanShoppingService;
 import org.dchbx.coveragehq.ridp.RidpService;
 import org.dchbx.coveragehq.startup.StartUpService;
 import org.dchbx.coveragehq.statemachine.StateManager;
@@ -33,6 +34,7 @@ public class ServiceManager implements IServiceManager {
 
 
     // Services
+    private PlanShoppingService planShoppingService;
     private RidpService ridpService;
     private BrokerWorker brokerWorker;
     private StateManager stateManager;
@@ -92,6 +94,7 @@ public class ServiceManager implements IServiceManager {
         debugStateService = new DebugStateService();
         financialEligibilityService = new FinancialEligibilityService(this);
         startUpService = new StartUpService(this);
+        planShoppingService = new PlanShoppingService(this);
 
         debugStateService.init();
         stateManager.init();
@@ -110,6 +113,11 @@ public class ServiceManager implements IServiceManager {
     @Override
     public RidpService getRidpService() {
         return ridpService;
+    }
+
+    @Override
+    public PlanShoppingService getPlanShoppingService() {
+        return planShoppingService;
     }
 
     @Override
