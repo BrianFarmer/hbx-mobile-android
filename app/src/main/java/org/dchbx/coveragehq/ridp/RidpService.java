@@ -120,7 +120,7 @@ public class RidpService extends StateProcessor {
 
         identity.personDemographics = new PersonDemographics();
         identity.personDemographics.sex = account.gender;
-        identity.personDemographics.ssn = account.ssn;
+        identity.personDemographics.ssn = account.ssn.replace("-", "");
         DateTimeFormatter dateTimeFormatter = ISODateTimeFormat.basicDate();
         if (account.birthdate != null){
             identity.personDemographics.birthDate = dateTimeFormatter.print(account.birthdate);
@@ -191,7 +191,7 @@ public class RidpService extends StateProcessor {
         signUp.person = new Person();
         signUp.person.firstName = account.firstName;
         signUp.person.lastName = account.lastName;
-        signUp.person.ssn = account.ssn;
+        signUp.person.ssn = account.ssn.replace("-", "");
         DateTimeFormatter dateTimeFormatter = ISODateTimeFormat.basicDate();
         signUp.person.dob = dateTimeFormatter.print(account.birthdate);
         signUp.username = account.emailAddress;
