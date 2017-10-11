@@ -18,8 +18,11 @@ import org.dchbx.coveragehq.LocalDateSerializer;
 import org.dchbx.coveragehq.LocalTimeDeserializer;
 import org.dchbx.coveragehq.Messages;
 import org.dchbx.coveragehq.UrlHandler;
+import org.dchbx.coveragehq.financialeligibility.FinancialEligibilityService;
 import org.dchbx.coveragehq.models.fe.Family;
+import org.dchbx.coveragehq.models.fe.UqhpDetermination;
 import org.dchbx.coveragehq.models.planshopping.Plan;
+import org.dchbx.coveragehq.models.planshopping.PlanChoice;
 import org.dchbx.coveragehq.models.planshopping.Plans;
 import org.dchbx.coveragehq.models.services.Service;
 import org.dchbx.coveragehq.models.startup.EffectiveDate;
@@ -54,6 +57,7 @@ import java.util.List;
 */
 public class PlanShoppingService {
     private static String TAG = "PlanShoppingService";
+    public static String Plan = "Plan";
     public static String GetPlansResult = "GetPlanResults";
     public static String PremiumFilter = "PremiumFilter";
     public static String DeductibleFilter = "DeductibleFilter";
@@ -69,6 +73,42 @@ public class PlanShoppingService {
         messages = BrokerApplication.getBrokerApplication().getMessages(this);
     }
 
+
+    @Subscribe(threadMode = ThreadMode.BACKGROUND)
+    public void doThis(Events.SubmitApplication submitApplication) {
+        EventParameters eventParameters = submitApplication.getEventParameters();
+        Plan plan = (org.dchbx.coveragehq.models.planshopping.Plan) eventParameters.getObject(Plan, org.dchbx.coveragehq.models.planshopping.Plan.class);
+        FinancialEligibilityService feService = serviceManager.getFinancialEligibilityService();
+        ConfigurationStorageHandler storageHandler = serviceManager.getConfigurationStorageHandler();
+        UqhpDetermination uqhpDetermination = feService.getUqhpDetermination();
+
+        PlanChoice planChoice = new PlanChoice();
+        planChoice.applicants = uqhpDetermination.eligibleForQhp;
+        planChoice.eaid = uqhpDetermination.eaid;
+        planChoice.effective_date = storageHandler.readEffectiveDate().effectiveDate;
+        planChoice.monthly_premium = plan.cost.monthlyPremium;
+        planChoice.planHiosId = plan.hios.id;
+        planChoice.planName = plan.name;
+
+
+        UrlHandler.HttpRequest httpRequest = serviceManager.getUrlHandler().getPlanChoiceParameters(planChoice);
+        try {
+            serviceManager.getConnectionHandler().process(httpRequest, new IConnectionHandler.OnCompletion() {
+                @Override
+                public void onCompletion(IConnectionHandler.HttpResponse response) {
+                    if (response.getResponseCode() >= 200
+                        && response.getResponseCode() < 300){
+                        Events.GetPlansResult getPlansResult = new Events.GetPlansResult(plans, -1, -1);
+                        messages.appEvent(StateManager.AppEvents.ChoosePlanSucessful, EventParameters.build().add(GetPlansResult, getPlansResult));
+                    } else {
+                        messages.appEvent(StateManager.AppEvents.Error);
+                    }
+                }
+            });
+        } catch (Exception e) {
+            messages.appEvent(StateManager.AppEvents.Error);
+        }
+    }
 
     @Subscribe(threadMode = ThreadMode.BACKGROUND)
     public void doThis(Events.GetPlans getPlans){
@@ -182,4 +222,14 @@ public class PlanShoppingService {
 
     public static double getDeductibleFilterFromIntent(Intent intent) {
         return intent.getDoubleExtra(DeductibleFilter, -1);
-    }}
+    }
+
+    public static Plan getPlanFromIntent(Intent intent) {
+        String jsonString = intent.getStringExtra(Plan);
+        GsonBuilder gsonBuilder = new GsonBuilder();
+        gsonBuilder.registerTypeAdapter(DateTime.class, new DateTimeDeserializer());
+        gsonBuilder.registerTypeAdapter(LocalDate.class, new LocalDateSerializer());
+        gsonBuilder.registerTypeAdapter(LocalTime.class, new LocalTimeDeserializer());
+        return gsonBuilder.create().fromJson(jsonString, Plan.class);
+    }
+}

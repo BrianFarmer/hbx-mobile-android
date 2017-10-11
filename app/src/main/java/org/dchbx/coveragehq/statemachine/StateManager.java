@@ -19,9 +19,7 @@ import org.dchbx.coveragehq.Intents;
 import org.dchbx.coveragehq.LoginActivity;
 import org.dchbx.coveragehq.Messages;
 import org.dchbx.coveragehq.PlanDetailsActivity;
-import org.dchbx.coveragehq.planshopping.PlanSelector;
 import org.dchbx.coveragehq.PlanShoppingChoicesActivity;
-import org.dchbx.coveragehq.planshopping.PremiumAndDeductibleActivity;
 import org.dchbx.coveragehq.ServerConfiguration;
 import org.dchbx.coveragehq.ServiceManager;
 import org.dchbx.coveragehq.StateProcessor;
@@ -33,6 +31,10 @@ import org.dchbx.coveragehq.financialeligibility.EligibleResultsActivity;
 import org.dchbx.coveragehq.financialeligibility.IneligibleResultsActivity;
 import org.dchbx.coveragehq.financialeligibility.RelationshipsActivity;
 import org.dchbx.coveragehq.financialeligibility.SectionActivity;
+import org.dchbx.coveragehq.planshopping.PlanSelector;
+import org.dchbx.coveragehq.planshopping.PremiumAndDeductibleActivity;
+import org.dchbx.coveragehq.planshopping.SelectedPlanActivity;
+import org.dchbx.coveragehq.planshopping.ThanksApplicationActivity;
 import org.dchbx.coveragehq.ridp.AcctAddress;
 import org.dchbx.coveragehq.ridp.AcctAuthConsent;
 import org.dchbx.coveragehq.ridp.AcctCreate;
@@ -280,7 +282,7 @@ public class StateManager extends StateProcessor {
         ResumeApplication, ResumingAppliedUqhp, ResumingApplying, LoggingIn, GettingEffectiveDate,
         GettingStatus, AcctNewPassword, AcctPreAuthNP, AcctAddressNP, AcctGenderNP, AcctDateOfBirthNP,
         AcctSsnNP, AcctAuthConsentNP, GetQuestionsNP, RidpQuestionsNP, AcctSystemFoundYou, FamilyMembers,
-        GettingUqhpDetermination, PremiumAndDeductible, GettingPlans, CoverageThisYear
+        GettingUqhpDetermination, PremiumAndDeductible, GettingPlans, SelectedPlan, ApplicationSubmitted, SubmittingApplication, CoverageThisYear
     }
 
     // You are discouraged from removing or reordring this enum. It is used in serialized objects.
@@ -330,7 +332,9 @@ public class StateManager extends StateProcessor {
         ShowEligible, ShowIneligible, ErrorHappened, GetCoverageThisYear, GetCoverageNextYear,
         StatusAppliedUqhp, StatusEnrollingUqhp, StatusApplying, StatusEnrolled,
         ReceivedEffectiveDate, InOpenEnrollment, OpenEnrollmentClosed, GetDentalCoverage,
-        ForgotPassword, ReceivedUqhpDeterminationHasIneligible, ChoosePlan, ContinueMultipleMemberFamily, ContinueSingleMemberFamily, GotPlans, ClearedPII
+        ForgotPassword, ReceivedUqhpDeterminationHasIneligible, ChoosePlan,
+        ContinueMultipleMemberFamily, ContinueSingleMemberFamily, GotPlans,
+        BuyPlanConfirmed, ChoosePlanSucessful, ClearedPII
     }
 
     public void configStates() {
@@ -446,7 +450,10 @@ public class StateManager extends StateProcessor {
         stateMachine.from(AppStates.PlanShoppingFamilyMembers).on(AppEvents.Continue).to(AppStates.PlanShoppingPremiumAndDeductible, new LaunchActivity(PremiumAndDeductibleActivity.uiActivity));
         stateMachine.from(AppStates.PlanShoppingPremiumAndDeductible).on(AppEvents.SeePlans).to(AppStates.PlanSelector, new LaunchActivity(PlanSelector.uiActivity));
         stateMachine.from(AppStates.PlanSelector).on(AppEvents.ShowPlanDetails).to(AppStates.PlanShoppingDetails, new LaunchActivity(PlanDetailsActivity.uiActivity));
-        stateMachine.from(AppStates.PlanSelector).on(AppEvents.BuyPlan).to(AppStates.PlanShoppingPremiumAndDeductible, new LaunchActivity(PremiumAndDeductibleActivity.uiActivity));
+        stateMachine.from(AppStates.PlanSelector).on(AppEvents.BuyPlan).to(AppStates.SelectedPlan, new LaunchActivity(SelectedPlanActivity.uiActivity));
+        stateMachine.from(AppStates.SelectedPlan).on(AppEvents.BuyPlanConfirmed).to(AppStates.SubmittingApplication, new BackgroundProcess(Events.SubmitApplication.class));
+        stateMachine.from(AppStates.SubmittingApplication).on(AppEvents.ChoosePlanSucessful).to(AppStates.ApplicationSubmitted, new LaunchActivity(ThanksApplicationActivity.uiActivity));
+        stateMachine.from(AppStates.ApplicationSubmitted).on(AppEvents.ChoosePlanSucessful).to(AppStates.Hello, new LaunchActivity(ThanksApplicationActivity.uiActivity));
     }
 
 

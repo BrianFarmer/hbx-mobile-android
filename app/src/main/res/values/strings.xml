@@ -180,6 +180,7 @@
     <string name="gender_label">gender:</string>
     <string name="employer_application_due_label">Employer Application Due</string>
     <string name="coverage_begins_label">Coverage Begins</string>
+    <string name="coverage_begins_colon_label">Coverage Begins:</string>
     <string name="shared_preference_user_type">userType</string>
     <string name="no_security_question">This account doesn\'t have a security question so it can\'t be logged in.</string>
     <string name="url_root">Url Root</string>
@@ -411,7 +412,28 @@ You <font color="#69a30d">favorited %d plans</font>.
     <string name="you_ve_selected_this_plan">You\'ve selected this plan...</string>
     <string name="confirm">Confirm</string>
     <string name="submit_my_application">Submit My Application</string>
-    <string name="terms_and_conditions_content">I chose this plan based upon written information provided by the insurer and nobody has my permission to change the terms of the offer or to agree to changes to it.\n\nI know that some plan benefits have limitations or maximums.\n\nI know that some personal information may be collected from other sources, such as District of Columbia or federal databases that can verify information I provided.\n\nAll of the information I provided on this application is true and complete to the best of my knowledge.\n\nI know that the plan contract will have in it the details of our agreement, including procedures, exclusions and limitations. No benefit comparison, summary or other description of the plan should be considered more correct than the contract in describing the details of the plan\'s services.\n\nI know that this application is part of the agreement or policy issued by the insurer. When I sign below, it means I agree to the terms and conditions of that agreement or policy.\n\nWARNING: It\'s a crime to provide false or misleading information to an insurer for the purpose of defrauding the insurer or any other person. Penalties include imprisonment and/or fines.</string>
+    <string name="terms_and_conditions_content">
+<![CDATA[
+<font color="#414141" face="sans-serif">
+    <p>
+        I chose this plan based upon written information provided by the insurer, and nobody has my permission to change the terms of the offer or to agree to changes to it.
+    </p>
+    <p>
+        I know that some plan benefits have limitations or maximums.
+    </p>
+    <p>
+        I know that the plan contract will have in it the details of our agreement, including procedures, exclusions and limitations. No benefit comparison, summary or other description of the plan should be considered more correct than the contract in describing the details of the plan\'s services.
+    </p>
+    <p>
+        I know that this application is part of the agreement or policy issued by the insurer. When I sign below, it means I agree to the terms and conditions of that agreement or policy.
+    </p>
+    <p>
+        <b>WARNING:</b>It\'s a crime to provide false or misleading information to an insurer for the purpose of defrauding the insurer or any other person. Penalties include imprisonment and/or fines as well as retroactive termination of coverage and an obligation to repay all medical claims previously covered by the health insurance company. 
+    </p>
+</font>
+]]>
+
+    </string>
     <string name="last_step">This is the last step.</string>
     <string name="sign_electronically">Sign Electronically.</string>
     <string name="must_report">I understand that I must report any changes that might affect my eligibility, or the eligibility of a household member for health insurance. I can report changes by logging in to my account at dchealthlink.com, by calling DC Health Link at (855) 532-5465, by sending information by US mail, or providing it in-person to one of the Department of Human Services\' Service Centers.  I know that some personal information may be collected from other sources, such as District of Columbia or federal databases that can verify information I provided.  I\'m the person whose name appears in the signature line below. I attest that I have permission from all the people listed on this application to submit the application on their behalf.</string>
@@ -445,6 +467,13 @@ You <font color="#69a30d">favorited %d plans</font>.
     <p>You may be able to sign up for a plan that starts before Jaunary 1, 2018 if you\'ve had a recent, major life change like losing other insurance or moving to DC.</p>
     <p>To see if you qualify, visit <a href="https://dchealthlink.com">DCHealthLink.com.</a>
     </p>
+</font>
+]]>
+    </string>
+    <string name="application_submitted">
+<![CDATA[
+<font color="#414141" face="sans-serif">
+    <p>We have submitted your application for coverage to DC Health Link. Please check back here to see if your application has been processed. <b>If there is no result within 3 days</b>, contact <a href="https://dchealthlink.com">DC Health Link.<a></p>
 </font>
 ]]>
     </string>

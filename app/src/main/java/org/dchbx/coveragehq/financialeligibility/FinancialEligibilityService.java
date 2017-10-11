@@ -79,6 +79,11 @@ public class FinancialEligibilityService {
         return configurationStorageHandler.readUqhpFamily();
     }
 
+    public UqhpDetermination getUqhpDetermination(){
+        ConfigurationStorageHandler configurationStorageHandler = serviceManager.getConfigurationStorageHandler();
+        return configurationStorageHandler.readUqhpDetermination();
+    }
+
     @Subscribe(threadMode = ThreadMode.BACKGROUND)
     public void doThis(Events.SaveUqhpFamily saveUqhpFamily) {
         ConfigurationStorageHandler configurationStorageHandler = serviceManager.getConfigurationStorageHandler();

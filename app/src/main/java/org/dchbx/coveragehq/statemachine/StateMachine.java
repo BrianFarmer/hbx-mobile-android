@@ -63,7 +63,7 @@ public class StateMachine {
         }
         eventParameters.add("OldState", curState.getState());
 
-        if (appEvent == StateManager.AppEvents.ReceivedUqhpDeterminationOnlyEligible){
+        if (appEvent == StateManager.AppEvents.ChoosePlanSucessful){
             Log.d(TAG, "the state you asked for has been reached.");
         }
 

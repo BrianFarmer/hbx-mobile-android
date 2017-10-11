@@ -1,9 +1,18 @@
 package org.dchbx.coveragehq.planshopping;
 
+import android.content.Intent;
 import android.os.Bundle;
+import android.text.Html;
+import android.view.View;
+import android.widget.Button;
+import android.widget.ImageView;
+import android.widget.TextView;
 
 import org.dchbx.coveragehq.BaseActivity;
+import org.dchbx.coveragehq.PlanCardPopulation;
 import org.dchbx.coveragehq.R;
+import org.dchbx.coveragehq.models.planshopping.Plan;
+import org.dchbx.coveragehq.statemachine.EventParameters;
 import org.dchbx.coveragehq.statemachine.StateManager;
 
 /*
@@ -26,15 +35,40 @@ import org.dchbx.coveragehq.statemachine.StateManager;
 public class SelectedPlanActivity extends BaseActivity{
     private static String TAG = "SelectedPlanActivity";
     public static StateManager.UiActivity uiActivity = new StateManager.UiActivity(SelectedPlanActivity.class);
+    private Plan plan;
+    private ImageView carrierLogo;
+    private TextView planName;
+    private TextView planType;
+    private ImageView planMetalRing;
+    private TextView metalType;
+    private TextView monthlyPremium;
+    private TextView annualPremium;
+    private TextView deductible;
+    private Button confirmButton;
 
     public void onCreate(Bundle bundle) {
         super.onCreate(bundle);
 
+        Intent intent = getIntent();
+        plan = PlanShoppingService.getPlanFromIntent(intent);
+
         setContentView(R.layout.selected_plan);
         configToolbar();
+        populate();
     }
 
-    public void onClick(){
+    private void populate() {
+        View header = findViewById(R.id.planDetailsHeader);
+        PlanCardPopulation.populateFromHealth(header, plan, this);
 
+        TextView termAndConditions = (TextView) findViewById(R.id.termAndCondidtions);
+        termAndConditions.setText(Html.fromHtml(getString(R.string.terms_and_conditions_content)));
+        confirmButton = (Button) findViewById(R.id.confirmButton);
+        confirmButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                messages.appEvent(StateManager.AppEvents.BuyPlanConfirmed, EventParameters.build().add(PlanShoppingService.Plan, plan));
+            }
+        });
     }
 }

@@ -1463,4 +1463,7 @@ public class Events {
 
     public class GetPlansFromServer {
     }
+
+    public static class SubmitApplication extends BackgroundProcess{
+    }
 }

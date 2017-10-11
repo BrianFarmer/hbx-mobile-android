@@ -14,6 +14,7 @@ import org.dchbx.coveragehq.models.brokeragency.BrokerAgency;
 import org.dchbx.coveragehq.models.employer.Employer;
 import org.dchbx.coveragehq.models.fe.UqhpApplication;
 import org.dchbx.coveragehq.models.planshopping.Plan;
+import org.dchbx.coveragehq.models.planshopping.PlanChoice;
 import org.dchbx.coveragehq.models.ridp.Answers;
 import org.dchbx.coveragehq.models.ridp.Questions;
 import org.dchbx.coveragehq.models.ridp.SignUp.Links;
@@ -600,8 +601,6 @@ public abstract class UrlHandler {
     public HttpRequest getLoginRequest(Login login) {
         PostParameters postParameters = new PostParameters();
         postParameters.url = HttpUrl.parse(serverConfiguration.localLoginEndpoint);
-        FormBody formBody = new FormBody.Builder()
-                .build();
         String jsonString = (new Gson()).toJson(login);
         postParameters.requestBody = RequestBody.create(JSON, jsonString);
         postParameters.requestString = jsonString;
@@ -671,5 +670,22 @@ public abstract class UrlHandler {
                 return serverConfiguration.uqhpDeterminationUrl + "?eaid=" + eaid;
             }
         });
-        }
+    }
+
+    public HttpRequest getPlanChoiceParameters(PlanChoice planChoice) {
+        PostParameters postParameters = new PostParameters();
+        postParameters.url = HttpUrl.parse(serverConfiguration.planChoiceUrl);
+        FormBody formBody = new FormBody.Builder()
+                .build();
+
+        String jsonString = Utilities.getJson(planChoice);
+        postParameters.requestBody = RequestBody.create(JSON, jsonString);
+        postParameters.requestString = jsonString;
+
+        HttpRequest httpRequest = new HttpRequest();
+        httpRequest.requestType = HttpRequest.RequestType.Post;
+        httpRequest.postParameters = postParameters;
+        return httpRequest;
+    }
+
 }

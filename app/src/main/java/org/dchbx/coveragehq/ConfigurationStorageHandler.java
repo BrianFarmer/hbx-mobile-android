@@ -5,7 +5,6 @@ import android.content.SharedPreferences;
 import android.util.Log;
 
 import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 
@@ -17,10 +16,10 @@ import org.dchbx.coveragehq.models.ridp.Questions;
 import org.dchbx.coveragehq.models.ridp.VerifyIdentityResponse;
 import org.dchbx.coveragehq.models.startup.EffectiveDate;
 import org.dchbx.coveragehq.models.startup.OpenEnrollmentStatus;
-import org.joda.time.LocalDate;
-import org.joda.time.LocalTime;
 
 import java.util.HashMap;
+
+import static org.dchbx.coveragehq.Utilities.getGson;
 
 public class ConfigurationStorageHandler extends IServerConfigurationStorageHandler {
     private static String TAG = "ConfigurationStorage";
@@ -30,14 +29,6 @@ public class ConfigurationStorageHandler extends IServerConfigurationStorageHand
     private SharedPreferences getSharedPreferences(){
         return BrokerApplication.getBrokerApplication().getSharedPreferences(BrokerApplication.getBrokerApplication().getString(R.string.sharedpreferencename), Context.MODE_PRIVATE);
     }
-
-    private Gson getGson(){
-        final GsonBuilder builder = new GsonBuilder()
-                .registerTypeAdapter(LocalDate.class, new LocalDateSerializer())
-                .registerTypeAdapter(LocalTime.class, new LocalTimeSerializer());
-        return builder.create();
-    }
-
 
     @Override
     public void store(ServerConfiguration serverConfiguration) {
@@ -94,8 +85,7 @@ public class ConfigurationStorageHandler extends IServerConfigurationStorageHand
     @Override
     public void store(ServiceManager.AppConfig appConfig) {
         SharedPreferences.Editor editor = getSharedPreferences().edit();
-        Gson gson = getGson();
-        String jsonString = gson.toJson(appConfig);
+        String jsonString = Utilities.getJson(appConfig);
         editor.putString("AppConfigJson", jsonString);
         editor.commit();
     }

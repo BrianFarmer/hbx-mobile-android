@@ -21,8 +21,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 
-import static org.dchbx.coveragehq.Intents.PLAN_ID;
-
 /**
  * Created by plast on 5/18/2017.
  */
@@ -155,7 +153,7 @@ public class PlanCardAdapter extends BaseAdapter {
             details.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                activity.getMessages().appEvent(StateManager.AppEvents.ShowPlanDetails, EventParameters.build().add(PLAN_ID, plan.id));
+                activity.getMessages().appEvent(StateManager.AppEvents.ShowPlanDetails, EventParameters.build().add("Plan", plan));
                 }
             });
 
@@ -163,7 +161,7 @@ public class PlanCardAdapter extends BaseAdapter {
             enroll.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-
+                    activity.getMessages().appEvent(StateManager.AppEvents.BuyPlan, EventParameters.build().add(PlanShoppingService.Plan, plan));
                 }
             });
         }

@@ -1,9 +1,13 @@
 package org.dchbx.coveragehq;
 
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+
 import org.joda.time.DateTime;
 import org.joda.time.Days;
 import org.joda.time.Duration;
 import org.joda.time.LocalDate;
+import org.joda.time.LocalTime;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
 import org.joda.time.format.ISODateTimeFormat;
@@ -95,5 +99,17 @@ public class Utilities {
             }
         }
         return buffer.toString();
+    }
+
+    public static Gson getGson(){
+        final GsonBuilder builder = new GsonBuilder()
+                .registerTypeAdapter(LocalDate.class, new LocalDateSerializer())
+                .registerTypeAdapter(LocalTime.class, new LocalTimeSerializer());
+        return builder.create();
+    }
+
+    public static String getJson(Object object){
+        Gson gson = getGson();
+        return gson.toJson(object);
     }
 }
