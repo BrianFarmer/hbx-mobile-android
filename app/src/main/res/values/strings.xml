@@ -460,6 +460,19 @@ You <font color="#69a30d">favorited %d plans</font>.
 </font>
 ]]>
     </string>
+    <string name="congratulations_content">
+<![CDATA[
+<font color="#414141" face="sans-serif">
+    <p>Your application has been processed by DC Health Link and sent on to the carrier.</p>
+    <p>
+        If you haven\'t created an account on DC Health Link, it\'s time to do so now. You will need
+        <a href="https://dchealthlink.com">sign up in your browser</a>, enter you personal
+        information again, and choose a new login and password. Afterwards, you can log into this
+        app to see your coverage.
+    </p>
+</font>
+]]>
+    </string>
     <string name="coverage_this_year_content">
 <![CDATA[
 <font color="#414141" face="sans-serif">
@@ -543,4 +556,6 @@ You <font color="#69a30d">favorited %d plans</font>.
     <string name="invalidDateValidationError" formatted="false">Please enter a valid date for %s</string>
     <string name="dateOfBirth">Date of Birth</string>
     <string name="ssnValidationError">Please enter a valid Social Security Number</string>
+    <string name="check_status_now">Check Status Now</string>
+    <string name="congratulations">Congratulations!</string>
 </resources>

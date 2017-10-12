@@ -307,6 +307,10 @@
                   android:configChanges="orientation|keyboardHidden|screenSize"
                   android:label=""
             />
+        <activity android:name=".startup.CongratsActivity"
+                  android:configChanges="orientation|keyboardHidden|screenSize"
+                  android:label=""
+            />
     </application>
 
 </manifest>

@@ -48,6 +48,7 @@ import org.dchbx.coveragehq.ridp.AcctSystemFoundYou;
 import org.dchbx.coveragehq.ridp.AcctSystemFoundYouAceds;
 import org.dchbx.coveragehq.ridp.RidpQuestionsActivity;
 import org.dchbx.coveragehq.ridp.RidpService;
+import org.dchbx.coveragehq.startup.CongratsActivity;
 import org.dchbx.coveragehq.startup.CoverageThisYearActivity;
 import org.dchbx.coveragehq.startup.DentalCoverageActivity;
 import org.dchbx.coveragehq.startup.FullPricePlanActivity;
@@ -282,7 +283,7 @@ public class StateManager extends StateProcessor {
         ResumeApplication, ResumingAppliedUqhp, ResumingApplying, LoggingIn, GettingEffectiveDate,
         GettingStatus, AcctNewPassword, AcctPreAuthNP, AcctAddressNP, AcctGenderNP, AcctDateOfBirthNP,
         AcctSsnNP, AcctAuthConsentNP, GetQuestionsNP, RidpQuestionsNP, AcctSystemFoundYou, FamilyMembers,
-        GettingUqhpDetermination, PremiumAndDeductible, GettingPlans, SelectedPlan, ApplicationSubmitted, SubmittingApplication, CoverageThisYear
+        GettingUqhpDetermination, PremiumAndDeductible, GettingPlans, SelectedPlan, ApplicationSubmitted, SubmittingApplication, ThanksApplication, Congrats, CoverageThisYear
     }
 
     // You are discouraged from removing or reordring this enum. It is used in serialized objects.
@@ -334,7 +335,7 @@ public class StateManager extends StateProcessor {
         ReceivedEffectiveDate, InOpenEnrollment, OpenEnrollmentClosed, GetDentalCoverage,
         ForgotPassword, ReceivedUqhpDeterminationHasIneligible, ChoosePlan,
         ContinueMultipleMemberFamily, ContinueSingleMemberFamily, GotPlans,
-        BuyPlanConfirmed, ChoosePlanSucessful, ClearedPII
+        BuyPlanConfirmed, ChoosePlanSucessful, CheckStatusNow, ComeBackLater, ClearedPII
     }
 
     public void configStates() {
@@ -400,7 +401,7 @@ public class StateManager extends StateProcessor {
         stateMachine.from(AppStates.OpenEnrollmentClosed).on(Continue).to(AppStates.OpenEnrollmentClosed, new LaunchActivity(OpenEnrollmentClosedActivity.uiActivity));
         stateMachine.from(AppStates.DentalCoverage).on(Continue).to(AppStates.DentalCoverage, new LaunchActivity(OpenEnrollmentClosedActivity.uiActivity));
         stateMachine.from(AppStates.CoverageNextYear).on(Yes).to(AppStates.MobilePassword, new LaunchActivity(MobilePasswordActivity.uiActivity));
-        stateMachine.from(AppStates.Any).on(AppEvents.Goto).to(AppStates.DentalCoverage, new LaunchActivity(DentalCoverageActivity.uiActivity));
+        stateMachine.from(AppStates.Any).on(AppEvents.Goto).to(AppStates.ThanksApplication, new LaunchActivity(ThanksApplicationActivity.uiActivity));
         stateMachine.from(AppStates.CoverageNextYear).on(No).to(AppStates.HelpPaying, new LaunchActivity(HelpPayingActivity.uiActivity));
         stateMachine.from(AppStates.MobilePassword)
             .on(Ok)
@@ -428,7 +429,7 @@ public class StateManager extends StateProcessor {
         stateMachine.from(AppStates.ResumingAppliedUqhp).on(AppEvents.InOpenEnrollment).to(AppStates.ResumingAppliedUqhp, new StateManager.BackgroundProcess(Events.CheckOpenEnrollment.class));
         stateMachine.from(AppStates.ResumingAppliedUqhp).on(AppEvents.OpenEnrollmentClosed).to(AppStates.ResumingAppliedUqhp, new StateManager.BackgroundProcess(Events.CheckOpenEnrollment.class));
         stateMachine.from(AppStates.GettingStatus).on(AppEvents.StatusEnrollingUqhp).to(AppStates.ResumeApplication, new StateManager.BackgroundProcess(Events.ResumeApplication.class));
-        stateMachine.from(AppStates.GettingStatus).on(AppEvents.StatusEnrolled).to(AppStates.ResumeApplication, new StateManager.BackgroundProcess(Events.ResumeApplication.class));
+        stateMachine.from(AppStates.GettingStatus).on(AppEvents.StatusEnrolled).to(AppStates.Congrats, new LaunchActivity(CongratsActivity.uiActivity));
         stateMachine.from(AppStates.GettingStatus).on(AppEvents.StatusApplying).to(AppStates.ResumingApplying, new StateManager.BackgroundProcess(Events.CheckOpenEnrollment.class));
         stateMachine.from(AppStates.ResumingApplying).on(AppEvents.InOpenEnrollment).to(AppStates.FamilyMembers, new LaunchActivity(org.dchbx.coveragehq.financialeligibility.FamilyActivity.uiActivity));
         stateMachine.from(AppStates.ResumingApplying).on(AppEvents.OpenEnrollmentClosed).to(AppStates.OpenEnrollmentClosed, new LaunchActivity(OpenEnrollmentClosedActivity.uiActivity));
@@ -452,8 +453,10 @@ public class StateManager extends StateProcessor {
         stateMachine.from(AppStates.PlanSelector).on(AppEvents.ShowPlanDetails).to(AppStates.PlanShoppingDetails, new LaunchActivity(PlanDetailsActivity.uiActivity));
         stateMachine.from(AppStates.PlanSelector).on(AppEvents.BuyPlan).to(AppStates.SelectedPlan, new LaunchActivity(SelectedPlanActivity.uiActivity));
         stateMachine.from(AppStates.SelectedPlan).on(AppEvents.BuyPlanConfirmed).to(AppStates.SubmittingApplication, new BackgroundProcess(Events.SubmitApplication.class));
-        stateMachine.from(AppStates.SubmittingApplication).on(AppEvents.ChoosePlanSucessful).to(AppStates.ApplicationSubmitted, new LaunchActivity(ThanksApplicationActivity.uiActivity));
+        stateMachine.from(AppStates.SubmittingApplication).on(AppEvents.ChoosePlanSucessful).to(AppStates.ThanksApplication, new LaunchActivity(ThanksApplicationActivity.uiActivity));
         stateMachine.from(AppStates.ApplicationSubmitted).on(AppEvents.ChoosePlanSucessful).to(AppStates.Hello, new LaunchActivity(ThanksApplicationActivity.uiActivity));
+        stateMachine.from(AppStates.ThanksApplication).on(AppEvents.CheckStatusNow).to(AppStates.GettingStatus, new StateManager.BackgroundProcess(Events.ResumeApplication.class));
+        stateMachine.from(AppStates.ThanksApplication).on(AppEvents.ComeBackLater).to(AppStates.Hello, new LaunchActivity(HelloActivity.uiActivity));
     }
 
 

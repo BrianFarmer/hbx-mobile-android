@@ -1,10 +1,8 @@
-package org.dchbx.coveragehq.planshopping;
+package org.dchbx.coveragehq.startup;
 
 import android.os.Bundle;
 import android.text.Html;
 import android.text.method.LinkMovementMethod;
-import android.view.View;
-import android.widget.Button;
 import android.widget.TextView;
 
 import org.dchbx.coveragehq.BaseActivity;
@@ -28,30 +26,18 @@ import org.dchbx.coveragehq.statemachine.StateManager;
     along with DC Health Link SmallBiz.  If not, see <http://www.gnu.org/licenses/>.
     This statement should go near the beginning of every source file, close to the copyright notices. When using the Lesser GPL, insert the word “Lesser” before “General” in all three places. When using the GNU AGPL, insert the word “Affero” before “General” in all three places.
 */
-public class ThanksApplicationActivity extends BaseActivity {
-    private static String TAG = "ThanksAppActivity";
-    public static StateManager.UiActivity uiActivity = new StateManager.UiActivity(ThanksApplicationActivity.class);
+public class CongratsActivity extends BaseActivity {
+    private static String TAG = "CongratsActivity";
+    public static StateManager.UiActivity uiActivity = new StateManager.UiActivity(CongratsActivity.class);
 
     public void onCreate(Bundle bundle) {
         super.onCreate(bundle);
 
-        setContentView(R.layout.thanks_application);
-        TextView applicationSubmittedContent = (TextView) findViewById(R.id.applicationSubmittedContent);
-        applicationSubmittedContent.setText(Html.fromHtml(getString(R.string.application_submitted)));
-        applicationSubmittedContent.setMovementMethod(LinkMovementMethod.getInstance());
+        setContentView(R.layout.congrats);
+        TextView congratulationsContent = (TextView) findViewById(R.id.congratulationsContent);
+        congratulationsContent.setText(Html.fromHtml(getString(R.string.dental_coverage_content)));
+        congratulationsContent.setMovementMethod(LinkMovementMethod.getInstance());
         configToolbar();
-        ((Button)findViewById(R.id.checkStatusNow)).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                messages.appEvent(StateManager.AppEvents.CheckStatusNow);
-            }
-        });
-        ((Button)findViewById(R.id.comeBackLater)).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                messages.appEvent(StateManager.AppEvents.ComeBackLater);
-            }
-        });
     }
 
 

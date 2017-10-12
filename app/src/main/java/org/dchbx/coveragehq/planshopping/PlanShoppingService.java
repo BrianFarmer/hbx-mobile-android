@@ -4,8 +4,6 @@ import android.content.Intent;
 import android.util.Log;
 
 import com.google.gson.GsonBuilder;
-import com.google.gson.JsonElement;
-import com.google.gson.JsonObject;
 
 import org.dchbx.coveragehq.BrokerApplication;
 import org.dchbx.coveragehq.ConfigurationStorageHandler;
@@ -19,7 +17,7 @@ import org.dchbx.coveragehq.LocalTimeDeserializer;
 import org.dchbx.coveragehq.Messages;
 import org.dchbx.coveragehq.UrlHandler;
 import org.dchbx.coveragehq.financialeligibility.FinancialEligibilityService;
-import org.dchbx.coveragehq.models.fe.Family;
+import org.dchbx.coveragehq.models.fe.PersonForCoverage;
 import org.dchbx.coveragehq.models.fe.UqhpDetermination;
 import org.dchbx.coveragehq.models.planshopping.Plan;
 import org.dchbx.coveragehq.models.planshopping.PlanChoice;
@@ -117,15 +115,10 @@ public class PlanShoppingService {
 
             ConfigurationStorageHandler configurationStorageHandler = serviceManager.getConfigurationStorageHandler();
             ArrayList<Integer> ages = new ArrayList<>();
-            Family family = configurationStorageHandler.readUqhpFamily();
+            UqhpDetermination uqhpDetermination = configurationStorageHandler.readUqhpDetermination();
             LocalDate now = LocalDate.now();
-            for (JsonElement jsonElement : family.Person) {
-                JsonObject person = jsonElement.getAsJsonObject();
-                if (person.has("persondob")){
-                    String persondob = person.get("persondob").getAsString();
-                    LocalDate dob = LocalDate.parse(persondob);
-                    ages.add(Years.yearsBetween(now, dob).getYears());
-                }
+            for (PersonForCoverage personForCoverage : uqhpDetermination.eligibleForQhp) {
+                ages.add(Years.yearsBetween(now, now.plusYears(20)).getYears());
             }
 
             EffectiveDate effectiveDate = configurationStorageHandler.readEffectiveDate();
