@@ -175,7 +175,7 @@ public class ServiceManager implements IServiceManager {
 
     @Override
     public ConnectionHandler getConnectionHandler() {
-        return new EnrollConnectionHandler(getServerConfiguration());
+        return new ConnectionHandler(getServerConfiguration());
     }
 
     @Override

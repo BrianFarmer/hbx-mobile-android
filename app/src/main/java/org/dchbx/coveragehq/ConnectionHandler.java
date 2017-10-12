@@ -48,6 +48,15 @@ public class ConnectionHandler implements IConnectionHandler{
     private static CookieJar cookieJar2;
 
 
+    private static SetCookieCache cookies1;
+    private static SetCookieCache cookies2;
+    private static SharedPrefsCookiePersistor sharedPrefsCookiePersistor1;
+    private static SharedPrefsCookiePersistor sharedPrefsCookiePersistor2;
+    private static PersistentCookieJar persistentCookieJar1;
+    private static PersistentCookieJar persistentCookieJar2;
+
+
+
     public static final MediaType JSON
             = MediaType.parse("application/json; charset=utf-8");
 
@@ -60,27 +69,28 @@ public class ConnectionHandler implements IConnectionHandler{
         if (clientHttp != null) {
             return;
         }
-        SetCookieCache cookies1 = new SetCookieCache();
+        cookies1 = new SetCookieCache();
         cookies1.clear();
-        SetCookieCache cookies2 = new SetCookieCache();
-        cookies2.clear();
-        SharedPrefsCookiePersistor sharedPrefsCookiePersistor1 = new SharedPrefsCookiePersistor(BrokerApplication.getBrokerApplication());
+        sharedPrefsCookiePersistor1 = new SharedPrefsCookiePersistor(BrokerApplication.getBrokerApplication());
         sharedPrefsCookiePersistor1.clear();
-        SharedPrefsCookiePersistor sharedPrefsCookiePersistor2 = new SharedPrefsCookiePersistor(BrokerApplication.getBrokerApplication());
-        sharedPrefsCookiePersistor2.clear();
-        PersistentCookieJar persistentCookieJar1 = new PersistentCookieJar(cookies1, sharedPrefsCookiePersistor1);
-        PersistentCookieJar persistentCookieJar2 = new PersistentCookieJar(cookies1, sharedPrefsCookiePersistor1);
+        persistentCookieJar1 = new PersistentCookieJar(cookies1, sharedPrefsCookiePersistor1);
         persistentCookieJar1.clearSession();
-        persistentCookieJar2.clearSession();
         cookieJar1 = persistentCookieJar1;
-        cookieJar2 = persistentCookieJar2;
-
 
         clientHttp = new OkHttpClient()
                 .newBuilder()
                 .followRedirects(true)
                 .cookieJar(cookieJar1)
                 .build();
+
+
+        cookies2 = new SetCookieCache();
+        cookies2.clear();
+        sharedPrefsCookiePersistor2 = new SharedPrefsCookiePersistor(BrokerApplication.getBrokerApplication());
+        sharedPrefsCookiePersistor2.clear();
+        persistentCookieJar2 = new PersistentCookieJar(cookies1, sharedPrefsCookiePersistor1);
+        persistentCookieJar2.clearSession();
+        cookieJar2 = persistentCookieJar2;
 
         clientDontFollowHttp = new OkHttpClient()
                 .newBuilder()
