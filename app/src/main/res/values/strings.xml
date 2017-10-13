@@ -559,4 +559,6 @@ You <font color="#69a30d">favorited %d plans</font>.
     <string name="ssnValidationError">Please enter a valid Social Security Number</string>
     <string name="check_status_now">Check Status Now</string>
     <string name="congratulations">Congratulations!</string>
+    <string name="coverage_after">Get healthcare coverage that starts on or after %s.</string>
+    <string name="coverage_before">Get Healthcare coverage that starts before %s.</string>
 </resources>

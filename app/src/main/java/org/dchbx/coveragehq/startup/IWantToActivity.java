@@ -3,9 +3,12 @@ package org.dchbx.coveragehq.startup;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
+import android.widget.TextView;
 
 import org.dchbx.coveragehq.BaseActivity;
 import org.dchbx.coveragehq.R;
+import org.dchbx.coveragehq.Utilities;
+import org.dchbx.coveragehq.models.startup.EffectiveDate;
 import org.dchbx.coveragehq.statemachine.StateManager;
 
 /*
@@ -32,21 +35,29 @@ public class IWantToActivity extends BaseActivity {
     public void onCreate(Bundle bundle) {
         super.onCreate(bundle);
 
+        EffectiveDate effectiveDate = StartUpService.getEffectiveDate(getIntent());
+        String effectiveDateStr = Utilities.DateAsMonthStringDayYear(effectiveDate.effectiveDate);
+
         setContentView(R.layout.i_want_to);
         configToolbar();
+
+        TextView nextYearCoverage = (TextView) findViewById(R.id.nextYearCoverage);
+        nextYearCoverage.setText(getString(R.string.coverage_after, effectiveDateStr));
+        TextView earlyCoverage = (TextView) findViewById(R.id.earlyCoverage);
+        earlyCoverage.setText(getString(R.string.coverage_before, effectiveDateStr));
         ((Button)findViewById(R.id.dentalCoverage)).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 messages.appEvent(StateManager.AppEvents.GetDentalCoverage);
             }
         });
-        ((Button)findViewById(R.id.nextYearCoverage)).setOnClickListener(new View.OnClickListener() {
+        ((Button) nextYearCoverage).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 messages.appEvent(StateManager.AppEvents.GetCoverageNextYear);
             }
         });
-        ((Button)findViewById(R.id.earlyCoverage)).setOnClickListener(new View.OnClickListener() {
+        ((Button) earlyCoverage).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 messages.appEvent(StateManager.AppEvents.GetCoverageThisYear);

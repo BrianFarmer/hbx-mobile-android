@@ -38,7 +38,12 @@ public class AcctPreAuthActivity extends BaseActivity {
     protected void onCreate(Bundle savedInstanceState) {
         binding = DataBindingUtil.setContentView(this, R.layout.acct_pii);
         super.onCreate(savedInstanceState);
+        htmlifyTextControl(R.id.weWillKeep);
+        htmlifyTextControl(R.id.youCanComplete);
+        htmlifyTextControl(R.id.asPartOf);
+        htmlifyTextControl(R.id.learnMoreAbout);
         htmlifyTextControl(R.id.viewPrivacy);
+        htmlifyTextControl(R.id.byClickingContinue);
         configToolbar();
 
         Intent intent = getIntent();

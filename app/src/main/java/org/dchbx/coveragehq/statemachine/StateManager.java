@@ -283,7 +283,7 @@ public class StateManager extends StateProcessor {
         ResumeApplication, ResumingAppliedUqhp, ResumingApplying, LoggingIn, GettingEffectiveDate,
         GettingStatus, AcctNewPassword, AcctPreAuthNP, AcctAddressNP, AcctGenderNP, AcctDateOfBirthNP,
         AcctSsnNP, AcctAuthConsentNP, GetQuestionsNP, RidpQuestionsNP, AcctSystemFoundYou, FamilyMembers,
-        GettingUqhpDetermination, PremiumAndDeductible, GettingPlans, SelectedPlan, ApplicationSubmitted, SubmittingApplication, ThanksApplication, Congrats, CoverageThisYear
+        GettingUqhpDetermination, PremiumAndDeductible, GettingPlans, SelectedPlan, ApplicationSubmitted, SubmittingApplication, ThanksApplication, Congrats, GettingEffectiveDateForIWant, CoverageThisYear
     }
 
     // You are discouraged from removing or reordring this enum. It is used in serialized objects.
@@ -393,7 +393,8 @@ public class StateManager extends StateProcessor {
 
     private void initStartupStates(StateMachine stateMachine){
         stateMachine.from(AppStates.Hello).on(AppEvents.ViewMyAccount).to(AppStates.Login, new LaunchActivity(LoginActivity.uiActivity));
-        stateMachine.from(AppStates.Hello).on(AppEvents.StartApplication).to(AppStates.IWantTo, new LaunchActivity(IWantToActivity.uiActivity));
+        stateMachine.from(AppStates.Hello).on(AppEvents.StartApplication).to(AppStates.GettingEffectiveDateForIWant, new StateManager.BackgroundProcess(Events.GetEffectiveDate.class));
+        stateMachine.from(AppStates.GettingEffectiveDateForIWant).on(AppEvents.ReceivedEffectiveDate).to(AppStates.IWantTo, new LaunchActivity(IWantToActivity.uiActivity));
         stateMachine.from(AppStates.Hello).on(AppEvents.ResumeApplication).to(AppStates.ResumeApplication, new LaunchActivity(ResumeApplicationActivity.uiActivity));
         stateMachine.from(AppStates.IWantTo).on(AppEvents.GetCoverageNextYear).to(AppStates.CoverageNextYear, new LaunchActivity(FullPricePlanActivity.uiActivity));
         stateMachine.from(AppStates.IWantTo).on(AppEvents.GetCoverageThisYear).to(AppStates.CoverageThisYear, new LaunchActivity(CoverageThisYearActivity.uiActivity));
@@ -428,7 +429,7 @@ public class StateManager extends StateProcessor {
 
         stateMachine.from(AppStates.ResumingAppliedUqhp).on(AppEvents.InOpenEnrollment).to(AppStates.ResumingAppliedUqhp, new StateManager.BackgroundProcess(Events.CheckOpenEnrollment.class));
         stateMachine.from(AppStates.ResumingAppliedUqhp).on(AppEvents.OpenEnrollmentClosed).to(AppStates.ResumingAppliedUqhp, new StateManager.BackgroundProcess(Events.CheckOpenEnrollment.class));
-        stateMachine.from(AppStates.GettingStatus).on(AppEvents.StatusEnrollingUqhp).to(AppStates.ResumeApplication, new StateManager.BackgroundProcess(Events.ResumeApplication.class));
+        stateMachine.from(AppStates.GettingStatus).on(AppEvents.StatusEnrollingUqhp).to(AppStates.ThanksApplication, new LaunchActivity(ThanksApplicationActivity.uiActivity));
         stateMachine.from(AppStates.GettingStatus).on(AppEvents.StatusEnrolled).to(AppStates.Congrats, new LaunchActivity(CongratsActivity.uiActivity));
         stateMachine.from(AppStates.GettingStatus).on(AppEvents.StatusApplying).to(AppStates.ResumingApplying, new StateManager.BackgroundProcess(Events.CheckOpenEnrollment.class));
         stateMachine.from(AppStates.ResumingApplying).on(AppEvents.InOpenEnrollment).to(AppStates.FamilyMembers, new LaunchActivity(org.dchbx.coveragehq.financialeligibility.FamilyActivity.uiActivity));

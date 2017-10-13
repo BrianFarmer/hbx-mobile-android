@@ -1,12 +1,19 @@
 package org.dchbx.coveragehq.startup;
 
+import android.content.Intent;
+
+import com.google.gson.GsonBuilder;
+
 import org.dchbx.coveragehq.BrokerApplication;
 import org.dchbx.coveragehq.ConnectionHandler;
 import org.dchbx.coveragehq.CoverageConnection;
+import org.dchbx.coveragehq.DateTimeDeserializer;
 import org.dchbx.coveragehq.Events;
 import org.dchbx.coveragehq.IConnectionHandler;
 import org.dchbx.coveragehq.IServiceManager;
 import org.dchbx.coveragehq.JsonParser;
+import org.dchbx.coveragehq.LocalDateSerializer;
+import org.dchbx.coveragehq.LocalTimeDeserializer;
 import org.dchbx.coveragehq.Messages;
 import org.dchbx.coveragehq.ServerConfiguration;
 import org.dchbx.coveragehq.UrlHandler;
@@ -19,6 +26,9 @@ import org.dchbx.coveragehq.statemachine.EventParameters;
 import org.dchbx.coveragehq.statemachine.StateManager;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
+import org.joda.time.DateTime;
+import org.joda.time.LocalDate;
+import org.joda.time.LocalTime;
 
 /*
     This file is part of DC.
@@ -39,6 +49,8 @@ import org.greenrobot.eventbus.ThreadMode;
 */
 public class StartUpService {
     private static String TAG = "MobilePasswordActivity";
+    public static String EffectiveDate = "EffectiveDate";
+
     private final IServiceManager serviceManager;
     Messages messages;
 
@@ -97,7 +109,7 @@ public class StartUpService {
                     JsonParser parser = serviceManager.getParser();
                     EffectiveDate effectiveDate = parser.parseEffectiveDate(response.getBody());
                     serviceManager.getConfigurationStorageHandler().storeEffectiveDate(effectiveDate);
-                    messages.appEvent(StateManager.AppEvents.ReceivedEffectiveDate);
+                    messages.appEvent(StateManager.AppEvents.ReceivedEffectiveDate, EventParameters.build().add(EffectiveDate, effectiveDate));
                 }
             }
         });
@@ -161,5 +173,14 @@ public class StartUpService {
                 }
             }
         });
+    }
+
+    public static EffectiveDate getEffectiveDate(Intent intent) {
+        String jsonString = intent.getStringExtra(EffectiveDate);
+        GsonBuilder gsonBuilder = new GsonBuilder();
+        gsonBuilder.registerTypeAdapter(DateTime.class, new DateTimeDeserializer());
+        gsonBuilder.registerTypeAdapter(LocalDate.class, new LocalDateSerializer());
+        gsonBuilder.registerTypeAdapter(LocalTime.class, new LocalTimeDeserializer());
+        return gsonBuilder.create().fromJson(jsonString, EffectiveDate.class);
     }
 }

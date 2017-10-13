@@ -69,6 +69,10 @@ public class Utilities {
         return DateTimeFormat.forPattern("MMM dd, yyyy").print(date);
     }
 
+    public static String DateAsMonthStringDayYear(LocalDate date){
+        return DateTimeFormat.forPattern("MMMM d, yyyy").print(date);
+    }
+
     public static long dateDifferenceDays(LocalDate start, LocalDate end) {
         return Days.daysBetween(start, end).getDays();
     }
