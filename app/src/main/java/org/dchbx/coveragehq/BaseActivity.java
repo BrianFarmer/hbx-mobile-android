@@ -5,7 +5,6 @@ import android.app.ProgressDialog;
 import android.content.Intent;
 import android.content.res.Resources;
 import android.os.Bundle;
-import android.support.annotation.IdRes;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.text.Html;
@@ -23,8 +22,6 @@ import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 
 import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
 
 
 public class BaseActivity extends AppCompatActivity {
@@ -184,10 +181,9 @@ public class BaseActivity extends AppCompatActivity {
     }
 
     protected void htmlifyTextControl(int id) {
-
         TextView view = (TextView)findViewById(id);
-        view.setMovementMethod(LinkMovementMethod.getInstance());
         view.setText(Html.fromHtml(view.getText().toString()));
+        view.setMovementMethod(LinkMovementMethod.getInstance());
     }
 
     protected void simpleAlert(int titleId, int textId) {

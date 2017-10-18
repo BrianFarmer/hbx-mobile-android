@@ -806,17 +806,6 @@ public class BrokerWorker extends IntentService {
     }
 
     @Subscribe(threadMode = ThreadMode.BACKGROUND)
-    public void doThis(Events.GetCreateAccountInfo getCreateAccountInfo){
-        try {
-            org.dchbx.coveragehq.models.account.Account account = serviceManager.getRidpService().getCreateAccountInfo();
-            BrokerWorker.eventBus.post(new Events.GetCreateAccountInfoResult(account));
-        } catch (Exception e) {
-            Log.e(TAG, "Exception processing Events.GetCreateAccountInfo");
-            BrokerWorker.eventBus.post(new Events.Error("Error processing Events.GetCreateAccountInfo", "Events.GetCreateAccountInfo"));
-        }
-    }
-
-    @Subscribe(threadMode = ThreadMode.BACKGROUND)
     public void doThis(Events.GetGlossary getGlossary) throws Exception {
         BrokerWorker.eventBus.post(new Events.GetGlossaryResponse(serviceManager.getCoverageConnection().getGlossary()));
     }

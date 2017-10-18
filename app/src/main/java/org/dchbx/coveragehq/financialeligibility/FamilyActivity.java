@@ -5,9 +5,7 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
-import android.widget.ImageView;
 import android.widget.ListView;
-import android.widget.TextView;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
@@ -44,6 +42,14 @@ public class FamilyActivity extends BaseActivity {
     }
 
     @Override
+    protected void onResume(){
+        super.onResume();
+        if (familyAdapter != null){
+            familyAdapter.notifyDataSetChanged();
+        }
+    }
+
+    @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
@@ -54,6 +60,15 @@ public class FamilyActivity extends BaseActivity {
         configToolbar();
         getMessages().getUqhpFamily();
         getMessages().getUqhpSchema();
+        if (account == null){
+            getMessages().getCreateAccountInfo();
+        }
+    }
+
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void doThis(Events.GetCreateAccountInfoResult getCreateAccountInfoResult){
+        account = getCreateAccountInfoResult.getAccount();
+        populate();
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)
@@ -70,7 +85,8 @@ public class FamilyActivity extends BaseActivity {
 
     protected void populate() {
         if (schema == null
-            || family == null){
+            || family == null
+            || account == null){
             return;
         }
 

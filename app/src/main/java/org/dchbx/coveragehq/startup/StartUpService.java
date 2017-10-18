@@ -5,6 +5,7 @@ import android.content.Intent;
 import com.google.gson.GsonBuilder;
 
 import org.dchbx.coveragehq.BrokerApplication;
+import org.dchbx.coveragehq.ConfigurationStorageHandler;
 import org.dchbx.coveragehq.ConnectionHandler;
 import org.dchbx.coveragehq.CoverageConnection;
 import org.dchbx.coveragehq.DateTimeDeserializer;
@@ -17,6 +18,7 @@ import org.dchbx.coveragehq.LocalTimeDeserializer;
 import org.dchbx.coveragehq.Messages;
 import org.dchbx.coveragehq.ServerConfiguration;
 import org.dchbx.coveragehq.UrlHandler;
+import org.dchbx.coveragehq.models.account.Account;
 import org.dchbx.coveragehq.models.startup.EffectiveDate;
 import org.dchbx.coveragehq.models.startup.Login;
 import org.dchbx.coveragehq.models.startup.OpenEnrollmentStatus;
@@ -67,10 +69,10 @@ public class StartUpService {
     }
 
     @Subscribe(threadMode = ThreadMode.BACKGROUND)
-    public void doThis(Events.IvlLoginRequest loginRequest) throws Exception {
+    public void doThis(final Events.IvlLoginRequest loginRequest) throws Exception {
         EventParameters eventParameters = loginRequest.getEventParameters();
 
-        ResumeParameters resumeParamters  = (ResumeParameters) eventParameters.getObject("LoginParameters", ResumeParameters.class);
+        final ResumeParameters resumeParamters  = (ResumeParameters) eventParameters.getObject("LoginParameters", ResumeParameters.class);
         Login login = new Login();
         login.username = resumeParamters.email;
         login.password = resumeParamters.password;
@@ -84,6 +86,16 @@ public class StartUpService {
             public void onCompletion(IConnectionHandler.HttpResponse response) {
                 if (response.getResponseCode() >= 200
                         && response.getResponseCode() < 300){
+                    ConfigurationStorageHandler configurationStorageHandler = serviceManager.getConfigurationStorageHandler();
+                    Account account = configurationStorageHandler.readAccount();
+                    if (account == null
+                        || account.getEmailAddress() == null
+                        || !account.getEmailAddress().toLowerCase().equals(resumeParamters.email.toLowerCase())){
+                        account = null;
+                        configurationStorageHandler.clear();
+                    }
+
+
                     JsonParser parser = serviceManager.getParser();
                     ServerConfiguration serverConfiguration = serviceManager.getServerConfiguration();
                     org.dchbx.coveragehq.models.startup.LoginResponse loginResponse = parser.parseResumeLogin(response.getBody());

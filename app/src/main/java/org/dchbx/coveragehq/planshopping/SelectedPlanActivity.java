@@ -11,7 +11,11 @@ import android.widget.TextView;
 import org.dchbx.coveragehq.BaseActivity;
 import org.dchbx.coveragehq.PlanCardPopulation;
 import org.dchbx.coveragehq.R;
+import org.dchbx.coveragehq.ServiceManager;
+import org.dchbx.coveragehq.Utilities;
 import org.dchbx.coveragehq.models.planshopping.Plan;
+import org.dchbx.coveragehq.models.startup.EffectiveDate;
+import org.dchbx.coveragehq.startup.StartUpService;
 import org.dchbx.coveragehq.statemachine.EventParameters;
 import org.dchbx.coveragehq.statemachine.StateManager;
 
@@ -45,13 +49,17 @@ public class SelectedPlanActivity extends BaseActivity{
     private TextView annualPremium;
     private TextView deductible;
     private Button confirmButton;
+    private EffectiveDate effectiveDate;
 
     public void onCreate(Bundle bundle) {
         super.onCreate(bundle);
 
         Intent intent = getIntent();
         plan = PlanShoppingService.getPlanFromIntent(intent);
-
+        effectiveDate = StartUpService.getEffectiveDate(intent);
+        if (effectiveDate == null){
+            effectiveDate = ServiceManager.getServiceManager().getConfigurationStorageHandler().readEffectiveDate();
+        }
         setContentView(R.layout.selected_plan);
         configToolbar();
         populate();
@@ -60,6 +68,9 @@ public class SelectedPlanActivity extends BaseActivity{
     private void populate() {
         View header = findViewById(R.id.planDetailsHeader);
         PlanCardPopulation.populateFromHealth(header, plan, this);
+
+        TextView effectiveDateField = (TextView)findViewById(R.id.effectiveDate);
+        effectiveDateField.setText(Utilities.DateAsMonthDayYear(effectiveDate.effectiveDate));
 
         TextView termAndConditions = (TextView) findViewById(R.id.termAndCondidtions);
         termAndConditions.setText(Html.fromHtml(getString(R.string.terms_and_conditions_content)));

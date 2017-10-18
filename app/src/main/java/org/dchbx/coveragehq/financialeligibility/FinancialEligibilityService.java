@@ -276,7 +276,7 @@ public class FinancialEligibilityService {
                         if (object.has(field.field)) {
                             boolean found = false;
                             for (Option option : field.options) {
-                                if (option.value.equals(object.get(field.field).getAsString())) {
+                                if (option.value.equalsIgnoreCase(object.get(field.field).getAsString())) {
                                     found = true;
                                     break;
                                 }

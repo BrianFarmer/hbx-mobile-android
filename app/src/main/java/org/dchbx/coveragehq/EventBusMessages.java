@@ -458,5 +458,10 @@ public class EventBusMessages implements Messages {
     public void getPlanResult(Plan plan, List<Service> services) {
         eventBus.post(new Events.GetPlanResult(plan, services));
     }
+
+    @Override
+    public void getCreateAccountInfoResult(Account account) {
+        eventBus.post(new Events.GetCreateAccountInfoResult(account));
+    }
 }
 

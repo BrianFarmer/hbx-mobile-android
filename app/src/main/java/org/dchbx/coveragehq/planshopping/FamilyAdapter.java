@@ -1,4 +1,4 @@
-package org.dchbx.coveragehq;
+package org.dchbx.coveragehq.planshopping;
 
 import android.content.Context;
 import android.content.Intent;
@@ -13,6 +13,7 @@ import com.google.gson.Gson;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 
+import org.dchbx.coveragehq.R;
 import org.dchbx.coveragehq.financialeligibility.ApplicationQuestionsActivity;
 import org.dchbx.coveragehq.financialeligibility.FinancialEligibilityService;
 import org.dchbx.coveragehq.models.fe.Family;

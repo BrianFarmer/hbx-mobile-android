@@ -76,7 +76,7 @@
             android:layout_height="wrap_content"
             app:layout_constraintLeft_toRightOf="@+id/effectiveDateLabel"
             app:layout_constraintTop_toTopOf="@+id/effectiveDateLabel"
-            android:text="TextView"
+            android:text=""
             android:fontFamily="sans-serif"
             android:textSize="18sp"
             android:textColor="@color/textdarkgray"

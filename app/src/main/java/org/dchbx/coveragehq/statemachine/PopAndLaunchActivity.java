@@ -21,7 +21,7 @@ import java.io.IOException;
     along with DC Health Link SmallBiz.  If not, see <http://www.gnu.org/licenses/>.
     This statement should go near the beginning of every source file, close to the copyright notices. When using the Lesser GPL, insert the word “Lesser” before “General” in all three places. When using the GNU AGPL, insert the word “Affero” before “General” in all three places.
 */
-public class PopAndLaunchActivity implements StateMachineAction {
+public class PopAndLaunchActivity extends StateMachineAction {
     private StateManager.UiActivity uiActivity;
 
     public PopAndLaunchActivity(StateManager.UiActivity uiActivity){
@@ -29,13 +29,14 @@ public class PopAndLaunchActivity implements StateMachineAction {
     }
 
     @Override
-    public void call(StateMachine stateMachine, StateManager stateManager, StateManager.AppEvents event,
+    public boolean call(StateMachine stateMachine, StateManager stateManager, StateManager.AppEvents event,
                      StateManager.AppStates leavingState, StateManager.AppStates enterState,
                      EventParameters eventParameters) throws IOException, CoverageException {
         StateInfoBase pop = stateMachine.getStatesStack().pop();
 //        pop.onPop(stateMachine, stateManager);
         stateMachine.push(new ActivityInfo(enterState, event, uiActivity));
         stateManager.popAndLaunchActivity(uiActivity, eventParameters);
+        return false;
     }
 }
 

@@ -1016,4 +1016,13 @@
         <item name="android:background">@color/transparent</item>
         <item name="android:drawableLeft">@drawable/edit_family_member_button</item>
     </style>
+
+    <style name="html_textview">
+        <item name="android:textSize">20dp</item>
+        <item name="android:textColor">@color/textdarkgray</item>
+        <item name="android:fontFamily">sans-serif</item>
+        <item name="android:textStyle">normal</item>
+        <item name="android:linksClickable">true</item>
+        <item name="android:textColorLink">@color/mainblue</item>
+    </style>
 </resources>

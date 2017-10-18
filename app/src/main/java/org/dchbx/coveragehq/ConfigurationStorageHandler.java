@@ -23,6 +23,7 @@ import static org.dchbx.coveragehq.Utilities.getGson;
 
 public class ConfigurationStorageHandler extends IServerConfigurationStorageHandler {
     private static String TAG = "ConfigurationStorage";
+    private static String UqhpFamily = "UqhpFamily";
 
 
 
@@ -75,8 +76,7 @@ public class ConfigurationStorageHandler extends IServerConfigurationStorageHand
 
     @Override
     public void clear() {
-        BrokerApplication brokerApplication = BrokerApplication.getBrokerApplication();
-        SharedPreferences sharedPref = brokerApplication.getSharedPreferences(brokerApplication.getString(R.string.sharedpreferencename), Context.MODE_PRIVATE);
+        SharedPreferences sharedPref = getSharedPreferences();
         SharedPreferences.Editor editor = sharedPref.edit();
         editor.clear();
         editor.apply();
@@ -218,9 +218,17 @@ public class ConfigurationStorageHandler extends IServerConfigurationStorageHand
     }
 
     @Override
+    public void clearUqhpFamily(){
+        SharedPreferences.Editor editor = getSharedPreferences().edit();
+        editor.remove(UqhpFamily);
+        editor.commit();
+
+    }
+
+    @Override
     public Family readUqhpFamily() {
         SharedPreferences sharedPreferences = getSharedPreferences();
-        String responseJson = sharedPreferences.getString("UqhpFamily", null);
+        String responseJson = sharedPreferences.getString(UqhpFamily, null);
         if (responseJson == null
                 || responseJson.length() == 0){
             Family family = new Family();
@@ -267,7 +275,7 @@ public class ConfigurationStorageHandler extends IServerConfigurationStorageHand
 
     @Override
     public void storeUqhpFamily(Family family){
-        store("UqhpFamily", family);
+        store(UqhpFamily, family);
     }
 
     @Override

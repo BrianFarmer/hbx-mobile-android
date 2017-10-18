@@ -935,7 +935,7 @@ public class ApplicationQuestionsActivity extends BrokerActivity {
             view = inflater.inflate(R.layout.app_yesnoradio_field, linearLayout, false);
             linearLayout.addView(view);
             TextView label = (TextView) view.findViewById(R.id.label);
-            label.setText(field.label);
+            label.setText(ApplicationQuestionsActivity.replace(field.label));
             radioGroup = (RadioGroup)view.findViewById(R.id.radioGroup);
             RadioButton yesButton = (RadioButton) view.findViewById(R.id.yesButton);
             RadioButton noButton = (RadioButton) view.findViewById(R.id.noButton);

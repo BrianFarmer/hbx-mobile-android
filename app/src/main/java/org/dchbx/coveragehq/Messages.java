@@ -2,6 +2,7 @@ package org.dchbx.coveragehq;
 
 import android.net.Uri;
 
+import org.dchbx.coveragehq.models.account.Account;
 import org.dchbx.coveragehq.models.fe.Family;
 import org.dchbx.coveragehq.models.fe.FinancialAssistanceApplication;
 import org.dchbx.coveragehq.models.fe.Schema;
@@ -100,5 +101,6 @@ public interface Messages {
     void getUqhpDeterminationResponse(UqhpDetermination uqhpDetermination);
     void sendBackgroundProcess(Events.BackgroundProcess o);
     void getPlanResult(Plan plan, List<Service> services);
+    void getCreateAccountInfoResult(Account account);
 }
 

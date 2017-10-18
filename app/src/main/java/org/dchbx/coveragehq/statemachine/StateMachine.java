@@ -34,12 +34,14 @@ public class StateMachine {
     private HashMap<StateManager.AppStates, HashMap<StateManager.AppEvents, Transition>> statesMap;
     private HashMap<StateManager.AppStates, HashMap<StateManager.AppEvents, EventProcessor>> statesToEventProcessors;
     private ArrayDeque<StateInfoBase> statesStack;
+    private boolean autoPop;
 
     public StateMachine(StateManager stateManager){
         this.stateManager = stateManager;
         statesMap = new HashMap<>();
         statesStack = new ArrayDeque<StateInfoBase>();
         statesToEventProcessors = new HashMap<>();
+        autoPop = false;
     }
 
     public void start(ArrayDeque<StateInfoBase> stack){
@@ -63,8 +65,13 @@ public class StateMachine {
         }
         eventParameters.add("OldState", curState.getState());
 
-        if (appEvent == StateManager.AppEvents.ChoosePlanSucessful){
+        if (appEvent == StateManager.AppEvents.GetQuestionsOperationComplete
+            ){
             Log.d(TAG, "the state you asked for has been reached.");
+        }
+
+        if (autoPop){
+            statesStack.pop();
         }
 
         // This checks and processes events that have to modified by data in the system.
@@ -84,7 +91,7 @@ public class StateMachine {
                         }
                         StateMachineAction enterAction = transition.getEnterAction();
                         if (enterAction != null) {
-                            enterAction.call(this, stateManager, appEvent, curState.getState(), transition.getToState(), eventParameters);
+                            autoPop = enterAction.call(this, stateManager, appEvent, curState.getState(), transition.getToState(), eventParameters);
                         }
                     }
                 } catch (Exception e) {
@@ -107,7 +114,7 @@ public class StateMachine {
                 }
                 StateMachineAction enterAction = transition.getEnterAction();
                 if (enterAction != null) {
-                    enterAction.call(this, stateManager, appEvent, curState.getState(), transition.getToState(), eventParameters);
+                    autoPop = enterAction.call(this, stateManager, appEvent, curState.getState(), transition.getToState(), eventParameters);
                 }
                 return;
             }
@@ -128,7 +135,7 @@ public class StateMachine {
                 }
                 StateMachineAction enterAction = transition.getEnterAction();
                 if (enterAction != null){
-                    enterAction.call(this, stateManager, appEvent, curState.getState(), transition.getToState(), eventParameters);
+                    autoPop = enterAction.call(this, stateManager, appEvent, curState.getState(), transition.getToState(), eventParameters);
                 }
             }
         }

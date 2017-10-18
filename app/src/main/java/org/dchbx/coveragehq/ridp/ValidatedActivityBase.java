@@ -1,5 +1,6 @@
 package org.dchbx.coveragehq.ridp;
 
+import android.widget.CheckBox;
 import android.widget.TextView;
 
 import org.dchbx.coveragehq.BaseActivity;
@@ -80,6 +81,12 @@ public class ValidatedActivityBase extends BaseActivity {
         int length = getTextFromField(fieldId).length();
         String format = getString(R.string.requiredFieldValidationFormat);
         return applyValidation (length > 0, String.format(format, getString(fieldName)), issues);
+    }
+
+    protected boolean validateRequiredCheckBox(int fieldId, int fieldName, List<String> issues) {
+        boolean checked = ((CheckBox) findViewById(fieldId)).isChecked();
+        String format = getString(R.string.requiredFieldValidationFormat);
+        return applyValidation (checked, String.format(format, getString(fieldName)), issues);
     }
 
     protected boolean validateTextFieldsMatch(int fieldId, int fieldName, int fieldId2,

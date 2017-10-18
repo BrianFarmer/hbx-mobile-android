@@ -1,4 +1,4 @@
-package org.dchbx.coveragehq;
+package org.dchbx.coveragehq.planshopping;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -9,6 +9,10 @@ import android.widget.ListView;
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 
+import org.dchbx.coveragehq.BaseActivity;
+import org.dchbx.coveragehq.Events;
+import org.dchbx.coveragehq.R;
+import org.dchbx.coveragehq.ServiceManager;
 import org.dchbx.coveragehq.financialeligibility.FinancialEligibilityService;
 import org.dchbx.coveragehq.models.fe.Family;
 import org.dchbx.coveragehq.statemachine.EventParameters;
@@ -41,7 +45,7 @@ public class FamilyActivity extends BaseActivity {
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)
-    public void doThis(Events.GetPlanShoppingResult  getPlanShoppingResult) throws Exception {
+    public void doThis(Events.GetPlanShoppingResult getPlanShoppingResult) throws Exception {
         populate();
     }
 

@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">SmallBiz</string>
+    <string name="app_name">DC Health Link</string>
     <string name="title_activity_login">SmallBiz Login</string>
     <string name="title_broker_details">Broker Details</string>
 
@@ -387,12 +387,12 @@ You <font color="#69a30d">favorited %d plans</font>.
     <string name="male">Male</string>
     <string name="female">Female</string>
     <string name="view_my_account">View my account</string>
-    <string name="already_created">If you\'ve already created a DC Health Link account on the web...</string>
-    <string name="want_to_apply">If you want to apply for DC Health Link coverage via your mobile phone...</string>
+    <string name="already_created">If you already have a DC Health Link account</string>
+    <string name="want_to_apply">If you need private health insurance</string>
     <string name="resume_application">Resume Application</string>
     <string name="forgot_your_password">Forgot Your Password?</string>
     <string name="your_mobile_password">Your Mobile Password</string>
-    <string name="to_protect_your_privacy">To protect your privacy , we\'ll create a password for you to save your application on your mobile device.</string>
+    <string name="to_protect_your_privacy">To protect your privacy, we\’ll create a unique password that saves your application to your mobile device.</string>
     <string name="if_you_apply">If you apply for coverage on the web, we won\'t be able to process your mobile application.</string>
     <string name="want_to_apply_financial">Do you want to apply for financial assistance for the upcoming year?</string>
     <string name="once_you_start">Once you start an application you cannot change this.</string>
@@ -409,9 +409,10 @@ You <font color="#69a30d">favorited %d plans</font>.
     <string name="applicants_ineligible">Some applicants\nare ineligible.</string>
     <string name="receive_notice">You will receive a notice from DC Health Link explaining why they don\'t qualify.</string>
     <string name="choose_plan">Choose Plan</string>
-    <string name="you_ve_selected_this_plan">You\'ve selected this plan...</string>
+    <string name="you_ve_selected_this_plan">You\'ve selected\nthis plan...</string>
     <string name="confirm">Confirm</string>
     <string name="submit_my_application">Submit My Application</string>
+    <string name="submit_your_application">Submit Your\nApplication</string>
     <string name="terms_and_conditions_content">
 <![CDATA[
 <font color="#414141" face="sans-serif">
@@ -436,12 +437,46 @@ You <font color="#69a30d">favorited %d plans</font>.
     </string>
     <string name="last_step">This is the last step.</string>
     <string name="sign_electronically">Sign Electronically.</string>
-    <string name="must_report">I understand that I must report any changes that might affect my eligibility, or the eligibility of a household member for health insurance. I can report changes by logging in to my account at dchealthlink.com, by calling DC Health Link at (855) 532-5465, by sending information by US mail, or providing it in-person to one of the Department of Human Services\' Service Centers.  I know that some personal information may be collected from other sources, such as District of Columbia or federal databases that can verify information I provided.  I\'m the person whose name appears in the signature line below. I attest that I have permission from all the people listed on this application to submit the application on their behalf.</string>
+    <string name="must_report" formatted="false">
+<![CDATA[
+<font color="#414141" face="sans-serif">
+    <p>
+        I understand that I must report any changes that might affect my eligibility, or the eligibility of a household member for health insurance. I can report changes by logging in to my account at <a href="https://dchealthlink.com">dchealthlink.com</a>, by calling DC Health Link at (855)532-5465, by sending information by US mail, or providing it in-person to one of the Department of Human Services\' Service Centers.
+    </p>
+    <p>
+        I know that some personal information may be collected from other sources, such as District of Columbia or federal databases that can verify information I provided.
+    </p>
+    I\'m the person whose name appears in the signature line below. I attest that I have permission from all the people listed on this application to submit the application on their behalf.
+</font>
+]]>
+    </string>
+
+
+
+
+    <string name="i_understand" formatted="false">
+<![CDATA[
+    <font color="#414141" face="sans-serif">
+        <p>
+            I understand that I\'m submitting an application for health insurance, and that information I provided will be used to decide eligibility for each applicant. I\'ve reviewed the information in this application, and I attest under penalty of perjury that it\'s accurate and complete to the best of my knowledge. I understand that if I\'m not truthful, there may be a penalty, including, but not limited to:
+        </p>
+        <p>• Retroactive termination of my coverage and an obligation to repay all medical claims previously covered by the health insurance company.</p>
+        • Civil or criminal prosecution by federal or District of Columbia authorities.
+    </font>
+]]>
+    </string>
+
+
+
+
+
     <string name="open_enrollment_closed_content" formatted="false">
 <![CDATA[
 <font color="#414141" face="sans-serif">
     <p>
-        Open enrollment is over, but you may still qualify to enroll now.\n\nSee if you qualify for special enrollment by visiting
+        Open enrollment is over, but you may still qualify to enroll now.
+    </p>
+    <p>nSee if you qualify for special enrollment by visiting
         <a href="https://www.dchealthlink.com/individuals">www.dchealthlink.com/individuals</a>
         or call us at <a href="tel:8555325465">(855)532-5465</a>.</p>
     </p>
@@ -454,8 +489,9 @@ You <font color="#69a30d">favorited %d plans</font>.
     <string name="dental_coverage_content">
 <![CDATA[
 <font color="#414141" face="sans-serif">
-    <p>You can only use DC Health Link Mobile to buy health care coverage for the upcoming plan year.</p>
-    <p>To sign up for dental coverage, visit <a href="https://dchealthlink.com">DCHealthLink.com.</a>
+    <p>You can only use DC Health Link Mobile to buy private health insurnace for the upcoming plan year.</p>
+    <p>To sign up for dental coverage, goto <a href="https://dchealthlink.com">DCHealthLink.com</a>
+     on your computer, or call us at <a href="tel:855-532-5465">(855) 532-5465.</a>
     </p>
 </font>
 ]]>
@@ -477,8 +513,8 @@ You <font color="#69a30d">favorited %d plans</font>.
     <string name="coverage_this_year_content">
 <![CDATA[
 <font color="#414141" face="sans-serif">
-    <p>You can only use DC Health Link Mobile to buy health care coverage for the upcoming plan year.</p>
-    <p>You may be able to sign up for a plan that starts before Jaunary 1, 2018 if you\'ve had a recent, major life change like losing other insurance or moving to DC.</p>
+    <p>You can only use DC Health Link Mobile to buy private health insurance for the upcoming plan year.</p>
+    <p>You may be able to sign up for a plan that starts before January 1, 2018 if you’ve had a major life change, like losing other health insurance or moving to DC. To see if you qualify, go to dchealthlink.com on your computer, or call us at <a href="tel:855-532-5465">(855) 532-5465.</a></p>
     <p>To see if you qualify, visit <a href="https://dchealthlink.com">DCHealthLink.com.</a>
     </p>
 </font>
@@ -495,7 +531,7 @@ You <font color="#69a30d">favorited %d plans</font>.
 <![CDATA[
 <font color="#414141" face="sans-serif">
     <p>You can only use DC Health Link Mobile to buy a full-price private insurance plan.</p>
-    <p>To find out whether you\'d qualify for a tax credit or Medicaid, you can use tha <a href="https://dc.checkbookhealth.org/hie/DC/2017/search.cfm">financial calculator</a> on our website.</p>
+    <p>To find out if you qualify for tax credit savings or Medicaid, use our Savings Calculator, or call us at <a href="855-532-5465">(855) 532-5465</a>. Select CONTINUE if you don’t need help.</p>
     <p>To apply for a Medicaid or tax credit savings, visit <a href="https://dchealthlink.com">DCHealthLink.com</a>.
     </p>
 </font>
@@ -521,9 +557,9 @@ You <font color="#69a30d">favorited %d plans</font>.
     </string>
     <string name="dental_coverage">Dental Coverage</string>
     <string name="open_enrollment_closed">Open Enrollment is currrently close</string>
-    <string name="i_want_to">I want to...</string>
-    <string name="full_price_plan">Do you want to buy a full-price health insurance plan?</string>
-    <string name="mobile_password">Your mobile password.</string>
+    <string name="i_want_to">I want to</string>
+    <string name="full_price_plan">Do you want to buy\na full-price health insurance plan?</string>
+    <string name="mobile_password">Your mobile password</string>
     <string name="help_paying_for_coverage">Help paying for coverage.</string>
     <string name="we_are_required_to_verify_content">
 <![CDATA[
@@ -555,10 +591,12 @@ You <font color="#69a30d">favorited %d plans</font>.
     <string name="minDateValidationError" formatted="false">%s cannot be before %tm/%td/%tY</string>
     <string name="maxDateValidationError" formatted="false">%s cannot be after %tm/%td/%tY</string>
     <string name="invalidDateValidationError" formatted="false">Please enter a valid date for %s</string>
+    <string name="firstCheckBox">firstCheckBox</string>
+    <string name="secondCheckBox">secondCheckBox</string>
     <string name="dateOfBirth">Date of Birth</string>
     <string name="ssnValidationError">Please enter a valid Social Security Number</string>
     <string name="check_status_now">Check Status Now</string>
     <string name="congratulations">Congratulations!</string>
-    <string name="coverage_after">Get healthcare coverage that starts on or after %s.</string>
-    <string name="coverage_before">Get Healthcare coverage that starts before %s.</string>
+    <string name="coverage_after">Get healthcare coverage that starts on or after %s</string>
+    <string name="coverage_before">Get Healthcare coverage that starts before %s</string>
 </resources>

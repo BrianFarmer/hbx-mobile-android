@@ -4,14 +4,15 @@ import org.dchbx.coveragehq.CoverageException;
 
 import java.io.IOException;
 
-public class HideWait implements StateMachineAction {
+public class HideWait extends StateMachineAction {
 
     public HideWait(){
     }
 
 
     @Override
-    public void call(StateMachine stateMachine, StateManager stateManager, StateManager.AppEvents event, StateManager.AppStates leavingState, StateManager.AppStates enterState, EventParameters intentParameters) throws IOException, CoverageException {
+    public boolean call(StateMachine stateMachine, StateManager stateManager, StateManager.AppEvents event, StateManager.AppStates leavingState, StateManager.AppStates enterState, EventParameters intentParameters) throws IOException, CoverageException {
         stateManager.hideWait();
+        return false;
     }
 }

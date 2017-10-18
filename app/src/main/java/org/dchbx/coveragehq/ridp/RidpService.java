@@ -4,10 +4,9 @@ import android.content.Intent;
 import android.util.Log;
 
 import com.google.gson.GsonBuilder;
-import com.google.gson.JsonArray;
-import com.google.gson.JsonObject;
 
 import org.dchbx.coveragehq.BrokerApplication;
+import org.dchbx.coveragehq.BrokerWorker;
 import org.dchbx.coveragehq.ConfigurationStorageHandler;
 import org.dchbx.coveragehq.ConnectionHandler;
 import org.dchbx.coveragehq.DateTimeDeserializer;
@@ -21,7 +20,6 @@ import org.dchbx.coveragehq.Messages;
 import org.dchbx.coveragehq.StateProcessor;
 import org.dchbx.coveragehq.UrlHandler;
 import org.dchbx.coveragehq.models.account.Account;
-import org.dchbx.coveragehq.models.fe.Family;
 import org.dchbx.coveragehq.models.ridp.Address;
 import org.dchbx.coveragehq.models.ridp.Answer;
 import org.dchbx.coveragehq.models.ridp.Answers;
@@ -49,7 +47,6 @@ import org.joda.time.format.DateTimeFormatter;
 import org.joda.time.format.ISODateTimeFormat;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 
 import static org.dchbx.coveragehq.statemachine.StateManager.AppEvents.Error;
 import static org.dchbx.coveragehq.statemachine.StateManager.AppEvents.GetQuestionsOperationComplete;
@@ -130,6 +127,13 @@ public class RidpService extends StateProcessor {
         return identity;
     }
 
+    @Subscribe(threadMode = ThreadMode.BACKGROUND)
+    public void doThis(Events.GetCreateAccountInfo getCreateAccountInfo){
+            org.dchbx.coveragehq.models.account.Account account = serviceManager.getRidpService().getCreateAccountInfo();
+            messages.getCreateAccountInfoResult(account);
+    }
+
+
     public org.dchbx.coveragehq.models.account.Account getCreateAccountInfo() {
         return serviceManager.getConfigurationStorageHandler().readAccount();
     }
@@ -174,16 +178,6 @@ public class RidpService extends StateProcessor {
             Log.e(TAG, "exception processing http request");
             messages.getEventBus().post(new Events.Error("Error processing RidpService.signUp", e.getMessage()));
         }
-    }
-
-    private void configureFamily(Account account) {
-        Family family = new Family();
-        JsonArray personArray = new JsonArray();
-        family.Person = personArray;
-        JsonObject person = new JsonObject();
-        person.addProperty("", "");
-        family.Relationship = new HashMap<>();
-        family.Attestation = new JsonObject();
     }
 
     private SignUp buildSignUp(VerifyIdentityResponse verifiyIdentityResponse, Account account) {
@@ -242,6 +236,7 @@ public class RidpService extends StateProcessor {
         UrlHandler urlHandler = serviceManager.getUrlHandler();
         final EventParameters eventParameters = verificationResponse.getEventParameters();
         QuestionsAndAnswers questionsAndAnswers = (RidpService.QuestionsAndAnswers) eventParameters.getObject(QuestionsAndAnswers, QuestionsAndAnswers.class);
+        final Account account = (org.dchbx.coveragehq.models.account.Account) eventParameters.getObject(Account, Account.class);
 
         UrlHandler.HttpRequest request = urlHandler.getAnswersRequest(questionsAndAnswers.answers);
         serviceManager.getConnectionHandler().process(request, new IConnectionHandler.OnCompletion() {
@@ -259,6 +254,9 @@ public class RidpService extends StateProcessor {
                             messages.appEvent(StateManager.AppEvents.UserVerifiedFoundYou, eventParameters);
                             break;
                         case OkToCreateAccount:
+                            ConfigurationStorageHandler configurationStorageHandler = serviceManager.getConfigurationStorageHandler();
+                            configurationStorageHandler.clearUqhpFamily();
+                            configurationStorageHandler.store(account);
                             messages.appEvent(StateManager.AppEvents.UserVerifiedOkToCreate, eventParameters);
                             break;
                     }

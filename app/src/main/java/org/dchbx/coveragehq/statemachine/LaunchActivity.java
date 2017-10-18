@@ -4,7 +4,7 @@ import org.dchbx.coveragehq.CoverageException;
 
 import java.io.IOException;
 
-public class LaunchActivity implements StateMachineAction {
+public class LaunchActivity extends StateMachineAction {
     private StateManager.UiActivity uiActivity;
 
     public LaunchActivity(StateManager.UiActivity uiActivity){
@@ -12,10 +12,11 @@ public class LaunchActivity implements StateMachineAction {
     }
 
     @Override
-    public void call(StateMachine stateMachine, StateManager stateManager, StateManager.AppEvents event,
-                     StateManager.AppStates leavingState, StateManager.AppStates enterState,
-                     EventParameters eventParameters) throws IOException, CoverageException {
+    public boolean call(StateMachine stateMachine, StateManager stateManager, StateManager.AppEvents event,
+                        StateManager.AppStates leavingState, StateManager.AppStates enterState,
+                        EventParameters eventParameters) throws IOException, CoverageException {
         stateMachine.push(new ActivityInfo(enterState, event, uiActivity));
         stateManager.launchActivity(uiActivity, eventParameters);
+        return false;
     }
 }

@@ -41,7 +41,7 @@
     <application
         android:name=".BrokerApplication"
         android:allowBackup="true"
-        android:icon="@drawable/launcher_icon"
+        android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
@@ -104,7 +104,7 @@
             android:label=""
             />
         <activity
-            android:name=".FamilyActivity"
+            android:name=".planshopping.FamilyActivity"
             android:configChanges="orientation|keyboardHidden|screenSize"
             android:label=""
             android:windowSoftInputMode="adjustPan"

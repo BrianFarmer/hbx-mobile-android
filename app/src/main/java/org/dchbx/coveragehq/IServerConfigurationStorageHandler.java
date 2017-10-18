@@ -37,6 +37,9 @@ public abstract class IServerConfigurationStorageHandler {
     public abstract void clearAnswers();
     public abstract VerifyIdentityResponse readVerifiyIdentityResponse();
     public abstract String readStateString();
+
+    public abstract void clearUqhpFamily();
+
     public abstract Family readUqhpFamily();
     public abstract void storeUqhpFamily(Family family);
     public abstract UqhpDetermination readUqhpDetermination();

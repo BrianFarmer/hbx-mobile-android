@@ -4,17 +4,18 @@ import org.dchbx.coveragehq.CoverageException;
 
 import java.io.IOException;
 
-public class PopActivity implements StateMachineAction {
+public class PopActivity extends StateMachineAction {
     private StateManager.UiActivity uiActivity;
 
     public PopActivity(){
     }
 
     @Override
-    public void call(StateMachine stateMachine, StateManager stateManager, StateManager.AppEvents event,
+    public boolean call(StateMachine stateMachine, StateManager stateManager, StateManager.AppEvents event,
                      StateManager.AppStates leavingState, StateManager.AppStates enterState,
                      EventParameters eventParameters) throws IOException, CoverageException {
         StateInfoBase pop = stateMachine.getStatesStack().pop();
         stateManager.popActivity(uiActivity, eventParameters);
+        return false;
     }
 }

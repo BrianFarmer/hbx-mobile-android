@@ -21,8 +21,8 @@ import java.io.IOException;
     along with DC Health Link SmallBiz.  If not, see <http://www.gnu.org/licenses/>.
     This statement should go near the beginning of every source file, close to the copyright notices. When using the Lesser GPL, insert the word “Lesser” before “General” in all three places. When using the GNU AGPL, insert the word “Affero” before “General” in all three places.
 */
-public interface StateMachineAction {
-    public abstract void call(StateMachine stateMachine, StateManager stateManager,
-              StateManager.AppEvents event, StateManager.AppStates leavingState,
-              StateManager.AppStates enterState, EventParameters intentParameters) throws IOException, CoverageException;
+public abstract class StateMachineAction {
+    public abstract boolean call(StateMachine stateMachine, StateManager stateManager,
+                                 StateManager.AppEvents event, StateManager.AppStates leavingState,
+                                 StateManager.AppStates enterState, EventParameters intentParameters) throws IOException, CoverageException;
 }
