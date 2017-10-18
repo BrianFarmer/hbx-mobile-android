@@ -1,4 +1,4 @@
-package org.dchbx.coveragehq.models.Security;
+package org.dchbx.coveragehq.models.ridp;
 
 /*
     This file is part of DC.
@@ -18,20 +18,12 @@ package org.dchbx.coveragehq.models.Security;
     This statement should go near the beginning of every source file, close to the copyright notices. When using the Lesser GPL, insert the word “Lesser” before “General” in all three places. When using the GNU AGPL, insert the word “Affero” before “General” in all three places.
 */
 
+import com.google.gson.annotations.Expose;
+import com.google.gson.annotations.SerializedName;
 
-public class Endpoints {
-    public String enroll_server;
-    public String plan_endpoint;
-    public String verify_identity_endpoint;
-    public String verify_identity_answers_endpoint;
-    public String verify_identity_check_override_endpoint;
-    public String local_sign_up_endpoint;
-    public String local_login_endpoint;
-    public String local_logout_endpoint;
-    public String uqhp_application_schema_endpoint;
-    public String faa_application_schema_endpoint;
-    public String effective_date_endpoint;
-    public String open_enrollment_status_endpoint;
-    public String glossary_endpoint;
+public class VerificationResult {
 
+    @SerializedName("transaction_id")
+    @Expose
+    public String transactionId;
 }

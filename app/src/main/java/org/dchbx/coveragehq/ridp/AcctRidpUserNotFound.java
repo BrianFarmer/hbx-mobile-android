@@ -1,14 +1,15 @@
 package org.dchbx.coveragehq.ridp;
 
-import android.content.Intent;
 import android.databinding.DataBindingUtil;
+import android.databinding.ViewDataBinding;
 import android.os.Bundle;
+import android.widget.ImageButton;
 
 import org.dchbx.coveragehq.BaseActivity;
 import org.dchbx.coveragehq.R;
-import org.dchbx.coveragehq.databinding.AcctPiiBinding;
-import org.dchbx.coveragehq.models.account.Account;
-import org.dchbx.coveragehq.statemachine.EventParameters;
+import org.dchbx.coveragehq.databinding.AcctRidpUserNotFoundBinding;
+import org.dchbx.coveragehq.databinding.AcctSystemFoundYouBinding;
+import org.dchbx.coveragehq.models.ridp.VerifyIdentityResponse;
 import org.dchbx.coveragehq.statemachine.StateManager;
 
 /*
@@ -28,34 +29,31 @@ import org.dchbx.coveragehq.statemachine.StateManager;
     along with DC Health Link SmallBiz.  If not, see <http://www.gnu.org/licenses/>.
     This statement should go near the beginning of every source file, close to the copyright notices. When using the Lesser GPL, insert the word “Lesser” before “General” in all three places. When using the GNU AGPL, insert the word “Affero” before “General” in all three places.
 */
-public class AcctPreAuthActivity extends BaseActivity {
-    public static StateManager.UiActivity uiActivity = new StateManager.UiActivity(AcctPreAuthActivity.class);
+public class AcctRidpUserNotFound extends BaseActivity {
+    public static StateManager.UiActivity uiActivity = new StateManager.UiActivity(AcctRidpUserNotFound.class);
 
-    private static String TAG = "AcctPreAuthActivity";
-    AcctPiiBinding binding;
+    private AcctRidpUserNotFoundBinding binding;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        binding = DataBindingUtil.setContentView(this, R.layout.acct_pii);
         super.onCreate(savedInstanceState);
-
-        htmlifyTextControl(R.id.weWillKeep);
-        htmlifyTextControl(R.id.youCanComplete);
-        htmlifyTextControl(R.id.asPartOf);
-        htmlifyTextControl(R.id.learnMoreAbout);
-        htmlifyTextControl(R.id.viewPrivacy);
-        htmlifyTextControl(R.id.byClickingContinue);
+        binding = DataBindingUtil.setContentView(this, R.layout.acct_ridp_user_not_found);
         configToolbar();
-
-        Intent intent = getIntent();
-        int newStateInt = intent.getExtras().getInt("NewState");
-        Account account = RidpService.getAccountFromIntent(intent);
-        StateManager.AppStates state = StateManager.AppStates.values()[newStateInt];
-        binding.setAccount(account);
         binding.setActivity(this);
+        htmlifyTextControl(R.id.ridp_user_not_found_label);
     }
 
-    public void onClick(Account account){
-        getMessages().appEvent(StateManager.AppEvents.Continue, EventParameters.build().add("Account", account));
+    public void callHbxClicked(){
+        callPhoneNumber("202-715-7576");
     }
+
+    public void reviewYourResponsesClicked(){
+        getMessages().appEvent(StateManager.AppEvents.ReviewRidpResponses);
+    }
+
+    public void comeBackLaterClicked(){
+        getMessages().appEvent(StateManager.AppEvents.Close);
+    }
+
+
 }

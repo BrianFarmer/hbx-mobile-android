@@ -1,6 +1,7 @@
 package org.dchbx.coveragehq;
 
 import android.net.Uri;
+import android.support.annotation.NonNull;
 import android.util.Log;
 
 import com.google.gson.Gson;
@@ -112,10 +113,7 @@ public abstract class UrlHandler {
         request.postParameters = postParameters;
         request.requestType = HttpRequest.RequestType.Post;
         return request;
-
     }
-
-
 
     public GetParameters getBrokerAgencyParameters() {
         GetParameters getParameters = new GetParameters();
@@ -410,7 +408,7 @@ public abstract class UrlHandler {
 
     public HttpRequest getPlansParameters(LocalDate year, ArrayList<Integer> ages) {
         GetParameters parameters = new GetParameters();
-        String queryParameters = "?coverage_kind=health&active_year=2017"; // + year.getYear();
+        String queryParameters = "?coverage_kind=health&active_year=" + year.getYear();
         for (Integer age : ages) {
             queryParameters = queryParameters + "&ages=" + age.toString();
         }
@@ -451,7 +449,8 @@ public abstract class UrlHandler {
         }
         serverConfiguration.planEndpoint = endpoints.plan_endpoint;
         serverConfiguration.verifyIdentityEndpoint = endpoints.verify_identity_endpoint;
-        serverConfiguration.verifyIdentityAnswersEndpoint = endpoints.verify_identity_answers_endpoint ;
+        serverConfiguration.verifyIdentityAnswersEndpoint = endpoints.verify_identity_answers_endpoint;
+        serverConfiguration.verifyIdentityCheckOverrideEndpoint = endpoints.verify_identity_check_override_endpoint;
         serverConfiguration.localSignUpEndpoint = endpoints.local_sign_up_endpoint;
         serverConfiguration.localLoginEndpoint = endpoints.local_login_endpoint;
         serverConfiguration.localLogoutEndpoint = endpoints.local_logout_endpoint;
@@ -537,26 +536,21 @@ public abstract class UrlHandler {
         return parser.parseRidpQuestions(response.body);
     }
 
-    public HttpRequest getAnswersRequest(Answers answers) {
-        PostParameters postParameters = new PostParameters();
-        if (serverConfiguration.verifyIdentityAnswersEndpoint.substring(0, 4).toLowerCase().compareTo("http") == 0){
-            postParameters.url = HttpUrl.parse(serverConfiguration.verifyIdentityAnswersEndpoint);
-        } else {
-            postParameters.url = new HttpUrl.Builder()
-                    .scheme(serverConfiguration.loginInfo.scheme)
-                    .host(serverConfiguration.loginInfo.host)
-                    .addPathSegments(serverConfiguration.verifyIdentityAnswersEndpoint)
-                    .port(serverConfiguration.loginInfo.port)
-                    .build();
-        }
-        String jsonString = (new Gson()).toJson(answers);
-        postParameters.requestBody = RequestBody.create(JSON, jsonString);
-        postParameters.requestString = jsonString;
+    private boolean isWebUrl(String endpoint){
+        return endpoint != null && endpoint.substring(0, 4).toLowerCase().compareTo("http") == 0;
+    }
 
-        HttpRequest request = new HttpRequest();
-        request.postParameters = postParameters;
-        request.requestType = HttpRequest.RequestType.Post;
-        return request;
+    public HttpRequest getRidpOverrideRequest(String transactionId) {
+        String endpoint = serverConfiguration.verifyIdentityCheckOverrideEndpoint;
+        //for now, just hardwiring the string rather than making a structure for it, feel free to change this if you want, Brian.
+        //String jsonString = String.format("{ \"interactive_verification_override_request\": {\"transaction_id\": \"%s\"}}", transactionId);
+        String jsonString = String.format("{ \"transaction_id\": \"%s\"}", transactionId);
+        return createPostRequest(endpoint, jsonString);
+    }
+
+
+    public HttpRequest getAnswersRequest(Answers answers) {
+        return createPostRequest(serverConfiguration.verifyIdentityAnswersEndpoint, (new Gson()).toJson(answers));
     }
 
     public HttpRequest getFinancialEligibilityJson(){
@@ -688,4 +682,25 @@ public abstract class UrlHandler {
         return httpRequest;
     }
 
+    @NonNull
+    private HttpRequest createPostRequest(String endpoint, String postBodyJson) {
+        PostParameters postParameters = new PostParameters();
+        if (isWebUrl(endpoint)){
+            postParameters.url = HttpUrl.parse(endpoint);
+        } else {
+            postParameters.url = new HttpUrl.Builder()
+                    .scheme(serverConfiguration.loginInfo.scheme)
+                    .host(serverConfiguration.loginInfo.host)
+                    .addPathSegments(endpoint)
+                    .port(serverConfiguration.loginInfo.port)
+                    .build();
+        }
+        postParameters.requestBody = RequestBody.create(JSON, postBodyJson);
+        postParameters.requestString = postBodyJson;
+
+        HttpRequest request = new HttpRequest();
+        request.postParameters = postParameters;
+        request.requestType = HttpRequest.RequestType.Post;
+        return request;
+    }
 }

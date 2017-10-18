@@ -1,14 +1,11 @@
 package org.dchbx.coveragehq.ridp;
 
-import android.content.Intent;
 import android.databinding.DataBindingUtil;
 import android.os.Bundle;
 
 import org.dchbx.coveragehq.BaseActivity;
 import org.dchbx.coveragehq.R;
-import org.dchbx.coveragehq.databinding.AcctPiiBinding;
-import org.dchbx.coveragehq.models.account.Account;
-import org.dchbx.coveragehq.statemachine.EventParameters;
+import org.dchbx.coveragehq.databinding.AcctRidpConnectionFailureBinding;
 import org.dchbx.coveragehq.statemachine.StateManager;
 
 /*
@@ -28,34 +25,34 @@ import org.dchbx.coveragehq.statemachine.StateManager;
     along with DC Health Link SmallBiz.  If not, see <http://www.gnu.org/licenses/>.
     This statement should go near the beginning of every source file, close to the copyright notices. When using the Lesser GPL, insert the word “Lesser” before “General” in all three places. When using the GNU AGPL, insert the word “Affero” before “General” in all three places.
 */
-public class AcctPreAuthActivity extends BaseActivity {
-    public static StateManager.UiActivity uiActivity = new StateManager.UiActivity(AcctPreAuthActivity.class);
+public class AcctRidpConnectionFailure extends BaseActivity {
+    public static StateManager.UiActivity uiActivity = new StateManager.UiActivity(AcctRidpConnectionFailure.class);
 
-    private static String TAG = "AcctPreAuthActivity";
-    AcctPiiBinding binding;
+    private AcctRidpConnectionFailureBinding binding;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        binding = DataBindingUtil.setContentView(this, R.layout.acct_pii);
         super.onCreate(savedInstanceState);
-
-        htmlifyTextControl(R.id.weWillKeep);
-        htmlifyTextControl(R.id.youCanComplete);
-        htmlifyTextControl(R.id.asPartOf);
-        htmlifyTextControl(R.id.learnMoreAbout);
-        htmlifyTextControl(R.id.viewPrivacy);
-        htmlifyTextControl(R.id.byClickingContinue);
+        binding = DataBindingUtil.setContentView(this, R.layout.acct_ridp_connection_failure);
         configToolbar();
-
-        Intent intent = getIntent();
-        int newStateInt = intent.getExtras().getInt("NewState");
-        Account account = RidpService.getAccountFromIntent(intent);
-        StateManager.AppStates state = StateManager.AppStates.values()[newStateInt];
-        binding.setAccount(account);
         binding.setActivity(this);
+        htmlifyTextControl(R.id.ridp_user_not_found_label);
     }
 
-    public void onClick(Account account){
-        getMessages().appEvent(StateManager.AppEvents.Continue, EventParameters.build().add("Account", account));
+    public void callHbxClicked(){
+        callPhoneNumber("1-855-532-5464");
     }
+
+    public void tryAgainClicked(){
+        onBackPressed();
+        //this is probably wrong? what's needed is to get back in a state where you can resend the request.
+        //one option -- maybe the easiest -- is just to go Back, presuming that screen still works, and
+        //let the user try again.
+    }
+
+    public void comeBackLaterClicked(){
+        getMessages().appEvent(StateManager.AppEvents.Close);
+    }
+
+
 }

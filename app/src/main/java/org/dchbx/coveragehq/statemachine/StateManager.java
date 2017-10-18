@@ -44,6 +44,10 @@ import org.dchbx.coveragehq.ridp.AcctCreateNewPassword;
 import org.dchbx.coveragehq.ridp.AcctDateOfBirth;
 import org.dchbx.coveragehq.ridp.AcctGenderActivity;
 import org.dchbx.coveragehq.ridp.AcctPreAuthActivity;
+import org.dchbx.coveragehq.ridp.AcctRidpConnectionFailure;
+import org.dchbx.coveragehq.ridp.AcctRidpUserNotFound;
+import org.dchbx.coveragehq.ridp.AcctRidpWrongAnswersLockout;
+import org.dchbx.coveragehq.ridp.AcctRidpWrongAnswersRecoverable;
 import org.dchbx.coveragehq.ridp.AcctSsn;
 import org.dchbx.coveragehq.ridp.AcctSsnWithEmployer;
 import org.dchbx.coveragehq.ridp.AcctSystemFoundYou;
@@ -291,7 +295,8 @@ public class StateManager extends StateProcessor {
         ChooseFinancialAssistance,
         FamilyRelationships,
         GlossaryDialog,
-        CreatingAccount, VerifyingUser, RidpQuestions, GetQuestions,
+        CreatingAccount, VerifyingUser, RidpQuestions, GetQuestions, AcctRidpUserNotFound, AcctRidpClosing,
+        AcctRidpConnectionFailure, AcctRidpWrongAnswersRecoverable, AcctRidpWrongAnswersLockout, AcctRidpCheckingOverride,
         AcctSystemFoundYouInCuramAceds, AcctSsnWithEmployer, AcctSystemFoundYouReturningToLogin, AcctSystemFoundYouClosing,
         FinancialAssitanceQuestions, FeDropDown,
         Wallet, SectionQuestions, EditFamilyRelationShip, Attestation,
@@ -331,6 +336,11 @@ public class StateManager extends StateProcessor {
         OperationComplete,
         ServiceErrorHappened,
         GetQuestionsOperationComplete,
+        RidpConnectionFailure,
+        RidpWrongAnswersRecoverable,
+        RidpWrongAnswersLockout,
+        RidpUserNotFound,
+        ReviewRidpResponses,
         UserVerifiedFoundYou,
         UserVerifiedSsnWithEmployer,
         UserVerifiedOkToCreate,
@@ -352,7 +362,9 @@ public class StateManager extends StateProcessor {
         ReceivedEffectiveDate, InOpenEnrollment, OpenEnrollmentClosed, GetDentalCoverage,
         ForgotPassword, ReceivedUqhpDeterminationHasIneligible, ChoosePlan,
         ContinueMultipleMemberFamily, ContinueSingleMemberFamily, GotPlans,
-        BuyPlanConfirmed, ChoosePlanSucessful, CheckStatusNow, ComeBackLater, SubmitMyApplicationClicked, PlanShoppingEditFamilyMember, ClearedPII
+
+        RidpCheckOverride, ClearedPII,
+        BuyPlanConfirmed, ChoosePlanSucessful, CheckStatusNow, ComeBackLater, SubmitMyApplicationClicked, PlanShoppingEditFamilyMember
     }
 
     public void configStates() {
@@ -404,7 +416,7 @@ public class StateManager extends StateProcessor {
 
 
         initStartupStates(stateMachine);
-        initRidpFeStates(stateMachine);
+        initRidpStates(stateMachine);
         initUQHPStates(stateMachine);
         initBasicPlanShoppingStates(stateMachine);
         initWalletStates(stateMachine);
@@ -481,7 +493,7 @@ public class StateManager extends StateProcessor {
     }
 
 
-    private void initRidpFeStates(StateMachine stateMachine) {
+    private void initRidpStates(StateMachine stateMachine) {
 
         // Auth for new account.
 
@@ -493,13 +505,38 @@ public class StateManager extends StateProcessor {
         stateMachine.from(AppStates.AcctSsn).on(AppEvents.Continue).to(AppStates.AcctAuthConsent, new LaunchActivity(AcctAuthConsent.uiActivity));
         stateMachine.from(AppStates.AcctAuthConsent).on(AppEvents.ConsentGiven).to(AppStates.GetQuestions, new BackgroundProcess(Events.GetRidpQuestions.class));
         stateMachine.from(AppStates.AcctAuthConsent).on(AppEvents.ConsentDenied).to(AppStates.Login, new LaunchActivity(AcctSystemFoundYouAceds.uiActivity));
+        stateMachine.from(AppStates.GetQuestions).on(AppEvents.RidpUserNotFound).to(AppStates.AcctRidpUserNotFound, new PopAndLaunchActivity(AcctRidpUserNotFound.uiActivity));
+        stateMachine.from(AppStates.GetQuestions).on(AppEvents.RidpConnectionFailure).to(AppStates.AcctRidpConnectionFailure, new PopAndLaunchActivity(AcctRidpConnectionFailure.uiActivity));
         stateMachine.from(AppStates.GetQuestions).on(AppEvents.GetQuestionsOperationComplete).to(AppStates.RidpQuestions, new LaunchActivity(RidpQuestionsActivity.uiActivity));
         stateMachine.from(AppStates.RidpQuestions).on(AppEvents.Continue).to(AppStates.VerifyingUser, new BackgroundProcess(Events.VerifyUser.class));
         stateMachine.from(AppStates.VerifyingUser).on(AppEvents.UserVerifiedFoundYou).to(AppStates.AcctSystemFoundYou, new LaunchActivity(AcctSystemFoundYou.uiActivity));
         stateMachine.from(AppStates.VerifyingUser).on(AppEvents.UserVerifiedSsnWithEmployer).to(AppStates.AcctSsnWithEmployer, new LaunchActivity(AcctSsnWithEmployer.uiActivity));
         stateMachine.from(AppStates.VerifyingUser).on(AppEvents.UserVerifiedOkToCreate).to(AppStates.CreatingAccount, new BackgroundProcess(Events.CreateAccount.class));
+        stateMachine.from(AppStates.VerifyingUser).on(AppEvents.RidpConnectionFailure).to(AppStates.AcctRidpConnectionFailure, new PopAndLaunchActivity(AcctRidpConnectionFailure.uiActivity));
+        stateMachine.from(AppStates.VerifyingUser).on(AppEvents.RidpWrongAnswersRecoverable).to(AppStates.AcctRidpWrongAnswersRecoverable, new PopAndLaunchActivity(AcctRidpWrongAnswersRecoverable.uiActivity));
+        stateMachine.from(AppStates.VerifyingUser).on(AppEvents.RidpWrongAnswersLockout).to(AppStates.AcctRidpWrongAnswersLockout, new PopAndLaunchActivity(AcctRidpWrongAnswersLockout.uiActivity));
+
         stateMachine.from(AppStates.CreatingAccount).on(AppEvents.SignUpUserInAceds).to(AppStates.AcctSystemFoundYouInCuramAceds, new LaunchActivity(AcctSystemFoundYouAceds.uiActivity));
         stateMachine.from(AppStates.CreatingAccount).on(AppEvents.SignUpSuccessful).to(AppStates.FamilyMembers, new PopAndLaunchActivity(org.dchbx.coveragehq.financialeligibility.FamilyActivity.uiActivity));
+
+        stateMachine.from(AppStates.AcctRidpUserNotFound).on(AppEvents.ReviewRidpResponses).to(AppStates.AcctCreate, new PopAndLaunchActivity(AcctCreate.uiActivity));
+        stateMachine.from(AppStates.AcctRidpUserNotFound).on(AppEvents.Close).to(AppStates.AcctRidpClosing, new StateManager.BackgroundProcess(Events.ClearPIIRequest.class));
+        stateMachine.from(AppStates.AcctRidpClosing).on(AppEvents.ClearedPII).to(AppStates.Hello, new PopAndLaunchActivity(HelloActivity.uiActivity));
+
+        stateMachine.from(AppStates.AcctRidpConnectionFailure).on(AppEvents.Close).to(AppStates.AcctRidpClosing, new StateManager.BackgroundProcess(Events.ClearPIIRequest.class));
+        stateMachine.from(AppStates.AcctRidpClosing).on(AppEvents.ClearedPII).to(AppStates.Hello, new PopAndLaunchActivity(HelloActivity.uiActivity));
+
+        stateMachine.from(AppStates.AcctRidpWrongAnswersRecoverable).on(AppEvents.RidpCheckOverride).to(AppStates.AcctRidpCheckingOverride, new StateManager.BackgroundProcess(Events.RidpCheckOverride.class));
+        stateMachine.from(AppStates.AcctRidpWrongAnswersRecoverable).on(AppEvents.Close).to(AppStates.AcctRidpClosing, new StateManager.BackgroundProcess(Events.ClearPIIRequest.class));
+        stateMachine.from(AppStates.AcctRidpClosing).on(AppEvents.ClearedPII).to(AppStates.Hello, new PopAndLaunchActivity(HelloActivity.uiActivity));
+
+        stateMachine.from(AppStates.AcctRidpCheckingOverride).on(AppEvents.UserVerifiedFoundYou).to(AppStates.AcctSystemFoundYou, new LaunchActivity(AcctSystemFoundYou.uiActivity));
+        stateMachine.from(AppStates.AcctRidpCheckingOverride).on(AppEvents.UserVerifiedSsnWithEmployer).to(AppStates.AcctSsnWithEmployer, new LaunchActivity(AcctSsnWithEmployer.uiActivity));
+        stateMachine.from(AppStates.AcctRidpCheckingOverride).on(AppEvents.UserVerifiedOkToCreate).to(AppStates.CreatingAccount, new BackgroundProcess(Events.CreateAccount.class));
+        stateMachine.from(AppStates.AcctRidpCheckingOverride).on(AppEvents.RidpConnectionFailure).to(AppStates.AcctRidpConnectionFailure, new PopAndLaunchActivity(AcctRidpConnectionFailure.uiActivity));
+        stateMachine.from(AppStates.AcctRidpCheckingOverride).on(AppEvents.RidpWrongAnswersLockout).to(AppStates.AcctRidpWrongAnswersLockout, new PopAndLaunchActivity(AcctRidpWrongAnswersLockout.uiActivity));
+
+        stateMachine.from(AppStates.AcctRidpWrongAnswersLockout).on(AppEvents.Close).to(AppStates.AcctRidpClosing, new StateManager.BackgroundProcess(Events.ClearPIIRequest.class));
 
         // Auth for new password.
 

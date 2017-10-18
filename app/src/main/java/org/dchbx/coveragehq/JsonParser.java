@@ -20,6 +20,7 @@ import org.dchbx.coveragehq.models.planshopping.Plan;
 import org.dchbx.coveragehq.models.ridp.Questions;
 import org.dchbx.coveragehq.models.ridp.SignUp.SignUpResponse;
 import org.dchbx.coveragehq.models.ridp.VerifyIdentityResponse;
+import org.dchbx.coveragehq.models.ridp.WrongAnswersResponse;
 import org.dchbx.coveragehq.models.roster.Roster;
 import org.dchbx.coveragehq.models.roster.RosterEntry;
 import org.dchbx.coveragehq.models.roster.SummaryOfBenefits;
@@ -196,6 +197,10 @@ public class JsonParser {
 
     public VerifyIdentityResponse parseVerificationResponse(String body) {
         return parse(body, VerifyIdentityResponse.class);
+    }
+
+    public WrongAnswersResponse parseWrongAnswersResponse(String body) {
+        return parse(body, WrongAnswersResponse.class);
     }
 
     public SignUpResponse parseSignUpResponse(String body) {

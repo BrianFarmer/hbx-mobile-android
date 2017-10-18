@@ -4,6 +4,7 @@ import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.Intent;
 import android.content.res.Resources;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
@@ -215,6 +216,12 @@ public class BaseActivity extends AppCompatActivity {
 
     protected void installSimpleAlertClickListener(final int id, final int title, final int text) {
         findViewById(id).setOnClickListener(clickForSimpleAlert(title, text));
+    }
+
+    public void callPhoneNumber(String phoneNumber){
+        Intent intent = new Intent(Intent.ACTION_DIAL);
+        intent.setData(Uri.parse("tel:" + phoneNumber));
+        startActivity(intent);
     }
 
     /*@Override

@@ -1466,4 +1466,7 @@ public class Events {
 
     public static class SubmitApplication extends BackgroundProcess{
     }
+
+    public static class RidpCheckOverride extends BackgroundProcess {
+    }
 }

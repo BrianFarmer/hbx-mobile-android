@@ -36,6 +36,7 @@ import org.dchbx.coveragehq.models.ridp.SignUp.SignUpResponse;
 import org.dchbx.coveragehq.models.ridp.VerifyIdentity;
 import org.dchbx.coveragehq.models.ridp.VerifyIdentityPerson;
 import org.dchbx.coveragehq.models.ridp.VerifyIdentityResponse;
+import org.dchbx.coveragehq.models.ridp.WrongAnswersResponse;
 import org.dchbx.coveragehq.statemachine.EventParameters;
 import org.dchbx.coveragehq.statemachine.StateManager;
 import org.greenrobot.eventbus.Subscribe;
@@ -50,6 +51,10 @@ import java.util.ArrayList;
 
 import static org.dchbx.coveragehq.statemachine.StateManager.AppEvents.Error;
 import static org.dchbx.coveragehq.statemachine.StateManager.AppEvents.GetQuestionsOperationComplete;
+import static org.dchbx.coveragehq.statemachine.StateManager.AppEvents.RidpConnectionFailure;
+import static org.dchbx.coveragehq.statemachine.StateManager.AppEvents.RidpUserNotFound;
+import static org.dchbx.coveragehq.statemachine.StateManager.AppEvents.RidpWrongAnswersLockout;
+import static org.dchbx.coveragehq.statemachine.StateManager.AppEvents.RidpWrongAnswersRecoverable;
 
 /*
     This file is part of DC.
@@ -82,7 +87,7 @@ public class RidpService extends StateProcessor {
         messages = BrokerApplication.getBrokerApplication().getMessages(this);
     }
 
-    private VerifyIdentity veriftyIdentityFromAccount(org.dchbx.coveragehq.models.account.Account account) {
+    private VerifyIdentity verifyIdentityFromAccount(org.dchbx.coveragehq.models.account.Account account) {
         VerifyIdentity identity = new VerifyIdentity();
         identity.person = new VerifyIdentityPerson();
         identity.person.addresses = new ArrayList<>();
@@ -204,23 +209,36 @@ public class RidpService extends StateProcessor {
 
         UrlHandler urlHandler = serviceManager.getUrlHandler();
         ConnectionHandler connectionHandler = serviceManager.getConnectionHandler();
-        VerifyIdentity verifyIdentity = veriftyIdentityFromAccount(account);
+        VerifyIdentity verifyIdentity = verifyIdentityFromAccount(account);
 
         UrlHandler.HttpRequest request = urlHandler.getRidpVerificationParameters(verifyIdentity);
+
         connectionHandler.process(request, new IConnectionHandler.OnCompletion() {
             @Override
             public void onCompletion(IConnectionHandler.HttpResponse response) {
-            if (response.getResponseCode() == 200){
-                Log.d(TAG, "verification request successful");
-                JsonParser parser = new JsonParser();
-                Questions questions = parser.parseRidpQuestions(response.getBody());
-                QuestionsAndAnswers questionsAndAnswers = new QuestionsAndAnswers();
-                questionsAndAnswers.questions = questions;
-                questionsAndAnswers.answers = buildAnswerObject(questions);
-                messages.appEvent(GetQuestionsOperationComplete, eventParameters.add(QuestionsAndAnswers, questionsAndAnswers));
-            } else {
-                messages.appEvent(Error, EventParameters.build().add("error_msg", "An error happened getting the verificaiton questions"));
-            }
+                int responseCode = response.getResponseCode();
+
+                //COMMENT THIS IN TO TEST RIDP ACCOUNT NOT FOUND
+                //responseCode = 401;
+
+                //COMMENT THIS IN TO TEST RIDP UNREACHABLE
+                //responseCode = 503;
+
+                if (responseCode == 200){
+                    Log.d(TAG, "verification request successful");
+                    JsonParser parser = new JsonParser();
+                    Questions questions = parser.parseRidpQuestions(response.getBody());
+                    QuestionsAndAnswers questionsAndAnswers = new QuestionsAndAnswers();
+                    questionsAndAnswers.questions = questions;
+                    questionsAndAnswers.answers = buildAnswerObject(questions);
+                    messages.appEvent(GetQuestionsOperationComplete, eventParameters.add(QuestionsAndAnswers, questionsAndAnswers));
+                } else if (responseCode == 503) {
+                    messages.appEvent(RidpConnectionFailure, eventParameters); //TODO “We're sorry. The third-party service used to confirm your identity is currently unavailable. Please try again later. If you continue to receive this message after trying several times, please call DC Health Link customer service for assistance at 1-855-532-5464.”
+                } else if (responseCode == 401) {
+                    messages.appEvent(RidpUserNotFound, eventParameters);
+                } else {
+                    messages.appEvent(Error, EventParameters.build().add("error_msg", "An error happened getting the verificaiton questions"));
+                }
         }});
     }
 
@@ -242,30 +260,73 @@ public class RidpService extends StateProcessor {
         serviceManager.getConnectionHandler().process(request, new IConnectionHandler.OnCompletion() {
             @Override
             public void onCompletion(IConnectionHandler.HttpResponse response) {
-                if (response.getResponseCode() == 200){
-                    JsonParser parser = serviceManager.getParser();
-                    VerifyIdentityResponse verifiyIdentityResponse = parser.parseVerificationResponse(response.getBody());
-                    eventParameters.add(VerifyIdentityResponse, verifiyIdentityResponse);
-                    switch (determineState(verifiyIdentityResponse)){
-                        case InRoster:
-                            messages.appEvent(StateManager.AppEvents.UserVerifiedSsnWithEmployer, eventParameters);
-                            break;
-                        case InEnroll:
-                            messages.appEvent(StateManager.AppEvents.UserVerifiedFoundYou, eventParameters);
-                            break;
-                        case OkToCreateAccount:
-                            ConfigurationStorageHandler configurationStorageHandler = serviceManager.getConfigurationStorageHandler();
-                            configurationStorageHandler.clearUqhpFamily();
-                            configurationStorageHandler.store(account);
-                            messages.appEvent(StateManager.AppEvents.UserVerifiedOkToCreate, eventParameters);
-                            break;
-                    }
-                } else {
-                    messages.appEvent(StateManager.AppEvents.Error, EventParameters.build().add("error_msg", "Bad Http response processing RidpService.verificationRequest"));
-                }
+                int responseCode = response.getResponseCode();
+                String responseBody = response.getBody();
+
+                               //COMMENT THIS IN TO TEST RIDP WRONG ANSWERS RECOVERABLE
+                // responseCode = 412;
+                // responseBody = "{\n  \"verification_result\": {\n    \"response_code\": \"urn:openhbx:terms:v1:interactive_identity_verification#FAILURE\",\n    \"response_text\": \"You have not passed identity validation. To proceed please contact Experian at 1-866-578-5409, and provide them with reference number 2ffe-a5-1cbf.\",\n    \"transaction_id\": \"2ffe-a5-1cbf\"\n  },\n  \"session\": null,\n  \"ridp_verified\": false\n}";
+                //COMMENT THIS IN TO TEST RIDP WRONG ANSWERS LOCKOUT
+                //responseCode = 403;
+
+                //COMMENT THIS IN TO TEST RIDP UNREACHABLE
+                //responseCode = 503;
+
+                handleVerificationResponse(responseCode, responseBody, eventParameters, account);
 
             }
         });
+    }
+
+
+    @Subscribe(threadMode = ThreadMode.BACKGROUND)
+    public void doThis(final Events.RidpCheckOverride checkOverride) throws Exception {
+        Log.d(TAG, "in RidpService.checkOverride");
+        UrlHandler urlHandler = serviceManager.getUrlHandler();
+        final EventParameters eventParameters = checkOverride.getEventParameters();
+        final Account account = (org.dchbx.coveragehq.models.account.Account) eventParameters.getObject(Account, Account.class);
+        String transactionId = eventParameters.getString("transactionId");
+        UrlHandler.HttpRequest request = urlHandler.getRidpOverrideRequest(transactionId);
+        serviceManager.getConnectionHandler().process(request, new IConnectionHandler.OnCompletion() {
+            @Override
+            public void onCompletion(IConnectionHandler.HttpResponse response) {
+                int responseCode = response.getResponseCode();
+                handleVerificationResponse(responseCode, response.getBody(), eventParameters, account);
+            }
+        });
+    }
+
+    private void handleVerificationResponse(int responseCode, String responseBody,
+                                            EventParameters eventParameters, Account account) {
+
+        if (responseCode == 200){
+            JsonParser parser = serviceManager.getParser();
+            VerifyIdentityResponse verifiyIdentityResponse = parser.parseVerificationResponse(responseBody);
+            eventParameters.add(VerifyIdentityResponse, verifiyIdentityResponse);
+            switch (determineState(verifiyIdentityResponse)){
+                case InRoster:
+                    messages.appEvent(StateManager.AppEvents.UserVerifiedSsnWithEmployer, eventParameters);
+                    break;
+                case InEnroll:
+                    messages.appEvent(StateManager.AppEvents.UserVerifiedFoundYou, eventParameters);
+                    break;
+                case OkToCreateAccount:
+                    ConfigurationStorageHandler configurationStorageHandler = serviceManager.getConfigurationStorageHandler();
+                    configurationStorageHandler.clearUqhpFamily();
+                    configurationStorageHandler.store(account);
+                    messages.appEvent(StateManager.AppEvents.UserVerifiedOkToCreate, eventParameters);
+                    break;
+            }
+        } else if (responseCode == 503) {
+            messages.appEvent(RidpConnectionFailure, eventParameters); //TODO “We're sorry. The third-party service used to confirm your identity is currently unavailable. Please try again later. If you continue to receive this message after trying several times, please call DC Health Link customer service for assistance at 1-855-532-5464.”
+        } else if (responseCode == 412) {
+            WrongAnswersResponse wrongAnswersResponse = serviceManager.getParser().parseWrongAnswersResponse(responseBody);
+            messages.appEvent(RidpWrongAnswersRecoverable, eventParameters.add("transactionId", wrongAnswersResponse.verificationResult.transactionId)); //TODO “You have not passed identity validation. To proceed please contact Experian at 1-866-578-5409, and provide them with reference number {transaction_id}.”
+        } else if (responseCode == 403 || responseCode == 422) {
+            messages.appEvent(RidpWrongAnswersLockout, eventParameters); //TODO “Experian was unable to confirm your identity based on the information you provided. You will need to complete your application at the DC Health Benefit Exchange Authority office at 1225 Eye St NW. Please call (202)715-7576 to set up an appointment..”
+        } else {
+            messages.appEvent(StateManager.AppEvents.Error, EventParameters.build().add("error_msg", "Bad Http response processing RidpService.verificationRequest"));
+        }
     }
 
     private VerifiyIdentityResponseStates determineState(VerifyIdentityResponse verifiyIdentityResponse) {

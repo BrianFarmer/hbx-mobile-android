@@ -348,9 +348,7 @@ public class EmployerDetailsActivity extends BrokerActivity {
 
                     switch (item.getItemId()) {
                         case R.id.nav_call_healthlink:
-                            Intent phoneIntent = new Intent(Intent.ACTION_DIAL);
-                            phoneIntent.setData(Uri.parse("tel:" + Constants.HbxPhoneNumber));
-                            startActivity(phoneIntent);
+                            callPhoneNumber(Constants.HbxPhoneNumber);
                             return true;
                         case R.id.nav_email_healthlink:
                             Intent emailIntent = new Intent(Intent.ACTION_SENDTO);

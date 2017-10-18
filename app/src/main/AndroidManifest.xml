@@ -201,6 +201,26 @@
             android:label=""
             />
         <activity
+            android:name=".ridp.AcctRidpUserNotFound"
+            android:configChanges="orientation|keyboardHidden|screenSize"
+            android:label=""
+            />
+        <activity
+            android:name=".ridp.AcctRidpConnectionFailure"
+            android:configChanges="orientation|keyboardHidden|screenSize"
+            android:label=""
+            />
+        <activity
+            android:name=".ridp.AcctRidpWrongAnswersRecoverable"
+            android:configChanges="orientation|keyboardHidden|screenSize"
+            android:label=""
+            />
+        <activity
+            android:name=".ridp.AcctRidpWrongAnswersLockout"
+            android:configChanges="orientation|keyboardHidden|screenSize"
+            android:label=""
+            />
+        <activity
             android:name=".HelloActivity"
             android:configChanges="orientation|keyboardHidden|screenSize"
             android:label=""
@@ -292,8 +312,8 @@
                   android:label=""
             />
         <activity android:name=".startup.ResumeApplicationActivity"
-                  android:configChanges="orientation|keyboardHidden|screenSize"
-                  android:label=""
+            android:configChanges="orientation|keyboardHidden|screenSize"
+            android:label=""
             />
         <activity android:name=".financialeligibility.EligibleResultsActivity"
                   android:configChanges="orientation|keyboardHidden|screenSize"

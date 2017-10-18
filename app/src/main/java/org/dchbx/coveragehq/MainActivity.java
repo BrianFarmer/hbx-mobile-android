@@ -124,9 +124,7 @@ public class MainActivity extends BrokerActivity {
                             AlertDialog alert = builder.create();
                             alert.show();
                         } else {
-                            Intent phoneIntent = new Intent(Intent.ACTION_DIAL);
-                            phoneIntent.setData(Uri.parse("tel:" + Constants.HbxPhoneNumber));
-                            startActivity(phoneIntent);
+                            callPhoneNumber(Constants.HbxPhoneNumber);
                         }
                         return true;
                     case R.id.nav_email_healthlink:

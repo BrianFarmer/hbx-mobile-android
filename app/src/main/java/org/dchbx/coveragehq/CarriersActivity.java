@@ -50,9 +50,4 @@ public class CarriersActivity extends BrokerActivity {
         listViewCarriers.setAdapter(new CarriersAdapter(this, carriers));
     }
 
-    public void callPhoneNumber(String phoneNumber){
-        Intent intent = new Intent(Intent.ACTION_DIAL);
-        intent.setData(Uri.parse("tel:" + phoneNumber));
-        startActivity(intent);
-    }
 }

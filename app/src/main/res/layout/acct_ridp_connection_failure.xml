@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout  xmlns:android="http://schemas.android.com/apk/res/android">
+    <data>
+        <variable
+            name="activity"
+            type="org.dchbx.coveragehq.ridp.AcctRidpConnectionFailure"/>
+    </data>
+    <android.support.constraint.ConstraintLayout
+                                                 xmlns:app="http://schemas.android.com/apk/res-auto"
+                                                 xmlns:tools="http://schemas.android.com/tools"
+                                                 android:layout_width="match_parent"
+                                                 android:layout_height="match_parent"
+                                                 android:background="@color/white"
+        >
+
+        <android.support.v7.widget.Toolbar
+            android:id="@+id/toolbar"
+            android:layout_height="wrap_content"
+            android:layout_width="0dp"
+            android:fitsSystemWindows="true"
+            android:minHeight="?attr/actionBarSize"
+            android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
+            android:title=""
+            android:background="@color/titlebar"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            />
+
+        <TextView
+            android:id="@+id/ridp_user_not_found_label"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:text="@string/ridp_connection_failure_error"
+            android:textAlignment="center"
+            android:textSize="18sp"
+            android:textStyle="bold"
+            android:background="@color/transparent"
+            android:layout_marginTop="45dp"
+            android:layout_marginLeft="43dp"
+            android:layout_marginRight="43dp"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/toolbar"
+            android:linksClickable="true"
+            android:textColorLink="@color/mainblue"
+            />
+
+        <Button
+            android:id="@+id/call_hbx"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:text="@string/call_dc_health_link"
+            android:textColor="@color/white"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/ridp_user_not_found_label"
+            android:layout_marginTop="45dp"
+            android:layout_marginLeft="43dp"
+            android:layout_marginRight="43dp"
+            android:background="@drawable/ivl_button_blue_solid"
+            android:onClick="@{()->activity.callHbxClicked()}"
+            />
+
+        <Button
+            android:id="@+id/tryAgain"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:text="TRY AGAIN"
+            android:textColor="@color/mainblue"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/call_hbx"
+            android:layout_marginTop="23dp"
+            android:layout_marginLeft="43dp"
+            android:layout_marginRight="43dp"
+            android:background="@drawable/ivl_button_blue_border"
+            android:onClick="@{()->activity.tryAgainClicked()}"
+            />
+
+        <Button
+            android:id="@+id/continueButton"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:text="@string/come_back_later"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/tryAgain"
+            android:layout_marginTop="23dp"
+            android:layout_marginLeft="43dp"
+            android:layout_marginRight="43dp"
+            android:background="@drawable/ivl_button_red_solid"
+            android:onClick="@{()->activity.comeBackLaterClicked()}"
+            />
+
+    </android.support.constraint.ConstraintLayout>
+</layout>

@@ -27,6 +27,7 @@ public class ServerConfiguration {
     public String sessionId = null;
     public GitAccounts gitAccounts;
     public String verifyIdentityAnswersEndpoint;
+    public String verifyIdentityCheckOverrideEndpoint;
     public String localSignUpEndpoint;
     public String localLoginEndpoint;
     public String localLogoutEndpoint;

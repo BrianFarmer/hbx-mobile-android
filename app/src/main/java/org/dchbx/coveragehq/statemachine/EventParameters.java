@@ -105,6 +105,15 @@ public class EventParameters {
 
     }
 
+    public String getString(String name) throws Exception {
+        for (EventParameter eventParameter : eventParameters) {
+            if (eventParameter.getName().equals(name)){
+                return ((StringParameter)eventParameter).value;
+            }
+        }
+        throw new Exception("Cannot find string event parameter " + name);
+    }
+
     public int getInteger(String name) throws Exception {
         for (EventParameter eventParameter : eventParameters) {
             if (eventParameter.getName().equals(name)){
