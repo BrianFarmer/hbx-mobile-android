@@ -2,6 +2,7 @@ package org.dchbx.coveragehq;
 
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.util.Base64;
 import android.util.Log;
 
 import com.google.gson.Gson;
@@ -17,7 +18,20 @@ import org.dchbx.coveragehq.models.ridp.VerifyIdentityResponse;
 import org.dchbx.coveragehq.models.startup.EffectiveDate;
 import org.dchbx.coveragehq.models.startup.OpenEnrollmentStatus;
 
+import java.io.UnsupportedEncodingException;
+import java.security.InvalidAlgorithmParameterException;
+import java.security.InvalidKeyException;
+import java.security.NoSuchAlgorithmException;
+import java.security.spec.InvalidKeySpecException;
+import java.security.spec.InvalidParameterSpecException;
 import java.util.HashMap;
+
+import javax.crypto.BadPaddingException;
+import javax.crypto.Cipher;
+import javax.crypto.IllegalBlockSizeException;
+import javax.crypto.NoSuchPaddingException;
+import javax.crypto.SecretKey;
+import javax.crypto.spec.SecretKeySpec;
 
 import static org.dchbx.coveragehq.Utilities.getGson;
 
@@ -25,7 +39,9 @@ public class ConfigurationStorageHandler extends IServerConfigurationStorageHand
     private static String TAG = "ConfigurationStorage";
     private static String UqhpFamily = "UqhpFamily";
 
-
+    private static String ENCRYPTION_ALGORITHM_WITH_PADDING = "AES/ECB/PKCS5Padding";
+    private static String ENCRYPTION_ALGORITHM = "AES";
+    private static String CHARACTER_SET_UTF8 = "UTF-8";
 
     private SharedPreferences getSharedPreferences(){
         return BrokerApplication.getBrokerApplication().getSharedPreferences(BrokerApplication.getBrokerApplication().getString(R.string.sharedpreferencename), Context.MODE_PRIVATE);
@@ -86,7 +102,7 @@ public class ConfigurationStorageHandler extends IServerConfigurationStorageHand
     public void store(ServiceManager.AppConfig appConfig) {
         SharedPreferences.Editor editor = getSharedPreferences().edit();
         String jsonString = Utilities.getJson(appConfig);
-        editor.putString("AppConfigJson", jsonString);
+        editor.putString("AppConfigJson", encrypt(jsonString));
         editor.commit();
     }
 
@@ -98,7 +114,7 @@ public class ConfigurationStorageHandler extends IServerConfigurationStorageHand
             return false;
         }
         Gson gson = getGson();
-        ServiceManager.AppConfig fromJsonAppConfig = gson.fromJson(appConfigJson, ServiceManager.AppConfig.class);
+        ServiceManager.AppConfig fromJsonAppConfig = gson.fromJson(decrypt(appConfigJson), ServiceManager.AppConfig.class);
         appConfig.DataSource = fromJsonAppConfig.DataSource;
         appConfig.EnrollServerUrl = fromJsonAppConfig.EnrollServerUrl;
         appConfig.GithubUrl = fromJsonAppConfig.GithubUrl;
@@ -111,7 +127,7 @@ public class ConfigurationStorageHandler extends IServerConfigurationStorageHand
         SharedPreferences.Editor editor = getSharedPreferences().edit();
         Gson gson = getGson();
         String jsonString = gson.toJson(account);
-        editor.putString("AccountJson", jsonString);
+        editor.putString("AccountJson", encrypt(jsonString));
         editor.commit();
     }
 
@@ -122,16 +138,16 @@ public class ConfigurationStorageHandler extends IServerConfigurationStorageHand
         editor.commit();
     }
 
-        @Override
+    @Override
     public Account readAccount() {
         SharedPreferences sharedPreferences = getSharedPreferences();
         String accountJson = sharedPreferences.getString("AccountJson", null);
         if (accountJson == null
-            || accountJson.length() == 0){
+                || accountJson.length() == 0){
             return new Account();
         }
         Gson gson = getGson();
-        Account account = gson.fromJson(accountJson, Account.class);
+        Account account = gson.fromJson(decrypt(accountJson), Account.class);
         if (account == null){
             return new Account();
         }
@@ -143,7 +159,7 @@ public class ConfigurationStorageHandler extends IServerConfigurationStorageHand
         SharedPreferences.Editor editor = getSharedPreferences().edit();
         Gson gson = getGson();
         String jsonString = gson.toJson(questions);
-        editor.putString("RidpQuestionsJson", jsonString);
+        editor.putString("RidpQuestionsJson", encrypt(jsonString));
         editor.remove("RidpAnswersJson");
         editor.commit();
     }
@@ -157,7 +173,7 @@ public class ConfigurationStorageHandler extends IServerConfigurationStorageHand
             return null;
         }
         Gson gson = getGson();
-        Questions questions = gson.fromJson(questionsJson, Questions.class);
+        Questions questions = gson.fromJson(decrypt(questionsJson), Questions.class);
         return questions;
     }
 
@@ -176,7 +192,7 @@ public class ConfigurationStorageHandler extends IServerConfigurationStorageHand
             return null;
         }
         Gson gson = getGson();
-        Answers answers = gson.fromJson(answersJson, Answers.class);
+        Answers answers = gson.fromJson(decrypt(answersJson), Answers.class);
         return answers;
 
     }
@@ -186,7 +202,7 @@ public class ConfigurationStorageHandler extends IServerConfigurationStorageHand
         Gson gson = getGson();
         String jsonString = gson.toJson(t);
         String name = t.getClass().getName();
-        editor.putString(name, jsonString);
+        editor.putString(name, encrypt(jsonString));
         editor.commit();
     }
 
@@ -194,7 +210,7 @@ public class ConfigurationStorageHandler extends IServerConfigurationStorageHand
         SharedPreferences.Editor editor = getSharedPreferences().edit();
         Gson gson = getGson();
         String jsonString = gson.toJson(t);
-        editor.putString(name, jsonString);
+        editor.putString(name, encrypt(jsonString));
         editor.commit();
     }
 
@@ -207,7 +223,7 @@ public class ConfigurationStorageHandler extends IServerConfigurationStorageHand
             return null;
         }
         Gson gson = getGson();
-        return gson.fromJson(responseJson, VerifyIdentityResponse.class);
+        return gson.fromJson(decrypt(responseJson), VerifyIdentityResponse.class);
     }
 
     @Override
@@ -238,7 +254,7 @@ public class ConfigurationStorageHandler extends IServerConfigurationStorageHand
             return family;
         }
         Gson gson = getGson();
-        return gson.fromJson(responseJson, Family.class);
+        return gson.fromJson(decrypt(responseJson), Family.class);
     }
 
     @Override
@@ -247,7 +263,7 @@ public class ConfigurationStorageHandler extends IServerConfigurationStorageHand
         String json = sharedPreferences.getString("UqhpDetermination", null);
         if (json != null){
             Gson gson = getGson();
-            return gson.fromJson(json, UqhpDetermination.class);
+            return gson.fromJson(decrypt(json), UqhpDetermination.class);
         }
         return null;
     }
@@ -263,7 +279,7 @@ public class ConfigurationStorageHandler extends IServerConfigurationStorageHand
         String json = sharedPreferences.getString("EffectiveDate", null);
         if (json != null){
             Gson gson = getGson();
-            return gson.fromJson(json, EffectiveDate.class);
+            return gson.fromJson(decrypt(json), EffectiveDate.class);
         }
         return null;
     }
@@ -289,4 +305,93 @@ public class ConfigurationStorageHandler extends IServerConfigurationStorageHand
         editor.commit();
     }
 
+    /**
+     * Uses a predefined secret key.
+     * TODO: Use a specific one defined for this purpose, maybe?
+     *
+     * @return
+     * @throws NoSuchAlgorithmException
+     * @throws InvalidKeySpecException
+     */
+    private SecretKey getSecretKey()
+            throws NoSuchAlgorithmException, InvalidKeySpecException {
+        return new SecretKeySpec(BrokerApplication.getBrokerApplication().getString(R.string.secret_key).getBytes(),
+                ENCRYPTION_ALGORITHM);
+    }
+
+    /**
+     * Returns the encrypted data.
+     *
+     * @param message
+     * @return
+     * @throws NoSuchAlgorithmException
+     * @throws NoSuchPaddingException
+     * @throws InvalidKeyException
+     * @throws InvalidParameterSpecException
+     * @throws IllegalBlockSizeException
+     * @throws BadPaddingException
+     * @throws UnsupportedEncodingException
+     * @throws InvalidKeySpecException
+     */
+    private byte[] encryptData(String message)
+            throws NoSuchAlgorithmException, NoSuchPaddingException, InvalidKeyException,
+            InvalidParameterSpecException, IllegalBlockSizeException, BadPaddingException,
+            UnsupportedEncodingException, InvalidKeySpecException {
+        Cipher cipher = Cipher.getInstance(ENCRYPTION_ALGORITHM_WITH_PADDING);
+        cipher.init(Cipher.ENCRYPT_MODE, getSecretKey());
+        return cipher.doFinal(message.getBytes(CHARACTER_SET_UTF8));
+    }
+
+    /**
+     * Returns the decrypted data.
+     *
+     * @param cipherText
+     * @return
+     * @throws NoSuchPaddingException
+     * @throws NoSuchAlgorithmException
+     * @throws InvalidParameterSpecException
+     * @throws InvalidAlgorithmParameterException
+     * @throws InvalidKeyException
+     * @throws BadPaddingException
+     * @throws IllegalBlockSizeException
+     * @throws UnsupportedEncodingException
+     * @throws InvalidKeySpecException
+     */
+    private String decryptData(byte[] cipherText)
+            throws NoSuchPaddingException, NoSuchAlgorithmException, InvalidParameterSpecException,
+            InvalidAlgorithmParameterException, InvalidKeyException, BadPaddingException,
+            IllegalBlockSizeException, UnsupportedEncodingException, InvalidKeySpecException {
+        Cipher cipher = Cipher.getInstance(ENCRYPTION_ALGORITHM_WITH_PADDING);
+        cipher.init(Cipher.DECRYPT_MODE, getSecretKey());
+        return new String(cipher.doFinal(cipherText), CHARACTER_SET_UTF8);
+    }
+
+    /**
+     * @param jsonString
+     * @return
+     */
+    private String encrypt(String jsonString) {
+        try {
+            byte[] encrypted = encryptData(jsonString);
+            jsonString = Base64.encodeToString(encrypted, Base64.NO_WRAP);
+        } catch (Exception e) {
+            Log.e(TAG, e.getMessage());
+            e.printStackTrace();
+        }
+        return jsonString;
+    }
+
+    /**
+     * @param accountJson
+     * @return
+     */
+    private String decrypt(String accountJson) {
+        try {
+            accountJson = decryptData(Base64.decode(accountJson, Base64.NO_WRAP));
+        } catch (Exception e) {
+            Log.e(TAG, e.getMessage());
+            e.printStackTrace();
+        }
+        return accountJson;
+    }
 }

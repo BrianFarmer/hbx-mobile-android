@@ -51,7 +51,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_below="@+id/premium"
-        android:layout_marginTop="27dp"
+        android:layout_marginTop="7dp"
         android:text="@string/monthly_premium"
         android:textAlignment="center"
         />
@@ -77,7 +77,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_below="@+id/deductible"
-        android:layout_marginTop="27dp"
+        android:layout_marginTop="7dp"
         android:text="@string/plan_deductible_maximum"
         android:textAlignment="center"
         />

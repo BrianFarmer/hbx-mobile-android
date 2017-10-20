@@ -51,17 +51,17 @@
             android:layout_marginTop="35dp"
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintRight_toRightOf="parent"
-            android:text="You're doing great!"
+            android:text="@string/doing_great"
             android:textSize="@dimen/plan_selector_card_costs_font"
             android:paddingLeft="50dp"
             android:paddingRight="50dp"
             android:gravity="center"
             />
         <TextView
-            android:id="@+id/zeroFavoriteed"
+            android:id="@+id/zeroFavorited"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="You've seen all the plans. You didn't favorite any plans."
+            android:text="@string/zeroFavorited"
             android:textSize="@dimen/plan_selector_card_costs_font"
             android:paddingLeft="50dp"
             android:paddingRight="50dp"
@@ -80,7 +80,7 @@
             android:paddingLeft="50dp"
             android:paddingRight="50dp"
             android:gravity="center"
-            app:layout_constraintTop_toBottomOf="@+id/zeroFavoriteed"
+            app:layout_constraintTop_toBottomOf="@+id/zeroFavorited"
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintRight_toRightOf="parent"
             />
@@ -97,6 +97,24 @@
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintRight_toRightOf="parent"
             />
+
+        <Button
+            android:id="@+id/seeItNow"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            style="@style/ivl_solid_blue_button"
+            android:text="@string/see_it_now"
+            android:textSize="@dimen/plan_selector_card_costs_font"
+            android:paddingLeft="44dp"
+            android:paddingRight="44dp"
+            android:paddingTop="13dp"
+            android:paddingBottom="13dp"
+            app:layout_constraintTop_toBottomOf="@+id/youFavorited"
+            android:layout_marginTop="20dp"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            />
+
         <Button
             android:id="@+id/keepSwiping"
             android:layout_width="wrap_content"
@@ -124,6 +142,22 @@
             android:paddingRight="50dp"
             android:gravity="center"
             app:layout_constraintTop_toBottomOf="@+id/keepSwiping"
+            android:layout_marginTop="31dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            android:layout_marginBottom="39dp"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            />
+        <TextView
+            android:id="@+id/tapResetFromOne"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/tap_reset"
+            android:textSize="@dimen/plan_selector_card_costs_font"
+            android:paddingLeft="50dp"
+            android:paddingRight="50dp"
+            android:gravity="center"
+            app:layout_constraintTop_toBottomOf="@+id/seeItNow"
             android:layout_marginTop="31dp"
             app:layout_constraintBottom_toBottomOf="parent"
             android:layout_marginBottom="39dp"
