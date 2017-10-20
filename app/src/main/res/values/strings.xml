@@ -2,6 +2,7 @@
     <string name="app_name">DC Health Link</string>
     <string name="title_activity_login">SmallBiz Login</string>
     <string name="title_broker_details">Broker Details</string>
+    <string name="secret_key">changethisvalue!</string>
 
     <!-- Strings related to login -->
     <string name="prompt_email">Email</string>
