@@ -72,7 +72,7 @@ public class PlanShoppingService {
     }
 
 
-    @Subscribe(threadMode = ThreadMode.BACKGROUND)
+    @Subscribe(threadMode = ThreadMode.ASYNC)
     public void doThis(Events.SubmitApplication submitApplication) {
         EventParameters eventParameters = submitApplication.getEventParameters();
         Plan plan = (org.dchbx.coveragehq.models.planshopping.Plan) eventParameters.getObject(Plan, org.dchbx.coveragehq.models.planshopping.Plan.class);
@@ -108,7 +108,7 @@ public class PlanShoppingService {
         }
     }
 
-    @Subscribe(threadMode = ThreadMode.BACKGROUND)
+    @Subscribe(threadMode = ThreadMode.ASYNC)
     public void doThis(Events.GetPlans getPlans){
         try {
             CoverageConnection coverageConnection = serviceManager.getCoverageConnection();

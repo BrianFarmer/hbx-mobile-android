@@ -71,7 +71,7 @@ public class BrokerWorker extends IntentService {
      *
      * @param getGitAccounts Get git test data account information. Only used during git build.
      */
-    @Subscribe(threadMode = ThreadMode.BACKGROUND)
+    @Subscribe(threadMode = ThreadMode.ASYNC)
     public void doThis(Events.GetGitAccounts getGitAccounts) {
         try {
             Log.d(TAG, "Getting git accounts");
@@ -101,7 +101,7 @@ public class BrokerWorker extends IntentService {
      *
      * @param fingerprintLogin Sent to login with existinig data after fingerprint authorization has happened.
      */
-    @Subscribe(threadMode = ThreadMode.BACKGROUND)
+    @Subscribe(threadMode = ThreadMode.ASYNC)
     public void doThis(Events.FingerprintLogin fingerprintLogin){
         try {
             Log.d(TAG, "In processing Events.FingerprintLogin");
@@ -141,7 +141,7 @@ public class BrokerWorker extends IntentService {
      *
      * @param loginRequest
      */
-    @Subscribe(threadMode = ThreadMode.BACKGROUND)
+    @Subscribe(threadMode = ThreadMode.ASYNC)
     public void doThis(Events.LoginRequest loginRequest) {
 
         try {
@@ -197,7 +197,7 @@ public class BrokerWorker extends IntentService {
     // This message sends the security answer to the server.
     //
 
-    @Subscribe(threadMode = ThreadMode.BACKGROUND)
+    @Subscribe(threadMode = ThreadMode.ASYNC)
     public void doThis(Events.SecurityAnswer securityAnswer) {
 
         try {
@@ -240,7 +240,7 @@ public class BrokerWorker extends IntentService {
      *
      * @param getLogin
      */
-    @Subscribe(threadMode = ThreadMode.BACKGROUND)
+    @Subscribe(threadMode = ThreadMode.ASYNC)
     public void doThis(Events.GetLogin getLogin) {
         try {
             Log.d(TAG, "Received GetLogin message");
@@ -265,7 +265,7 @@ public class BrokerWorker extends IntentService {
         }
     }
 
-    @Subscribe(threadMode = ThreadMode.BACKGROUND)
+    @Subscribe(threadMode = ThreadMode.ASYNC)
     public void doThis(Events.GetCurrentActivity getCurrentActivity) {
         try {
             Log.d(TAG, "Received GetCurrentActivity message");
@@ -283,7 +283,7 @@ public class BrokerWorker extends IntentService {
     // be cleared.
     //
 
-    @Subscribe(threadMode = ThreadMode.BACKGROUND)
+    @Subscribe(threadMode = ThreadMode.ASYNC)
     public void doThis(Events.LogoutRequest logoutRequest) {
         Log.d(TAG, "Received LogoutRequest message");
 
@@ -300,7 +300,7 @@ public class BrokerWorker extends IntentService {
     // Get employer detail data.
     //
 
-    @Subscribe(threadMode = ThreadMode.BACKGROUND)
+    @Subscribe(threadMode = ThreadMode.ASYNC)
     public void doThis(Events.GetEmployer getEmployer) {
         try {
             Log.d(TAG, "Received GetEmployer");
@@ -334,7 +334,7 @@ public class BrokerWorker extends IntentService {
     // Get the roster data.
     //
 
-    @Subscribe(threadMode = ThreadMode.BACKGROUND)
+    @Subscribe(threadMode = ThreadMode.ASYNC)
     public void doThis(Events.GetRoster getRoster) {
         try {
             Log.d(TAG, "Received GetRoster");
@@ -366,7 +366,7 @@ public class BrokerWorker extends IntentService {
     // Get the employer information. Could be called get borker details.
     //
 
-    @Subscribe(threadMode = ThreadMode.BACKGROUND)
+    @Subscribe(threadMode = ThreadMode.ASYNC)
     public void doThis(Events.GetBrokerAgency getBrokerAgency) {
         try {
             Log.d(TAG, "Received GetBrokerAgency message.");
@@ -390,7 +390,7 @@ public class BrokerWorker extends IntentService {
     // Get the carrier information.
     //
 
-    @Subscribe(threadMode = ThreadMode.BACKGROUND)
+    @Subscribe(threadMode = ThreadMode.ASYNC)
     public void doThis(Events.GetCarriers getCarriers) {
         try {
             Log.d(TAG, "Received GetCarriers message");
@@ -413,7 +413,7 @@ public class BrokerWorker extends IntentService {
     // Get the employee details.
     //
 
-    @Subscribe(threadMode = ThreadMode.BACKGROUND)
+    @Subscribe(threadMode = ThreadMode.ASYNC)
     public void doThis(Events.GetEmployee getEmployee) {
         try {
             Log.d(TAG, "Received GetEmployee message");
@@ -447,7 +447,7 @@ public class BrokerWorker extends IntentService {
     //
 
 
-    @Subscribe(threadMode = ThreadMode.BACKGROUND)
+    @Subscribe(threadMode = ThreadMode.ASYNC)
     public void doThis(Events.StartSessionTimeout startSessionTimeout) {
         Log.d(TAG, "processing Events.StartSessionTimeout");
 
@@ -462,7 +462,7 @@ public class BrokerWorker extends IntentService {
     // doing any real work.
     //
 
-    @Subscribe(threadMode = ThreadMode.BACKGROUND)
+    @Subscribe(threadMode = ThreadMode.ASYNC)
     public void doThis(Events.StayLoggedIn stayLoggedIn) {
         boolean success = false;
 
@@ -487,7 +487,7 @@ public class BrokerWorker extends IntentService {
     // fingerprint scanner status.
     //
 
-    @Subscribe(threadMode = ThreadMode.BACKGROUND)
+    @Subscribe(threadMode = ThreadMode.ASYNC)
     public void doThis(Events.GetFingerprintStatus getFingerprintStatus){
         Log.d(TAG, "processing Events.GetFingerprintStatus");
         FingerprintManager.DetectFingerprintResult detect = fingerprintManager.detect();
@@ -498,7 +498,7 @@ public class BrokerWorker extends IntentService {
     // The message is sent to authenticate the users fingerprint.
     //
 
-    @Subscribe(threadMode = ThreadMode.BACKGROUND)
+    @Subscribe(threadMode = ThreadMode.ASYNC)
     public void doThis(Events.AuthenticateFingerprintEncrypt authenticateFingerprint) {
         ServerConfiguration serverConfiguration = serviceManager.getServerConfiguration();
         try {
@@ -545,7 +545,7 @@ public class BrokerWorker extends IntentService {
         }
     }
 
-    @Subscribe(threadMode = ThreadMode.BACKGROUND)
+    @Subscribe(threadMode = ThreadMode.ASYNC)
     public void doThis(Events.AuthenticateFingerprintDecrypt authenticateFingerprint) {
         try {
             final ServerConfiguration serverConfiguration = serviceManager.getEnrollConfig().getServerConfiguration();
@@ -595,7 +595,7 @@ public class BrokerWorker extends IntentService {
     // The message is sent to authenticate the users fingerprint.
     //
 
-    @Subscribe(threadMode = ThreadMode.BACKGROUND)
+    @Subscribe(threadMode = ThreadMode.ASYNC)
     public void doThis(Events.Relogin relogin) {
         try {
             Log.d(TAG, "processing relogin");
@@ -625,17 +625,17 @@ public class BrokerWorker extends IntentService {
         }
     }
 
-    @Subscribe(threadMode = ThreadMode.BACKGROUND)
+    @Subscribe(threadMode = ThreadMode.ASYNC)
     public void doThis(Events.TestTimeout testTimeout) {
         eventBus.post(new Events.TestTimeoutResult(serviceManager.getAppStatusService().testTimeout()));
     }
 
-    @Subscribe(threadMode = ThreadMode.BACKGROUND)
+    @Subscribe(threadMode = ThreadMode.ASYNC)
     public void doThis(Events.GetUserEmployee getUserEmployee) {
         eventBus.post(new Events.GetUserEmployeeResults(serviceManager.getCoverageConnection().getUserEmployee()));
     }
 
-    @Subscribe(threadMode = ThreadMode.BACKGROUND)
+    @Subscribe(threadMode = ThreadMode.ASYNC)
     public void doThis(Events.MoveImageToData moveImageToData){
         try{
             serviceManager.getCoverageConnection().moveImageToData(moveImageToData.isFrontOfCard(), moveImageToData.getUri());
@@ -645,7 +645,7 @@ public class BrokerWorker extends IntentService {
         }
     }
 
-    @Subscribe(threadMode = ThreadMode.BACKGROUND)
+    @Subscribe(threadMode = ThreadMode.ASYNC)
     public void doThis(Events.RemoveInsuraceCardImage removeInsuraceCardImage){
         try{
             serviceManager.getCoverageConnection().removeInsuraceCardImage(removeInsuraceCardImage.isFront());
@@ -656,7 +656,7 @@ public class BrokerWorker extends IntentService {
     }
 
     /*
-    @Subscribe(threadMode = ThreadMode.BACKGROUND)
+    @Subscribe(threadMode = ThreadMode.ASYNC)
     public void doThis(Events.GetInsuredAndBenefits getInsuredAndBenefits) {
         try {
             Log.d(TAG, "Received GetInsuredAndBenefits message");
@@ -678,7 +678,7 @@ public class BrokerWorker extends IntentService {
     }
     */
 
-    @Subscribe(threadMode = ThreadMode.BACKGROUND)
+    @Subscribe(threadMode = ThreadMode.ASYNC)
     public void doThis(Events.GetInsuredAndServices getInsuredAndServices) {
         try {
             Log.d(TAG, "Received GetInsuredAndBenefits message");
@@ -706,7 +706,7 @@ public class BrokerWorker extends IntentService {
         }
     }
 
-    @Subscribe(threadMode = ThreadMode.BACKGROUND)
+    @Subscribe(threadMode = ThreadMode.ASYNC)
     public void doThis(Events.SignUp signUp) {
         try {
             serviceManager.getStateManager().process(StateManager.AppEvents.SignUpIndividual, null);
@@ -718,7 +718,7 @@ public class BrokerWorker extends IntentService {
         }
     }
 
-    @Subscribe(threadMode = ThreadMode.BACKGROUND)
+    @Subscribe(threadMode = ThreadMode.ASYNC)
     public void doThis(Events.ResetPlanShopping resetPlanShopping){
         try {
             serviceManager.getCoverageConnection().configureForSignUp(null);
@@ -730,7 +730,7 @@ public class BrokerWorker extends IntentService {
     }
 
     /*
-    @Subscribe(threadMode = ThreadMode.BACKGROUND)
+    @Subscribe(threadMode = ThreadMode.ASYNC)
     public void doThis(Events.UpdatePlanShopping updatePlanShopping){
         try {
             serviceManager.getCoverageConnection().updatePlanShopping(updatePlanShopping);
@@ -740,7 +740,7 @@ public class BrokerWorker extends IntentService {
         BrokerWorker.eventBus.post(new Events.UpdatePlanShoppingResult());
     }*/
 
-    @Subscribe(threadMode = ThreadMode.BACKGROUND)
+    @Subscribe(threadMode = ThreadMode.ASYNC)
     public void doThis(Events.GetAppConfig getAppConfig) {
         try {
             BrokerWorker.eventBus.post(new Events.GetAppConfigResult(serviceManager.getAppConfig()));
@@ -749,12 +749,12 @@ public class BrokerWorker extends IntentService {
         }
     }
 
-    @Subscribe(threadMode = ThreadMode.BACKGROUND)
+    @Subscribe(threadMode = ThreadMode.ASYNC)
     public void doThis(Events.UpdateAppConfig updateAppConfig) {
         serviceManager.update(updateAppConfig.getAppConfig());
     }
 
-    @Subscribe(threadMode = ThreadMode.BACKGROUND)
+    @Subscribe(threadMode = ThreadMode.ASYNC)
     public void doThis(Events.GetRidpQuestionsAndAnswers getRidpQuestions) {
         try {
             RidpService.QuestionsAndAnswers questions = serviceManager.getRidpService().getRidpQuestions();
@@ -769,7 +769,7 @@ public class BrokerWorker extends IntentService {
         }
     }
 
-    @Subscribe(threadMode = ThreadMode.BACKGROUND)
+    @Subscribe(threadMode = ThreadMode.ASYNC)
     public void doThis(Events.UpdateAnswers updateAnswers) {
         try {
             serviceManager.getRidpService().updateAnswers(updateAnswers.getAnswers());
@@ -779,7 +779,7 @@ public class BrokerWorker extends IntentService {
         }
     }
 
-    @Subscribe(threadMode = ThreadMode.BACKGROUND)
+    @Subscribe(threadMode = ThreadMode.ASYNC)
     public void doThis(Events.AccountButtonClicked accountButtonClicked) {
         try {
             serviceManager.getConfigurationStorageHandler().store(accountButtonClicked.getAccount());
@@ -794,7 +794,7 @@ public class BrokerWorker extends IntentService {
         }
     }
 
-    @Subscribe(threadMode = ThreadMode.BACKGROUND)
+    @Subscribe(threadMode = ThreadMode.ASYNC)
     public void doThis(Events.ButtonClicked buttonClicked) {
         try {
             serviceManager.getStateManager().process(buttonClicked.getAppEvent(), null);
@@ -805,12 +805,12 @@ public class BrokerWorker extends IntentService {
         }
     }
 
-    @Subscribe(threadMode = ThreadMode.BACKGROUND)
+    @Subscribe(threadMode = ThreadMode.ASYNC)
     public void doThis(Events.GetGlossary getGlossary) throws Exception {
         BrokerWorker.eventBus.post(new Events.GetGlossaryResponse(serviceManager.getCoverageConnection().getGlossary()));
     }
 
-    @Subscribe(threadMode = ThreadMode.BACKGROUND)
+    @Subscribe(threadMode = ThreadMode.ASYNC)
     public void doThis(Events.GetGlossaryItem getGlossary) throws Exception {
         Glossary.GlossaryItem glossaryItem = serviceManager.getCoverageConnection().getGlossaryItem(getGlossary.getTerm());
         BrokerWorker.eventBus.post(new Events.GetGlossaryItemResponse(glossaryItem));

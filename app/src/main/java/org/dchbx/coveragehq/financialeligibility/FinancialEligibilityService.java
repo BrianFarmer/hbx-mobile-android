@@ -67,7 +67,7 @@ public class FinancialEligibilityService {
         messages = BrokerApplication.getBrokerApplication().getMessages(this);
     }
 
-    @Subscribe(threadMode = ThreadMode.BACKGROUND)
+    @Subscribe(threadMode = ThreadMode.ASYNC)
     public void doThis(Events.GetUqhpFamily getUqhpFamily) {
         Family family = getUqhpFamily();
         messages.getUqhpFamilyResponse(family);
@@ -84,7 +84,7 @@ public class FinancialEligibilityService {
         return configurationStorageHandler.readUqhpDetermination();
     }
 
-    @Subscribe(threadMode = ThreadMode.BACKGROUND)
+    @Subscribe(threadMode = ThreadMode.ASYNC)
     public void doThis(Events.SaveUqhpFamily saveUqhpFamily) {
         ConfigurationStorageHandler configurationStorageHandler = serviceManager.getConfigurationStorageHandler();
         Family family = saveUqhpFamily.getFamily();
@@ -92,12 +92,12 @@ public class FinancialEligibilityService {
         messages.saveUqhpFamilyResponse();
     }
 
-    @Subscribe(threadMode = ThreadMode.BACKGROUND)
+    @Subscribe(threadMode = ThreadMode.ASYNC)
     public void doThis(Events.GetFinancialAssistanceApplication getFinancialAssistanceApplication) {
         messages.getFinancialAssistanceApplicationResponse(new FinancialAssistanceApplication());
     }
 
-    @Subscribe(threadMode = ThreadMode.BACKGROUND)
+    @Subscribe(threadMode = ThreadMode.ASYNC)
     public void doThis(Events.GetFinancialEligibilityJson getFinancialEligibilityJson) throws Exception {
         Log.d(TAG, "in FinancialEligibilityService.doThis(Events.GetFinancialEligibilityJson)");
         if (schema == null) {
@@ -120,7 +120,7 @@ public class FinancialEligibilityService {
         messages.getFinancialEligibilityJsonResponse(schema);
     }
 
-    @Subscribe(threadMode = ThreadMode.BACKGROUND)
+    @Subscribe(threadMode = ThreadMode.ASYNC)
     public void doThis(Events.SendHavenApplication getUqhpSchema) throws Exception {
         Log.d(TAG, "in FinancialEligibilityService.doThis(Events.GetFinancialEligibilityJson)");
         UrlHandler urlHandler = serviceManager.getUrlHandler();
@@ -161,7 +161,7 @@ public class FinancialEligibilityService {
         });
     }
 
-    @Subscribe(threadMode = ThreadMode.BACKGROUND)
+    @Subscribe(threadMode = ThreadMode.ASYNC)
     public void doThis(Events.GetUqhpSchema getUqhpSchema) throws Exception {
         Log.d(TAG, "in FinancialEligibilityService.doThis(Events.GetFinancialEligibilityJson)");
         if (schema == null) {
@@ -322,7 +322,7 @@ public class FinancialEligibilityService {
         family.Relationship.put(person.get("eapersonid").getAsString(), new HashMap<String, JsonObject>());
     }
 
-    @Subscribe(threadMode = ThreadMode.BACKGROUND)
+    @Subscribe(threadMode = ThreadMode.ASYNC)
     public void doThis(Events.GetUqhpDeterminationFromServer getUqhpDeterminationFromServer) throws Exception {
         final EventParameters eventParameters = getUqhpDeterminationFromServer.getEventParameters();
         Status status = (Status) eventParameters.getObject("Status", Status.class);
@@ -348,7 +348,7 @@ public class FinancialEligibilityService {
             }
         });
     }
-    @Subscribe(threadMode = ThreadMode.BACKGROUND)
+    @Subscribe(threadMode = ThreadMode.ASYNC)
     public void doThis(Events.GetUqhpDetermination getUqhpDetermination) throws Exception {
         ConfigurationStorageHandler configurationStorageHandler = serviceManager.getConfigurationStorageHandler();
         UqhpDetermination uqhpDetermination = configurationStorageHandler.readUqhpDetermination();

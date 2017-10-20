@@ -131,7 +131,7 @@ public class RidpService extends StateProcessor {
         return identity;
     }
 
-    @Subscribe(threadMode = ThreadMode.BACKGROUND)
+    @Subscribe(threadMode = ThreadMode.ASYNC)
     public void doThis(Events.GetCreateAccountInfo getCreateAccountInfo){
             org.dchbx.coveragehq.models.account.Account account = serviceManager.getRidpService().getCreateAccountInfo();
             messages.getCreateAccountInfoResult(account);
@@ -142,7 +142,7 @@ public class RidpService extends StateProcessor {
         return serviceManager.getConfigurationStorageHandler().readAccount();
     }
 
-    @Subscribe(threadMode = ThreadMode.BACKGROUND)
+    @Subscribe(threadMode = ThreadMode.ASYNC)
     public void doThis(Events.CreateAccount createAccount){
         Log.d(TAG, "in RidpService.verificationRequest");
 
@@ -199,7 +199,7 @@ public class RidpService extends StateProcessor {
     }
 
 
-    @Subscribe(threadMode = ThreadMode.BACKGROUND)
+    @Subscribe(threadMode = ThreadMode.ASYNC)
     public void doThis(Events.GetRidpQuestions verificationResponse) throws Exception {
         Log.d(TAG, "in RidpService.doThis(Events(GetVerificationResponse)");
 
@@ -246,7 +246,7 @@ public class RidpService extends StateProcessor {
         storageHandler.store(answers);
     }
 
-    @Subscribe(threadMode = ThreadMode.BACKGROUND)
+    @Subscribe(threadMode = ThreadMode.ASYNC)
     public void doThis(final Events.VerifyUser verificationResponse) throws Exception {
         Log.d(TAG, "in RidpService.verificationRequest");
 
@@ -278,7 +278,7 @@ public class RidpService extends StateProcessor {
     }
 
 
-    @Subscribe(threadMode = ThreadMode.BACKGROUND)
+    @Subscribe(threadMode = ThreadMode.ASYNC)
     public void doThis(final Events.RidpCheckOverride checkOverride) throws Exception {
         Log.d(TAG, "in RidpService.checkOverride");
         UrlHandler urlHandler = serviceManager.getUrlHandler();

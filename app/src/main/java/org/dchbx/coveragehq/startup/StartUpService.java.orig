@@ -49,7 +49,7 @@ public class StartUpService {
 =======
     }
 
-    @Subscribe(threadMode = ThreadMode.BACKGROUND)
+    @Subscribe(threadMode = ThreadMode.ASYNC)
     public void doThis(Events.ClearPIIRequest clearPIIRequest) throws Exception {
         serviceManager.getConfigurationStorageHandler().clearAccount();
         serviceManager.getConfigurationStorageHandler().clearAnswers();
@@ -57,7 +57,7 @@ public class StartUpService {
 >>>>>>> 221d22349ec258167ef1df4410fd21165a0aa0ba
     }
 
-    @Subscribe(threadMode = ThreadMode.BACKGROUND)
+    @Subscribe(threadMode = ThreadMode.ASYNC)
     public void doThis(Events.IvlLoginRequest loginRequest) throws Exception {
         EventParameters eventParameters = loginRequest.getEventParameters();
 
@@ -85,7 +85,7 @@ public class StartUpService {
         });
     }
 
-    @Subscribe(threadMode = ThreadMode.BACKGROUND)
+    @Subscribe(threadMode = ThreadMode.ASYNC)
     public void doThis(Events.GetEffectiveDate getEffectiveDate) throws Exception {
 
         final UrlHandler urlHandler = serviceManager.getUrlHandler();
@@ -106,7 +106,7 @@ public class StartUpService {
         });
     }
 
-    @Subscribe(threadMode = ThreadMode.BACKGROUND)
+    @Subscribe(threadMode = ThreadMode.ASYNC)
     public void doThis(Events.ResumeApplication resumeApplication) throws Exception {
         EventParameters eventParameters = resumeApplication.getEventParameters();
 
@@ -141,7 +141,7 @@ public class StartUpService {
         });
     }
 
-    @Subscribe(threadMode = ThreadMode.BACKGROUND)
+    @Subscribe(threadMode = ThreadMode.ASYNC)
     public void doThis(Events.CheckOpenEnrollment checkOpenEnrollment) throws Exception {
         UrlHandler urlHandler = serviceManager.getUrlHandler();
         UrlHandler.HttpRequest openEnrollmentRequest = urlHandler.getOpenEnrollmentRequest();

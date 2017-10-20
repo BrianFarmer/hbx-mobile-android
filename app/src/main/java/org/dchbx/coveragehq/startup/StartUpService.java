@@ -62,14 +62,14 @@ public class StartUpService {
         messages = BrokerApplication.getBrokerApplication().getMessages(this);
     }
 
-    @Subscribe(threadMode = ThreadMode.BACKGROUND)
+    @Subscribe(threadMode = ThreadMode.ASYNC)
     public void doThis(Events.ClearPIIRequest clearPIIRequest) throws Exception {
         serviceManager.getConfigurationStorageHandler().clearAccount();
         serviceManager.getConfigurationStorageHandler().clearAnswers();
         messages.appEvent(StateManager.AppEvents.ClearedPII);
     }
 
-    @Subscribe(threadMode = ThreadMode.BACKGROUND)
+    @Subscribe(threadMode = ThreadMode.ASYNC)
     public void doThis(final Events.IvlLoginRequest loginRequest) throws Exception {
         EventParameters eventParameters = loginRequest.getEventParameters();
 
@@ -138,7 +138,7 @@ public class StartUpService {
         }
     }
 
-    @Subscribe(threadMode = ThreadMode.BACKGROUND)
+    @Subscribe(threadMode = ThreadMode.ASYNC)
     public void doThis(Events.ResumeApplication resumeApplication) throws Exception {
         final EventParameters eventParameters = resumeApplication.getEventParameters();
 
@@ -173,7 +173,7 @@ public class StartUpService {
         });
     }
 
-    @Subscribe(threadMode = ThreadMode.BACKGROUND)
+    @Subscribe(threadMode = ThreadMode.ASYNC)
     public void doThis(Events.CheckOpenEnrollment checkOpenEnrollment) throws Exception {
         UrlHandler urlHandler = serviceManager.getUrlHandler();
         UrlHandler.HttpRequest openEnrollmentRequest = urlHandler.getOpenEnrollmentRequest();
