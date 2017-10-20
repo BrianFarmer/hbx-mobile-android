@@ -46,8 +46,10 @@ public class PlanDetailsAdapter extends SummaryAdapter {
         items.add(new ResourcesItemWrapper(this.plan.links.providerDirectory, R.drawable.physicians, activity.getString(R.string.provider_directory), activity));
         items.add(new SummaryHeaderWrapper());
 
-        for (Service service : services) {
-            items.add(new SummaryItemWrapper(service, items.size(), this));
+        if (services != null) {
+            for (Service service : services) {
+                items.add(new SummaryItemWrapper(service, items.size(), this));
+            }
         }
 
         this.inflater = (LayoutInflater) planDetailsActivity.getSystemService(Context.LAYOUT_INFLATER_SERVICE);

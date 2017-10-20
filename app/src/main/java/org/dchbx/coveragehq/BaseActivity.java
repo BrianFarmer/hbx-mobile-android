@@ -61,6 +61,7 @@ public class BaseActivity extends AppCompatActivity {
         if (messages == null) {
             messages = BrokerApplication.getBrokerApplication().getMessages(this);
         }
+        hideProgress();
     }
 
     @Override
@@ -98,6 +99,7 @@ public class BaseActivity extends AppCompatActivity {
                 finish();
                 break;
             case PopAndLaunchActivity:
+                hideProgress();
                 StateManager.UiActivity.Info uiActivityType = StateManager.UiActivity.getUiActivityType(stateAction.getUiActivityId());
                 Intents.launchActivity(uiActivityType.cls, this, stateAction.getEventParameters());
                 finish();

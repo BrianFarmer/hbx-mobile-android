@@ -1,6 +1,8 @@
 package org.dchbx.coveragehq.startup;
 
+import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
@@ -35,8 +37,17 @@ public class IWantToActivity extends BaseActivity {
     public void onCreate(Bundle bundle) {
         super.onCreate(bundle);
 
-        EffectiveDate effectiveDate = StartUpService.getEffectiveDate(getIntent());
-        String effectiveDateStr = Utilities.DateAsMonthStringDayYear(effectiveDate.effectiveDate);
+        Intent intent = getIntent();
+        EffectiveDate effectiveDate = StartUpService.getEffectiveDate(intent);
+        String effectiveDateStr;
+        try {
+            effectiveDateStr = Utilities.DateAsMonthStringDayYear(effectiveDate.effectiveDate);
+        } catch (Throwable t){
+            String jsonString = intent.getStringExtra("EffectiveDate");
+            Log.d(TAG, "json: " + jsonString);
+            Log.d(TAG, "throowable: " + t.getMessage());
+            throw t;
+        }
 
         setContentView(R.layout.i_want_to);
         configToolbar();

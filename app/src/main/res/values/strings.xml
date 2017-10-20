@@ -496,6 +496,16 @@ You <font color="#69a30d">favorited %d plans</font>.
 </font>
 ]]>
     </string>
+    <string name="generic_error_content">
+<![CDATA[
+<font color="#414141" face="sans-serif">
+    <p>An Error Happened</p>
+    <p>EventType: {EventType}</a>
+    <p>Response Code: {ResponseCode}</p>
+    <p>Body: {Body}</p>
+</font>
+]]>
+    </string>
     <string name="congratulations_content">
 <![CDATA[
 <font color="#414141" face="sans-serif">
@@ -506,7 +516,6 @@ You <font color="#69a30d">favorited %d plans</font>.
         information again, and choose a new login and password. Afterwards, you can log into this
         app to see your coverage.
     </p>
-    <p>You can also purchase dental insurance by logging in with your browser to your <a href="https://dchealthlink.com">DC Health Link</a> account.</p>
 </font>
 ]]>
     </string>
@@ -556,6 +565,7 @@ You <font color="#69a30d">favorited %d plans</font>.
 ]]>
     </string>
     <string name="dental_coverage">Dental Coverage</string>
+    <string name="error_title">DC Health Link Error</string>
     <string name="open_enrollment_closed">Open Enrollment is currrently close</string>
     <string name="i_want_to">I want to</string>
     <string name="full_price_plan">Do you want to buy\na full-price health insurance plan?</string>

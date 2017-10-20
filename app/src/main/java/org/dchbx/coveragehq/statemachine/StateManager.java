@@ -74,6 +74,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 
 import static org.dchbx.coveragehq.statemachine.StateManager.AppEvents.Cancel;
+import static org.dchbx.coveragehq.statemachine.StateManager.AppEvents.ClearedPII;
 import static org.dchbx.coveragehq.statemachine.StateManager.AppEvents.Continue;
 import static org.dchbx.coveragehq.statemachine.StateManager.AppEvents.No;
 import static org.dchbx.coveragehq.statemachine.StateManager.AppEvents.Ok;
@@ -305,7 +306,7 @@ public class StateManager extends StateProcessor {
         ResumeApplication, ResumingAppliedUqhp, ResumingApplying, LoggingIn, GettingEffectiveDate,
         GettingStatus, AcctNewPassword, AcctPreAuthNP, AcctAddressNP, AcctGenderNP, AcctDateOfBirthNP,
         AcctSsnNP, AcctAuthConsentNP, GetQuestionsNP, RidpQuestionsNP, AcctSystemFoundYou, FamilyMembers,
-        GettingUqhpDetermination, PremiumAndDeductible, GettingPlans, SelectedPlan, ApplicationSubmitted, SubmittingApplication, ThanksApplication, Congrats, GettingEffectiveDateForIWant, LastStep, CoverageThisYear
+        GettingUqhpDetermination, PremiumAndDeductible, GettingPlans, SelectedPlan, ApplicationSubmitted, SubmittingApplication, ThanksApplication, Congrats, GettingEffectiveDateForIWant, LastStep, ClearPIIMobilePassword, CoverageThisYear
     }
 
     // You are discouraged from removing or reordring this enum. It is used in serialized objects.
@@ -434,8 +435,9 @@ public class StateManager extends StateProcessor {
         stateMachine.from(AppStates.DentalCoverage).on(Continue).to(AppStates.DentalCoverage, new LaunchActivity(OpenEnrollmentClosedActivity.uiActivity));
         stateMachine.from(AppStates.CoverageNextYear).on(Yes).to(AppStates.MobilePassword, new LaunchActivity(MobilePasswordActivity.uiActivity));
         stateMachine.from(AppStates.CoverageNextYear).on(No).to(AppStates.HelpPaying, new LaunchActivity(HelpPayingActivity.uiActivity));
-        stateMachine.from(AppStates.MobilePassword)
-            .on(Ok)
+        stateMachine.from(AppStates.MobilePassword).on(Ok).to(AppStates.ClearPIIMobilePassword, new BackgroundProcess(Events.ClearPIIRequest.class));
+        stateMachine.from(AppStates.ClearPIIMobilePassword)
+            .on(ClearedPII)
                 .to(AppStates.AcctCreate, new InitAndLaunchActivity(AcctCreate.uiActivity, new InitAndLaunchActivity.InitEventParameter() {
                     @Override
                     public void init(EventParameters eventParameters) {

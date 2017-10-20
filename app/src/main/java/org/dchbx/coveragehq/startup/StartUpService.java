@@ -1,6 +1,7 @@
 package org.dchbx.coveragehq.startup;
 
 import android.content.Intent;
+import android.util.Log;
 
 import com.google.gson.GsonBuilder;
 
@@ -106,25 +107,35 @@ public class StartUpService {
         });
     }
 
-    @Subscribe(threadMode = ThreadMode.BACKGROUND)
+    @Subscribe(threadMode = ThreadMode.ASYNC)
     public void doThis(Events.GetEffectiveDate getEffectiveDate) throws Exception {
-
-        final UrlHandler urlHandler = serviceManager.getUrlHandler();
-        UrlHandler.HttpRequest httpRequest = urlHandler.getEffectiveDateRequest();
-        CoverageConnection coverageConnection = serviceManager.getCoverageConnection();
-        ConnectionHandler connectionHandler = serviceManager.getConnectionHandler();
-        connectionHandler.process(httpRequest, new IConnectionHandler.OnCompletion() {
-            @Override
-            public void onCompletion(IConnectionHandler.HttpResponse response) {
-                if (response.getResponseCode() >= 200
-                        && response.getResponseCode() < 300){
-                    JsonParser parser = serviceManager.getParser();
-                    EffectiveDate effectiveDate = parser.parseEffectiveDate(response.getBody());
-                    serviceManager.getConfigurationStorageHandler().storeEffectiveDate(effectiveDate);
-                    messages.appEvent(StateManager.AppEvents.ReceivedEffectiveDate, EventParameters.build().add(EffectiveDate, effectiveDate));
+        try {
+            final UrlHandler urlHandler = serviceManager.getUrlHandler();
+            UrlHandler.HttpRequest httpRequest = urlHandler.getEffectiveDateRequest();
+            CoverageConnection coverageConnection = serviceManager.getCoverageConnection();
+            ConnectionHandler connectionHandler = serviceManager.getConnectionHandler();
+            connectionHandler.process(httpRequest, new IConnectionHandler.OnCompletion() {
+                @Override
+                public void onCompletion(IConnectionHandler.HttpResponse response) {
+                    if (response.getResponseCode() >= 200
+                            && response.getResponseCode() < 300) {
+                        JsonParser parser = serviceManager.getParser();
+                        EffectiveDate effectiveDate = parser.parseEffectiveDate(response.getBody());
+                        serviceManager.getConfigurationStorageHandler().storeEffectiveDate(effectiveDate);
+                        messages.appEvent(StateManager.AppEvents.ReceivedEffectiveDate, EventParameters.build().add(EffectiveDate, effectiveDate));
+                    } else {
+                        messages.appEvent(StateManager.AppEvents.Error, EventParameters.build()
+                                .add("ResponseCode", response.getResponseCode())
+                                .add("Body", response.getBody())
+                                .add("EventType", "Events.GetEffectiveDate"));
+                    }
                 }
-            }
-        });
+            });
+            Log.d(TAG, "*********finished requesting effectivedate");
+        } catch (Throwable t){
+            Log.e(TAG, "throwable: " + t.getMessage());
+            throw  t;
+        }
     }
 
     @Subscribe(threadMode = ThreadMode.BACKGROUND)

@@ -6,7 +6,6 @@ import android.util.Log;
 import com.google.gson.GsonBuilder;
 
 import org.dchbx.coveragehq.BrokerApplication;
-import org.dchbx.coveragehq.BrokerWorker;
 import org.dchbx.coveragehq.ConfigurationStorageHandler;
 import org.dchbx.coveragehq.ConnectionHandler;
 import org.dchbx.coveragehq.DateTimeDeserializer;
@@ -263,9 +262,9 @@ public class RidpService extends StateProcessor {
                 int responseCode = response.getResponseCode();
                 String responseBody = response.getBody();
 
-                               //COMMENT THIS IN TO TEST RIDP WRONG ANSWERS RECOVERABLE
-                // responseCode = 412;
-                // responseBody = "{\n  \"verification_result\": {\n    \"response_code\": \"urn:openhbx:terms:v1:interactive_identity_verification#FAILURE\",\n    \"response_text\": \"You have not passed identity validation. To proceed please contact Experian at 1-866-578-5409, and provide them with reference number 2ffe-a5-1cbf.\",\n    \"transaction_id\": \"2ffe-a5-1cbf\"\n  },\n  \"session\": null,\n  \"ridp_verified\": false\n}";
+                //COMMENT THIS IN TO TEST RIDP WRONG ANSWERS RECOVERABLE
+                //responseCode = 412;
+                //responseBody = "{\n  \"verification_result\": {\n    \"response_code\": \"urn:openhbx:terms:v1:interactive_identity_verification#FAILURE\",\n    \"response_text\": \"You have not passed identity validation. To proceed please contact Experian at 1-866-578-5409, and provide them with reference number 2ffe-a5-1cbf.\",\n    \"transaction_id\": \"2ffe-a5-1cbf\"\n  },\n  \"session\": null,\n  \"ridp_verified\": false\n}";
                 //COMMENT THIS IN TO TEST RIDP WRONG ANSWERS LOCKOUT
                 //responseCode = 403;
 

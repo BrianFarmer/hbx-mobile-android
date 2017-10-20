@@ -141,7 +141,7 @@ public class PlanShoppingService {
         }
     }
 
-    @Subscribe(threadMode = ThreadMode.BACKGROUND)
+    @Subscribe(threadMode = ThreadMode.ASYNC)
     public void doThis(Events.GetPlan getPlan) {
         try {
             final EventParameters eventParameters = getPlan.getEventParameters();

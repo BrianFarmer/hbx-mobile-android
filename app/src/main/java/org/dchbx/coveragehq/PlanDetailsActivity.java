@@ -36,6 +36,7 @@ import android.widget.ListView;
 
 import org.dchbx.coveragehq.models.planshopping.Plan;
 import org.dchbx.coveragehq.models.services.Service;
+import org.dchbx.coveragehq.planshopping.PlanShoppingService;
 import org.dchbx.coveragehq.statemachine.StateManager;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
@@ -61,9 +62,10 @@ public class PlanDetailsActivity extends BaseActivity {
 
         Intent intent = getIntent();
         setContentView(R.layout.plan_details);
-        String planId = intent.getExtras().getCharSequence(Intents.PLAN_ID).toString();
+        //String planId = intent.getExtras().getCharSequence(Intents.PLAN_ID).toString();
         configToolbar();
-        getMessages().getPlan(planId, true);
+        plan = PlanShoppingService.getPlanFromIntent(intent);
+        populate();
     }
 
     private void initToolbar(){
