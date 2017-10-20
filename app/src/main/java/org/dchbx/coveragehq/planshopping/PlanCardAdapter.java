@@ -1,6 +1,8 @@
 package org.dchbx.coveragehq.planshopping;
 
 import android.content.Context;
+import android.support.constraint.ConstraintLayout;
+import android.support.constraint.ConstraintSet;
 import android.text.Html;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -209,56 +211,62 @@ public class PlanCardAdapter extends BaseAdapter {
             int favoriteePlanCount = planCardAdapter.activity.getFavoriteedPlans().size();
             switch (favoriteePlanCount) {
                 case 0:
-                    populateZeroFavoriteed(view);
+                    populateZeroFavorited(view);
                     break;
                 case 1:
-                    populateOneFavoriteed(view);
+                    populateOneFavorited(view);
                     break;
                 default:
-                    populateMoreThanOneFavoriteed(view);
+                    populateMoreThanOneFavorited(view);
             }
         }
 
-        private void populateZeroFavoriteed(View view) {
-            TextView zeroFavoriteed = (TextView) view.findViewById(R.id.zeroFavoriteed);
-            zeroFavoriteed.setVisibility(View.VISIBLE);
-            TextView youFavorited = (TextView) view.findViewById(R.id.youFavorited);
-            youFavorited.setVisibility(View.GONE);
-            TextView seeThemAgain = (TextView) view.findViewById(R.id.seeThemAgain);
-            seeThemAgain.setVisibility(View.GONE);
-            Button keepSwiping = (Button) view.findViewById(R.id.keepSwiping);
-            keepSwiping.setVisibility(View.GONE);
-            TextView tapReset = (TextView) view.findViewById(R.id.tapReset);
-            TextView tapResetFromZero = (TextView) view.findViewById(R.id.tapResetFromZero);
-
-            tapReset.setVisibility(View.GONE);
-            tapResetFromZero.setVisibility(View.VISIBLE);
-
-            String favorited = planSelector.getResources().getString(R.string.you_favorited_d_plans);
-            youFavorited.setText(Html.fromHtml(String.format(favorited, planCardAdapter.activity.getFavoriteedPlans().size())));
-
+        private void populateZeroFavorited(View view) {
+            show(R.id.zeroFavorited, view);
+            hide(R.id.youFavorited, view);
+            hide(R.id.seeThemAgain, view);
+            hide(R.id.seeItNow, view);
+            hide(R.id.keepSwiping, view);
+            hide(R.id.tapReset, view);
+            hide(R.id.tapResetFromOne, view);
+            TextView tapResetFromZero = (TextView)show(R.id.tapResetFromZero, view);
             tapResetFromZero.setText(Html.fromHtml(planSelector.getResources().getString(R.string.tap_reset_from_zero)));
         }
-        private void populateMoreThanOneFavoriteed(View view) {
-            TextView zeroFavoriteed = (TextView) view.findViewById(R.id.zeroFavoriteed);
-            zeroFavoriteed.setVisibility(View.GONE);
-            TextView youFavoriteed = (TextView) view.findViewById(R.id.youFavorited);
-            youFavoriteed.setVisibility(View.VISIBLE);
-            TextView seeThemAgain = (TextView) view.findViewById(R.id.seeThemAgain);
-            seeThemAgain.setVisibility(View.VISIBLE);
-            Button keepSwiping = (Button) view.findViewById(R.id.keepSwiping);
-            keepSwiping.setVisibility(View.VISIBLE);
-            TextView tapReset = (TextView) view.findViewById(R.id.tapReset);
-            tapReset.setVisibility(View.VISIBLE);
-            TextView tapResetFromZero = (TextView) view.findViewById(R.id.tapResetFromZero);
-            tapResetFromZero.setVisibility(View.GONE);
 
-            String favorited = planSelector.getResources().getString(R.string.you_favorited_d_plans);
-            youFavoriteed.setText(Html.fromHtml(String.format(favorited, planCardAdapter.activity.getFavoriteedPlans().size())));
+        private void populateMoreThanOneFavorited(View view) {
+            hide(R.id.zeroFavorited, view);
+            TextView youFavorited = (TextView) show(R.id.youFavorited, view);
+            show(R.id.seeThemAgain, view);
+            hide(R.id.seeItNow, view);
+            View keepSwiping = show(R.id.keepSwiping, view);
+            TextView tapReset = (TextView)show(R.id.tapReset, view);
+            hide(R.id.tapResetFromZero, view);
+            hide(R.id.tapResetFromOne, view);
+
+            String format = planSelector.getResources().getString(R.string.you_favorited_d_plans);
+            String favoritedMessage = String.format(format, planCardAdapter.activity.getFavoriteedPlans().size());
+            populateNonZeroFavorited(favoritedMessage, youFavorited, keepSwiping, tapReset);
+        }
+
+        private void populateOneFavorited(View view) {
+            hide(R.id.zeroFavorited, view);
+            TextView youFavorited = (TextView) show(R.id.youFavorited, view);
+            hide(R.id.seeThemAgain, view);
+            View seeItNow = show(R.id.seeItNow, view);
+            hide(R.id.keepSwiping, view);
+            hide(R.id.tapReset, view);
+            TextView tapReset = (TextView) show(R.id.tapResetFromOne, view);
+            hide(R.id.tapResetFromZero, view);
+            String favorited = planSelector.getResources().getString(R.string.you_favorited_one_plan);
+            populateNonZeroFavorited(favorited, youFavorited, seeItNow, tapReset);
+        }
+
+        private void populateNonZeroFavorited(String favoritedMessage, TextView youFavorited, View returnToPlans, TextView tapReset) {
+            youFavorited.setText(Html.fromHtml(favoritedMessage));
 
             tapReset.setText(Html.fromHtml(planSelector.getResources().getString(R.string.tap_reset)));
 
-            keepSwiping.setOnClickListener(new View.OnClickListener() {
+            returnToPlans.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
                     ArrayList<Plan> selectedPlans = new ArrayList<Plan>();
@@ -269,35 +277,19 @@ public class PlanCardAdapter extends BaseAdapter {
                 }
             });
         }
-        private void populateOneFavoriteed(View view) {
-            TextView zeroFavoriteed = (TextView) view.findViewById(R.id.zeroFavoriteed);
-            zeroFavoriteed.setVisibility(View.GONE);
-            TextView youFavorited = (TextView) view.findViewById(R.id.youFavorited);
-            youFavorited.setVisibility(View.VISIBLE);
-            TextView seeThemAgain = (TextView) view.findViewById(R.id.seeThemAgain);
-            seeThemAgain.setVisibility(View.VISIBLE);
-            Button keepSwiping = (Button) view.findViewById(R.id.keepSwiping);
-            keepSwiping.setVisibility(View.VISIBLE);
-            TextView tapReset = (TextView) view.findViewById(R.id.tapReset);
-            tapReset.setVisibility(View.VISIBLE);
-            TextView tapResetFromZero = (TextView) view.findViewById(R.id.tapResetFromZero);
-            tapResetFromZero.setVisibility(View.GONE);
 
-            String favorited = planSelector.getResources().getString(R.string.you_favorited_d_plans);
-            youFavorited.setText(Html.fromHtml(String.format(favorited, planCardAdapter.activity.getFavoriteedPlans().size())));
+        private View show(int elementId, View view) {
+            return setVisibility(elementId, view, View.VISIBLE);
+        }
 
-            tapReset.setText(Html.fromHtml(planSelector.getResources().getString(R.string.tap_reset)));
+        private View hide(int elementId, View view) {
+            return setVisibility(elementId, view, View.GONE);
+        }
 
-            keepSwiping.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    ArrayList<Plan> selectedPlans = new ArrayList<Plan>();
-                    for (AdapterItemWrapperBase favorite : planCardAdapter.favorites) {
-                        selectedPlans.add(((CardWrapper) favorite).plan);
-                    }
-                    planCardAdapter.activity.showFavorites(selectedPlans);
-                }
-            });
+        private View setVisibility(int elementId, View view, int visibility) {
+            View element = view.findViewById(elementId);
+            element.setVisibility(visibility);
+            return element;
         }
 
         @Override

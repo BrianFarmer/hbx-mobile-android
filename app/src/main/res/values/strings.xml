@@ -341,6 +341,11 @@
 You <font color="#69a30d">favorited %d plans</font>.
 ]]>
     </string>
+    <string name="you_favorited_one_plan">
+<![CDATA[
+You <font color="#69a30d">favorited one plan</font>.
+]]>
+    </string>
     <string name="tap_reset">
 <![CDATA[
     Or tap <font color="#eaaa00">RESET</font> below to start over.</string>
@@ -618,4 +623,7 @@ You <font color="#69a30d">favorited %d plans</font>.
     <string name="wrong_answers_lockout_error">Experian was unable to confirm your identity based on the information you provided. You will need to complete your application at the DC Health Benefit Exchange Authority office at 1225 I St NW. Please call (202)715-7576 to set up an appointment.</string>
     <string name="coverage_after">Get healthcare coverage that starts on or after %s</string>
     <string name="coverage_before">Get Healthcare coverage that starts before %s</string>
+    <string name="zeroFavorited">You\'ve seen all the plans. You didn\'t favorite any plans.</string>
+    <string name="doing_great">You\'re doing great!</string>
+    <string name="see_it_now">See It Now</string>
 </resources>
