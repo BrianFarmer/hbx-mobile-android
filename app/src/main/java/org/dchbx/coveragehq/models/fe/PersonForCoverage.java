@@ -34,5 +34,5 @@ public class PersonForCoverage {
     public String personLastName;
     @SerializedName("persondob")
     @Expose
-    LocalDate personDob;
+    public LocalDate personDob;
 }

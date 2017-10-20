@@ -519,6 +519,7 @@ public class StateManager extends StateProcessor {
         stateMachine.from(AppStates.VerifyingUser).on(AppEvents.RidpWrongAnswersLockout).to(AppStates.AcctRidpWrongAnswersLockout, new PopAndLaunchActivity(AcctRidpWrongAnswersLockout.uiActivity));
 
         stateMachine.from(AppStates.CreatingAccount).on(AppEvents.SignUpUserInAceds).to(AppStates.AcctSystemFoundYouInCuramAceds, new LaunchActivity(AcctSystemFoundYouAceds.uiActivity));
+        stateMachine.from(AppStates.CreatingAccount).on(AppEvents.SignUpSuccessful).to(AppStates.GettingStatus, new StateManager.BackgroundProcess(Events.ResumeApplication.class));
         stateMachine.from(AppStates.CreatingAccount).on(AppEvents.SignUpSuccessful).to(AppStates.FamilyMembers, new PopAndLaunchActivity(org.dchbx.coveragehq.financialeligibility.FamilyActivity.uiActivity));
 
         stateMachine.from(AppStates.AcctRidpUserNotFound).on(AppEvents.ReviewRidpResponses).to(AppStates.AcctCreate, new PopAndLaunchActivity(AcctCreate.uiActivity));

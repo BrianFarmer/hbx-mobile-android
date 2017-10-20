@@ -118,7 +118,8 @@ public class PlanShoppingService {
             UqhpDetermination uqhpDetermination = configurationStorageHandler.readUqhpDetermination();
             LocalDate now = LocalDate.now();
             for (PersonForCoverage personForCoverage : uqhpDetermination.eligibleForQhp) {
-                ages.add(Years.yearsBetween(now, now.plusYears(20)).getYears());
+                int years = Years.yearsBetween(now, personForCoverage.personDob).getYears();
+                ages.add(years);
             }
 
             EffectiveDate effectiveDate = configurationStorageHandler.readEffectiveDate();
