@@ -124,6 +124,14 @@ public class Account implements Serializable {
         this.ssn = ssn;
     }
 
+    public String getPhone() {
+        return phone;
+    }
+
+    public void setPhone(String phone) {
+        this.phone = phone;
+    }
+
     public Address getAddress() {
         return address;
     }
@@ -151,6 +159,7 @@ public class Account implements Serializable {
     public String password;
     public LocalDate birthdate;
     public String ssn;
+    public String phone;
     public Address address;
     public boolean incarcerated;
     public boolean experianConsent;

@@ -611,6 +611,7 @@ You <font color="#69a30d">favorited one plan</font>.
     <string name="secondCheckBox">secondCheckBox</string>
     <string name="dateOfBirth">Date of Birth</string>
     <string name="ssnValidationError">Please enter a valid Social Security Number</string>
+    <string name="phoneValidationError">Please enter a valid telephone number</string>
     <string name="ridp_user_not_found_content"><![CDATA[
        To keep your data secure, we are required to verify your identity electronically using the credit reporting agency Experian. Unfortunately, Experian was unable to confirm your identity based on the information you provided. You will need to complete your application at the DC Health Benefit Exchange Authority office at 1225 Eye St NW. Please call (202) 715-7576 to set up an appointment.
     ]]></string>
@@ -627,4 +628,5 @@ You <font color="#69a30d">favorited one plan</font>.
     <string name="zeroFavorited">You\'ve seen all the plans. You didn\'t favorite any plans.</string>
     <string name="doing_great">You\'re doing great!</string>
     <string name="see_it_now">See It Now</string>
+    <string name="phone">phone</string>
 </resources>
