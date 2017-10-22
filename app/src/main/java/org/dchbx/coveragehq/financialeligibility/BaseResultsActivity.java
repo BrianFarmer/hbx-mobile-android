@@ -36,39 +36,48 @@ import java.util.ArrayList;
     along with DC Health Link SmallBiz.  If not, see <http://www.gnu.org/licenses/>.
     This statement should go near the beginning of every source file, close to the copyright notices. When using the Lesser GPL, insert the word “Lesser” before “General” in all three places. When using the GNU AGPL, insert the word “Affero” before “General” in all three places.
 */
-public class EligibleResultsActivity extends BaseResultsActivity {
-    private static String TAG = "EligibleResultsActivity";
-    public static StateManager.UiActivity uiActivity = new StateManager.UiActivity(EligibleResultsActivity.class);
+public abstract class BaseResultsActivity extends BaseActivity {
+    private UqhpDetermination uqhpDetermination;
 
-    protected int getLayoutId() {
-        return R.layout.marketplace_coverage;
+    public void onCreate(Bundle bundle) {
+        super.onCreate(bundle);
+        setContentView(getLayoutId());
+        messages.getUqhpDetermination();
     }
 
-    protected void populate() {
-        try {
-            ArrayList<PersonForCoverage> people = getUqhpDetermination().eligibleForQhp;
-            ArrayList<PersonForCoverage> others = getUqhpDetermination().ineligibleForQhp;
+    abstract protected int getLayoutId();
+    abstract protected void populate();
+    abstract protected OnSwipeTouchListener getSwipeListener();
 
-            populateResults(people, others, R.id.eligibleList, R.id.leftButton, R.id.rightButton,
-                    StateManager.AppEvents.ShowIneligible);
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void doThis(Events.GetUqhpDeterminationResponse getUqhpDeterminationResponse) throws Exception {
+        uqhpDetermination = getUqhpDeterminationResponse.getUqhpDetermination();
+        populate();
+    }
 
-            Button purchasePlan = (Button) findViewById(R.id.purchasePlan);
-            purchasePlan.setOnClickListener(new View.OnClickListener() {
+    protected void populateResults(ArrayList<PersonForCoverage> people, ArrayList<PersonForCoverage> others, int listId, int otherButtonId, int myButtonId, final StateManager.AppEvents moveToOtherEvent) {
+        PersonForCoverageAdapter personForCoverageAdapter = new PersonForCoverageAdapter(this, people);
+        ListView ineligibleList = (ListView) findViewById(listId);
+        ineligibleList.setAdapter(personForCoverageAdapter);
+        ImageButton otherButton = (ImageButton) findViewById(otherButtonId);
+        ImageButton myButton = (ImageButton) findViewById(myButtonId);
+        if (others.size() == 0) {
+            configToolbarWithoutBackButton();
+            otherButton.setVisibility(View.GONE);
+            myButton.setVisibility(View.GONE);
+        } else {
+            configToolbar();
+            otherButton.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    messages.appEvent(StateManager.AppEvents.ChoosePlan);
+                    messages.appEvent(moveToOtherEvent);
                 }
             });
-        } catch (Throwable t){
-            Log.d(TAG, "t: " + t.getMessage());
+            findViewById(getLayoutId()).setOnTouchListener(getSwipeListener());
         }
     }
 
-    protected OnSwipeTouchListener getSwipeListener() {
-        return new OnSwipeTouchListener(EligibleResultsActivity.this) {
-            public void onSwipeRight() {
-                messages.appEvent(StateManager.AppEvents.ShowIneligible);
-            }
-        };
+    protected UqhpDetermination getUqhpDetermination() {
+        return uqhpDetermination;
     }
 }

@@ -7,6 +7,7 @@ import android.content.pm.ActivityInfo;
 import android.content.res.Resources;
 import android.net.Uri;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.text.Html;
@@ -163,13 +164,23 @@ public class BaseActivity extends AppCompatActivity {
         progressDialog.show();
     }
 
+
+    protected Toolbar configToolbarWithoutBackButton() {
+        return configToolbar(false);
+    }
+
     protected Toolbar configToolbar() {
+        return configToolbar(true);
+    }
+
+    @NonNull
+    private Toolbar configToolbar(boolean showBackButton) {
         // Initializing Toolbar and setting it as the actionbar
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         toolbar.setLogo(R.drawable.app_header_vector);
         toolbar.setTitle("");
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(showBackButton);
         getSupportActionBar().setDisplayShowHomeEnabled(true);
         toolbar.setNavigationOnClickListener( new View.OnClickListener() {
             @Override

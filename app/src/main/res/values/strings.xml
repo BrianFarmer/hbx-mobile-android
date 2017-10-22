@@ -629,4 +629,6 @@ You <font color="#69a30d">favorited one plan</font>.
     <string name="doing_great">You\'re doing great!</string>
     <string name="see_it_now">See It Now</string>
     <string name="phone">phone</string>
+    <string name="marketplace_coverage">Marketplace Coverage</string>
+    <string name="these_can_enroll">These people can enroll in private health insurance via DC Health Link.</string>
 </resources>

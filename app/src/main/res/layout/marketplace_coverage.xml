@@ -5,7 +5,7 @@
     <data>
         <variable
             name="activity"
-            type="org.dchbx.coveragehq.ridp.AcctSsn"/>
+            type="org.dchbx.coveragehq.financialeligibility.EligibleResultsActivity"/>
         <variable
             name="account"
             type="org.dchbx.coveragehq.models.account.Account"/>
@@ -34,7 +34,7 @@
             android:id="@+id/marketplaceCoverage"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:text="Marketplace Coverage"
+            android:text="@string/marketplace_coverage"
             android:textAlignment="center"
             android:textSize="32dp"
             android:textStyle="bold"
@@ -50,7 +50,7 @@
             android:id="@+id/canEnroll"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:text="These people can enroll in private health insurance via DC Health Link."
+            android:text="@string/these_can_enroll"
             android:textSize="20dp"
             android:textColor="@color/textdarkgray"
             app:layout_constraintTop_toBottomOf="@+id/marketplaceCoverage"
@@ -72,7 +72,7 @@
             android:layout_marginTop="25dp"
             android:layout_marginLeft="25dp"
             android:layout_marginRight="25dp"
-            ></ListView>
+           />
 
         <Button
             android:id="@+id/purchasePlan"
@@ -90,7 +90,6 @@
             android:layout_marginBottom="15dp"
             android:paddingTop="19dp"
             android:paddingBottom="19dp"
-            android:onClick="@{()->activity.onClick(account)}"
             />
 
         <ImageButton
@@ -103,8 +102,7 @@
             app:layout_constraintBottom_toBottomOf="parent"
             android:layout_marginRight="5dp"
             android:layout_marginBottom="22dp"
-            app:srcCompat="@drawable/blue_circle_solid_small"
-            android:onClick="@{()->activity.onClick(account)}"
+            app:srcCompat="@drawable/blue_circle_vector_small"
             app:layout_constraintHorizontal_chainStyle="packed"
             />
         <ImageButton
@@ -117,8 +115,7 @@
             app:layout_constraintBottom_toBottomOf="parent"
             android:layout_marginLeft="5dp"
             android:layout_marginBottom="22dp"
-            app:srcCompat="@drawable/blue_circle_vector_small"
-            android:onClick="@{()->activity.onClick(account)}"
+            app:srcCompat="@drawable/blue_circle_solid_small"
             />
 
     </android.support.constraint.ConstraintLayout>
