@@ -3,6 +3,8 @@ package org.dchbx.coveragehq.financialeligibility;
 import android.content.Intent;
 import android.support.annotation.IdRes;
 import android.text.Editable;
+import android.text.InputFilter;
+import android.text.Spanned;
 import android.text.TextWatcher;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -1075,6 +1077,7 @@ public class ApplicationQuestionsActivity extends BrokerActivity {
             if (first){
                 value.requestFocus();
             }
+            value.setFilters(new InputFilter[]{new InputFilter.LengthFilter(5)});
             indicator = view.findViewById(R.id.indicator);
             if (field.optional.equals("N")){
                 value.addTextChangedListener(new TextWatcher() {
