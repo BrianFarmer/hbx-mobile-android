@@ -3,6 +3,7 @@ package org.dchbx.coveragehq;
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.Intent;
+import android.content.pm.ActivityInfo;
 import android.content.res.Resources;
 import android.net.Uri;
 import android.os.Bundle;
@@ -23,6 +24,7 @@ import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 
 import java.util.HashMap;
+import java.util.UUID;
 
 
 public class BaseActivity extends AppCompatActivity {
@@ -47,6 +49,14 @@ public class BaseActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         currentActivity = this;
+        this.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
+
+        Intent intent = getIntent();
+        String actionId = intent.getStringExtra("ActionId");
+        if (actionId != null) {
+            UUID uuid = UUID.fromString(actionId);
+            ServiceManager.getServiceManager().getStateManager().setActivityForId(uuid, this);
+        }
         if (messages == null) {
             Log.d(TAG, "in BaseActivity.onCreate");
             messages = BrokerApplication.getBrokerApplication().getMessages(this);
@@ -88,6 +98,7 @@ public class BaseActivity extends AppCompatActivity {
     public void doThis(Events.StateAction stateAction) {
         switch (stateAction.getAction()){
             case Finish:
+            case Pop:
                 Intent intent = new Intent();
                 EventParameters eventParameters = stateAction.getEventParameters();
                 eventParameters.initIntent(intent);

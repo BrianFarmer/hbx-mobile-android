@@ -1,8 +1,10 @@
 package org.dchbx.coveragehq.statemachine;
 
+import org.dchbx.coveragehq.BaseActivity;
 import org.dchbx.coveragehq.CoverageException;
 
 import java.io.IOException;
+import java.util.UUID;
 
 /*
     This file is part of DC.
@@ -22,7 +24,26 @@ import java.io.IOException;
     This statement should go near the beginning of every source file, close to the copyright notices. When using the Lesser GPL, insert the word “Lesser” before “General” in all three places. When using the GNU AGPL, insert the word “Affero” before “General” in all three places.
 */
 public abstract class StateMachineAction {
+    private final UUID id;
+    private BaseActivity activity;
+
+    protected StateMachineAction(){
+        id = UUID.randomUUID();
+    }
+
     public abstract boolean call(StateMachine stateMachine, StateManager stateManager,
                                  StateManager.AppEvents event, StateManager.AppStates leavingState,
                                  StateManager.AppStates enterState, EventParameters intentParameters) throws IOException, CoverageException;
+
+    public BaseActivity getActivity() {
+        return activity;
+    }
+
+    public void setActivity(BaseActivity activity) {
+        this.activity = activity;
+    }
+
+    public UUID getId() {
+        return id;
+    }
 }

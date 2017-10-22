@@ -4,7 +4,8 @@ public class ActivityInfo extends StateInfoBase {
     private int uiActivityId;
     private transient StateManager.UiActivity uiActivity;
 
-        public ActivityInfo(StateManager.AppStates state, StateManager.AppEvents event, StateManager.UiActivity uiActivity) {
+    public ActivityInfo(StateManager.AppStates state, StateManager.AppEvents event,
+                        StateManager.UiActivity uiActivity) {
         super(state,event);
         this.uiActivity = uiActivity;
         if (uiActivity != null) {

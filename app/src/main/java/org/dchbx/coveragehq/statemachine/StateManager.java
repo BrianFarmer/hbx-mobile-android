@@ -72,6 +72,7 @@ import java.io.IOException;
 import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.UUID;
 
 import static org.dchbx.coveragehq.statemachine.StateManager.AppEvents.Cancel;
 import static org.dchbx.coveragehq.statemachine.StateManager.AppEvents.ClearedPII;
@@ -108,12 +109,13 @@ public class StateManager extends StateProcessor {
     private Messages messages;
     private boolean inUse;
     private ArrayList<Events.AppEvent> queuedEvents;
+    private HashMap<UUID, BaseActivity> activityMap;
 
     public StateManager(IServiceManager serviceManager){
         this.serviceManager = serviceManager;
         inUse = false;
         queuedEvents = new ArrayList<>();
-
+        activityMap = new HashMap<>();
     }
 
     public ArrayDeque<StateInfoBase> deserialize(String serializedString){
@@ -178,7 +180,7 @@ public class StateManager extends StateProcessor {
     }
 
     @Subscribe(threadMode = ThreadMode.ASYNC)
-    public void doThis(Events.AppEvent appEvent){
+    public void doThis(Events.AppEvent appEvent) throws IOException, CoverageException {
         try {
             if (inUse){
                 queuedEvents.add(appEvent);
@@ -193,6 +195,7 @@ public class StateManager extends StateProcessor {
             inUse = false;
         } catch (Throwable t){
             Log.e(TAG, "throwable in state manager: " + t);
+            throw t;
         }
     }
 
@@ -215,12 +218,12 @@ public class StateManager extends StateProcessor {
         messages.stateAction(Events.StateAction.Action.Pop, uiActivity.getId(), eventParameters);
     }
 
-    public void popAndLaunchActivity(StateManager.UiActivity uiActivity, EventParameters eventParameters) {
-        messages.stateAction(Events.StateAction.Action.PopAndLaunchActivity, uiActivity.getId(), eventParameters);
+    public void popAndLaunchActivity(StateManager.UiActivity uiActivity, EventParameters eventParameters, StateMachineAction launchActivity) {
+        messages.stateAction(Events.StateAction.Action.PopAndLaunchActivity, uiActivity.getId(), eventParameters.add("ActionId", launchActivity.getId().toString()));
     }
 
-    public void launchActivity(StateManager.UiActivity uiActivity, EventParameters eventParameters) {
-        messages.stateAction(Events.StateAction.Action.LaunchActivity, uiActivity.getId(), eventParameters);
+    public void launchActivity(UiActivity uiActivity, EventParameters eventParameters, StateMachineAction launchActivity) {
+        messages.stateAction(Events.StateAction.Action.LaunchActivity, uiActivity.getId(), eventParameters.add("ActionId", launchActivity.getId().toString()));
     }
 
     public void launchDialog(StateManager.UiDialog uiDialog, EventParameters eventParameters) {
@@ -254,6 +257,14 @@ public class StateManager extends StateProcessor {
 
     public void dismissDialog() {
         messages.stateAction(Events.StateAction.Action.Dismiss);
+    }
+
+    public void setActivityForId(UUID activityForId, BaseActivity baseActivity) {
+        activityMap.put(activityForId, baseActivity);
+    }
+
+    public HashMap<UUID, BaseActivity> getActivityMap() {
+        return activityMap;
     }
 
 
@@ -306,7 +317,7 @@ public class StateManager extends StateProcessor {
         ResumeApplication, ResumingAppliedUqhp, ResumingApplying, LoggingIn, GettingEffectiveDate,
         GettingStatus, AcctNewPassword, AcctPreAuthNP, AcctAddressNP, AcctGenderNP, AcctDateOfBirthNP,
         AcctSsnNP, AcctAuthConsentNP, GetQuestionsNP, RidpQuestionsNP, AcctSystemFoundYou, FamilyMembers,
-        GettingUqhpDetermination, PremiumAndDeductible, GettingPlans, SelectedPlan, ApplicationSubmitted, SubmittingApplication, ThanksApplication, Congrats, GettingEffectiveDateForIWant, LastStep, ClearPIIMobilePassword, CoverageThisYear
+        GettingUqhpDetermination, PremiumAndDeductible, GettingPlans, SelectedPlan, ApplicationSubmitted, SubmittingApplication, ThanksApplication, Congrats, GettingEffectiveDateForIWant, LastStep, ClearPIIMobilePassword, GettingOpenEnrollmentForIWant, CoverageThisYear
     }
 
     // You are discouraged from removing or reordring this enum. It is used in serialized objects.
@@ -425,7 +436,9 @@ public class StateManager extends StateProcessor {
 
     private void initStartupStates(StateMachine stateMachine){
         stateMachine.from(AppStates.Hello).on(AppEvents.ViewMyAccount).to(AppStates.Login, new LaunchActivity(LoginActivity.uiActivity));
-        stateMachine.from(AppStates.Hello).on(AppEvents.StartApplication).to(AppStates.GettingEffectiveDateForIWant, new StateManager.BackgroundProcess(Events.GetEffectiveDate.class));
+        stateMachine.from(AppStates.Hello).on(AppEvents.StartApplication).to(AppStates.GettingOpenEnrollmentForIWant, new StateManager.BackgroundProcess(Events.CheckOpenEnrollment.class));
+        stateMachine.from(AppStates.GettingOpenEnrollmentForIWant).on(AppEvents.InOpenEnrollment).to(AppStates.GettingEffectiveDateForIWant, new StateManager.BackgroundProcess(Events.GetEffectiveDate.class));
+        stateMachine.from(AppStates.GettingOpenEnrollmentForIWant).on(AppEvents.OpenEnrollmentClosed).to(AppStates.OpenEnrollmentClosed, new LaunchActivity(OpenEnrollmentClosedActivity.uiActivity));
         stateMachine.from(AppStates.GettingEffectiveDateForIWant).on(AppEvents.ReceivedEffectiveDate).to(AppStates.IWantTo, new LaunchActivity(IWantToActivity.uiActivity));
         stateMachine.from(AppStates.Hello).on(AppEvents.ResumeApplication).to(AppStates.ResumeApplication, new LaunchActivity(ResumeApplicationActivity.uiActivity));
         stateMachine.from(AppStates.IWantTo).on(AppEvents.GetCoverageNextYear).to(AppStates.CoverageNextYear, new LaunchActivity(FullPricePlanActivity.uiActivity));
@@ -490,6 +503,7 @@ public class StateManager extends StateProcessor {
         stateMachine.from(AppStates.LastStep).on(AppEvents.SubmitMyApplicationClicked).to(AppStates.SubmittingApplication, new BackgroundProcess(Events.SubmitApplication.class));
         stateMachine.from(AppStates.SubmittingApplication).on(AppEvents.ChoosePlanSucessful).to(AppStates.ThanksApplication, new LaunchActivity(ThanksApplicationActivity.uiActivity));
         stateMachine.from(AppStates.ApplicationSubmitted).on(AppEvents.ChoosePlanSucessful).to(AppStates.Hello, new LaunchActivity(ThanksApplicationActivity.uiActivity));
+        stateMachine.from(AppStates.ThanksApplication).on(AppEvents.Back).to(AppStates.Hello, new LaunchActivity(HelloActivity.uiActivity));
         stateMachine.from(AppStates.ThanksApplication).on(AppEvents.CheckStatusNow).to(AppStates.GettingStatus, new StateManager.BackgroundProcess(Events.ResumeApplication.class));
         stateMachine.from(AppStates.ThanksApplication).on(AppEvents.ComeBackLater).to(AppStates.Hello, new LaunchActivity(HelloActivity.uiActivity));
     }
@@ -520,7 +534,6 @@ public class StateManager extends StateProcessor {
 
         stateMachine.from(AppStates.CreatingAccount).on(AppEvents.SignUpUserInAceds).to(AppStates.AcctSystemFoundYouInCuramAceds, new LaunchActivity(AcctSystemFoundYouAceds.uiActivity));
         stateMachine.from(AppStates.CreatingAccount).on(AppEvents.SignUpSuccessful).to(AppStates.GettingStatus, new StateManager.BackgroundProcess(Events.ResumeApplication.class));
-        stateMachine.from(AppStates.CreatingAccount).on(AppEvents.SignUpSuccessful).to(AppStates.FamilyMembers, new PopAndLaunchActivity(org.dchbx.coveragehq.financialeligibility.FamilyActivity.uiActivity));
 
         stateMachine.from(AppStates.AcctRidpUserNotFound).on(AppEvents.ReviewRidpResponses).to(AppStates.AcctCreate, new PopAndLaunchActivity(AcctCreate.uiActivity));
         stateMachine.from(AppStates.AcctRidpUserNotFound).on(AppEvents.Close).to(AppStates.AcctRidpClosing, new StateManager.BackgroundProcess(Events.ClearPIIRequest.class));
@@ -545,6 +558,7 @@ public class StateManager extends StateProcessor {
 
         stateMachine.from(AppStates.AcctNewPassword).on(AppEvents.Continue).to(AppStates.AcctPreAuth, new LaunchActivity(AcctPreAuthActivity.uiActivity));
 
+        stateMachine.from(AppStates.FamilyMembers).on(AppEvents.Back).to(AppStates.Hello, new LaunchActivity(HelloActivity.uiActivity));
         stateMachine.from(AppStates.FamilyMembers).on(AppEvents.EditFamilyMember).to(AppStates.FinancialAssitanceQuestions, new LaunchActivity(EditPersonActivity.uiActivity));
         stateMachine.from(AppStates.FamilyMembers).on(AppEvents.ContinueSingleMemberFamily).to(AppStates.Attestation, new LaunchActivity(AttestationActivity.uiActivity));
         stateMachine.from(AppStates.FamilyMembers).on(AppEvents.ContinueMultipleMemberFamily).to(AppStates.FamilyRelationships, new LaunchActivity(RelationshipsActivity.uiActivity));
@@ -564,7 +578,9 @@ public class StateManager extends StateProcessor {
             .on(AppEvents.ReceivedUqhpDeterminationHasIneligible)
                 .to(AppStates.Ineligible, new LaunchActivity(IneligibleResultsActivity.uiActivity));
         stateMachine.from(AppStates.UqhpDetermination).on(ReceivedUqhpDeterminationOnlyEligible).to(AppStates.Eligible, new LaunchActivity(EligibleResultsActivity.uiActivity));
+        stateMachine.from(AppStates.Ineligible).on(AppEvents.Back).to(AppStates.Hello, new LaunchActivity(HelloActivity.uiActivity));
         stateMachine.from(AppStates.Ineligible).on(AppEvents.ShowEligible).to(AppStates.Eligible, new LaunchActivity(EligibleResultsActivity.uiActivity));
+        stateMachine.from(AppStates.Eligible).on(AppEvents.Back).to(AppStates.Hello, new LaunchActivity(HelloActivity.uiActivity));
         stateMachine.from(AppStates.Eligible).on(AppEvents.ShowIneligible).to(AppStates.Ineligible, new LaunchActivity(IneligibleResultsActivity.uiActivity));
         stateMachine.from(AppStates.Eligible).on(AppEvents.ChoosePlan).to(AppStates.GettingPlans, new BackgroundProcess(Events.GetPlans.class));
         stateMachine.from(AppStates.GettingPlans).on(AppEvents.GotPlans).to(AppStates.PremiumAndDeductible, new LaunchActivity(PremiumAndDeductibleActivity.uiActivity));
@@ -699,7 +715,7 @@ public class StateManager extends StateProcessor {
         public boolean call(StateMachine stateMachine, StateManager stateManager, AppEvents event,
                             AppStates leavingState, AppStates enterState,
                             EventParameters intentParameters) throws IOException, CoverageException {
-            stateMachine.push(new WaitActivityInfo<AppEvents, AppStates>(enterState, event, null));
+            stateMachine.push(new WaitActivityInfo<AppEvents, AppStates>(enterState, event, null, this));
             stateManager.showWait();
             try {
                 Object o = c.newInstance();

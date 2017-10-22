@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">DC Health Link</string>
+    <string name="app_name">MyLink2018</string>
     <string name="title_activity_login">SmallBiz Login</string>
     <string name="title_broker_details">Broker Details</string>
     <string name="secret_key">changethisvalue!</string>

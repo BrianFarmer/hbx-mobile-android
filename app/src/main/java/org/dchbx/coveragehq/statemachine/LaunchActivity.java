@@ -16,7 +16,7 @@ public class LaunchActivity extends StateMachineAction {
                         StateManager.AppStates leavingState, StateManager.AppStates enterState,
                         EventParameters eventParameters) throws IOException, CoverageException {
         stateMachine.push(new ActivityInfo(enterState, event, uiActivity));
-        stateManager.launchActivity(uiActivity, eventParameters);
+        stateManager.launchActivity(uiActivity, eventParameters, this);
         return false;
     }
 }

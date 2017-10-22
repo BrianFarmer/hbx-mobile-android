@@ -23,7 +23,7 @@ public class InitAndLaunchActivity extends StateMachineAction {
                      EventParameters eventParameters) throws IOException, CoverageException {
         init.init(eventParameters);
         stateMachine.push(new ActivityInfo(enterState, event, uiActivity));
-        stateManager.launchActivity(uiActivity, eventParameters);
+        stateManager.launchActivity(uiActivity, eventParameters, this);
         return false;
     }
 }

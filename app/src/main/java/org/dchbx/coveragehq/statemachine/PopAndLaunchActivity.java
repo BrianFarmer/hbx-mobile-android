@@ -35,7 +35,7 @@ public class PopAndLaunchActivity extends StateMachineAction {
         StateInfoBase pop = stateMachine.getStatesStack().pop();
 //        pop.onPop(stateMachine, stateManager);
         stateMachine.push(new ActivityInfo(enterState, event, uiActivity));
-        stateManager.popAndLaunchActivity(uiActivity, eventParameters);
+        stateManager.popAndLaunchActivity(uiActivity, eventParameters, this);
         return false;
     }
 }

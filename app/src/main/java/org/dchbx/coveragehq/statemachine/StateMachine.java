@@ -164,7 +164,6 @@ public class StateMachine {
 
         return new FromState(state, null, this, transitionsMap, processorsMap);
     }
-
     public class FromState{
         private final StateManager.AppStates state;
         private final StateMachineAction action;
