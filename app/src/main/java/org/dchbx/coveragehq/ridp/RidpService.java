@@ -112,7 +112,7 @@ public class RidpService extends StateProcessor {
         identity.person.phones = new ArrayList<>();
         Phone phone = new Phone();
         phone.phone = new Phone.InternalPhone();
-        phone.phone.phoneNumber = "2025551212";
+        phone.phone.phoneNumber = account.phone.replaceAll("[(-)]", "");
         phone.phone.type = "home";
         identity.person.phones.add(phone);
         identity.person.personName = new PersonName();

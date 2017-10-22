@@ -43,6 +43,7 @@ import org.dchbx.coveragehq.ridp.AcctCreate;
 import org.dchbx.coveragehq.ridp.AcctCreateNewPassword;
 import org.dchbx.coveragehq.ridp.AcctDateOfBirth;
 import org.dchbx.coveragehq.ridp.AcctGenderActivity;
+import org.dchbx.coveragehq.ridp.AcctPhone;
 import org.dchbx.coveragehq.ridp.AcctPreAuthActivity;
 import org.dchbx.coveragehq.ridp.AcctRidpConnectionFailure;
 import org.dchbx.coveragehq.ridp.AcctRidpUserNotFound;
@@ -284,6 +285,7 @@ public class StateManager extends StateProcessor {
         Any,
         Previous,
         AcctAddress,
+        AcctPhone,
         AcctAuthConsent,
         AcctCreate,
         AcctGender,
@@ -515,7 +517,8 @@ public class StateManager extends StateProcessor {
 
         stateMachine.from(AppStates.AcctCreate).on(AppEvents.Continue).to(AppStates.AcctPreAuth, new LaunchActivity(AcctPreAuthActivity.uiActivity));
         stateMachine.from(AppStates.AcctPreAuth).on(AppEvents.Continue).to(AppStates.AcctAddress, new LaunchActivity(AcctAddress.uiActivity));
-        stateMachine.from(AppStates.AcctAddress).on(AppEvents.Continue).to(AppStates.AcctGender, new LaunchActivity(AcctGenderActivity.uiActivity));
+        stateMachine.from(AppStates.AcctAddress).on(AppEvents.Continue).to(AppStates.AcctPhone, new LaunchActivity(AcctPhone.uiActivity));
+        stateMachine.from(AppStates.AcctPhone).on(AppEvents.Continue).to(AppStates.AcctGender, new LaunchActivity(AcctGenderActivity.uiActivity));
         stateMachine.from(AppStates.AcctGender).on(AppEvents.Continue).to(AppStates.AcctDateOfBirth, new LaunchActivity(AcctDateOfBirth.uiActivity));
         stateMachine.from(AppStates.AcctDateOfBirth).on(AppEvents.Continue).to(AppStates.AcctSsn, new LaunchActivity(AcctSsn.uiActivity));
         stateMachine.from(AppStates.AcctSsn).on(AppEvents.Continue).to(AppStates.AcctAuthConsent, new LaunchActivity(AcctAuthConsent.uiActivity));

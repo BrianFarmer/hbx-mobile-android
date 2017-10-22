@@ -34,6 +34,7 @@ public class ValidatedActivityBase extends BaseActivity {
         public final static String STATE = "^[A-Z]{2}$";
         public final static String ZIPCODE = "^[0-9]{5}$";
         public final static String SSN = "^\\d{3}-\\d{2}-\\d{4}$";
+        public final static String PHONE = "^\\d{3}-\\d{3}-\\d{4}$";
 
         public final static String DATE_FORMAT = "MM/dd/yyyy";
     }

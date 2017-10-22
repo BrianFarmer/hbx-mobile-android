@@ -152,6 +152,11 @@
             android:label=""
             />
         <activity
+            android:name=".ridp.AcctPhone"
+            android:configChanges="orientation|keyboardHidden|screenSize"
+            android:label=""
+            />
+        <activity
             android:name=".ridp.AcctSsn"
             android:configChanges="orientation|keyboardHidden|screenSize"
             android:label=""
