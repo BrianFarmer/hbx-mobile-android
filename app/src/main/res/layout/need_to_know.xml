@@ -50,6 +50,7 @@
 
     <Button
         android:id="@+id/skipThis"
+        android:visibility="gone"
         style="@style/ivl_open_button"
         android:text="@string/skip_this"
         android:layout_below="@+id/continueButton"

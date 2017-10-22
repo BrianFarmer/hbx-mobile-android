@@ -117,7 +117,7 @@ public class Account implements Serializable {
     }
 
     public String getSsn() {
-        return ssn;
+        return ssn == null ? ssn : ssn.replaceAll("[^0-9]", "");
     }
 
     public void setSsn(String ssn) {
@@ -125,7 +125,7 @@ public class Account implements Serializable {
     }
 
     public String getPhone() {
-        return phone;
+        return phone == null ? phone : phone.replaceAll("[(-)]", "");
     }
 
     public void setPhone(String phone) {

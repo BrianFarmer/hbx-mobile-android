@@ -93,38 +93,38 @@ public class RidpService extends StateProcessor {
         Address address = new Address();
         address.address = new Address.InternalAddress();
         address.address.type = "home";
-        address.address.addressLine1 = account.address.address1;
+        address.address.addressLine1 = account.getAddress().address1;
         if (account.address.address2 != null) {
-            address.address.addressLine2 = account.address.address2;
+            address.address.addressLine2 = account.getAddress().address2;
         } else {
             address.address.addressLine2 = "";
         }
-        address.address.locationCityName = account.address.city;
-        address.address.locationStateCode = account.address.state;
-        address.address.postalCode = account.address.zipCode;
+        address.address.locationCityName = account.getAddress().city;
+        address.address.locationStateCode = account.getAddress().state;
+        address.address.postalCode = account.getAddress().zipCode;
         identity.person.addresses.add(address);
         identity.person.emails = new ArrayList<>();
         Email email = new Email();
         email.email = new Email.InternalEmail();
-        email.email.emailAddress = account.emailAddress;
+        email.email.emailAddress = account.getEmailAddress();
         email.email.type = "home";
         identity.person.emails.add(email);
         identity.person.phones = new ArrayList<>();
         Phone phone = new Phone();
         phone.phone = new Phone.InternalPhone();
-        phone.phone.phoneNumber = account.phone.replaceAll("[(-)]", "");
+        phone.phone.phoneNumber = account.getPhone();
         phone.phone.type = "home";
         identity.person.phones.add(phone);
         identity.person.personName = new PersonName();
-        identity.person.personName.personGivenName = account.firstName;
-        identity.person.personName.personSurname = account.lastName;
+        identity.person.personName.personGivenName = account.getFirstName();
+        identity.person.personName.personSurname = account.getLastName();
 
         identity.personDemographics = new PersonDemographics();
-        identity.personDemographics.sex = account.gender;
-        identity.personDemographics.ssn = account.ssn.replace("-", "");
+        identity.personDemographics.sex = account.getGender();
+        identity.personDemographics.ssn = account.getSsn();
         DateTimeFormatter dateTimeFormatter = ISODateTimeFormat.basicDate();
         if (account.birthdate != null){
-            identity.personDemographics.birthDate = dateTimeFormatter.print(account.birthdate);
+            identity.personDemographics.birthDate = dateTimeFormatter.print(account.getBirthdate());
         }
         identity.personDemographics.createdAt = dateTimeFormatter.print(LocalDate.now());
         identity.personDemographics.modifiedAt = dateTimeFormatter.print(LocalDate.now());

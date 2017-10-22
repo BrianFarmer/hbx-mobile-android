@@ -244,6 +244,7 @@
                     />
                 <Button
                     android:id="@+id/skipButton"
+                    android:visibility="gone"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:text="@string/skip_this"

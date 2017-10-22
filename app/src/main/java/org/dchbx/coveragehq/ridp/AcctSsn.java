@@ -53,9 +53,4 @@ public class AcctSsn extends ValidatedActivityBase {
         return validateTextFieldByRegex(R.id.ssn, Patterns.SSN, R.string.ssnValidationError, issues);
     }
 
-    @Override
-    public void onClick(Account account) {
-        account.setSsn(account.getSsn().replace("-", ""));
-        super.onClick(account);
-    }
 }
