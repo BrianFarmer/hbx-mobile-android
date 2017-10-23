@@ -42,7 +42,9 @@ public class PlanDetailsAdapter extends SummaryAdapter {
         items = new ArrayList<>();
         items.add(new PlanOverviewWrapper(planDetailsActivity, this.plan));
         items.add(new ResourcesHeaderWrapper());
-        items.add(new ResourcesItemWrapper(this.plan.links.summaryOfBenefits, R.drawable.pdf_document, activity.getString(R.string.terms_conditions_pdf), activity));
+        if (this.plan.links.summaryOfBenefits != null){
+            items.add(new ResourcesItemWrapper(this.plan.links.summaryOfBenefits, R.drawable.pdf_document, activity.getString(R.string.terms_conditions_pdf), activity));
+        }
         items.add(new ResourcesItemWrapper(this.plan.links.providerDirectory, R.drawable.physicians, activity.getString(R.string.provider_directory), activity));
         items.add(new SummaryHeaderWrapper());
 

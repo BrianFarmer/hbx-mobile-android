@@ -4,7 +4,6 @@ import android.content.Intent;
 import android.support.annotation.IdRes;
 import android.text.Editable;
 import android.text.InputFilter;
-import android.text.Spanned;
 import android.text.TextWatcher;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -221,7 +220,7 @@ public class ApplicationQuestionsActivity extends BrokerActivity {
     protected void getValues(JsonObject values, ArrayList<FieldType> fields){
         String mostRecentField = "";
         FieldType mostRecentFieldType = null;
-        try {
+        //try {
             for (FieldType field : fields) {
                 mostRecentField = field.field.field;
                 mostRecentFieldType = field;
@@ -238,7 +237,10 @@ public class ApplicationQuestionsActivity extends BrokerActivity {
                     JsonElement value = field.getValue();
                     if (value != null) {
                         values.add(field.field.field, value);
+                    } else {
+                        Log.d(TAG, "should this field be null: " + field.field.field);
                     }
+
                     if (field.dependentFields != null) {
                         try {
                             getValues(values, field.dependentFields);
@@ -249,13 +251,13 @@ public class ApplicationQuestionsActivity extends BrokerActivity {
                     }
                 }
             }
-        } catch (Throwable t) {
+        /*} catch (Throwable t) {
             Log.e(TAG, "exception: " + t);
             Log.e(TAG, "field name: " + mostRecentField);
             if (mostRecentFieldType != null) {
                 Log.e(TAG, mostRecentFieldType.field.field);
             }
-        }
+        }*/
     }
 
     public static abstract class FieldType{
@@ -417,6 +419,9 @@ public class ApplicationQuestionsActivity extends BrokerActivity {
 
         @Override
         public JsonElement getValue() {
+            if (savedValue == null){
+                return null;
+            }
             return new JsonPrimitive(savedValue);
         }
 
