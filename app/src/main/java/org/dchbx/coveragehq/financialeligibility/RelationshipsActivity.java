@@ -6,6 +6,8 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.ListView;
 
+import com.google.gson.JsonObject;
+
 import org.dchbx.coveragehq.BaseActivity;
 import org.dchbx.coveragehq.Events;
 import org.dchbx.coveragehq.R;
@@ -14,6 +16,9 @@ import org.dchbx.coveragehq.models.fe.Schema;
 import org.dchbx.coveragehq.statemachine.StateManager;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
+
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * Created by plast on 5/4/2017.
@@ -68,9 +73,36 @@ public class RelationshipsActivity extends BaseActivity {
         continueButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                if (!checkRelationships()){
+                    simpleAlert(R.string.app_name, R.string.please_check_relationships);
+                    return;
+                }
                 getMessages().appEvent(StateManager.AppEvents.Continue);
             }
         });
+    }
+
+    private boolean checkRelationships() {
+        if (family.Relationship.size() != family.Person.size() - 1){
+            return false;
+        }
+
+        int i = 1;
+        for (Map.Entry<String, HashMap<String, JsonObject>> entry : family.Relationship.entrySet()) {
+            HashMap<String, JsonObject> relationships = entry.getValue();
+            if (relationships.size() != family.Person.size() - i){
+                return false;
+            }
+
+            for (Map.Entry<String, JsonObject> relationship : relationships.entrySet()) {
+                if (relationship == null){
+                    return false;
+                }
+            }
+            i ++;
+        }
+
+        return true;
     }
 
     public void saveData() {

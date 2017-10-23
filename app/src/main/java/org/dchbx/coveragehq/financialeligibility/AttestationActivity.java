@@ -85,6 +85,12 @@ public class AttestationActivity extends ApplicationQuestionsActivity {
             public void onClick(View view) {
                 jsonObject = getValues();
                 family.Attestation = jsonObject;
+
+                if (!FinancialEligibilityService.checkObject(family.Attestation, schema.Attestation)){
+                    simpleAlert(R.string.app_name, R.string.please_check_attestation);
+                    return;
+                }
+
                 getMessages().saveUqhpFamily(family);
             }
         });

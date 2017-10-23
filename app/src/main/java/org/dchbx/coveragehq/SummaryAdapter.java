@@ -226,9 +226,11 @@ class ResourcesItemWrapper extends AdapterItemWrapperBase{
         resourceName.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent intent = new Intent(Intent.ACTION_VIEW);
-                intent.setData(Uri.parse(url));
-                activity.startActivity(intent);
+                if (url != null) {
+                    Intent intent = new Intent(Intent.ACTION_VIEW);
+                    intent.setData(Uri.parse(url));
+                    activity.startActivity(intent);
+                }
             }
         });
     }

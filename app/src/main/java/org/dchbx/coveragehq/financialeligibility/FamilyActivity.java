@@ -8,6 +8,7 @@ import android.widget.Button;
 import android.widget.ListView;
 
 import com.google.gson.Gson;
+import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 
 import org.dchbx.coveragehq.BaseActivity;
@@ -132,6 +133,11 @@ public class FamilyActivity extends BaseActivity {
         continueButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                if (!allcomplete()){
+                    simpleAlert(R.string.app_name, R.string.please_check_person);
+                    return;
+                }
+
                 if (family.Person.size() == 1){
                     getMessages().appEvent(StateManager.AppEvents.ContinueSingleMemberFamily, EventParameters.build().add("FamilyMemberCount", family.Person.size()));
                 } else {
@@ -139,6 +145,17 @@ public class FamilyActivity extends BaseActivity {
                 }
             }
         });
+    }
+
+    private boolean allcomplete() {
+        for (JsonElement jsonElement : family.Person) {
+            JsonObject person = jsonElement.getAsJsonObject();
+            if (!FinancialEligibilityService.checkObject(person, schema.Person)){
+                return false;
+            }
+        }
+
+        return true;
     }
 
     public void saveData() {
