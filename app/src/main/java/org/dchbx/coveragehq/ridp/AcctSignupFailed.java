@@ -3,20 +3,18 @@ package org.dchbx.coveragehq.ridp;
 import android.content.Intent;
 import android.databinding.DataBindingUtil;
 import android.os.Bundle;
+import android.text.Html;
 import android.widget.ImageButton;
+import android.widget.TextView;
+import android.widget.Toast;
 
 import org.dchbx.coveragehq.BaseActivity;
 import org.dchbx.coveragehq.R;
-import org.dchbx.coveragehq.databinding.AcctDateOfBirthBinding;
+import org.dchbx.coveragehq.databinding.AcctSignupFailedBinding;
+import org.dchbx.coveragehq.databinding.AcctSystemFoundYouAcedsBinding;
 import org.dchbx.coveragehq.models.account.Account;
-import org.dchbx.coveragehq.models.ridp.Questions;
-import org.dchbx.coveragehq.statemachine.EventParameters;
+import org.dchbx.coveragehq.models.ridp.VerifyIdentityResponse;
 import org.dchbx.coveragehq.statemachine.StateManager;
-
-import java.util.Calendar;
-import java.util.Date;
-import java.util.GregorianCalendar;
-import java.util.List;
 
 /*
     This file is part of DC.
@@ -35,31 +33,30 @@ import java.util.List;
     along with DC Health Link SmallBiz.  If not, see <http://www.gnu.org/licenses/>.
     This statement should go near the beginning of every source file, close to the copyright notices. When using the Lesser GPL, insert the word “Lesser” before “General” in all three places. When using the GNU AGPL, insert the word “Affero” before “General” in all three places.
 */
-public class AcctDateOfBirth extends ValidatedActivityBase {
-    public static StateManager.UiActivity uiActivity = new StateManager.UiActivity(AcctDateOfBirth.class);
-    private static String TAG = "AcctDateOfBirth";
-
-    //private Questions ridpQuestions;
+public class AcctSignupFailed extends ValidatedActivityBase {
+    public static StateManager.UiActivity uiActivity = new StateManager.UiActivity(AcctSignupFailed.class);
     //private ImageButton continueButton;
-    private AcctDateOfBirthBinding binding;
 
-    @Override
-    protected boolean validate(List<String> issues) {
-        Date min = new GregorianCalendar(1911, Calendar.JANUARY, 1).getTime();
-        return validateDateInRange(R.id.dateOfBirth, R.string.dateOfBirth,  min, new Date(), issues);
-    }
+    private AcctSignupFailedBinding binding;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        binding = DataBindingUtil.setContentView(this, R.layout.acct_date_of_birth);
-        configToolbar();
-
+        binding = DataBindingUtil.setContentView(this, R.layout.acct_signup_failed);
         Intent intent = getIntent();
         Account account = RidpService.getAccountFromIntent(intent);
         binding.setAccount(account);
         binding.setActivity(this);
+        String error = intent.getExtras().getString("error_msg");
+        if (error != null) {
+            TextView problemText = (TextView) findViewById(R.id.problemText);
+            problemText.setText(error);
+        }
+        configToolbar();
     }
 
+    public void comeBackLaterClicked(){
+        getMessages().appEvent(StateManager.AppEvents.Close);
+    }
 
 }

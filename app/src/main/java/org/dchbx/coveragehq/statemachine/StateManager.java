@@ -49,6 +49,7 @@ import org.dchbx.coveragehq.ridp.AcctRidpConnectionFailure;
 import org.dchbx.coveragehq.ridp.AcctRidpUserNotFound;
 import org.dchbx.coveragehq.ridp.AcctRidpWrongAnswersLockout;
 import org.dchbx.coveragehq.ridp.AcctRidpWrongAnswersRecoverable;
+import org.dchbx.coveragehq.ridp.AcctSignupFailed;
 import org.dchbx.coveragehq.ridp.AcctSsn;
 import org.dchbx.coveragehq.ridp.AcctSsnWithEmployer;
 import org.dchbx.coveragehq.ridp.AcctSystemFoundYou;
@@ -311,7 +312,7 @@ public class StateManager extends StateProcessor {
         GlossaryDialog,
         CreatingAccount, VerifyingUser, RidpQuestions, GetQuestions, AcctRidpUserNotFound, AcctRidpClosing,
         AcctRidpConnectionFailure, AcctRidpWrongAnswersRecoverable, AcctRidpWrongAnswersLockout, AcctRidpCheckingOverride,
-        AcctSystemFoundYouInCuramAceds, AcctSsnWithEmployer, AcctSystemFoundYouReturningToLogin, AcctSystemFoundYouClosing,
+        AcctSystemFoundYouInCuramAceds, AcctSignupFailed, AcctSsnWithEmployer, AcctSystemFoundYouReturningToLogin, AcctSystemFoundYouClosing,
         FinancialAssitanceQuestions, FeDropDown,
         Wallet, SectionQuestions, EditFamilyRelationShip, Attestation,
         UqhpDetermination, Ineligible, Eligible, Saved,
@@ -360,6 +361,7 @@ public class StateManager extends StateProcessor {
         UserVerifiedOkToCreate,
         SignUpSuccessful,
         SignUpUserInAceds,
+        SignUpFailed,
         ViewMyAccount,
         StartApplication,
         ResumeApplication,
@@ -536,7 +538,11 @@ public class StateManager extends StateProcessor {
         stateMachine.from(AppStates.VerifyingUser).on(AppEvents.RidpWrongAnswersLockout).to(AppStates.AcctRidpWrongAnswersLockout, new PopAndLaunchActivity(AcctRidpWrongAnswersLockout.uiActivity));
 
         stateMachine.from(AppStates.CreatingAccount).on(AppEvents.SignUpUserInAceds).to(AppStates.AcctSystemFoundYouInCuramAceds, new LaunchActivity(AcctSystemFoundYouAceds.uiActivity));
+        stateMachine.from(AppStates.CreatingAccount).on(AppEvents.SignUpFailed).to(AppStates.AcctSignupFailed, new LaunchActivity(AcctSignupFailed.uiActivity));
         stateMachine.from(AppStates.CreatingAccount).on(AppEvents.SignUpSuccessful).to(AppStates.GettingStatus, new StateManager.BackgroundProcess(Events.ResumeApplication.class));
+        stateMachine.from(AppStates.AcctSignupFailed).on(AppEvents.Close).to(AppStates.AcctRidpClosing, new StateManager.BackgroundProcess(Events.ClearPIIRequest.class));
+        stateMachine.from(AppStates.AcctSignupFailed).on(AppEvents.Continue).to(AppStates.AcctCreate, new LaunchActivity(AcctCreate.uiActivity));
+
 
         stateMachine.from(AppStates.AcctRidpUserNotFound).on(AppEvents.ReviewRidpResponses).to(AppStates.AcctCreate, new PopAndLaunchActivity(AcctCreate.uiActivity));
         stateMachine.from(AppStates.AcctRidpUserNotFound).on(AppEvents.Close).to(AppStates.AcctRidpClosing, new StateManager.BackgroundProcess(Events.ClearPIIRequest.class));

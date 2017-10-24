@@ -29,6 +29,7 @@ import org.dchbx.coveragehq.models.ridp.Phone;
 import org.dchbx.coveragehq.models.ridp.Question;
 import org.dchbx.coveragehq.models.ridp.QuestionResponse;
 import org.dchbx.coveragehq.models.ridp.Questions;
+import org.dchbx.coveragehq.models.ridp.SignUp.Error;
 import org.dchbx.coveragehq.models.ridp.SignUp.Person;
 import org.dchbx.coveragehq.models.ridp.SignUp.SignUp;
 import org.dchbx.coveragehq.models.ridp.SignUp.SignUpResponse;
@@ -158,23 +159,33 @@ public class RidpService extends StateProcessor {
             connectionHandler.process(request, new IConnectionHandler.OnCompletion() {
                 @Override
                 public void onCompletion(IConnectionHandler.HttpResponse response) {
-                    if (response.getResponseCode() == 201){
-                        JsonParser parser = serviceManager.getParser();
-                        SignUpResponse signUpResponse = parser.parseSignUpResponse(response.getBody());
+                    //regardless of response code, we assume the server responds with the correct structure. If not,
+                    //we'd throw an error caught down below. We treat any 200-206 response without an error as success.
+                    boolean success = response.getResponseCode() >= 200 && response.getResponseCode() <= 206;
+
+                    JsonParser parser = serviceManager.getParser();
+                    SignUpResponse signUpResponse = parser.parseSignUpResponse(response.getBody());
+                    if (success) {
                         serviceManager.getConfigurationStorageHandler().store(signUpResponse);
                         serviceManager.getUrlHandler().populateLinks(signUpResponse.links);
+                    }
 
-                        if (signUpResponse.error != null){
-                            if (signUpResponse.error.type.compareTo("userHasActiveMedicaid") == 0){
-                                messages.getEventBus().post(new Events.AppEvent(StateManager.AppEvents.SignUpUserInAceds, eventParameters.add("error_msg", signUpResponse.error.message)));
-                            } else {
-                                messages.getEventBus().post(new Events.AppEvent(StateManager.AppEvents.Error, eventParameters.add("error_msg", signUpResponse.error.message)));
-                            }
+                    Error error = signUpResponse.error;
+
+                    if (error != null) {
+                        if ("userHasActiveMedicaid".equals(error.type)) {
+                            messages.getEventBus().post(new Events.AppEvent(StateManager.AppEvents.SignUpUserInAceds, eventParameters.add("error_msg", error.message)));
+                        } else if ("UserError".equals(error.type)) {
+                            messages.getEventBus().post(new Events.AppEvent(StateManager.AppEvents.SignUpFailed, eventParameters.add("error_msg", error.message).add("Account", account)));
                         } else {
-                            messages.getEventBus().post(new Events.AppEvent(StateManager.AppEvents.SignUpSuccessful, eventParameters));
+                            messages.getEventBus().post(new Events.AppEvent(StateManager.AppEvents.SignUpFailed, eventParameters.add("Account", account)));
                         }
                     } else {
-                        messages.getEventBus().post(new Events.Error("Bad Http response processing RidpService.signUp", "Events.GetCreateAccountInfo"));
+                        if (success) {
+                            messages.getEventBus().post(new Events.AppEvent(StateManager.AppEvents.SignUpSuccessful, eventParameters));
+                        } else {
+                            messages.getEventBus().post(new Events.Error("Bad Http response processing RidpService.signUp", "Events.GetCreateAccountInfo"));
+                        }
                     }
                 }
             });

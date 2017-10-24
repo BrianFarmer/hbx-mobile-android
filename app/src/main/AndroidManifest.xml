@@ -182,6 +182,11 @@
             android:label=""
             />
         <activity
+            android:name=".ridp.AcctSignupFailed"
+            android:configChanges="orientation|keyboardHidden|screenSize"
+            android:label=""
+            />
+        <activity
             android:name=".ridp.AcctSsnWithEmployer"
             android:configChanges="orientation|keyboardHidden|screenSize"
             android:label=""

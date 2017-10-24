@@ -625,6 +625,10 @@ public abstract class UrlHandler {
     }
 
     public void populateLinks(Links links) {
+        if (links == null) {
+            throw new RuntimeException("Malformed sign-up or login response: no links found");
+        }
+
         serverConfiguration.logoutUrl = links.get.logoutUrl;
         serverConfiguration.statusUrl = links.get.statusUrl;
         serverConfiguration.userCoverageUrl = links.get.userCoverageUrl;

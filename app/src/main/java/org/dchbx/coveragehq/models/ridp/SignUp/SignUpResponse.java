@@ -29,4 +29,5 @@ public class SignUpResponse {
     public String uuid;
     @SerializedName("_links")
     @Expose
-    public Links links;}
+    public Links links;
+}

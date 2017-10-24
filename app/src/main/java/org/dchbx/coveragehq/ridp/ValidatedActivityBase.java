@@ -100,7 +100,7 @@ public class ValidatedActivityBase extends BaseActivity {
     }
 
     protected boolean validate(List<String> issues) {
-        return false;
+        return true;
     }
 
     public void onClick(Account account){
