@@ -73,7 +73,8 @@ public abstract class BaseResultsActivity extends BaseActivity {
                     messages.appEvent(moveToOtherEvent);
                 }
             });
-            findViewById(getLayoutId()).setOnTouchListener(getSwipeListener());
+            //TODO this seems to be crashing. Swiping would be nice though!
+            //findViewById(getLayoutId()).setOnTouchListener(getSwipeListener());
         }
     }
 
