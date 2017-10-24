@@ -1,5 +1,6 @@
 package org.dchbx.coveragehq.ridp;
 
+import android.content.Intent;
 import android.databinding.DataBindingUtil;
 import android.databinding.ViewDataBinding;
 import android.os.Bundle;
@@ -9,7 +10,9 @@ import org.dchbx.coveragehq.BaseActivity;
 import org.dchbx.coveragehq.R;
 import org.dchbx.coveragehq.databinding.AcctRidpUserNotFoundBinding;
 import org.dchbx.coveragehq.databinding.AcctSystemFoundYouBinding;
+import org.dchbx.coveragehq.models.account.Account;
 import org.dchbx.coveragehq.models.ridp.VerifyIdentityResponse;
+import org.dchbx.coveragehq.statemachine.EventParameters;
 import org.dchbx.coveragehq.statemachine.StateManager;
 
 /*
@@ -33,6 +36,7 @@ public class AcctRidpUserNotFound extends BaseActivity {
     public static StateManager.UiActivity uiActivity = new StateManager.UiActivity(AcctRidpUserNotFound.class);
 
     private AcctRidpUserNotFoundBinding binding;
+    private Account account;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -41,6 +45,9 @@ public class AcctRidpUserNotFound extends BaseActivity {
         configToolbar();
         binding.setActivity(this);
         htmlifyTextControl(R.id.ridp_user_not_found_label);
+
+        Intent intent = getIntent();
+        account = RidpService.getAccountFromIntent(intent);
     }
 
     public void callHbxClicked(){
@@ -48,7 +55,7 @@ public class AcctRidpUserNotFound extends BaseActivity {
     }
 
     public void reviewYourResponsesClicked(){
-        getMessages().appEvent(StateManager.AppEvents.ReviewRidpResponses);
+        getMessages().appEvent(StateManager.AppEvents.ReviewRidpResponses, EventParameters.build().add("Account", account));
     }
 
     public void comeBackLaterClicked(){

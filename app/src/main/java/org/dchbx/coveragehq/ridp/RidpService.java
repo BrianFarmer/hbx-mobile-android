@@ -215,7 +215,7 @@ public class RidpService extends StateProcessor {
         Log.d(TAG, "in RidpService.doThis(Events(GetVerificationResponse)");
 
         final EventParameters eventParameters = verificationResponse.getEventParameters();
-        Account account = (Account) eventParameters.getObject("Account", Account.class);
+        final Account account = (Account) eventParameters.getObject("Account", Account.class);
 
         UrlHandler urlHandler = serviceManager.getUrlHandler();
         ConnectionHandler connectionHandler = serviceManager.getConnectionHandler();
@@ -243,9 +243,9 @@ public class RidpService extends StateProcessor {
                     questionsAndAnswers.answers = buildAnswerObject(questions);
                     messages.appEvent(GetQuestionsOperationComplete, eventParameters.add(QuestionsAndAnswers, questionsAndAnswers));
                 } else if (responseCode == 503) {
-                    messages.appEvent(RidpConnectionFailure, eventParameters); //TODO “We're sorry. The third-party service used to confirm your identity is currently unavailable. Please try again later. If you continue to receive this message after trying several times, please call DC Health Link customer service for assistance at 1-855-532-5464.”
+                    messages.appEvent(RidpConnectionFailure, eventParameters.add("Account", account)); //“We're sorry. The third-party service used to confirm your identity is currently unavailable. Please try again later. If you continue to receive this message after trying several times, please call DC Health Link customer service for assistance at 1-855-532-5464.”
                 } else if (responseCode == 401) {
-                    messages.appEvent(RidpUserNotFound, eventParameters);
+                    messages.appEvent(RidpUserNotFound, eventParameters.add("Account", account));
                 } else {
                     messages.appEvent(Error, EventParameters.build().add("error_msg", "An error happened getting the verificaiton questions"));
                 }
@@ -301,6 +301,13 @@ public class RidpService extends StateProcessor {
             @Override
             public void onCompletion(IConnectionHandler.HttpResponse response) {
                 int responseCode = response.getResponseCode();
+
+                //COMMENT THIS IN TO TEST RIDP WRONG ANSWERS LOCKOUT
+                //responseCode = 403;
+
+                //COMMENT THIS IN TO TEST RIDP UNREACHABLE
+                //responseCode = 503;
+
                 handleVerificationResponse(responseCode, response.getBody(), eventParameters, account);
             }
         });
@@ -318,7 +325,7 @@ public class RidpService extends StateProcessor {
                     messages.appEvent(StateManager.AppEvents.UserVerifiedSsnWithEmployer, eventParameters);
                     break;
                 case InEnroll:
-                    messages.appEvent(StateManager.AppEvents.UserVerifiedFoundYou, eventParameters);
+                    messages.appEvent(StateManager.AppEvents.UserVerifiedFoundYou, eventParameters.add(Account, account));
                     break;
                 case OkToCreateAccount:
                     ConfigurationStorageHandler configurationStorageHandler = serviceManager.getConfigurationStorageHandler();
@@ -328,12 +335,12 @@ public class RidpService extends StateProcessor {
                     break;
             }
         } else if (responseCode == 503) {
-            messages.appEvent(RidpConnectionFailure, eventParameters); //TODO “We're sorry. The third-party service used to confirm your identity is currently unavailable. Please try again later. If you continue to receive this message after trying several times, please call DC Health Link customer service for assistance at 1-855-532-5464.”
+            messages.appEvent(RidpConnectionFailure, eventParameters.add(Account, account)); //TODO “We're sorry. The third-party service used to confirm your identity is currently unavailable. Please try again later. If you continue to receive this message after trying several times, please call DC Health Link customer service for assistance at 1-855-532-5464.”
         } else if (responseCode == 412) {
             WrongAnswersResponse wrongAnswersResponse = serviceManager.getParser().parseWrongAnswersResponse(responseBody);
-            messages.appEvent(RidpWrongAnswersRecoverable, eventParameters.add("transactionId", wrongAnswersResponse.verificationResult.transactionId)); //TODO “You have not passed identity validation. To proceed please contact Experian at 1-866-578-5409, and provide them with reference number {transaction_id}.”
+            messages.appEvent(RidpWrongAnswersRecoverable, eventParameters.add("transactionId", wrongAnswersResponse.verificationResult.transactionId).add(Account, account)); //TODO “You have not passed identity validation. To proceed please contact Experian at 1-866-578-5409, and provide them with reference number {transaction_id}.”
         } else if (responseCode == 403 || responseCode == 422) {
-            messages.appEvent(RidpWrongAnswersLockout, eventParameters); //TODO “Experian was unable to confirm your identity based on the information you provided. You will need to complete your application at the DC Health Benefit Exchange Authority office at 1225 Eye St NW. Please call (202)715-7576 to set up an appointment..”
+            messages.appEvent(RidpWrongAnswersLockout, eventParameters.add(Account, account)); //TODO “Experian was unable to confirm your identity based on the information you provided. You will need to complete your application at the DC Health Benefit Exchange Authority office at 1225 Eye St NW. Please call (202)715-7576 to set up an appointment..”
         } else {
             messages.appEvent(StateManager.AppEvents.Error, EventParameters.build().add("error_msg", "Bad Http response processing RidpService.verificationRequest"));
         }

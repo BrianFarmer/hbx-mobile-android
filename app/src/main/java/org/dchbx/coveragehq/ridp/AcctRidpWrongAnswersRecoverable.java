@@ -6,10 +6,10 @@ import android.os.Bundle;
 
 import org.dchbx.coveragehq.BaseActivity;
 import org.dchbx.coveragehq.R;
-import org.dchbx.coveragehq.databinding.AcctRidpConnectionFailureBinding;
 import org.dchbx.coveragehq.databinding.AcctRidpWrongAnswersRecoverableBinding;
 import org.dchbx.coveragehq.statemachine.EventParameters;
 import org.dchbx.coveragehq.statemachine.StateManager;
+import org.dchbx.coveragehq.models.account.Account;
 
 /*
     This file is part of DC.
@@ -33,13 +33,14 @@ public class AcctRidpWrongAnswersRecoverable extends BaseActivity {
 
     private AcctRidpWrongAnswersRecoverableBinding binding;
     private String transactionId;
+    private Account account;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         Intent intent = getIntent();
         transactionId = intent.getExtras().getString("transactionId");
-
+        account = RidpService.getAccountFromIntent(intent);
         binding = DataBindingUtil.setContentView(this, R.layout.acct_ridp_wrong_answers_recoverable);
         configToolbar();
         binding.setActivity(this);
@@ -50,7 +51,7 @@ public class AcctRidpWrongAnswersRecoverable extends BaseActivity {
     }
 
     public void continueClicked(){
-        getMessages().appEvent(StateManager.AppEvents.RidpCheckOverride, EventParameters.build().add("transactionId", transactionId));
+        getMessages().appEvent(StateManager.AppEvents.RidpCheckOverride, EventParameters.build().add("transactionId", transactionId).add("Account", account));
     }
 
     public void comeBackLaterClicked(){
