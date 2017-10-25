@@ -6,6 +6,7 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.reflect.TypeToken;
 
+import org.dchbx.coveragehq.models.Errors.ServerError;
 import org.dchbx.coveragehq.models.Glossary;
 import org.dchbx.coveragehq.models.Security.Endpoints;
 import org.dchbx.coveragehq.models.Security.LoginResponse;
@@ -235,5 +236,9 @@ public class JsonParser {
 
     public OpenEnrollmentStatus parseOpenEnrollment(String json) {
         return parse(json, org.dchbx.coveragehq.models.startup.OpenEnrollmentStatus.class);
+    }
+
+    public ServerError parseError(String body) {
+        return parse(body, ServerError.class);
     }
 }

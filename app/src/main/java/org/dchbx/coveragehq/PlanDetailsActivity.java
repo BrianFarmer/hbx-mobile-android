@@ -37,6 +37,7 @@ import android.widget.ListView;
 import org.dchbx.coveragehq.models.planshopping.Plan;
 import org.dchbx.coveragehq.models.services.Service;
 import org.dchbx.coveragehq.planshopping.PlanShoppingService;
+import org.dchbx.coveragehq.statemachine.EventParameters;
 import org.dchbx.coveragehq.statemachine.StateManager;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
@@ -175,6 +176,8 @@ public class PlanDetailsActivity extends BaseActivity {
         enroll.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                getMessages().appEvent(StateManager.AppEvents.BuyPlan, EventParameters.build().add(PlanShoppingService.Plan, plan));
+
             }
         });
     }

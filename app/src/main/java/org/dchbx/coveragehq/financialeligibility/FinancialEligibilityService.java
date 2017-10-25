@@ -1,20 +1,26 @@
 package org.dchbx.coveragehq.financialeligibility;
 
+import android.content.Intent;
 import android.util.Log;
 
+import com.google.gson.GsonBuilder;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 
 import org.dchbx.coveragehq.BrokerApplication;
 import org.dchbx.coveragehq.ConfigurationStorageHandler;
 import org.dchbx.coveragehq.ConnectionHandler;
+import org.dchbx.coveragehq.DateTimeDeserializer;
 import org.dchbx.coveragehq.Events;
 import org.dchbx.coveragehq.IConnectionHandler;
 import org.dchbx.coveragehq.JsonParser;
+import org.dchbx.coveragehq.LocalDateSerializer;
+import org.dchbx.coveragehq.LocalTimeDeserializer;
 import org.dchbx.coveragehq.Messages;
 import org.dchbx.coveragehq.ServiceManager;
 import org.dchbx.coveragehq.UrlHandler;
 import org.dchbx.coveragehq.Utilities;
+import org.dchbx.coveragehq.models.Errors.ServerError;
 import org.dchbx.coveragehq.models.account.Account;
 import org.dchbx.coveragehq.models.fe.Family;
 import org.dchbx.coveragehq.models.fe.Field;
@@ -29,10 +35,23 @@ import org.dchbx.coveragehq.statemachine.EventParameters;
 import org.dchbx.coveragehq.statemachine.StateManager;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
+import org.joda.time.DateTime;
+import org.joda.time.LocalDate;
+import org.joda.time.LocalTime;
 
+import java.io.UnsupportedEncodingException;
+import java.security.InvalidAlgorithmParameterException;
+import java.security.InvalidKeyException;
+import java.security.NoSuchAlgorithmException;
+import java.security.spec.InvalidKeySpecException;
+import java.security.spec.InvalidParameterSpecException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
+
+import javax.crypto.BadPaddingException;
+import javax.crypto.IllegalBlockSizeException;
+import javax.crypto.NoSuchPaddingException;
 
 /*
     This file is part of DC.
@@ -53,7 +72,7 @@ import java.util.Map;
 */
 public class FinancialEligibilityService {
     private static String TAG = "FinancialEligibility";
-
+    public static String ServerError = "ServerError";
     public static String EaPersonId = "eapersonid";
 
     public static String UqhpDetermination = "UqhpDetermination";
@@ -68,24 +87,23 @@ public class FinancialEligibilityService {
     }
 
     @Subscribe(threadMode = ThreadMode.ASYNC)
-    public void doThis(Events.GetUqhpFamily getUqhpFamily) {
+    public void doThis(Events.GetUqhpFamily getUqhpFamily) throws NoSuchAlgorithmException, InvalidKeyException, InvalidAlgorithmParameterException, NoSuchPaddingException, BadPaddingException, UnsupportedEncodingException, InvalidParameterSpecException, InvalidKeySpecException, IllegalBlockSizeException {
         Family family = getUqhpFamily();
         messages.getUqhpFamilyResponse(family);
     }
 
-    private Family getUqhpFamily() {
+    private Family getUqhpFamily() throws NoSuchAlgorithmException, InvalidKeyException, InvalidAlgorithmParameterException, NoSuchPaddingException, BadPaddingException, UnsupportedEncodingException, InvalidParameterSpecException, InvalidKeySpecException, IllegalBlockSizeException {
         ConfigurationStorageHandler configurationStorageHandler = serviceManager.getConfigurationStorageHandler();
-
         return configurationStorageHandler.readUqhpFamily();
     }
 
-    public UqhpDetermination getUqhpDetermination(){
+    public UqhpDetermination getUqhpDetermination() throws NoSuchAlgorithmException, InvalidKeyException, InvalidAlgorithmParameterException, NoSuchPaddingException, BadPaddingException, UnsupportedEncodingException, InvalidParameterSpecException, InvalidKeySpecException, IllegalBlockSizeException {
         ConfigurationStorageHandler configurationStorageHandler = serviceManager.getConfigurationStorageHandler();
         return configurationStorageHandler.readUqhpDetermination();
     }
 
     @Subscribe(threadMode = ThreadMode.ASYNC)
-    public void doThis(Events.SaveUqhpFamily saveUqhpFamily) {
+    public void doThis(Events.SaveUqhpFamily saveUqhpFamily) throws NoSuchPaddingException, InvalidKeySpecException, UnsupportedEncodingException, IllegalBlockSizeException, BadPaddingException, NoSuchAlgorithmException, InvalidKeyException, InvalidParameterSpecException {
         ConfigurationStorageHandler configurationStorageHandler = serviceManager.getConfigurationStorageHandler();
         Family family = saveUqhpFamily.getFamily();
         configurationStorageHandler.storeUqhpFamily(family);
@@ -141,9 +159,9 @@ public class FinancialEligibilityService {
             }
         }
 
-        UrlHandler.HttpRequest request = urlHandler.getHavenApplication(uqhpApplication);
+        final UrlHandler.HttpRequest request = urlHandler.getHavenApplication(uqhpApplication);
         connectionHandler.process(request, new IConnectionHandler.OnCompletion() {
-            public void onCompletion(IConnectionHandler.HttpResponse response) {
+            public void onCompletion(IConnectionHandler.HttpResponse response) throws NoSuchPaddingException, InvalidKeySpecException, UnsupportedEncodingException, IllegalBlockSizeException, BadPaddingException, NoSuchAlgorithmException, InvalidKeyException, InvalidParameterSpecException {
             if (response.getResponseCode() == 201) {
                 JsonParser parser = FinancialEligibilityService.this.serviceManager.getParser();
                 UqhpDetermination uqhpDetermination = parser.parseUqhpDeterminationResponse(response.getBody());
@@ -155,7 +173,9 @@ public class FinancialEligibilityService {
                     messages.appEvent(StateManager.AppEvents.ReceivedUqhpDeterminationOnlyEligible);
                 }
             } else {
-                messages.appEvent(StateManager.AppEvents.Error, EventParameters.build().add("error_msg", "Error in UQHP determination"));
+                JsonParser parser = FinancialEligibilityService.this.serviceManager.getParser();
+                ServerError serverError = parser.parseError(response.getBody());
+                messages.appEvent(StateManager.AppEvents.ServerError, EventParameters.build().add(ServerError, serverError));
             }
             }
         });
@@ -175,7 +195,19 @@ public class FinancialEligibilityService {
                         JsonParser parser = serviceManager.getParser();
                         schema = parser.parseSchema(response.getBody());
                     } else {
-                        messages.appEvent(StateManager.AppEvents.Error, EventParameters.build().add("error_msg", "Error getting Schema"));
+                        if (response.getBody() != null
+                            && response.getBody().length() > 0){
+                            try {
+                                JsonParser parser = FinancialEligibilityService.this.serviceManager.getParser();
+                                ServerError serverError = parser.parseError(response.getBody());
+                                messages.appEvent(StateManager.AppEvents.Error, EventParameters.build().add("Error", serverError));
+                            } catch (Throwable t){
+                                Log.e(TAG, "Exception trying to parse json body during server error");
+                                messages.appEvent(StateManager.AppEvents.Error, EventParameters.build().add("error_msg", "Error getting Schema"));
+                            }
+                        } else {
+                            messages.appEvent(StateManager.AppEvents.Error, EventParameters.build().add("error_msg", "Error getting Schema"));
+                        }
                     }
                 }
             });
@@ -331,7 +363,8 @@ public class FinancialEligibilityService {
         ConnectionHandler connectionHandler = serviceManager.getConnectionHandler();
         UrlHandler.HttpRequest request = urlHandler.getUqhpDetermination(status.eaid);
         connectionHandler.process(request, new IConnectionHandler.OnCompletion() {
-            public void onCompletion(IConnectionHandler.HttpResponse response) {
+            public void onCompletion(IConnectionHandler.HttpResponse response) throws NoSuchPaddingException, InvalidKeySpecException, UnsupportedEncodingException, IllegalBlockSizeException, BadPaddingException, NoSuchAlgorithmException, InvalidKeyException, InvalidParameterSpecException {
+
                 if (response.getResponseCode() == 200) {
                     JsonParser parser = FinancialEligibilityService.this.serviceManager.getParser();
                     UqhpDetermination uqhpDetermination = parser.parseUqhpDeterminationResponse(response.getBody());
@@ -343,7 +376,9 @@ public class FinancialEligibilityService {
                         messages.appEvent(StateManager.AppEvents.ReceivedUqhpDeterminationOnlyEligible);
                     }
                 } else {
-                    messages.appEvent(StateManager.AppEvents.Error, EventParameters.build().add("error_msg", "Error in UQHP determination"));
+                    JsonParser parser = FinancialEligibilityService.this.serviceManager.getParser();
+                    ServerError serverError = parser.parseError(response.getBody());
+                    messages.appEvent(StateManager.AppEvents.ServerError, EventParameters.build().add(ServerError, serverError));
                 }
             }
         });
@@ -357,5 +392,14 @@ public class FinancialEligibilityService {
 
     public static String getNameForPersonForCoverage(PersonForCoverage personForCoverage) {
         return personForCoverage.personFirstName + " " + personForCoverage.personLastName;
+    }
+
+    public static ServerError getServerErrorFromIntent(Intent intent) {
+        String jsonString = intent.getStringExtra(ServerError);
+        GsonBuilder gsonBuilder = new GsonBuilder();
+        gsonBuilder.registerTypeAdapter(DateTime.class, new DateTimeDeserializer());
+        gsonBuilder.registerTypeAdapter(LocalDate.class, new LocalDateSerializer());
+        gsonBuilder.registerTypeAdapter(LocalTime.class, new LocalTimeDeserializer());
+        return gsonBuilder.create().fromJson(jsonString, ServerError.class);
     }
 }

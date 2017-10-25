@@ -522,13 +522,6 @@ public class InsuredInfoFragment extends BrokerFragment {
                 }
             });
         }
-        Button summaryButton = (Button)includeView.findViewById(R.id.summary);
-        summaryButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Intents.launchSummaryOfBenefitsActivity(InsuredInfoFragment.this.getActivity(), currentDate, health);
-            }
-        });
     }
 
     private int getMetalRingResource(String metalLevel) {

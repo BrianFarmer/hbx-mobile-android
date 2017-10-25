@@ -65,7 +65,7 @@ public class StateMachine {
         }
         eventParameters.add("OldState", curState.getState());
 
-        if (appEvent == StateManager.AppEvents.ReceivedEffectiveDate
+        if (appEvent == StateManager.AppEvents.ServerError
             ){
             Log.d(TAG, "the state you asked for has been reached.");
         }

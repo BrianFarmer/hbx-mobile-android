@@ -463,5 +463,10 @@ public class EventBusMessages implements Messages {
     public void getCreateAccountInfoResult(Account account) {
         eventBus.post(new Events.GetCreateAccountInfoResult(account));
     }
+
+    @Override
+    public void sendServerErrorMessage(EventParameters intentParameters) {
+        eventBus.post(new Events.ServerError(intentParameters));
+    }
 }
 

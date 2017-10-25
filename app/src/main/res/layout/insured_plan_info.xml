@@ -218,7 +218,7 @@
                     android:textColor="@color/yearly_deductble_blue"
                     />
                 <TextView
-                    android:text="Deductble"
+                    android:text="@string/deductible"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:maxLines="1"
@@ -229,26 +229,11 @@
             </LinearLayout>
         </LinearLayout>
         <Button
-            android:id="@+id/summary"
-            android:layout_width="150dp"
-            android:layout_height="wrap_content"
-            android:layout_below="@+id/linearLayoutContributions"
-            android:layout_alignParentLeft="true"
-            android:layout_marginLeft="21dp"
-            android:layout_marginTop="44dp"
-            android:background="@color/white"
-            android:drawableLeft="@drawable/benefits_document"
-            android:drawablePadding="10dp"
-            android:text="@string/summary_of_benefits_coverage"
-            android:textSize="12dp"
-            android:textColor="@color/mainblue"
-            />
-        <Button
             android:id="@+id/planContactInfo"
             android:layout_width="150dp"
             android:layout_height="wrap_content"
             android:layout_alignParentRight="true"
-            android:layout_alignTop="@+id/summary"
+            android:layout_below="@+id/linearLayoutContributions"
             android:layout_marginRight="21dp"
             android:background="@color/white"
             android:drawableLeft="@drawable/phone_line"

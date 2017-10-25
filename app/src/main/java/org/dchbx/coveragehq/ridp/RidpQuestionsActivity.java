@@ -70,6 +70,12 @@ public class RidpQuestionsActivity extends BaseActivity {
         return null;
     }
 
+
+    private String reformat(String string) {
+        string = string.replace("\n", "");
+        return string.replaceAll("\\s+", " ");
+    }
+
     protected void populateQuestions() {
         LayoutInflater layoutInflater = (LayoutInflater) this.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         LinearLayout questionArea = (LinearLayout) findViewById(R.id.questionArea);

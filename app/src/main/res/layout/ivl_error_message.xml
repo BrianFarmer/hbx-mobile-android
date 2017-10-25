@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout  xmlns:android="http://schemas.android.com/apk/res/android">
+    <data>
+        <variable
+            name="serverError"
+            type="org.dchbx.coveragehq.models.Errors.ServerError"/>"
+
+        <variable
+            name="activity"
+            type="org.dchbx.coveragehq.ErrorMessageActivity"/>
+    </data>
+    <android.support.constraint.ConstraintLayout
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        xmlns:tools="http://schemas.android.com/tools"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@color/white"
+        >
+
+        <android.support.v7.widget.Toolbar
+            android:id="@+id/toolbar"
+            android:layout_height="wrap_content"
+            android:layout_width="0dp"
+            android:fitsSystemWindows="true"
+            android:minHeight="?attr/actionBarSize"
+            android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
+            android:title=""
+            android:background="@color/titlebar"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            />
+
+        <TextView
+            android:id="@+id/message"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:text="@={serverError.error.message}"
+            android:textAlignment="center"
+            android:textSize="18sp"
+            android:textStyle="bold"
+            android:background="@color/transparent"
+            android:layout_marginTop="45dp"
+            android:layout_marginLeft="43dp"
+            android:layout_marginRight="43dp"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/toolbar"
+            android:linksClickable="true"
+            android:textColorLink="@color/mainblue"
+            />
+
+        <Button
+            android:id="@+id/ok"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:text="@string/ok"
+            android:textColor="@color/mainblue"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/message"
+            android:layout_marginTop="23dp"
+            android:layout_marginLeft="43dp"
+            android:layout_marginRight="43dp"
+            android:background="@drawable/ivl_button_blue_border"
+            android:onClick="@{()->activity.back()}"
+            />
+
+    </android.support.constraint.ConstraintLayout>
+</layout>

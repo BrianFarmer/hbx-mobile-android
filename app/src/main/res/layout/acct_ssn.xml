@@ -80,9 +80,10 @@
 
         <com.vicmikhailau.maskededittext.MaskedEditText
             android:id="@+id/ssn"
-            android:inputType="text"
+            android:inputType="number"
             android:text="@={account.ssn}"
             app:mask="###-##-####"
+            android:digits="0,1,2,3,4,5,6,7,8,9,-"
             android:textSize="24dp"
             android:textColor="@color/keep_green"
             android:background="@color/transparent"

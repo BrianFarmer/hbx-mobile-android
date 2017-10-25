@@ -17,6 +17,7 @@ import android.view.View;
 import android.webkit.WebView;
 import android.widget.TextView;
 
+import org.dchbx.coveragehq.models.Errors.ServerError;
 import org.dchbx.coveragehq.models.Glossary;
 import org.dchbx.coveragehq.statemachine.EventParameters;
 import org.dchbx.coveragehq.statemachine.OnActivityResultListener;
@@ -133,7 +134,17 @@ public class BaseActivity extends AppCompatActivity {
             case HideWait:
                 hideProgress();
                 break;
+            case PopAndServerErrorMessage:
+                hideProgress();
+                EventParameters serverErrorEventParameters = stateAction.getEventParameters();
+                ServerError serverErr = (ServerError) serverErrorEventParameters.getObject("Error", ServerError.class);
+                simpleAlert(R.string.app_name, formatErrorMessage(serverErr.error.message));
+                break;
         }
+    }
+
+    private String formatErrorMessage(String message) {
+        return message;
     }
 
     @Override
@@ -209,6 +220,12 @@ public class BaseActivity extends AppCompatActivity {
         TextView view = (TextView)findViewById(id);
         view.setText(Html.fromHtml(view.getText().toString()));
         view.setMovementMethod(LinkMovementMethod.getInstance());
+    }
+
+    private void simpleAlert(int titleId, String message) {
+        Resources r = getResources();
+        String title = r.getString(titleId);
+        simpleAlert(title, message);
     }
 
     protected void simpleAlert(int titleId, int textId) {

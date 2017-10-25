@@ -1,9 +1,19 @@
 package org.dchbx.coveragehq;
 
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
+import java.security.InvalidAlgorithmParameterException;
+import java.security.InvalidKeyException;
+import java.security.NoSuchAlgorithmException;
+import java.security.spec.InvalidKeySpecException;
+import java.security.spec.InvalidParameterSpecException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import javax.crypto.BadPaddingException;
+import javax.crypto.IllegalBlockSizeException;
+import javax.crypto.NoSuchPaddingException;
 
 import okhttp3.FormBody;
 import okhttp3.HttpUrl;
@@ -83,6 +93,6 @@ public interface IConnectionHandler {
     void process(UrlHandler.HttpRequest request, ConnectionHandler.OnCompletion onCompletion) throws Exception;
 
     public static interface OnCompletion {
-        void onCompletion(IConnectionHandler.HttpResponse response);
+        void onCompletion(IConnectionHandler.HttpResponse response) throws NoSuchPaddingException, InvalidKeySpecException, UnsupportedEncodingException, IllegalBlockSizeException, BadPaddingException, NoSuchAlgorithmException, InvalidKeyException, InvalidParameterSpecException, InvalidAlgorithmParameterException;
     }
 }

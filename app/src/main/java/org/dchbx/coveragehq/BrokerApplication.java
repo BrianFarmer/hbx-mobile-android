@@ -43,7 +43,11 @@ public class BrokerApplication extends Application {
 
         // ConnectionHandler.initClients();
         ServiceManager serviceManager = ServiceManager.getServiceManager();
-        serviceManager.init();
+        try {
+            serviceManager.init();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
         brokerWorker = serviceManager.getBrokerWorker();
         brokerWorker.onHandleIntent(null); // this causes the background working to be initialized.
     }
