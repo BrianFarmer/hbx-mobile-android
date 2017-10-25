@@ -567,6 +567,7 @@ public class StateManager extends StateProcessor {
         stateMachine.from(AppStates.AcctRidpCheckingOverride).on(AppEvents.UserVerifiedOkToCreate).to(AppStates.CreatingAccount, new BackgroundProcess(Events.CreateAccount.class));
         stateMachine.from(AppStates.AcctRidpCheckingOverride).on(AppEvents.RidpConnectionFailure).to(AppStates.AcctRidpConnectionFailure, new PopAndLaunchActivity(AcctRidpConnectionFailure.uiActivity));
         stateMachine.from(AppStates.AcctRidpCheckingOverride).on(AppEvents.RidpWrongAnswersLockout).to(AppStates.AcctRidpWrongAnswersLockout, new PopAndLaunchActivity(AcctRidpWrongAnswersLockout.uiActivity));
+        stateMachine.from(AppStates.AcctRidpCheckingOverride).on(AppEvents.RidpWrongAnswersRecoverable).to(AppStates.AcctRidpWrongAnswersRecoverable, new PopAndLaunchActivity(AcctRidpWrongAnswersRecoverable.uiActivity));
 
         stateMachine.from(AppStates.AcctRidpWrongAnswersLockout).on(AppEvents.Close).to(AppStates.AcctRidpClosing, new BackgroundProcess(Events.ClearPIIRequest.class));
 

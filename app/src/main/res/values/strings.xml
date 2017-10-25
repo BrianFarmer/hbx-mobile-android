@@ -399,7 +399,7 @@ You <font color="#69a30d">favorited one plan</font>.
     <string name="forgot_your_password">Forgot Your Password?</string>
     <string name="your_mobile_password">Your Mobile Password</string>
     <string name="to_protect_your_privacy">To protect your privacy, we\’ll create a unique password that saves your application to your mobile device.</string>
-    <string name="if_you_apply">If you apply for coverage on the web, we won\'t be able to process your mobile application.</string>
+        <string name="if_you_apply">If you apply for coverage on a computer, we won\'t be able to process your mobile application.</string>
     <string name="want_to_apply_financial">Do you want to apply for financial assistance for the upcoming year?</string>
     <string name="once_you_start">Once you start an application you cannot change this.</string>
     <string name="yes">Yes</string>
@@ -556,7 +556,7 @@ You <font color="#69a30d">favorited one plan</font>.
 <![CDATA[
 <font color="#414141" face="sans-serif">
     <p>To protect your privacy, we’ll create a password for you to save your application on your mobile device.</p>
-    <bold><p>If you apply for coverage on the web, we won’t be able to process your mobile application.</p></bold>
+    <bold><p>If you apply for coverage on a computer, we won’t be able to process your mobile application.</p></bold>
 </font>
 ]]>
     </string>
