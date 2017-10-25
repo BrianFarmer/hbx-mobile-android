@@ -33,8 +33,18 @@ import org.joda.time.LocalDate;
 import org.joda.time.LocalTime;
 import org.joda.time.Years;
 
+import java.io.UnsupportedEncodingException;
+import java.security.InvalidAlgorithmParameterException;
+import java.security.InvalidKeyException;
+import java.security.NoSuchAlgorithmException;
+import java.security.spec.InvalidKeySpecException;
+import java.security.spec.InvalidParameterSpecException;
 import java.util.ArrayList;
 import java.util.List;
+
+import javax.crypto.BadPaddingException;
+import javax.crypto.IllegalBlockSizeException;
+import javax.crypto.NoSuchPaddingException;
 
 /*
     This file is part of DC.
@@ -73,7 +83,7 @@ public class PlanShoppingService {
 
 
     @Subscribe(threadMode = ThreadMode.ASYNC)
-    public void doThis(Events.SubmitApplication submitApplication) {
+    public void doThis(Events.SubmitApplication submitApplication) throws NoSuchAlgorithmException, InvalidKeyException, InvalidAlgorithmParameterException, NoSuchPaddingException, BadPaddingException, UnsupportedEncodingException, InvalidParameterSpecException, InvalidKeySpecException, IllegalBlockSizeException {
         EventParameters eventParameters = submitApplication.getEventParameters();
         Plan plan = (org.dchbx.coveragehq.models.planshopping.Plan) eventParameters.getObject(Plan, org.dchbx.coveragehq.models.planshopping.Plan.class);
         FinancialEligibilityService feService = serviceManager.getFinancialEligibilityService();
@@ -118,7 +128,7 @@ public class PlanShoppingService {
             UqhpDetermination uqhpDetermination = configurationStorageHandler.readUqhpDetermination();
             LocalDate now = LocalDate.now();
             for (PersonForCoverage personForCoverage : uqhpDetermination.eligibleForQhp) {
-                int years = Years.yearsBetween(now, personForCoverage.personDob).getYears();
+                int years = Years.yearsBetween(personForCoverage.personDob, now).getYears();
                 ages.add(years);
             }
 

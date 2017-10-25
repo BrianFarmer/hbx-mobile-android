@@ -1,7 +1,4 @@
-package org.dchbx.coveragehq.models.ridp.SignUp;
-
-import com.google.gson.annotations.Expose;
-import com.google.gson.annotations.SerializedName;
+package org.dchbx.coveragehq.models.Errors;
 
 /*
     This file is part of DC.
@@ -20,14 +17,12 @@ import com.google.gson.annotations.SerializedName;
     along with DC Health Link SmallBiz.  If not, see <http://www.gnu.org/licenses/>.
     This statement should go near the beginning of every source file, close to the copyright notices. When using the Lesser GPL, insert the word “Lesser” before “General” in all three places. When using the GNU AGPL, insert the word “Affero” before “General” in all three places.
 */
-public class SignUpResponse {
-    @SerializedName("error")
-    @Expose
-    public Error error;
-    @SerializedName("uuid")
-    @Expose
-    public String uuid;
-    @SerializedName("_links")
-    @Expose
-    public Links links;
+public class ServerError {
+    public class ErrorContent {
+        public String type;
+        public String message;
+    }
+
+    public ErrorContent error;
 }
+

@@ -192,7 +192,7 @@
     <string name="login">Login</string>
     <string name="session_timeout_messagge">Your session has timed out due to inactivity. Please log back in.</string>
     <string name="app_title">SmallBiz</string>
-    <string name="bad_login_message">We could not log you in as an employer or broker. If you believe you have received this message in error, please call <a href='tel:1(855)532-5465'>1(855)532-5465</a>. If you are looking for healthcare as an employee or individual, please visit <a href='dchealthlink.com'>dchealthlink.com</a>.</string>
+    <string name="bad_login_message">Invalid username or password. If you are looking for healthcare as an individual, please reopen this app and select "Start an Application," or visit <a href='dchealthlink.com'>dchealthlink.com</a> on a computer. If you believe you have reached this message in error, please call <a href='tel:1(855)532-5465'>1(855)532-5465</a>.</string>
     <string name="generic_error_message">An error happened, please try again.</string>
     <string name="register_fingerprint_message">Register at least one fingerprint in Settings.</string>
     <string name="lock_screen_security_message">Lock screen security is not enabled.</string>
@@ -634,4 +634,5 @@ You <font color="#69a30d">favorited one plan</font>.
     <string name="please_check_person">Please click on the name of each person and fill out all required fields.</string>
     <string name="please_check_relationships">Please answer all of the questions before continuing.</string>
     <string name="please_check_attestation">Please answer all questions below and provide your electronic signature.</string>
+    <string name="dc_metro_in_network">DC Metro In-Network</string>
 </resources>

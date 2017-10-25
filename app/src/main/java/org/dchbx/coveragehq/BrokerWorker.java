@@ -19,6 +19,14 @@ import org.greenrobot.eventbus.ThreadMode;
 import org.joda.time.DateTime;
 
 import java.io.IOException;
+import java.security.InvalidKeyException;
+import java.security.NoSuchAlgorithmException;
+import java.security.spec.InvalidKeySpecException;
+import java.security.spec.InvalidParameterSpecException;
+
+import javax.crypto.BadPaddingException;
+import javax.crypto.IllegalBlockSizeException;
+import javax.crypto.NoSuchPaddingException;
 
 
 /**
@@ -780,18 +788,12 @@ public class BrokerWorker extends IntentService {
     }
 
     @Subscribe(threadMode = ThreadMode.ASYNC)
-    public void doThis(Events.AccountButtonClicked accountButtonClicked) {
-        try {
-            serviceManager.getConfigurationStorageHandler().store(accountButtonClicked.getAccount());
+    public void doThis(Events.AccountButtonClicked accountButtonClicked) throws NoSuchPaddingException, InvalidKeySpecException, IOException, IllegalBlockSizeException, BadPaddingException, NoSuchAlgorithmException, InvalidKeyException, InvalidParameterSpecException, CoverageException {
+            serviceManager.getConfigurationStorageHandler().storeAccount(accountButtonClicked.getAccount());
             if (accountButtonClicked.getAnswers() != null) {
-                serviceManager.getConfigurationStorageHandler().store(accountButtonClicked.getAnswers());
+                serviceManager.getConfigurationStorageHandler().storeAnswers(accountButtonClicked.getAnswers());
             }
             serviceManager.getStateManager().process(accountButtonClicked.getAppEvent(), null);
-        } catch (IOException e) {
-            e.printStackTrace();
-        } catch (CoverageException e) {
-            e.printStackTrace();
-        }
     }
 
     @Subscribe(threadMode = ThreadMode.ASYNC)

@@ -26,6 +26,16 @@ import org.dchbx.coveragehq.startup.StartUpService;
 import org.dchbx.coveragehq.statemachine.StateManager;
 
 import java.io.Serializable;
+import java.io.UnsupportedEncodingException;
+import java.security.InvalidAlgorithmParameterException;
+import java.security.InvalidKeyException;
+import java.security.NoSuchAlgorithmException;
+import java.security.spec.InvalidKeySpecException;
+import java.security.spec.InvalidParameterSpecException;
+
+import javax.crypto.BadPaddingException;
+import javax.crypto.IllegalBlockSizeException;
+import javax.crypto.NoSuchPaddingException;
 
 
 public class ServiceManager implements IServiceManager {
@@ -83,7 +93,7 @@ public class ServiceManager implements IServiceManager {
         return stateManager;
     }
 
-    public void init() {
+    public void init() throws NoSuchAlgorithmException, InvalidKeyException, InvalidAlgorithmParameterException, NoSuchPaddingException, BadPaddingException, UnsupportedEncodingException, InvalidParameterSpecException, InvalidKeySpecException, IllegalBlockSizeException {
         // Initialize all of the services
 
         ridpService = new RidpService(this);

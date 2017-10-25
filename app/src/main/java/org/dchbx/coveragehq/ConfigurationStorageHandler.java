@@ -14,6 +14,7 @@ import org.dchbx.coveragehq.models.fe.Family;
 import org.dchbx.coveragehq.models.fe.UqhpDetermination;
 import org.dchbx.coveragehq.models.ridp.Answers;
 import org.dchbx.coveragehq.models.ridp.Questions;
+import org.dchbx.coveragehq.models.ridp.SignUp.SignUpResponse;
 import org.dchbx.coveragehq.models.ridp.VerifyIdentityResponse;
 import org.dchbx.coveragehq.models.startup.EffectiveDate;
 import org.dchbx.coveragehq.models.startup.OpenEnrollmentStatus;
@@ -38,18 +39,26 @@ import static org.dchbx.coveragehq.Utilities.getGson;
 public class ConfigurationStorageHandler extends IServerConfigurationStorageHandler {
     private static String TAG = "ConfigurationStorage";
     private static String UqhpFamily = "UqhpFamily";
+    private static String SharedPreferenceName = "IvlSharedPreferences";
 
     private static String ENCRYPTION_ALGORITHM_WITH_PADDING = "AES/ECB/PKCS5Padding";
     private static String ENCRYPTION_ALGORITHM = "AES";
     private static String CHARACTER_SET_UTF8 = "UTF-8";
+    private String currentAccount;
+    private String currentKey;
+    private IEncryption encryption;
 
-    private SharedPreferences getSharedPreferences(){
-        return BrokerApplication.getBrokerApplication().getSharedPreferences(BrokerApplication.getBrokerApplication().getString(R.string.sharedpreferencename), Context.MODE_PRIVATE);
+    public ConfigurationStorageHandler(){
+        encryption = new IdentityEncryption();
+    }
+
+    private SharedPreferences getSharedPreferences(String sharedName) {
+        return BrokerApplication.getBrokerApplication().getSharedPreferences(sharedName, Context.MODE_PRIVATE);
     }
 
     @Override
     public void store(ServerConfiguration serverConfiguration) {
-        SharedPreferences.Editor editor = getSharedPreferences().edit();
+        SharedPreferences.Editor editor = getSharedPreferences(getCurrentAccount()).edit();
         editor.putBoolean("useFingerprintSensor", serverConfiguration.useFingerprintSensor);
         if (serverConfiguration.useFingerprintSensor) {
             editor.putString(BrokerApplication.getBrokerApplication().getString(R.string.shared_preference_encrypted_info), serverConfiguration.encryptedString);
@@ -68,8 +77,8 @@ public class ConfigurationStorageHandler extends IServerConfigurationStorageHand
 
     @Override
     public void read(ServerConfiguration serverConfiguration) {
-        SharedPreferences sharedPref = getSharedPreferences();
-        serverConfiguration.useFingerprintSensor = getSharedPreferences().getBoolean("useFingerprintSensor", false);
+        SharedPreferences sharedPref = getSharedPreferences(getCurrentAccount());
+        serverConfiguration.useFingerprintSensor = getSharedPreferences(getCurrentAccount()).getBoolean("useFingerprintSensor", false);
         if (serverConfiguration.useFingerprintSensor){
             serverConfiguration.encryptedString = sharedPref.getString(BrokerApplication.getBrokerApplication().getString(R.string.shared_preference_encrypted_info), null);
         } else {
@@ -92,7 +101,7 @@ public class ConfigurationStorageHandler extends IServerConfigurationStorageHand
 
     @Override
     public void clear() {
-        SharedPreferences sharedPref = getSharedPreferences();
+        SharedPreferences sharedPref = getSharedPreferences(getCurrentAccount());
         SharedPreferences.Editor editor = sharedPref.edit();
         editor.clear();
         editor.apply();
@@ -100,21 +109,18 @@ public class ConfigurationStorageHandler extends IServerConfigurationStorageHand
 
     @Override
     public void store(ServiceManager.AppConfig appConfig) {
-        SharedPreferences.Editor editor = getSharedPreferences().edit();
-        String jsonString = Utilities.getJson(appConfig);
-        editor.putString("AppConfigJson", encrypt(jsonString));
-        editor.commit();
+        store(appConfig);
     }
 
     @Override
-    public boolean read(ServiceManager.AppConfig appConfig) {
-        SharedPreferences sharedPreferences = getSharedPreferences();
+    public boolean read(ServiceManager.AppConfig appConfig) throws NoSuchAlgorithmException, InvalidKeyException, InvalidAlgorithmParameterException, NoSuchPaddingException, BadPaddingException, UnsupportedEncodingException, InvalidParameterSpecException, InvalidKeySpecException, IllegalBlockSizeException {
+        SharedPreferences sharedPreferences = getSharedPreferences(getCurrentAccount());
         String appConfigJson = sharedPreferences.getString("AppConfigJson", null);
         if (appConfigJson == null){
             return false;
         }
         Gson gson = getGson();
-        ServiceManager.AppConfig fromJsonAppConfig = gson.fromJson(decrypt(appConfigJson), ServiceManager.AppConfig.class);
+        ServiceManager.AppConfig fromJsonAppConfig = gson.fromJson(encryption.decrypt(appConfigJson), ServiceManager.AppConfig.class);
         appConfig.DataSource = fromJsonAppConfig.DataSource;
         appConfig.EnrollServerUrl = fromJsonAppConfig.EnrollServerUrl;
         appConfig.GithubUrl = fromJsonAppConfig.GithubUrl;
@@ -123,80 +129,40 @@ public class ConfigurationStorageHandler extends IServerConfigurationStorageHand
     }
 
     @Override
-    public void store(Account account) {
-        SharedPreferences.Editor editor = getSharedPreferences().edit();
-        Gson gson = getGson();
-        String jsonString = gson.toJson(account);
-        editor.putString("AccountJson", encrypt(jsonString));
-        editor.commit();
+    public void setAccountName(String accountName){
+        currentAccount = accountName;
+        currentKey = currentAccount.substring(0,16);
     }
 
     @Override
-    public void clearAccount() {
-        SharedPreferences.Editor editor = getSharedPreferences().edit();
-        editor.remove("AccountJson");
-        editor.commit();
+    public void storeAccount(Account account) throws NoSuchPaddingException, UnsupportedEncodingException, IllegalBlockSizeException, BadPaddingException, NoSuchAlgorithmException, InvalidParameterSpecException, InvalidKeyException, InvalidKeySpecException {
+        store(Account.class.getName(), account);
     }
 
     @Override
-    public Account readAccount() {
-        SharedPreferences sharedPreferences = getSharedPreferences();
-        String accountJson = sharedPreferences.getString("AccountJson", null);
-        if (accountJson == null
-                || accountJson.length() == 0){
-            return new Account();
-        }
-        Gson gson = getGson();
-        Account account = gson.fromJson(decrypt(accountJson), Account.class);
-        if (account == null){
+    public Account readAccount() throws NoSuchAlgorithmException, InvalidKeyException, InvalidAlgorithmParameterException, NoSuchPaddingException, BadPaddingException, UnsupportedEncodingException, InvalidParameterSpecException, InvalidKeySpecException, IllegalBlockSizeException {
+        Account account = read(Account.class.getName(), Account.class);
+        if (account == null) {
             return new Account();
         }
         return account;
     }
 
     @Override
-    public void store(Questions questions) {
-        SharedPreferences.Editor editor = getSharedPreferences().edit();
-        Gson gson = getGson();
-        String jsonString = gson.toJson(questions);
-        editor.putString("RidpQuestionsJson", encrypt(jsonString));
-        editor.remove("RidpAnswersJson");
-        editor.commit();
+    public void storeQuestions(Questions questions) throws NoSuchPaddingException, UnsupportedEncodingException, IllegalBlockSizeException, BadPaddingException, NoSuchAlgorithmException, InvalidParameterSpecException, InvalidKeyException, InvalidKeySpecException {
+        store(Questions.class.getName(), questions);
     }
 
     @Override
-    public Questions readQuestions() {
-        SharedPreferences sharedPreferences = getSharedPreferences();
-        String questionsJson = sharedPreferences.getString("RidpQuestionsJson", null);
-        if (questionsJson == null
-                || questionsJson.length() == 0){
-            return null;
-        }
-        Gson gson = getGson();
-        Questions questions = gson.fromJson(decrypt(questionsJson), Questions.class);
-        return questions;
+    public Questions readQuestions() throws NoSuchAlgorithmException, InvalidKeyException, InvalidAlgorithmParameterException, NoSuchPaddingException, BadPaddingException, UnsupportedEncodingException, InvalidParameterSpecException, InvalidKeySpecException, IllegalBlockSizeException {
+        return read(Questions.class.getName(), Questions.class);
     }
 
-    @Override
-    public void clearAnswers() {
-        SharedPreferences.Editor editor = getSharedPreferences().edit();
-        editor.remove(Answers.class.getName());
-        editor.commit();
+    public Answers readAnswers() throws NoSuchAlgorithmException, InvalidKeyException, InvalidAlgorithmParameterException, NoSuchPaddingException, BadPaddingException, UnsupportedEncodingException, InvalidParameterSpecException, InvalidKeySpecException, IllegalBlockSizeException {
+        return read(Answers.class.getName(), Answers.class);
     }
 
-    public Answers readAnswers() {
-        SharedPreferences sharedPreferences = getSharedPreferences();
-        String answersJson = sharedPreferences.getString(Answers.class.getName(), null);
-        if (answersJson == null
-                || answersJson.length() == 0){
-            return null;
-        }
-        Gson gson = getGson();
-        Answers answers = gson.fromJson(decrypt(answersJson), Answers.class);
-        return answers;
-
-    }
-
+    /*
     public <T> void store(T t) {
         SharedPreferences.Editor editor = getSharedPreferences().edit();
         Gson gson = getGson();
@@ -204,194 +170,219 @@ public class ConfigurationStorageHandler extends IServerConfigurationStorageHand
         String name = t.getClass().getName();
         editor.putString(name, encrypt(jsonString));
         editor.commit();
+    }*/
+
+    protected <T> void store(String name, T t) throws NoSuchPaddingException, InvalidKeySpecException, UnsupportedEncodingException, IllegalBlockSizeException, BadPaddingException, NoSuchAlgorithmException, InvalidKeyException, InvalidParameterSpecException {
+        store(name, t, getCurrentAccount(), true);
     }
 
-    public <T> void store(String name, T t) {
-        SharedPreferences.Editor editor = getSharedPreferences().edit();
+    protected <T> void store(String name, T t, String sharedName, boolean encrypt) throws NoSuchPaddingException, UnsupportedEncodingException, IllegalBlockSizeException, BadPaddingException, NoSuchAlgorithmException, InvalidParameterSpecException, InvalidKeyException, InvalidKeySpecException {
+        SharedPreferences.Editor editor = getSharedPreferences(sharedName).edit();
         Gson gson = getGson();
         String jsonString = gson.toJson(t);
-        editor.putString(name, encrypt(jsonString));
+        if (encrypt) {
+            String encrypted = encryption.encrypt(jsonString);
+            editor.putString(name, encrypted);
+        } else {
+            editor.putString(name, jsonString);
+        }
         editor.commit();
     }
 
-    @Override
-    public VerifyIdentityResponse readVerifiyIdentityResponse() {
-        SharedPreferences sharedPreferences = getSharedPreferences();
-        String responseJson = sharedPreferences.getString(VerifyIdentityResponse.class.getName(), null);
+    protected <T> T read(String name, Class c) throws NoSuchAlgorithmException, InvalidKeyException, InvalidAlgorithmParameterException, NoSuchPaddingException, BadPaddingException, UnsupportedEncodingException, InvalidParameterSpecException, InvalidKeySpecException, IllegalBlockSizeException {
+        return read(name, getCurrentAccount(), c, true);
+    }
+
+    protected <T> T read(String name, String sharedName, Class c, boolean decrypt) throws NoSuchAlgorithmException, InvalidKeyException, InvalidAlgorithmParameterException, NoSuchPaddingException, BadPaddingException, UnsupportedEncodingException, InvalidParameterSpecException, InvalidKeySpecException, IllegalBlockSizeException {
+        SharedPreferences sharedPreferences = getSharedPreferences(sharedName);
+        String responseJson = sharedPreferences.getString(c.getName(), null);
         if (responseJson == null
                 || responseJson.length() == 0){
             return null;
         }
         Gson gson = getGson();
-        return gson.fromJson(decrypt(responseJson), VerifyIdentityResponse.class);
+        if (decrypt) {
+            String decrypted = encryption.decrypt(responseJson);
+            return (T) gson.fromJson(decrypted, c);
+        }
+        return (T)gson.fromJson(responseJson, c);
+    }
+
+
+    @Override
+    public VerifyIdentityResponse readVerifiyIdentityResponse() throws NoSuchAlgorithmException, InvalidKeyException, InvalidAlgorithmParameterException, NoSuchPaddingException, BadPaddingException, UnsupportedEncodingException, InvalidParameterSpecException, InvalidKeySpecException, IllegalBlockSizeException {
+        return read(VerifyIdentityResponse.class.getName(), VerifyIdentityResponse.class);
     }
 
     @Override
     public String readStateString() {
-        SharedPreferences sharedPreferences = getSharedPreferences();
+        SharedPreferences sharedPreferences = getSharedPreferences(SharedPreferenceName);
         String responseJson = sharedPreferences.getString("StateString", null);
         return responseJson;
     }
 
     @Override
-    public void clearUqhpFamily(){
-        SharedPreferences.Editor editor = getSharedPreferences().edit();
-        editor.remove(UqhpFamily);
-        editor.commit();
-
-    }
-
-    @Override
-    public Family readUqhpFamily() {
-        SharedPreferences sharedPreferences = getSharedPreferences();
-        String responseJson = sharedPreferences.getString(UqhpFamily, null);
-        if (responseJson == null
-                || responseJson.length() == 0){
-            Family family = new Family();
+    public Family readUqhpFamily() throws NoSuchAlgorithmException, InvalidKeyException, InvalidAlgorithmParameterException, NoSuchPaddingException, BadPaddingException, UnsupportedEncodingException, InvalidParameterSpecException, InvalidKeySpecException, IllegalBlockSizeException {
+        Family family = read(Family.class.getName(), Family.class);
+        if (family == null){
+            family = new Family();
             family.Person = new JsonArray();
             family.Relationship = new HashMap<>();
             family.Attestation = new JsonObject();
-            return family;
         }
-        Gson gson = getGson();
-        return gson.fromJson(decrypt(responseJson), Family.class);
+        return family;
     }
 
     @Override
-    public UqhpDetermination readUqhpDetermination() {
-        SharedPreferences sharedPreferences = getSharedPreferences();
-        String json = sharedPreferences.getString("UqhpDetermination", null);
-        if (json != null){
-            Gson gson = getGson();
-            return gson.fromJson(decrypt(json), UqhpDetermination.class);
+    public UqhpDetermination readUqhpDetermination() throws NoSuchAlgorithmException, InvalidKeyException, InvalidAlgorithmParameterException, NoSuchPaddingException, BadPaddingException, UnsupportedEncodingException, InvalidParameterSpecException, InvalidKeySpecException, IllegalBlockSizeException {
+        return read(UqhpDetermination.class.getName(), UqhpDetermination.class);
+    }
+
+    @Override
+    public void storeEffectiveDate(EffectiveDate effectiveDate) throws NoSuchPaddingException, InvalidKeySpecException, UnsupportedEncodingException, IllegalBlockSizeException, BadPaddingException, NoSuchAlgorithmException, InvalidKeyException, InvalidParameterSpecException {
+        store(EffectiveDate.class.getName(), effectiveDate, SharedPreferenceName, false);
+    }
+
+    @Override
+    public EffectiveDate readEffectiveDate() throws NoSuchAlgorithmException, InvalidKeyException, InvalidAlgorithmParameterException, NoSuchPaddingException, BadPaddingException, UnsupportedEncodingException, InvalidParameterSpecException, InvalidKeySpecException, IllegalBlockSizeException {
+        return read(EffectiveDate.class.getName(), SharedPreferenceName, EffectiveDate.class, false);
+    }
+
+    @Override
+    public void storeOpenEnrollmentStatus(OpenEnrollmentStatus openEnrollmentStatus) throws NoSuchPaddingException, InvalidKeySpecException, UnsupportedEncodingException, IllegalBlockSizeException, BadPaddingException, NoSuchAlgorithmException, InvalidKeyException, InvalidParameterSpecException {
+        store(OpenEnrollmentStatus.class.getName(), openEnrollmentStatus, SharedPreferenceName, false);
+    }
+
+    @Override
+    public void storeUqhpFamily(Family family) throws NoSuchPaddingException, UnsupportedEncodingException, IllegalBlockSizeException, BadPaddingException, NoSuchAlgorithmException, InvalidParameterSpecException, InvalidKeyException, InvalidKeySpecException {
+        store(Family.class.getName(), family);
+    }
+
+    @Override
+    public void storeUqhpDetermination(UqhpDetermination uqhpDetermination) throws NoSuchPaddingException, UnsupportedEncodingException, IllegalBlockSizeException, BadPaddingException, NoSuchAlgorithmException, InvalidParameterSpecException, InvalidKeyException, InvalidKeySpecException {
+        store(UqhpDetermination.class.getName(), uqhpDetermination);
+    }
+
+    @Override
+    public void storeSignupResponse(SignUpResponse signUpResponse) throws NoSuchPaddingException, UnsupportedEncodingException, IllegalBlockSizeException, BadPaddingException, NoSuchAlgorithmException, InvalidParameterSpecException, InvalidKeyException, InvalidKeySpecException {
+        setAccountName(signUpResponse.uuid);
+        store(SignUpResponse.class.getName(), signUpResponse);
+    }
+
+    @Override
+    public void storeAnswers(Answers answers) throws NoSuchPaddingException, UnsupportedEncodingException, IllegalBlockSizeException, BadPaddingException, NoSuchAlgorithmException, InvalidParameterSpecException, InvalidKeyException, InvalidKeySpecException {
+        store(Answers.class.getName(), answers);
+    }
+
+    public String getCurrentAccount() {
+        return currentAccount;
+    }
+
+    public class IdentityEncryption implements IEncryption {
+        @Override
+        public String encrypt(String jsonString){
+            return jsonString;
         }
-        return null;
-    }
 
-    @Override
-    public void storeEffectiveDate(EffectiveDate effectiveDate) {
-        store("EffectiveDate", effectiveDate);
-    }
-
-    @Override
-    public EffectiveDate readEffectiveDate(){
-        SharedPreferences sharedPreferences = getSharedPreferences();
-        String json = sharedPreferences.getString("EffectiveDate", null);
-        if (json != null){
-            Gson gson = getGson();
-            return gson.fromJson(decrypt(json), EffectiveDate.class);
+        @Override
+        public String decrypt(String accountJson) {
+            return accountJson;
         }
-        return null;
     }
 
-    @Override
-    public void storeOpenEnrollmentStatus(OpenEnrollmentStatus openEnrollmentStatus) {
-        store("OpenEnrollmentStatus", openEnrollmentStatus);
+    interface IEncryption {
+        String encrypt(String jsonString) throws NoSuchPaddingException, UnsupportedEncodingException, InvalidKeySpecException, NoSuchAlgorithmException, IllegalBlockSizeException, BadPaddingException, InvalidKeyException, InvalidParameterSpecException;
+        public String decrypt(String accountJson) throws NoSuchAlgorithmException, InvalidKeyException, InvalidAlgorithmParameterException, NoSuchPaddingException, BadPaddingException, UnsupportedEncodingException, InvalidParameterSpecException, InvalidKeySpecException, IllegalBlockSizeException;
     }
 
-    @Override
-    public void storeUqhpFamily(Family family){
-        store(UqhpFamily, family);
-    }
 
-    @Override
-    public void storeUqhpDetermination(UqhpDetermination uqhpDetermination){
-        store("UqhpDetermination", uqhpDetermination);
-    }
-    public void storeStateString(String stateString) {
-        Log.d(TAG, "StateString: ->" + stateString + "<-");
-        SharedPreferences.Editor editor = getSharedPreferences().edit();
-        editor.putString("StateString", stateString);
-        editor.commit();
-    }
+    class RealEncryption implements IEncryption {
+        /**
+         * Uses a predefined secret key.
+         * TODO: Use a specific one defined for this purpose, maybe?
+         *
+         * @return
+         * @throws NoSuchAlgorithmException
+         * @throws InvalidKeySpecException
+         */
+        private SecretKey getSecretKey()
+                throws NoSuchAlgorithmException, InvalidKeySpecException {
+            return new SecretKeySpec(currentKey.getBytes(), ENCRYPTION_ALGORITHM);
+        }
 
-    /**
-     * Uses a predefined secret key.
-     * TODO: Use a specific one defined for this purpose, maybe?
-     *
-     * @return
-     * @throws NoSuchAlgorithmException
-     * @throws InvalidKeySpecException
-     */
-    private SecretKey getSecretKey()
-            throws NoSuchAlgorithmException, InvalidKeySpecException {
-        return new SecretKeySpec(BrokerApplication.getBrokerApplication().getString(R.string.secret_key).getBytes(),
-                ENCRYPTION_ALGORITHM);
-    }
+        /**
+         * Returns the encrypted data.
+         *
+         * @param message
+         * @return
+         * @throws NoSuchAlgorithmException
+         * @throws NoSuchPaddingException
+         * @throws InvalidKeyException
+         * @throws InvalidParameterSpecException
+         * @throws IllegalBlockSizeException
+         * @throws BadPaddingException
+         * @throws UnsupportedEncodingException
+         * @throws InvalidKeySpecException
+         */
+        private byte[] encryptData(String message)
+                throws NoSuchAlgorithmException, NoSuchPaddingException, InvalidKeyException,
+                InvalidParameterSpecException, IllegalBlockSizeException, BadPaddingException,
+                UnsupportedEncodingException, InvalidKeySpecException {
+            Cipher cipher = Cipher.getInstance(ENCRYPTION_ALGORITHM_WITH_PADDING);
+            try {
+                cipher.init(Cipher.ENCRYPT_MODE, getSecretKey());
+            } catch (Exception e) {
+                Log.e(TAG, "Exception: " + e);
+            } catch (Throwable t) {
+                Log.e(TAG, "throwable: " + t);
+                throw t;
+            }
+            return cipher.doFinal(message.getBytes(CHARACTER_SET_UTF8));
+        }
 
-    /**
-     * Returns the encrypted data.
-     *
-     * @param message
-     * @return
-     * @throws NoSuchAlgorithmException
-     * @throws NoSuchPaddingException
-     * @throws InvalidKeyException
-     * @throws InvalidParameterSpecException
-     * @throws IllegalBlockSizeException
-     * @throws BadPaddingException
-     * @throws UnsupportedEncodingException
-     * @throws InvalidKeySpecException
-     */
-    private byte[] encryptData(String message)
-            throws NoSuchAlgorithmException, NoSuchPaddingException, InvalidKeyException,
-            InvalidParameterSpecException, IllegalBlockSizeException, BadPaddingException,
-            UnsupportedEncodingException, InvalidKeySpecException {
-        Cipher cipher = Cipher.getInstance(ENCRYPTION_ALGORITHM_WITH_PADDING);
-        cipher.init(Cipher.ENCRYPT_MODE, getSecretKey());
-        return cipher.doFinal(message.getBytes(CHARACTER_SET_UTF8));
-    }
+        /**
+         * Returns the decrypted data.
+         *
+         * @param cipherText
+         * @return
+         * @throws NoSuchPaddingException
+         * @throws NoSuchAlgorithmException
+         * @throws InvalidParameterSpecException
+         * @throws InvalidAlgorithmParameterException
+         * @throws InvalidKeyException
+         * @throws BadPaddingException
+         * @throws IllegalBlockSizeException
+         * @throws UnsupportedEncodingException
+         * @throws InvalidKeySpecException
+         */
+        private String decryptData(byte[] cipherText)
+                throws NoSuchPaddingException, NoSuchAlgorithmException, InvalidParameterSpecException,
+                InvalidAlgorithmParameterException, InvalidKeyException, BadPaddingException,
+                IllegalBlockSizeException, UnsupportedEncodingException, InvalidKeySpecException {
+            Cipher cipher = Cipher.getInstance(ENCRYPTION_ALGORITHM_WITH_PADDING);
+            cipher.init(Cipher.DECRYPT_MODE, getSecretKey());
+            return new String(cipher.doFinal(cipherText), CHARACTER_SET_UTF8);
+        }
 
-    /**
-     * Returns the decrypted data.
-     *
-     * @param cipherText
-     * @return
-     * @throws NoSuchPaddingException
-     * @throws NoSuchAlgorithmException
-     * @throws InvalidParameterSpecException
-     * @throws InvalidAlgorithmParameterException
-     * @throws InvalidKeyException
-     * @throws BadPaddingException
-     * @throws IllegalBlockSizeException
-     * @throws UnsupportedEncodingException
-     * @throws InvalidKeySpecException
-     */
-    private String decryptData(byte[] cipherText)
-            throws NoSuchPaddingException, NoSuchAlgorithmException, InvalidParameterSpecException,
-            InvalidAlgorithmParameterException, InvalidKeyException, BadPaddingException,
-            IllegalBlockSizeException, UnsupportedEncodingException, InvalidKeySpecException {
-        Cipher cipher = Cipher.getInstance(ENCRYPTION_ALGORITHM_WITH_PADDING);
-        cipher.init(Cipher.DECRYPT_MODE, getSecretKey());
-        return new String(cipher.doFinal(cipherText), CHARACTER_SET_UTF8);
-    }
-
-    /**
-     * @param jsonString
-     * @return
-     */
-    private String encrypt(String jsonString) {
-        try {
+        /**
+         * @param jsonString
+         * @return
+         */
+        public String encrypt(String jsonString) throws NoSuchPaddingException, UnsupportedEncodingException,
+                InvalidKeySpecException, NoSuchAlgorithmException, IllegalBlockSizeException,
+                BadPaddingException, InvalidKeyException, InvalidParameterSpecException {
             byte[] encrypted = encryptData(jsonString);
             jsonString = Base64.encodeToString(encrypted, Base64.NO_WRAP);
-        } catch (Exception e) {
-            Log.e(TAG, e.getMessage());
-            e.printStackTrace();
+            return jsonString;
         }
-        return jsonString;
-    }
 
-    /**
-     * @param accountJson
-     * @return
-     */
-    private String decrypt(String accountJson) {
-        try {
+        /**
+         * @param accountJson
+         * @return
+         */
+        public String decrypt(String accountJson) throws NoSuchAlgorithmException, InvalidKeyException, InvalidAlgorithmParameterException, NoSuchPaddingException, BadPaddingException, UnsupportedEncodingException, InvalidParameterSpecException, InvalidKeySpecException, IllegalBlockSizeException {
             accountJson = decryptData(Base64.decode(accountJson, Base64.NO_WRAP));
-        } catch (Exception e) {
-            Log.e(TAG, e.getMessage());
-            e.printStackTrace();
+            return accountJson;
         }
-        return accountJson;
     }
 }

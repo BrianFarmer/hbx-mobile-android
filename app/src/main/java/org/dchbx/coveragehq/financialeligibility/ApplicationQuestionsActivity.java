@@ -333,6 +333,11 @@ public class ApplicationQuestionsActivity extends BrokerActivity {
                     value.setText(field.defaultValue);
                 }
             }
+
+            if (field.readonly.equalsIgnoreCase("y")){
+                value.setEnabled(false);
+            }
+
             if (first){
                 value.requestFocus();
             }
@@ -651,6 +656,7 @@ public class ApplicationQuestionsActivity extends BrokerActivity {
                 indicator.setVisibility(View.GONE);
             }
         }
+
 
         private void checkIndicator() {
             indicator.setVisibility(value.getText().length() < 10?View.VISIBLE:View.GONE);

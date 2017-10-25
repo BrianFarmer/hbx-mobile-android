@@ -2,9 +2,11 @@ package org.dchbx.coveragehq;
 
 import android.app.ProgressDialog;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.graphics.Typeface;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.test.espresso.idling.CountingIdlingResource;
 import android.support.v4.app.DialogFragment;
@@ -148,6 +150,14 @@ public class LoginActivity extends BrokerActivity {
                     }
                     attemptLogin();
                     return true;
+                }
+            });
+            TextView forgotPassword = (TextView) findViewById(R.id.forgot_password);
+            forgotPassword.setOnClickListener(new OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Intent myIntent = new Intent(Intent.ACTION_VIEW, Uri.parse("https://app.dchealthlink.com/SelfService/"));
+                    startActivity(myIntent);
                 }
             });
             haveLoginInfo = false;
@@ -465,7 +475,7 @@ public class LoginActivity extends BrokerActivity {
 
     private void alertDialog(SpannableString message, int buttonTextId){
         AlertDialog alert = new AlertDialog.Builder(this)
-                .setTitle(R.string.app_title)
+                .setTitle(R.string.app_name)
                 .setMessage(message)
                 .setPositiveButton(buttonTextId, new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int which) {

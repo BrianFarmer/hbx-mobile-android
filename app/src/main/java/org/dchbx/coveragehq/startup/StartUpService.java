@@ -17,9 +17,9 @@ import org.dchbx.coveragehq.JsonParser;
 import org.dchbx.coveragehq.LocalDateSerializer;
 import org.dchbx.coveragehq.LocalTimeDeserializer;
 import org.dchbx.coveragehq.Messages;
-import org.dchbx.coveragehq.ServerConfiguration;
 import org.dchbx.coveragehq.UrlHandler;
 import org.dchbx.coveragehq.models.account.Account;
+import org.dchbx.coveragehq.models.ridp.SignUp.SignUpResponse;
 import org.dchbx.coveragehq.models.startup.EffectiveDate;
 import org.dchbx.coveragehq.models.startup.Login;
 import org.dchbx.coveragehq.models.startup.OpenEnrollmentStatus;
@@ -32,6 +32,16 @@ import org.greenrobot.eventbus.ThreadMode;
 import org.joda.time.DateTime;
 import org.joda.time.LocalDate;
 import org.joda.time.LocalTime;
+
+import java.io.UnsupportedEncodingException;
+import java.security.InvalidKeyException;
+import java.security.NoSuchAlgorithmException;
+import java.security.spec.InvalidKeySpecException;
+import java.security.spec.InvalidParameterSpecException;
+
+import javax.crypto.BadPaddingException;
+import javax.crypto.IllegalBlockSizeException;
+import javax.crypto.NoSuchPaddingException;
 
 /*
     This file is part of DC.
@@ -64,8 +74,6 @@ public class StartUpService {
 
     @Subscribe(threadMode = ThreadMode.ASYNC)
     public void doThis(Events.ClearPIIRequest clearPIIRequest) throws Exception {
-        serviceManager.getConfigurationStorageHandler().clearAccount();
-        serviceManager.getConfigurationStorageHandler().clearAnswers();
         messages.appEvent(StateManager.AppEvents.ClearedPII);
     }
 
@@ -74,33 +82,30 @@ public class StartUpService {
         EventParameters eventParameters = loginRequest.getEventParameters();
 
         final ResumeParameters resumeParamters  = (ResumeParameters) eventParameters.getObject("LoginParameters", ResumeParameters.class);
-        Login login = new Login();
+        final Login login = new Login();
         login.username = resumeParamters.email;
         login.password = resumeParamters.password;
 
         final UrlHandler urlHandler = serviceManager.getUrlHandler();
         UrlHandler.HttpRequest httpRequest = urlHandler.getLoginRequest(login);
-        CoverageConnection coverageConnection = serviceManager.getCoverageConnection();
         ConnectionHandler connectionHandler = serviceManager.getConnectionHandler();
         connectionHandler.process(httpRequest, new IConnectionHandler.OnCompletion() {
             @Override
             public void onCompletion(IConnectionHandler.HttpResponse response) {
                 if (response.getResponseCode() >= 200
                         && response.getResponseCode() < 300){
+                    JsonParser parser = serviceManager.getParser();
+                    SignUpResponse signUpResponse = parser.parseSignUpResponse(response.getBody());
+                    urlHandler.populateLinks(signUpResponse.links);
                     ConfigurationStorageHandler configurationStorageHandler = serviceManager.getConfigurationStorageHandler();
+                    configurationStorageHandler.setAccountName(signUpResponse.uuid);
                     Account account = configurationStorageHandler.readAccount();
                     if (account == null
-                        || account.getEmailAddress() == null
-                        || !account.getEmailAddress().toLowerCase().equals(resumeParamters.email.toLowerCase())){
+                            || account.getEmailAddress() == null
+                            || !account.getEmailAddress().toLowerCase().equals(resumeParamters.email.toLowerCase())){
                         account = null;
                         configurationStorageHandler.clear();
                     }
-
-
-                    JsonParser parser = serviceManager.getParser();
-                    ServerConfiguration serverConfiguration = serviceManager.getServerConfiguration();
-                    org.dchbx.coveragehq.models.startup.LoginResponse loginResponse = parser.parseResumeLogin(response.getBody());
-                    urlHandler.populateLinks(loginResponse._links);
                     messages.appEvent(StateManager.AppEvents.IndividualLoggedIn);
                 }
             }
@@ -116,7 +121,7 @@ public class StartUpService {
             ConnectionHandler connectionHandler = serviceManager.getConnectionHandler();
             connectionHandler.process(httpRequest, new IConnectionHandler.OnCompletion() {
                 @Override
-                public void onCompletion(IConnectionHandler.HttpResponse response) {
+                public void onCompletion(IConnectionHandler.HttpResponse response) throws NoSuchPaddingException, UnsupportedEncodingException, IllegalBlockSizeException, BadPaddingException, NoSuchAlgorithmException, InvalidParameterSpecException, InvalidKeyException, InvalidKeySpecException {
                     if (response.getResponseCode() >= 200
                             && response.getResponseCode() < 300) {
                         JsonParser parser = serviceManager.getParser();
@@ -182,7 +187,7 @@ public class StartUpService {
         ConnectionHandler connectionHandler = serviceManager.getConnectionHandler();
         connectionHandler.process(openEnrollmentRequest, new IConnectionHandler.OnCompletion() {
             @Override
-            public void onCompletion(IConnectionHandler.HttpResponse response) {
+            public void onCompletion(IConnectionHandler.HttpResponse response) throws NoSuchPaddingException, UnsupportedEncodingException, IllegalBlockSizeException, BadPaddingException, NoSuchAlgorithmException, InvalidParameterSpecException, InvalidKeyException, InvalidKeySpecException {
                 if (response.getResponseCode() >= 200
                     && response.getResponseCode() < 300){
                     JsonParser parser = serviceManager.getParser();

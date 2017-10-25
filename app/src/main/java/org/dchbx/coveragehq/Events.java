@@ -1144,7 +1144,7 @@ public class Events {
             LaunchDialog,
             HideWait,
             ShowWait,
-            PopAndLaunchActivity, Pop, Dismiss
+            PopAndLaunchActivity, Pop, PopAndServerErrorMessage, Dismiss
         }
 
         private final Action action;
@@ -1468,5 +1468,17 @@ public class Events {
     }
 
     public static class RidpCheckOverride extends BackgroundProcess {
+    }
+
+    public static class ServerError {
+        private final EventParameters intentParameters;
+
+        public ServerError(EventParameters intentParameters) {
+            this.intentParameters = intentParameters;
+        }
+
+        public EventParameters getIntentParameters() {
+            return intentParameters;
+        }
     }
 }

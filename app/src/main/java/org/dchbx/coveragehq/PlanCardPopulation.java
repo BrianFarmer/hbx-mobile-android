@@ -73,7 +73,7 @@ public class PlanCardPopulation {
                 && plan.nationwide) {
             planLocation.setText(R.string.nationwide);
         } else {
-            planLocation.setText("nationwide false");
+            planLocation.setText(R.string.dc_metro_in_network);
         }
 
         TextView metalLevel = (TextView) view.findViewById(R.id.metalType);

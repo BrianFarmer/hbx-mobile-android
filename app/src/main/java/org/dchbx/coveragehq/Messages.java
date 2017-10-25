@@ -102,5 +102,6 @@ public interface Messages {
     void sendBackgroundProcess(Events.BackgroundProcess o);
     void getPlanResult(Plan plan, List<Service> services);
     void getCreateAccountInfoResult(Account account);
+    void sendServerErrorMessage(EventParameters intentParameters);
 }
 

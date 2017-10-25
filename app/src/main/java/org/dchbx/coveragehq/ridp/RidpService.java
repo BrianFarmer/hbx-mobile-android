@@ -46,7 +46,16 @@ import org.joda.time.LocalTime;
 import org.joda.time.format.DateTimeFormatter;
 import org.joda.time.format.ISODateTimeFormat;
 
+import java.io.UnsupportedEncodingException;
+import java.security.InvalidKeyException;
+import java.security.NoSuchAlgorithmException;
+import java.security.spec.InvalidKeySpecException;
+import java.security.spec.InvalidParameterSpecException;
 import java.util.ArrayList;
+
+import javax.crypto.BadPaddingException;
+import javax.crypto.IllegalBlockSizeException;
+import javax.crypto.NoSuchPaddingException;
 
 import static org.dchbx.coveragehq.statemachine.StateManager.AppEvents.Error;
 import static org.dchbx.coveragehq.statemachine.StateManager.AppEvents.GetQuestionsOperationComplete;
@@ -157,20 +166,23 @@ public class RidpService extends StateProcessor {
             UrlHandler.HttpRequest request = urlHandler.getCreateAccount(signUp);
             connectionHandler.process(request, new IConnectionHandler.OnCompletion() {
                 @Override
-                public void onCompletion(IConnectionHandler.HttpResponse response) {
+                public void onCompletion(IConnectionHandler.HttpResponse response) throws NoSuchPaddingException, InvalidKeySpecException, UnsupportedEncodingException, IllegalBlockSizeException, BadPaddingException, NoSuchAlgorithmException, InvalidKeyException, InvalidParameterSpecException {
                     if (response.getResponseCode() == 201){
                         JsonParser parser = serviceManager.getParser();
                         SignUpResponse signUpResponse = parser.parseSignUpResponse(response.getBody());
-                        serviceManager.getConfigurationStorageHandler().store(signUpResponse);
                         serviceManager.getUrlHandler().populateLinks(signUpResponse.links);
 
                         if (signUpResponse.error != null){
                             if (signUpResponse.error.type.compareTo("userHasActiveMedicaid") == 0){
-                                messages.getEventBus().post(new Events.AppEvent(StateManager.AppEvents.SignUpUserInAceds, eventParameters.add("error_msg", signUpResponse.error.message)));
+                                    messages.getEventBus().post(new Events.AppEvent(StateManager.AppEvents.SignUpUserInAceds, eventParameters.add("error_msg", signUpResponse.error.message)));
                             } else {
                                 messages.getEventBus().post(new Events.AppEvent(StateManager.AppEvents.Error, eventParameters.add("error_msg", signUpResponse.error.message)));
                             }
                         } else {
+                            ConfigurationStorageHandler configurationStorageHandler = serviceManager.getConfigurationStorageHandler();
+                            configurationStorageHandler.setAccountName(signUpResponse.uuid);
+                            configurationStorageHandler.storeSignupResponse(signUpResponse);
+                            configurationStorageHandler.storeAccount(account);
                             messages.getEventBus().post(new Events.AppEvent(StateManager.AppEvents.SignUpSuccessful, eventParameters));
                         }
                     } else {
@@ -241,9 +253,9 @@ public class RidpService extends StateProcessor {
         }});
     }
 
-    public void updateAnswers(Answers answers) {
+    public void updateAnswers(Answers answers) throws NoSuchPaddingException, InvalidKeySpecException, UnsupportedEncodingException, IllegalBlockSizeException, BadPaddingException, NoSuchAlgorithmException, InvalidKeyException, InvalidParameterSpecException {
         ConfigurationStorageHandler storageHandler = serviceManager.getConfigurationStorageHandler();
-        storageHandler.store(answers);
+        storageHandler.storeAnswers(answers);
     }
 
     @Subscribe(threadMode = ThreadMode.ASYNC)
@@ -258,7 +270,7 @@ public class RidpService extends StateProcessor {
         UrlHandler.HttpRequest request = urlHandler.getAnswersRequest(questionsAndAnswers.answers);
         serviceManager.getConnectionHandler().process(request, new IConnectionHandler.OnCompletion() {
             @Override
-            public void onCompletion(IConnectionHandler.HttpResponse response) {
+            public void onCompletion(IConnectionHandler.HttpResponse response) throws NoSuchPaddingException, UnsupportedEncodingException, IllegalBlockSizeException, BadPaddingException, NoSuchAlgorithmException, InvalidParameterSpecException, InvalidKeyException, InvalidKeySpecException {
                 int responseCode = response.getResponseCode();
                 String responseBody = response.getBody();
 
@@ -288,7 +300,7 @@ public class RidpService extends StateProcessor {
         UrlHandler.HttpRequest request = urlHandler.getRidpOverrideRequest(transactionId);
         serviceManager.getConnectionHandler().process(request, new IConnectionHandler.OnCompletion() {
             @Override
-            public void onCompletion(IConnectionHandler.HttpResponse response) {
+            public void onCompletion(IConnectionHandler.HttpResponse response) throws NoSuchPaddingException, UnsupportedEncodingException, IllegalBlockSizeException, BadPaddingException, NoSuchAlgorithmException, InvalidParameterSpecException, InvalidKeyException, InvalidKeySpecException {
                 int responseCode = response.getResponseCode();
                 handleVerificationResponse(responseCode, response.getBody(), eventParameters, account);
             }
@@ -296,7 +308,7 @@ public class RidpService extends StateProcessor {
     }
 
     private void handleVerificationResponse(int responseCode, String responseBody,
-                                            EventParameters eventParameters, Account account) {
+                                            EventParameters eventParameters, Account account) throws NoSuchPaddingException, InvalidKeySpecException, UnsupportedEncodingException, IllegalBlockSizeException, BadPaddingException, NoSuchAlgorithmException, InvalidKeyException, InvalidParameterSpecException {
 
         if (responseCode == 200){
             JsonParser parser = serviceManager.getParser();
@@ -310,9 +322,6 @@ public class RidpService extends StateProcessor {
                     messages.appEvent(StateManager.AppEvents.UserVerifiedFoundYou, eventParameters);
                     break;
                 case OkToCreateAccount:
-                    ConfigurationStorageHandler configurationStorageHandler = serviceManager.getConfigurationStorageHandler();
-                    configurationStorageHandler.clearUqhpFamily();
-                    configurationStorageHandler.store(account);
                     messages.appEvent(StateManager.AppEvents.UserVerifiedOkToCreate, eventParameters);
                     break;
             }
