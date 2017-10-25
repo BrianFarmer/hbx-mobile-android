@@ -40,6 +40,7 @@ import org.joda.time.LocalDate;
 import org.joda.time.LocalTime;
 
 import java.io.UnsupportedEncodingException;
+import java.security.InvalidAlgorithmParameterException;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
 import java.security.spec.InvalidKeySpecException;
@@ -86,17 +87,17 @@ public class FinancialEligibilityService {
     }
 
     @Subscribe(threadMode = ThreadMode.ASYNC)
-    public void doThis(Events.GetUqhpFamily getUqhpFamily) {
+    public void doThis(Events.GetUqhpFamily getUqhpFamily) throws NoSuchAlgorithmException, InvalidKeyException, InvalidAlgorithmParameterException, NoSuchPaddingException, BadPaddingException, UnsupportedEncodingException, InvalidParameterSpecException, InvalidKeySpecException, IllegalBlockSizeException {
         Family family = getUqhpFamily();
         messages.getUqhpFamilyResponse(family);
     }
 
-    private Family getUqhpFamily() {
+    private Family getUqhpFamily() throws NoSuchAlgorithmException, InvalidKeyException, InvalidAlgorithmParameterException, NoSuchPaddingException, BadPaddingException, UnsupportedEncodingException, InvalidParameterSpecException, InvalidKeySpecException, IllegalBlockSizeException {
         ConfigurationStorageHandler configurationStorageHandler = serviceManager.getConfigurationStorageHandler();
         return configurationStorageHandler.readUqhpFamily();
     }
 
-    public UqhpDetermination getUqhpDetermination(){
+    public UqhpDetermination getUqhpDetermination() throws NoSuchAlgorithmException, InvalidKeyException, InvalidAlgorithmParameterException, NoSuchPaddingException, BadPaddingException, UnsupportedEncodingException, InvalidParameterSpecException, InvalidKeySpecException, IllegalBlockSizeException {
         ConfigurationStorageHandler configurationStorageHandler = serviceManager.getConfigurationStorageHandler();
         return configurationStorageHandler.readUqhpDetermination();
     }

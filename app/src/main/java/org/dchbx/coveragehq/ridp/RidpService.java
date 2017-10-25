@@ -47,6 +47,7 @@ import org.joda.time.format.DateTimeFormatter;
 import org.joda.time.format.ISODateTimeFormat;
 
 import java.io.UnsupportedEncodingException;
+import java.security.InvalidAlgorithmParameterException;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
 import java.security.spec.InvalidKeySpecException;
@@ -141,13 +142,13 @@ public class RidpService extends StateProcessor {
     }
 
     @Subscribe(threadMode = ThreadMode.ASYNC)
-    public void doThis(Events.GetCreateAccountInfo getCreateAccountInfo){
+    public void doThis(Events.GetCreateAccountInfo getCreateAccountInfo) throws NoSuchAlgorithmException, InvalidKeyException, InvalidAlgorithmParameterException, NoSuchPaddingException, BadPaddingException, UnsupportedEncodingException, InvalidParameterSpecException, InvalidKeySpecException, IllegalBlockSizeException {
             org.dchbx.coveragehq.models.account.Account account = serviceManager.getRidpService().getCreateAccountInfo();
             messages.getCreateAccountInfoResult(account);
     }
 
 
-    public org.dchbx.coveragehq.models.account.Account getCreateAccountInfo() {
+    public org.dchbx.coveragehq.models.account.Account getCreateAccountInfo() throws NoSuchAlgorithmException, InvalidKeyException, InvalidAlgorithmParameterException, NoSuchPaddingException, BadPaddingException, UnsupportedEncodingException, InvalidParameterSpecException, InvalidKeySpecException, IllegalBlockSizeException {
         return serviceManager.getConfigurationStorageHandler().readAccount();
     }
 
@@ -349,7 +350,7 @@ public class RidpService extends StateProcessor {
         return VerifiyIdentityResponseStates.OkToCreateAccount;
     }
 
-    public VerifyIdentityResponse getVerificationResponse() {
+    public VerifyIdentityResponse getVerificationResponse() throws NoSuchAlgorithmException, InvalidKeyException, InvalidAlgorithmParameterException, NoSuchPaddingException, BadPaddingException, UnsupportedEncodingException, InvalidParameterSpecException, InvalidKeySpecException, IllegalBlockSizeException {
         ConfigurationStorageHandler configurationStorageHandler = serviceManager.getConfigurationStorageHandler();
         return configurationStorageHandler.readVerifiyIdentityResponse();
     }

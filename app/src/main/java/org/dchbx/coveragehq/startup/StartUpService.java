@@ -34,6 +34,7 @@ import org.joda.time.LocalDate;
 import org.joda.time.LocalTime;
 
 import java.io.UnsupportedEncodingException;
+import java.security.InvalidAlgorithmParameterException;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
 import java.security.spec.InvalidKeySpecException;
@@ -91,7 +92,7 @@ public class StartUpService {
         ConnectionHandler connectionHandler = serviceManager.getConnectionHandler();
         connectionHandler.process(httpRequest, new IConnectionHandler.OnCompletion() {
             @Override
-            public void onCompletion(IConnectionHandler.HttpResponse response) {
+            public void onCompletion(IConnectionHandler.HttpResponse response) throws NoSuchAlgorithmException, InvalidKeyException, InvalidAlgorithmParameterException, NoSuchPaddingException, BadPaddingException, UnsupportedEncodingException, InvalidParameterSpecException, InvalidKeySpecException, IllegalBlockSizeException {
                 if (response.getResponseCode() >= 200
                         && response.getResponseCode() < 300){
                     JsonParser parser = serviceManager.getParser();

@@ -58,7 +58,11 @@ public class SelectedPlanActivity extends BaseActivity{
         plan = PlanShoppingService.getPlanFromIntent(intent);
         effectiveDate = StartUpService.getEffectiveDate(intent);
         if (effectiveDate == null){
-            effectiveDate = ServiceManager.getServiceManager().getConfigurationStorageHandler().readEffectiveDate();
+            try {
+                effectiveDate = ServiceManager.getServiceManager().getConfigurationStorageHandler().readEffectiveDate();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
         }
         setContentView(R.layout.selected_plan);
         configToolbar();
