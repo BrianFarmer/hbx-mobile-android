@@ -18,6 +18,8 @@ import org.dchbx.coveragehq.LocalDateSerializer;
 import org.dchbx.coveragehq.LocalTimeDeserializer;
 import org.dchbx.coveragehq.Messages;
 import org.dchbx.coveragehq.UrlHandler;
+import org.dchbx.coveragehq.financialeligibility.FinancialEligibilityService;
+import org.dchbx.coveragehq.models.Errors.ServerError;
 import org.dchbx.coveragehq.models.account.Account;
 import org.dchbx.coveragehq.models.ridp.SignUp.SignUpResponse;
 import org.dchbx.coveragehq.models.startup.EffectiveDate;
@@ -80,7 +82,7 @@ public class StartUpService {
 
     @Subscribe(threadMode = ThreadMode.ASYNC)
     public void doThis(final Events.IvlLoginRequest loginRequest) throws Exception {
-        EventParameters eventParameters = loginRequest.getEventParameters();
+        final EventParameters eventParameters = loginRequest.getEventParameters();
 
         final ResumeParameters resumeParamters  = (ResumeParameters) eventParameters.getObject("LoginParameters", ResumeParameters.class);
         final Login login = new Login();
@@ -108,6 +110,10 @@ public class StartUpService {
                         configurationStorageHandler.clear();
                     }
                     messages.appEvent(StateManager.AppEvents.IndividualLoggedIn);
+                } else {
+                    JsonParser parser = serviceManager.getParser();
+                    ServerError error = parser.parseError(response.getBody());
+                    messages.appEvent(StateManager.AppEvents.ServerError, eventParameters.add(FinancialEligibilityService.ServerError, error));
                 }
             }
         });
@@ -137,7 +143,6 @@ public class StartUpService {
                     }
                 }
             });
-            Log.d(TAG, "*********finished requesting effectivedate");
         } catch (Throwable t){
             Log.e(TAG, "throwable: " + t.getMessage());
             throw  t;

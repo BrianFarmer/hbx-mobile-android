@@ -234,6 +234,7 @@
         <activity
             android:name=".HelloActivity"
             android:configChanges="orientation|keyboardHidden|screenSize"
+            android:launchMode="singleTop"
             android:label=""
             />
         <activity
@@ -343,6 +344,10 @@
                   android:label=""
             />
         <activity android:name=".ErrorMessageActivity"
+                  android:configChanges="orientation|keyboardHidden|screenSize"
+                  android:label=""
+            />
+        <activity android:name=".startup.ResumeErrorActivity"
                   android:configChanges="orientation|keyboardHidden|screenSize"
                   android:label=""
             />

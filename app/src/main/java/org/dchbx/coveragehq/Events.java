@@ -1144,7 +1144,7 @@ public class Events {
             LaunchDialog,
             HideWait,
             ShowWait,
-            PopAndLaunchActivity, Pop, PopAndServerErrorMessage, Dismiss
+            PopAndLaunchActivity, Pop, PopAndServerErrorMessage, LaunchHome, Dismiss
         }
 
         private final Action action;

@@ -66,6 +66,7 @@ import org.dchbx.coveragehq.startup.IWantToActivity;
 import org.dchbx.coveragehq.startup.MobilePasswordActivity;
 import org.dchbx.coveragehq.startup.OpenEnrollmentClosedActivity;
 import org.dchbx.coveragehq.startup.ResumeApplicationActivity;
+import org.dchbx.coveragehq.startup.ResumeErrorActivity;
 import org.dchbx.coveragehq.uqhp.FamilyRelationshipsActivity;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.SubscriberExceptionEvent;
@@ -77,6 +78,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.UUID;
 
+import static org.dchbx.coveragehq.statemachine.StateManager.AppEvents.Back;
 import static org.dchbx.coveragehq.statemachine.StateManager.AppEvents.Cancel;
 import static org.dchbx.coveragehq.statemachine.StateManager.AppEvents.ClearedPII;
 import static org.dchbx.coveragehq.statemachine.StateManager.AppEvents.Continue;
@@ -230,6 +232,10 @@ public class StateManager extends StateProcessor {
         messages.stateAction(Events.StateAction.Action.LaunchActivity, uiActivity.getId(), eventParameters.add("ActionId", launchActivity.getId().toString()));
     }
 
+    public void launchHome(EventParameters eventParameters, LaunchHome launchHome) {
+        messages.stateAction(Events.StateAction.Action.LaunchHome, eventParameters);
+    }
+
     public void launchDialog(StateManager.UiDialog uiDialog, EventParameters eventParameters) {
         messages.stateAction(Events.StateAction.Action.LaunchDialog, uiDialog.getId(), eventParameters);
     }
@@ -274,7 +280,6 @@ public class StateManager extends StateProcessor {
     public Messages getMessages() {
         return messages;
     }
-
 
     public enum ResumeActions {
         Continue,
@@ -433,6 +438,8 @@ public class StateManager extends StateProcessor {
         stateMachine.from(AppStates.Login).on(AppEvents.SignUpIndividual).to(AppStates.PlanShoppingChoices, new LaunchActivity(PlanShoppingChoicesActivity.uiActivity));
         stateMachine.from(AppStates.Login).on(AppEvents.Cancel).to(AppStates.Hello, new LaunchActivity(HelloActivity.uiActivity));
 
+        stateMachine.from(AppStates.Hello).on(Back).to(AppStates.Hello, new LaunchHome());
+
         stateMachine.from(AppStates.PlanShoppingChoices)
                 .on(AppEvents.StartShopping)
                     .to(AppStates.AcctCreate, new LaunchActivity(AcctCreate.uiActivity));
@@ -474,6 +481,7 @@ public class StateManager extends StateProcessor {
         stateMachine.from(AppStates.ResumeApplication).on(AppEvents.ForgotPassword).to(AppStates.AcctNewPassword, new LaunchActivity(AcctCreateNewPassword.uiActivity));
         stateMachine.from(AppStates.ResumeApplication).on(AppEvents.ResumeApplication).to(AppStates.LoggingIn, new BackgroundProcess(Events.IvlLoginRequest.class));
         stateMachine.from(AppStates.LoggingIn).on(AppEvents.IndividualLoggedIn).to(AppStates.GettingEffectiveDate, new BackgroundProcess(Events.GetEffectiveDate.class));
+        stateMachine.from(AppStates.LoggingIn).on(AppEvents.ServerError).to(AppStates.ServerError, new LaunchActivity(ResumeErrorActivity.uiActivity));
         stateMachine.from(AppStates.GettingEffectiveDate).on(AppEvents.ReceivedEffectiveDate).to(AppStates.GettingStatus, new BackgroundProcess(Events.ResumeApplication.class));
         stateMachine.from(AppStates.GettingStatus).on(AppEvents.StatusAppliedUqhp).to(AppStates.GettingUqhpDetermination, new BackgroundProcess(Events.GetUqhpDeterminationFromServer.class));
 

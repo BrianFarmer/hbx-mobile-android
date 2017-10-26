@@ -176,7 +176,9 @@ public class RidpService extends StateProcessor {
                     JsonParser parser = serviceManager.getParser();
                     SignUpResponse signUpResponse = parser.parseSignUpResponse(response.getBody());
                     if (success) {
-                        serviceManager.getConfigurationStorageHandler().storeSignupResponse(signUpResponse);
+                        ConfigurationStorageHandler configurationStorageHandler = serviceManager.getConfigurationStorageHandler();
+                        configurationStorageHandler.storeSignupResponse(signUpResponse);
+                        configurationStorageHandler.storeAccount(account);
                         serviceManager.getUrlHandler().populateLinks(signUpResponse.links);
                     }
 

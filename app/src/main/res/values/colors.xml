@@ -59,6 +59,7 @@
     <color name="metal_gold">#FABB18</color>
     <color name="metal_bronze">#CD7F32</color>
     <color name="metal_platinum">#E5E4E2</color>
+    <color name="metal_catastrophic">#E82110</color>
     <color name="life_event_color">#98397a</color>
     <color name="id_card_color">#044972 </color>
     <color name="home_color">#69a30d </color>

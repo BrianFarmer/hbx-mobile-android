@@ -127,8 +127,9 @@ public class PlanSelector extends BaseActivity {
     }
 
     private void discardClicked() {
+        int swipedCount = planCardAdapter.getFavoriteCount() + planCardAdapter.getRemovedCount();
         if (planCardAdapter == null
-            || planCardAdapter.getCount() == 0){
+            || swipedCount == planCardAdapter.getCount() - 1){
             return;
         }
 
@@ -148,11 +149,11 @@ public class PlanSelector extends BaseActivity {
     }
 
     private void keepClicked() {
+        int swipedCount = planCardAdapter.getFavoriteCount() + planCardAdapter.getRemovedCount();
         if (planCardAdapter == null
-                || planCardAdapter.getCount() == 0){
+                || swipedCount == planCardAdapter.getCount() - 1){
             return;
         }
-
         deckView.swipeTopCardRight(1200);
     }
 
@@ -198,6 +199,9 @@ public class PlanSelector extends BaseActivity {
         deckView.setCallback(new SwipeDeckCallback() {
             @Override
             public void cardSwipedLeft(long positionInAdapter) {
+                if (planCardAdapter.getCount() == 0){
+                    return;
+                }
 
                 planCardAdapter.cardSwipedLeft(positionInAdapter);
                 populatePlansAndFavorites();
@@ -205,6 +209,9 @@ public class PlanSelector extends BaseActivity {
 
             @Override
             public void cardSwipedRight(long positionInAdapter) {
+                if (planCardAdapter.getCount() == 0){
+                    return;
+                }
                 favoriteedPlans.add(((PlanCardAdapter.CardWrapper)(planCardAdapter.getItem((int)positionInAdapter))).getPlan());
                 planCardAdapter.cardSwipedRight(positionInAdapter);
                 populatePlansAndFavorites();

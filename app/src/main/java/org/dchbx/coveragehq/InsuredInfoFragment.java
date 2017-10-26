@@ -534,6 +534,9 @@ public class InsuredInfoFragment extends BrokerFragment {
         if (metalLevel.equalsIgnoreCase("platinum")){
             return R.drawable.metal_platinum;
         }
+        if (metalLevel.equalsIgnoreCase("catastrophic")){
+            return R.drawable.metal_catastrophic;
+        }
         return R.drawable.metal_bronze;
     }
 

@@ -62,6 +62,9 @@ public class PlanUtilities {
         if (plan.metalLevel.equalsIgnoreCase("platinum")){
             return R.drawable.metal_platinum;
         }
+        if (plan.metalLevel.equalsIgnoreCase("catastrophic")){
+            return R.drawable.metal_catastrophic;
+        }
         return R.drawable.metal_bronze;
 
     }

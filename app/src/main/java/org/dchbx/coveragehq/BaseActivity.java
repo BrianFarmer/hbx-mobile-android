@@ -128,6 +128,9 @@ public class BaseActivity extends AppCompatActivity {
             case LaunchDialog:
                 StateManager.UiDialog.getUiDialogType(stateAction.getUiActivityId()).dialogBuilder.build(stateAction.getEventParameters(), this);
                 break;
+            case LaunchHome:
+                Intents.launchHome(this);
+                break;
             case ShowWait:
                 showProgress();
                 break;

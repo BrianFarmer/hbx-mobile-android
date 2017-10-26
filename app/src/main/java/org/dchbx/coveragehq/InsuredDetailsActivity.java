@@ -114,6 +114,7 @@ public class InsuredDetailsActivity extends BrokerActivity {
                 R.string.card_tab_name,
                 R.drawable.ivl_tab_id_card_states,
                 false, R.color.id_card_color, R.color.transparent)), InsuranceCardFragment.class, null);
+        tabHost.getTabWidget().getChildAt(3).setEnabled(false);
 
         tabHost.setOnTabChangedListener(new TabHost.OnTabChangeListener() {
             @Override

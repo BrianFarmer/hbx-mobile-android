@@ -1,8 +1,6 @@
 package org.dchbx.coveragehq.planshopping;
 
 import android.content.Context;
-import android.support.constraint.ConstraintLayout;
-import android.support.constraint.ConstraintSet;
 import android.text.Html;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -132,6 +130,10 @@ public class PlanCardAdapter extends BaseAdapter {
 
     public boolean isLastCard(long cardId) {
         return (currentWrapperBaseList.size() - 1) == cardId;
+    }
+
+    public int getRemovedCount() {
+        return removed.size();
     }
 
     public class CardWrapper extends AdapterItemWrapperBase {
